@@ -34,6 +34,8 @@ struct AuthScaffold<Content: View>: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background { PageContourBackdrop(seed: backdropSeed ?? "page-\(title)") }
+        // The title scrolls under the system back button: the same edge blur as every bar.
+        .blurredNavigationEdge()
         .bottomBar {
             VStack(spacing: DS.Space.sm) {
                 Button(action: action) {
