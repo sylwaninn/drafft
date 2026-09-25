@@ -233,7 +233,7 @@ struct GoalBlock: View {
 
 // MARK: - Vitals
 
-/// Hinge-style quick facts as a loose cluster of pills. Intent leads when shared; sport stays the headline.
+/// Hinge-style quick facts as a loose cluster of pills; sport stays the headline.
 struct VitalsStrip: View {
     let profile: Profile
     var showDistance = true
@@ -244,7 +244,6 @@ struct VitalsStrip: View {
 
     private var items: [Item] {
         var out: [Item] = []
-        if let intent = profile.vitals?.intent { out.append(.init(symbol: intent.symbol, text: intent.label)) }
         if showsPlace && !profile.neighborhood.isEmpty {
             out.append(.init(symbol: nil, text: profile.neighborhood + (showDistance ? ", \(LocationPrivacy.rounded(km: profile.distanceKm))" : "")))
         }

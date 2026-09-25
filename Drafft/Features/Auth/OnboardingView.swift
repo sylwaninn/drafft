@@ -14,7 +14,6 @@ struct OnboardingView: View {
     @State private var legalDoc: LegalDoc?
     @State private var identity: String?
     @State private var interestedIn: Set<String> = []
-    @State private var intent: Intent?
     @State private var locator = AreaLocator()
     @State private var notifications = NotificationService.shared
     @State private var phone = PhoneVerificationModel()
@@ -35,7 +34,7 @@ struct OnboardingView: View {
     @State private var icebreaker: Icebreaker = Icebreaker.Kind.twoTruths.blank
     /// Written prompts (up to 3): a question from the library and their answer.
     @State private var prompts: [ProfilePrompt] = []
-    /// Lifestyle answers (intent lives in its own step).
+    /// Lifestyle answers.
     @State private var lifestyle = Vitals.blank
     @State private var bio = ""
     @State private var pickingPrompt: Int?
@@ -48,7 +47,7 @@ struct OnboardingView: View {
     /// account, say who you are, how you move, then what people see.
     enum Step: Int, CaseIterable {
         case language, rules, phone
-        case name, birthday, gender, showMe, intent, lifestyle, area
+        case name, birthday, gender, showMe, lifestyle, area
         case sports, rhythm
         case photos, bio, voice, prompts, icebreaker, notifications
 
@@ -66,7 +65,7 @@ struct OnboardingView: View {
         var chapter: Chapter {
             switch self {
             case .language, .rules, .phone: .account
-            case .name, .birthday, .gender, .showMe, .intent, .lifestyle, .area: .you
+            case .name, .birthday, .gender, .showMe, .lifestyle, .area: .you
             case .sports, .rhythm: .sports
             case .photos, .bio, .voice, .prompts, .icebreaker, .notifications: .profile
             }
@@ -110,7 +109,6 @@ struct OnboardingView: View {
         case .gender: genderStep
         case .showMe: showMeStep
         case .area: areaStep
-        case .intent: intentStep
         case .lifestyle: lifestyleStep
         case .bio: bioStep
         case .sports: sportsStep
@@ -139,7 +137,7 @@ struct OnboardingView: View {
 
     /// The phone check is mandatory: never skippable.
     private var skippable: Bool { Self.optional.contains(current) }
-    private static let optional: Set<Step> = [.intent, .lifestyle, .bio, .voice, .prompts, .icebreaker, .notifications]
+    private static let optional: Set<Step> = [.lifestyle, .bio, .voice, .prompts, .icebreaker, .notifications]
 
     private var footer: some View {
         VStack(spacing: DS.Space.sm) {
@@ -219,7 +217,6 @@ struct OnboardingView: View {
             return isAdult ? nil : (L("drafft is for people 18 and over."), true)
         case .gender: return identity == nil ? (L("Pick the one that fits you best."), false) : nil
         case .showMe: return interestedIn.isEmpty ? (L("Pick at least one."), false) : nil
-        case .intent: return intent == nil ? (L("Pick one, or skip it for now."), false) : nil
         case .lifestyle: return lifestyle.hasLifestyle ? nil : (L("Answer one, or skip it for now."), false)
         case .bio:
             if bio.count > 200 { return (L("Keep it under 200 characters."), true) }
@@ -271,7 +268,6 @@ struct OnboardingView: View {
         case .gender: identity != nil
         case .showMe: !interestedIn.isEmpty
         case .area: area != nil
-        case .intent: intent != nil
         case .sports, .rhythm: !sports.isEmpty
         case .photos: !photos.isEmpty && (mainFace == .face || resuming && mainFace == nil)
         case .voice: voice != nil
@@ -305,7 +301,6 @@ struct OnboardingView: View {
         p.identity = identity
         p.interestedIn = Array(interestedIn)
         p.area = area?.name
-        p.intent = intent.map { "\($0)" }
         p.sports = sports.map { .init(sport: $0.sport.rawValue, perWeek: $0.perWeek) }
         p.photos = photos
         p.voicePath = voice?.url.path
@@ -330,7 +325,6 @@ struct OnboardingView: View {
         identity = p.identity
         interestedIn = Set(p.interestedIn)
         if let a = p.area { area = Area(name: a, city: a) }
-        intent = Intent.allCases.first { "\($0)" == p.intent }
         sports = p.sports.compactMap { s in Sport(rawValue: s.sport).map { SportEntry(sport: $0, perWeek: s.perWeek) } }
         photos = p.photos.filter { FileManager.default.fileExists(atPath: $0) }
         prompts = p.prompts.map { ProfilePrompt(question: $0.question, answer: $0.answer) }
@@ -360,7 +354,6 @@ struct OnboardingView: View {
     /// The new profile holds only what the person answered: nothing from the demo profile.
     private func finish() {
         var vitals = lifestyle
-        vitals.intent = intent
         let p = Profile(
             id: "me",
             name: name.trimmingCharacters(in: .whitespaces),
@@ -385,7 +378,7 @@ struct OnboardingView: View {
         guard let birthday else { return }
         let signUp = ProfileSync.SignUp(
             name: p.name, birthday: birthday, gender: identity, interestedIn: interestedIn,
-            neighborhood: area?.name ?? "", location: locator.blurred, intent: intent, bio: p.bio,
+            neighborhood: area?.name ?? "", location: locator.blurred, bio: p.bio,
             lifestyle: lifestyle, icebreaker: icebreaker.isComplete ? icebreaker : nil, sports: sports,
             prompts: answeredPrompts, photos: photos, voice: voice, language: language)
         finishError = nil
@@ -780,13 +773,6 @@ struct OnboardingView: View {
         }
     }
 
-    private var intentStep: some View {
-        page {
-            stepTitle(L("What are you training for?"), L("Shown on your profile so nobody's guessing. Skip it to keep it private."))
-            IntentPicker(selection: $intent)
-        }
-    }
-
     /// Step 1 of 2 for sports: pick them.
     private var sportsStep: some View {
         page {
@@ -1133,43 +1119,6 @@ struct FlowLayout: Layout {
             v.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(s))
             x += s.width + spacing
             rowH = max(rowH, s.height)
-        }
-    }
-}
-
-/// Pick what you're looking for, in Drafft's training vocabulary. Tapping the selected option clears it.
-struct IntentPicker: View {
-    @Binding var selection: Intent?
-    var onChange: () -> Void = {}
-
-    var body: some View {
-        VStack(spacing: DS.Space.sm) {
-            ForEach(Intent.allCases) { option in
-                let on = selection == option
-                Button {
-                    Haptics.select()
-                    withAnimation(Motion.select) { selection = on ? nil : option }
-                    onChange()
-                } label: {
-                    HStack(alignment: .center, spacing: DS.Space.md) {
-                        Image(systemName: option.symbol)
-                            .font(.body.weight(.bold))
-                            .frame(width: 24)
-                        Text(option.label).font(.body.weight(.semibold))
-                        Spacer(minLength: 0)
-                        CheckDisc(isOn: on, onLimeFill: on)
-                    }
-                    .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
-                    .padding(DS.Space.lg)
-                    .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvas), in: .rect(cornerRadius: DS.Radius.lg))
-                }
-                .buttonStyle(PressScaleStyle(scale: 0.98))
-                .accessibilityAddTraits(on ? .isSelected : [])
-            }
-            Text("Tap again to unselect.")
-                .font(.footnote)
-                .foregroundStyle(DS.Palette.body)
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

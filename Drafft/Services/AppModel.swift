@@ -122,8 +122,7 @@ final class AppModel {
             (!me.bio.isEmpty, L("Write a short bio")),
             (me.voiceIntro != nil, L("Record a voice intro")),
             (me.prompts.count >= 3, L("Answer a third prompt")),
-            (!me.goal.isEmpty, L("Add what you're training for")),
-            (me.vitals?.intent != nil, L("Say what you're looking for"))
+            (!me.goal.isEmpty, L("Add what you're training for"))
         ]
         let done = checks.filter(\.0).count
         return (Double(done) / Double(checks.count), checks.first { !$0.0 }?.1)

@@ -613,7 +613,7 @@ One job per colour, everywhere:
 - The product is **drafft**, always lowercase, in copy and as the app name on the home screen. In running text it is set one weight above the sentence (semibold in regular text, heavy in semibold text) so it reads as a name: use `Text(branded:font:)`, which does it for every occurrence.
 - The paid tier is **drafft tempo**: both words lowercase, same face and weight, "tempo" in the accent colour so the pair reads as one name. `Text(branded:)` colours it: `accentInk` on light surfaces, `lime` on night, `night` on an accent fill (the tier card on You, the paywall button). Never "Plus", "plus" or "+". The paywall lockup is the wordmark followed by "tempo" in Inter Display Black at the same size, in the accent. The spark stays the tier's icon.
 - Liking stays green (`like`, `#9fe870`) whatever the brand accent: like buttons, the heart pop, "Send like", "Like with this answer" and the like markers in chat.
-- Never pre-select an answer for the person (identity, who to meet, intent, birthday, photos). Empty until they choose.
+- Never pre-select an answer for the person (identity, who to meet, birthday, photos). Empty until they choose.
 - On an optional step, Continue stays disabled until something is filled in; Skip is the way past it.
 - Multi-step flows move only with Back / Continue / Skip: no swipe between steps.
 - One question per step: when a step asks two things (sports, then how often), split it.
@@ -624,7 +624,7 @@ One job per colour, everywhere:
 - One icon per meaning: never reuse the same symbol for two different items in a list or a switcher.
 
 ### Verification & support
-- Sign-up runs in four chapters, never mixed, one question per step: Account (language, preselected from the phone or English; ground rules + consent; phone), About you (first name, birthday, gender, who to meet, intent, lifestyle, area), Sports (sports, then how often), Profile (photos, bio, voice, written prompts, interactive prompt, notifications). 18 steps. Lifestyle is one step (rhythm, food, drinking, smoking, each optional, tap again to clear) shared with Edit profile (`LifestylePicker`).
+- Sign-up runs in four chapters, never mixed, one question per step: Account (language, preselected from the phone or English; ground rules + consent; phone), About you (first name, birthday, gender, who to meet, lifestyle, area), Sports (sports, then how often), Profile (photos, bio, voice, written prompts, interactive prompt, notifications). 17 steps. No "looking for" question: drafft doesn't ask it, show it or filter by it. Lifestyle is one step (rhythm, food, drinking, smoking, each optional, tap again to clear) shared with Edit profile (`LifestylePicker`).
 - A finished sign-up creates a profile holding only the answers: no bio, goal, pronouns, lifestyle or prompts borrowed from demo data. Skipped prompts stay empty and are hidden on the profile (the interactive prompt shows only when complete); Edit profile accepts them empty.
 - The stepper (`ChapterStepper`) shows one bar per chapter, same width each, filling step by step, with the chapter names under the bars: current in bold, finished ones ticked, next ones in body grey. Back on the left, Skip on the right (optional steps only). Entering a new chapter gives a success haptic. The last step's button says "Start swiping".
 - No line under the pinned button to say why it's disabled: the screen already says what to do, repeating it is noise. Only a real error goes there, in red (the server turned the profile down).

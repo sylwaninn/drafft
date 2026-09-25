@@ -10,40 +10,14 @@ struct ProfilePrompt: Hashable, Identifiable {
     var questionText: String { Self.text(for: question) }
 }
 
-/// What someone is looking for, in Drafft's training vocabulary. Optional: nil means "prefer not to say".
-enum Intent: String, CaseIterable, Identifiable, Hashable {
-    case marathon, warmUp, sprint, stretching
-
-    var id: String { rawValue }
-
-    var label: String {
-        switch self {
-        case .marathon: L("In it for the marathon")
-        case .warmUp: L("Warm-up first")
-        case .sprint: L("Up for a sprint")
-        case .stretching: L("Still stretching")
-        }
-    }
-
-    var symbol: String {
-        switch self {
-        case .marathon: "flag.checkered"
-        case .warmUp: "figure.cooldown"
-        case .sprint: "hare.fill"
-        case .stretching: "figure.flexibility"
-        }
-    }
-}
-
 struct Vitals: Hashable {
-    var intent: Intent?
     var drinks: String
     var smokes: String
     var diet: String
     var chronotype: String
 
     /// Nothing answered: what a new account starts with.
-    static let blank = Vitals(intent: nil, drinks: "", smokes: "", diet: "", chronotype: "")
+    static let blank = Vitals(drinks: "", smokes: "", diet: "", chronotype: "")
 
     /// Lifestyle answers are saved as their English option ("Early bird", "Never"…), which stays
     /// their identity; this is the text to show. Anything else (free text) is shown as is.
@@ -198,89 +172,89 @@ extension MockData {
 
     static let extras: [String: Extras] = [
         "me": .init(
-            vitals: .init(intent: .marathon, drinks: "Post-race only", smokes: "Never", diet: "Flexitarian", chronotype: "Early bird"),
+            vitals: .init(drinks: "Post-race only", smokes: "Never", diet: "Flexitarian", chronotype: "Early bird"),
             prompts: [
                 .init(question: "My ideal Sunday session", answer: "25k along the Seine, then a very long breakfast."),
                 .init(question: "Green flag in a training partner", answer: "Checks the weather before I do.")
             ]),
         "maya": .init(
-            vitals: .init(intent: .marathon, drinks: "Socially", smokes: "Never", diet: "Vegetarian", chronotype: "Early bird"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Vegetarian", chronotype: "Early bird"),
             prompts: [
                 .init(question: "My ideal Sunday session", answer: "Muddy trail, zero plans, bakery at the finish."),
                 .init(question: "After a workout you'll find me", answer: "Stretching other people's hamstrings. Occupational hazard."),
                 .init(question: "We'll get along if", answer: "You think walking the steep bits is a strategy, not a defeat.")
             ]),
         "leo": .init(
-            vitals: .init(intent: .warmUp, drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
             prompts: [
                 .init(question: "My most irrational fear", answer: "A flat tyre 60k from home with no CO2 cartridge."),
                 .init(question: "Green flag in a training partner", answer: "Points out potholes. Shares gels."),
                 .init(question: "I'll know it's a match if", answer: "You beat me at padel and don't gloat. Much.")
             ]),
         "ines": .init(
-            vitals: .init(intent: .marathon, drinks: "Rarely", smokes: "Never", diet: "Pescatarian", chronotype: "Very early bird"),
+            vitals: .init(drinks: "Rarely", smokes: "Never", diet: "Pescatarian", chronotype: "Very early bird"),
             prompts: [
                 .init(question: "My ideal Sunday session", answer: "2k in an outdoor pool while the city is still asleep."),
                 .init(question: "The way to win me over", answer: "Show up at 6:15 with two coffees."),
                 .init(question: "After a workout you'll find me", answer: "Smelling of chlorine and sketching buildings.")
             ]),
         "sam": .init(
-            vitals: .init(intent: .warmUp, drinks: "Socially", smokes: "Never", diet: "High protein, obviously", chronotype: "Night owl"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "High protein, obviously", chronotype: "Night owl"),
             prompts: [
                 .init(question: "Green flag in a training partner", answer: "Re-racks their plates."),
                 .init(question: "My most irrational fear", answer: "Someone curling in the squat rack."),
                 .init(question: "We'll get along if", answer: "You laugh at puns you pretend to hate.")
             ]),
         "chloe": .init(
-            vitals: .init(intent: .marathon, drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
             prompts: [
                 .init(question: "My ideal Sunday session", answer: "32k long run, negative split, croissant at km 33."),
                 .init(question: "A stat I'm weirdly proud of", answer: "Four years without skipping a Tuesday interval."),
                 .init(question: "I'll know it's a match if", answer: "You can hold a conversation at marathon pace.")
             ]),
         "noah": .init(
-            vitals: .init(intent: .marathon, drinks: "Socially", smokes: "Never", diet: "Vegetarian", chronotype: "Night owl"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Vegetarian", chronotype: "Night owl"),
             prompts: [
                 .init(question: "My most irrational fear", answer: "Falling off the easy moves in front of people."),
                 .init(question: "The way to win me over", answer: "Cheer for my project like it's the Olympics."),
                 .init(question: "After a workout you'll find me", answer: "Drawing the route I just failed.")
             ]),
         "aya": .init(
-            vitals: .init(intent: .sprint, drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
             prompts: [
                 .init(question: "Green flag in a training partner", answer: "Calls the ball, every time."),
                 .init(question: "My competitive streak, rated", answer: "11 out of 10. I apologise in advance."),
                 .init(question: "We'll get along if", answer: "You're happy to lose a set and win dinner.")
             ]),
         "jonas": .init(
-            vitals: .init(intent: .marathon, drinks: "Rarely", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
+            vitals: .init(drinks: "Rarely", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
             prompts: [
                 .init(question: "A stat I'm weirdly proud of", answer: "I know where all 14 fountains in Vincennes are."),
                 .init(question: "My ideal Sunday session", answer: "Easy 15k, chatting pace, no watch."),
                 .init(question: "The way to win me over", answer: "Pace me on my last 400m rep.")
             ]),
         "zoe": .init(
-            vitals: .init(intent: nil, drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Night owl"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Night owl"),
             prompts: [
                 .init(question: "Green flag in a training partner", answer: "Warms up without being asked."),
                 .init(question: "After a workout you'll find me", answer: "Eating something heavier than what I lifted."),
                 .init(question: "My most irrational fear", answer: "Bad posture. Yours. Right now.")
             ]),
         "nina": .init(
-            vitals: .init(intent: .marathon, drinks: "Rarely", smokes: "Never", diet: "Vegetarian", chronotype: "Very early bird"),
+            vitals: .init(drinks: "Rarely", smokes: "Never", diet: "Vegetarian", chronotype: "Very early bird"),
             prompts: [
                 .init(question: "My ideal Sunday session", answer: "Sunrise 10k, then 30 minutes of yoga on the grass."),
                 .init(question: "The way to win me over", answer: "Be at the park gate at 6. Not 6:05."),
                 .init(question: "We'll get along if", answer: "You think a sunrise counts as a date.")
             ]),
         "tom": .init(
-            vitals: .init(intent: .warmUp, drinks: "Socially", smokes: "Never", diet: "Sandwich-based", chronotype: "Early bird"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Sandwich-based", chronotype: "Early bird"),
             prompts: [
                 .init(question: "My ideal Sunday session", answer: "Gravel loop, one wrong turn, one great view."),
                 .init(question: "A stat I'm weirdly proud of", answer: "3 years of bike commuting, zero rainy-day excuses.")
             ]),
         "lucas": .init(
-            vitals: .init(intent: .warmUp, drinks: "Socially", smokes: "Never", diet: "Everything, I'm a chef", chronotype: "Night owl"),
+            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Everything, I'm a chef", chronotype: "Night owl"),
             prompts: [
                 .init(question: "The way to win me over", answer: "Tell me honestly if the sauce needs salt."),
                 .init(question: "After a workout you'll find me", answer: "Cooking for whoever belayed me."),

@@ -31,14 +31,6 @@ struct FiltersSheet: View {
                         }
                     }
 
-                    block("Looking for", icon: "heart.fill", value: draft.intents.isEmpty ? L("Any") : L("\(draft.intents.count) selected")) {
-                        chips(Intent.allCases.map { ($0.label, $0.symbol) },
-                              isOn: { label in draft.intents.contains { $0.label == label } }) { label in
-                            guard let i = Intent.allCases.first(where: { $0.label == label }) else { return }
-                            if draft.intents.contains(i) { draft.intents.remove(i) } else { draft.intents.insert(i) }
-                        }
-                    }
-
                     block("Sports", icon: "figure.run", value: draft.sports.isEmpty ? L("Any") : L("\(draft.sports.count) selected")) {
                         SportPicker(selected: Sport.allCases.filter(draft.sports.contains),
                                     chipBackground: DS.Palette.canvasSoft, collapsedCount: 16) { s in
