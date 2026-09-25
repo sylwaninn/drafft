@@ -158,31 +158,7 @@ private struct EdgeBlurModifier<Bar: View>: ViewModifier {
     }
 }
 
-// MARK: - Legibility on an edge
-
-/// The blur softens what passes under a bar but can't lighten it: ink text over a night block or a
-/// photo would vanish. So whatever sits on an edge carries its own halo, a soft glow in the page
-/// tone hugging each letter and icon. Not a background: on the page at rest it's the page's own
-/// colour and can't be seen; it only shows where darker content slides under.
-private struct EdgeHalo: ViewModifier {
-    @Environment(\.isSheetSurface) private var inSheet
-
-    func body(content: Content) -> some View {
-        let tone = inSheet ? DS.Palette.white : DS.Palette.sage
-        content
-            .compositingGroup()
-            .shadow(color: tone, radius: 1)
-            .shadow(color: tone.opacity(0.9), radius: 4)
-            .shadow(color: tone.opacity(0.7), radius: 10)
-    }
-}
-
 extension View {
-    /// The edge halo, for the text and icons of a header (TabHeader's title, the sign-up header, a
-    /// toolbar's principal item). Never on glass: a composited shadow would flatten it, and glass
-    /// (the search field, bottom bars' composer) stays legible on its own.
-    func edgeHalo() -> some View { modifier(EdgeHalo()) }
-
     /// Pins `content` to the bottom (validate buttons, the chat composer, above the keyboard).
     /// Scroll content passes under it through a progressive blur. Never a background colour.
     func bottomBar<C: View>(@ViewBuilder _ content: () -> C) -> some View {

@@ -30,7 +30,6 @@ struct TabHeader<Leading: View, Trailing: View>: View {
             HStack(alignment: .center, spacing: DS.Space.sm) {
                 // Fixed height: only the scale changes, so the bar (and the insets) stay put.
                 leading
-                    .edgeHalo()
                     .scaleEffect(1 - collapse * 0.32, anchor: .leading)
                     .frame(height: 44, alignment: .leading)
                 Spacer(minLength: DS.Space.sm)
@@ -51,7 +50,7 @@ struct TabHeader<Leading: View, Trailing: View>: View {
                     .accessibilityLabel(searchPrompt)
                     .transition(.scale.combined(with: .opacity))
                 }
-                trailing.edgeHalo()
+                trailing
             }
 
             if let search, showsSearchField {
