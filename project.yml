@@ -10,8 +10,9 @@ configs:
   Debug: debug
   Release: release
   Staging: release
+  Local: release
 fileGroups:
-  # Backend per build configuration (Release: production; Debug and Staging: staging).
+  # Backend per build configuration (Release: production; Debug and Staging: staging; Local: this Mac).
   - Config
   # Local App Store for testing purchases in the Simulator (not shipped in the app).
   - StoreKit
@@ -44,6 +45,7 @@ targets:
       Debug: Config/Staging.xcconfig
       Release: Config/Production.xcconfig
       Staging: Config/Staging.xcconfig
+      Local: Config/Local.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: so.drafft.app
@@ -114,3 +116,16 @@ schemes:
       config: Debug
     archive:
       config: Staging
+  # Local Supabase (drafft-backend `supabase start`, then scripts/local-backend.sh) with the staging services
+  # ("drafft local" on the home screen). Release-optimised like the others: Debug builds stall on device.
+  # No local StoreKit file: purchases go through Apple's Sandbox and RevenueCat "drafft staging".
+  Drafft Local:
+    build:
+      targets:
+        Drafft: all
+    run:
+      config: Local
+    profile:
+      config: Local
+    analyze:
+      config: Debug

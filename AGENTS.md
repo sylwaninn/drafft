@@ -32,7 +32,10 @@ brand, palette colours only, a surface on every sheet); a deliberate exception c
 a catalog in sync with the code.
 
 Environments: scheme **Drafft** (production backend) and **Drafft Staging** ("drafft β", staging
-backend), from `Config/*.xcconfig`. Never put a secret in the app: only public keys go there.
+backend), from `Config/*.xcconfig`. **Drafft Local** ("drafft local") runs on the local Supabase of
+drafft-backend with its staging services: `supabase start` there, then `scripts/local-backend.sh` (add
+`--device` for an iPhone on the same Wi-Fi) writes the machine's URL and key to the gitignored
+`Local.private.xcconfig`. Never put a secret in the app: only public keys go there.
 
 @.agents/rules/commits.md
 @.agents/rules/github.md
