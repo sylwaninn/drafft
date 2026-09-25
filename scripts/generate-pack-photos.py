@@ -20,11 +20,13 @@ import urllib.request
 ASSETS = pathlib.Path(__file__).resolve().parent.parent / "Drafft/Resources/Assets.xcassets"
 
 STYLE = (
-    "Photorealistic candid sports photograph, shot on a 85mm lens, natural light, shallow depth of "
-    "field, real effort: sweat, focus, motion. One person, face clearly visible, framed from the "
-    "waist or chest up, vertical composition with the subject centred. Plain unbranded sportswear, "
-    "no logos, no text, no race numbers with readable digits, no watermark. Looks like a real "
-    "photo, not an illustration."
+    "Looks like a casual photo a friend took on an iPhone 15 main camera, not a professional shoot: "
+    "slightly off-centre framing, deep depth of field, mild wide-angle distortion, a little motion "
+    "blur, blown-out highlights or harsh midday sun, uneven mixed lighting indoors, some sensor noise "
+    "in the shadows, Smart HDR look, no studio light, no bokeh, no retouching. One person mid-effort, "
+    "real sweat and focus, face clearly visible, framed from the waist or chest up. Plain unbranded "
+    "sportswear, no logos, no text, no readable race numbers, no watermark. Photorealistic, never an "
+    "illustration or CGI."
 )
 
 SUBJECTS = {
