@@ -1,0 +1,71 @@
+# Checks every change to the iOS app on Linux runners (cheap and fast). Building, testing and
+# shipping to TestFlight belong to Xcode Cloud, which has the toolchain and the signing.
+name: app
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  swift:
+    name: swift (SwiftLint, new violations only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      # Same version as the baseline was written with (.swiftlint-baseline.json).
+      - name: SwiftLint
+        run: >
+          docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/realm/swiftlint:0.65.1
+          swiftlint lint --strict --baseline .swiftlint-baseline.json --reporter github-actions-logging
+
+  design:
+    name: design (DESIGN.md rules)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Design rules
+        run: python3 scripts/ci/design_lint.py
+
+  i18n:
+    name: i18n (7 languages, placeholders, brand)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: String catalogs
+        run: python3 scripts/ci/i18n_lint.py
+
+  hygiene:
+    name: hygiene (secrets, workflows, assets)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secrets (whole history)
+        run: docker run --rm -v "$PWD:/repo" -w /repo zricethezav/gitleaks:v8.28.0 git --no-banner --config .gitleaks.toml --redact .
+      - name: Workflows
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7 -color
+      - name: Asset sizes
+        # The app ships every byte: a media file over 1 MB is almost always an export mistake.
+        run: |
+          big=$(git ls-files -z -- '*.png' '*.jpg' '*.jpeg' '*.heic' '*.gif' '*.webp' '*.pdf' \
+            '*.mp3' '*.m4a' '*.wav' '*.caf' '*.mp4' '*.mov' '*.ttf' '*.otf' \
+            | xargs -0 -I{} find {} -type f -size +1024k)
+          if [ -n "$big" ]; then echo "error: files over 1 MB:"; echo "$big"; exit 1; fi
+      - name: Only public keys in build settings
+        run: |
+          if grep -nE 'sb_secret_|service_role|PRIVATE KEY' Config/*.xcconfig project.yml; then
+            echo "error: a secret in the build settings: only publishable/public keys belong there"; exit 1
+          fi

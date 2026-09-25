@@ -107,6 +107,7 @@ struct LikesTabView: View {
         Photo(name: p.portrait, side: 180, blur: app.isPremium ? 0 : 18)
             .frame(height: 230)
             .overlay {
+                // design-lint: allow gradient - photo scrim under the name
                 LinearGradient(stops: [.init(color: .clear, location: 0.5),
                                        .init(color: DS.Palette.night.opacity(0.8), location: 1)],
                                startPoint: .top, endPoint: .bottom)

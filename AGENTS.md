@@ -20,7 +20,16 @@ them; Claude Code loads them through `CLAUDE.md`.
 
 ```sh
 xcodegen generate && xcodebuild -project Drafft.xcodeproj -scheme Drafft -destination 'generic/platform=iOS Simulator' build
+swiftlint lint --strict --baseline .swiftlint-baseline.json
+python3 scripts/ci/design_lint.py && python3 scripts/ci/i18n_lint.py
 ```
+
+CI (`.github/workflows/app.yml`) runs the last two lines plus gitleaks and actionlint on every pull
+request. SwiftLint fails on new violations only (existing debt is in `.swiftlint-baseline.json`). The
+design lint encodes DESIGN.md's rules (no gradients but photo scrims, no '·', no '…' on copy, lowercase
+brand, palette colours only, a surface on every sheet); a deliberate exception carries its reason:
+`// design-lint: allow <rule> - <why>`. The i18n lint wants all 7 languages, matching placeholders and
+a catalog in sync with the code.
 
 Environments: scheme **Drafft** (production backend) and **Drafft Staging** ("drafft β", staging
 backend), from `Config/*.xcconfig`. Never put a secret in the app: only public keys go there.

@@ -81,10 +81,6 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLName: so.drafft.app.auth
             CFBundleURLSchemes: [drafft]
-        NSMicrophoneUsageDescription: Drafft uses the microphone to record voice messages and your voice intro.
-        NSPhotoLibraryUsageDescription: Drafft lets you share photos and videos in chat and add them to your profile.
-        NSCameraUsageDescription: Drafft uses the camera to take photos for your profile and chats.
-        NSLocationWhenInUseUsageDescription: Drafft shows your area, never your address, and rounds distances.
         NSLocationDefaultAccuracyReduced: true
 schemes:
   Drafft:

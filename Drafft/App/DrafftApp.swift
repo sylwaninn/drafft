@@ -44,7 +44,7 @@ struct DrafftApp: App {
     /// Large titles in the display face, inline titles in its extra-bold cut, both in ink.
     /// Only text attributes are set, so the system bar keeps its glass and scroll-edge blur.
     private static func styleNavigationBars() {
-        let ink = UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0xF1F3EF) : UIColor(hex: 0x0E0F0C) }
+        let ink = UIColor(DS.Palette.ink)
         let bar = UINavigationBar.appearance()
         if let large = UIFont(name: DisplayFont.black, size: 34) {
             bar.largeTitleTextAttributes = [
@@ -60,7 +60,7 @@ struct DrafftApp: App {
             ]
         }
         // Tab badges in ink, not the system red: the tab bar stays monochrome.
-        let onInk = UIColor { $0.userInterfaceStyle == .dark ? UIColor(hex: 0x0E0F0C) : .white }
+        let onInk = UIColor(DS.Palette.onInk)
         let tabItem = UITabBarItem.appearance()
         tabItem.badgeColor = ink
         tabItem.setBadgeTextAttributes([.foregroundColor: onInk], for: .normal)

@@ -163,6 +163,7 @@ struct PaywallView: View {
         .task { await store.load() }
         .sheet(item: $legal) { item in Group { LegalDocSheet(doc: item) }.sheetSurface() }
         // Over the paywall; closing it closes both, then the unlocked action runs.
+        // design-lint: allow sheet-surface - PurchaseConfirmation sets its raised surface itself
         .sheet(item: $receipt, onDismiss: {
             dismiss()
             Task {

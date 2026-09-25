@@ -84,6 +84,7 @@ enum NotificationText {
     /// The quoted message in a reaction notification: one line's worth.
     private static func short(_ text: String) -> String {
         let t = text.replacingOccurrences(of: "\n", with: " ")
+        // design-lint: allow truncation - quoted message in a notification, not UI copy
         return t.count > 60 ? String(t.prefix(59)).trimmingCharacters(in: .whitespaces) + "…" : t
     }
 

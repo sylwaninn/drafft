@@ -1,0 +1,53 @@
+# SwiftLint for drafft. CI fails on any violation not recorded in .swiftlint-baseline.json:
+# existing debt is tolerated, new code must be clean. Regenerate the baseline only when paying debt down:
+#   swiftlint lint --write-baseline .swiftlint-baseline.json
+included:
+  - Drafft
+
+opt_in_rules:
+  - array_init
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - contains_over_first_not_nil
+  - discouraged_optional_boolean
+  - empty_count
+  - empty_string
+  - fatal_error_message
+  - first_where
+  - force_unwrapping
+  - identical_operands
+  - last_where
+  - legacy_multiple
+  - modifier_order
+  - overridden_super_call
+  - prefer_self_type_over_type_of_self
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - toggle_bool
+  - unowned_variable_capture
+  - weak_delegate
+  - yoda_condition
+
+identifier_name:
+  # Short names are idiomatic in closures and geometry (i, p, x, dx).
+  min_length: 1
+  max_length: 50
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+type_body_length:
+  warning: 400
+  error: 800
+file_length:
+  warning: 700
+  error: 1500
+function_body_length:
+  warning: 80
+  error: 200
+large_tuple:
+  warning: 4
+nesting:
+  type_level: 3

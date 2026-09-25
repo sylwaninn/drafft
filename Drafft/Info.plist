@@ -41,16 +41,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Drafft uses the camera to take photos for your profile and chats.</string>
 	<key>NSLocationDefaultAccuracyReduced</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Drafft shows your area, never your address, and rounds distances.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Drafft uses the microphone to record voice messages and your voice intro.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Drafft lets you share photos and videos in chat and add them to your profile.</string>
 	<key>RevenueCatAPIKey</key>
 	<string>$(REVENUECAT_API_KEY)</string>
 	<key>SupabasePublishableKey</key>
