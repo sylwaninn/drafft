@@ -1,0 +1,6 @@
+// Production backend. Publishable keys only: they identify the project, row-level security does the rest.
+// `$()` keeps `//` from starting an xcconfig comment.
+SUPABASE_URL = https:/$()/wrcpgnqwjmnirjfxpcux.supabase.co
+SUPABASE_PUBLISHABLE_KEY = sb_publishable_VBj4h4XxRDB-Ky5mK0d_ag_dj86XO22
+REVENUECAT_API_KEY = appl_tGPiuiBrncvrUfYkkFAGQzOmQEF
+APP_DISPLAY_NAME = drafft

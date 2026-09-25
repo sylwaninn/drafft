@@ -1,0 +1,208 @@
+{
+  "identifier" : "D4AFF7E1",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "6754100101",
+      "localizations" : [
+        {
+          "description" : "30 minutes at the top of decks nearby",
+          "displayName" : "1 Boost",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "so.drafft.app.boost.1",
+      "referenceName" : "1 Boost",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "17.99",
+      "familyShareable" : false,
+      "internalID" : "6754100102",
+      "localizations" : [
+        {
+          "description" : "30 minutes at the top of decks nearby, five times",
+          "displayName" : "5 Boosts",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "so.drafft.app.boost.5",
+      "referenceName" : "5 Boosts",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "29.99",
+      "familyShareable" : false,
+      "internalID" : "6754100103",
+      "localizations" : [
+        {
+          "description" : "30 minutes at the top of decks nearby, ten times",
+          "displayName" : "10 Boosts",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "so.drafft.app.boost.10",
+      "referenceName" : "10 Boosts",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "6754100104",
+      "localizations" : [
+        {
+          "description" : "Let them know before they swipe",
+          "displayName" : "3 Super Likes",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "so.drafft.app.superlike.3",
+      "referenceName" : "3 Super Likes",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "17.99",
+      "familyShareable" : false,
+      "internalID" : "6754100105",
+      "localizations" : [
+        {
+          "description" : "Let them know before they swipe",
+          "displayName" : "15 Super Likes",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "so.drafft.app.superlike.15",
+      "referenceName" : "15 Super Likes",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "29.99",
+      "familyShareable" : false,
+      "internalID" : "6754100106",
+      "localizations" : [
+        {
+          "description" : "Let them know before they swipe",
+          "displayName" : "30 Super Likes",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "so.drafft.app.superlike.30",
+      "referenceName" : "30 Super Likes",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_developerTeamID" : "4F4J2C4L9W",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "FRA",
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21540001",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "drafft tempo",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "drafft tempo",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "71.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6754100203",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited likes and every drafft tempo perk",
+              "displayName" : "drafft tempo 12 months",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "so.drafft.app.tempo.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "drafft tempo 12 months",
+          "subscriptionGroupID" : "21540001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "44.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6754100202",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited likes and every drafft tempo perk",
+              "displayName" : "drafft tempo 6 months",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "so.drafft.app.tempo.sixmonths",
+          "recurringSubscriptionPeriod" : "P6M",
+          "referenceName" : "drafft tempo 6 months",
+          "subscriptionGroupID" : "21540001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "12.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6754100201",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited likes and every drafft tempo perk",
+              "displayName" : "drafft tempo 1 month",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "so.drafft.app.tempo.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "drafft tempo 1 month",
+          "subscriptionGroupID" : "21540001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

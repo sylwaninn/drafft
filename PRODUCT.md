@@ -1,0 +1,58 @@
+# Product
+
+<!-- impeccable:product-schema 1 -->
+
+## Platform
+
+ios
+
+## Stack
+
+SwiftUI, iOS 26 minimum (Liquid Glass available), project generated with XcodeGen. Third-party dependencies allowed (Swift Package Manager) when proven robust and scalable. No backend yet: demo app with local mock data only.
+
+## Users
+
+Active urban adults, 25–40, who train 2–5 times a week (run clubs, gyms, padel, climbing, cycling, swimming). They are single, time-poor, and already structure their week around sessions. Their job: meet someone compatible without spending evenings on dead-end chat; sport is both a filter and a shared language.
+
+## Product Purpose
+
+Drafft is a sports dating app. Its distinctive mechanism: the first date is a training session together. A match is not an invitation to chat forever; it is an invitation to propose a session (sport, place, time, level). Success = matches that turn into a real session within days.
+
+## Positioning
+
+Where swipe apps end at "it's a match", Drafft continues to "Tuesday 7am, 8 km, Canal Saint-Martin". Profiles lead with how someone moves (sports, level, weekly rhythm, preferred slots), not just photos. Reference in the category: bpm.so.
+
+## Operating Context
+
+Used on the go: between sessions, after a workout, on transit. One-handed, often outdoors in daylight. Chat is the core loop and must feel instant: text, photos, video, attachments, voice messages.
+
+## Capabilities and Constraints
+
+- Sign up / sign in: email + password credentials, Sign in with Apple, Google.
+- Profile: photos, sports with level, a voice intro, and an interactive icebreaker ("joke"/prompt) that the viewer can react to.
+- Discovery of profiles, matching, proposing a session.
+- Messaging: text, photo, video, file attachment, voice message; must feel ultra-responsive (optimistic sends, instant feedback).
+- Demo only: all data is mocked, photos are random placeholders (to be replaced with real content). No real auth, no network persistence.
+- UI languages: English (source), French, Spanish, German, Italian, European Portuguese, Dutch. Picked in the app (sign-up, You › Language), not from the phone. Strings live in `Drafft/Resources/Localizable.xcstrings`; text built in code goes through `L("…")`.
+
+## Brand Commitments
+
+- Name: drafft, always lowercase (app name included), set one weight heavier than the sentence around it. Paid tier: drafft tempo, both lowercase, "tempo" in the accent colour.
+- Visual system pinned by the user: DESIGN.md (Wise-inspired: lime green `#9fe870` single accent, sage canvas, near-black ink, heavy 900 display, 24pt radius). Binding.
+
+## Evidence on Hand
+
+No real users, testimonials, photos, or metrics. All people, photos, and conversations in the demo are synthetic placeholders and must be replaced before any public use. Do not invent user counts, match rates, or press.
+
+## Product Principles
+
+1. Move, then talk: every flow nudges toward a real shared session.
+2. Profiles show how someone lives, not only how they look.
+3. Chat is instant: no spinner between tap and feedback.
+4. Low-pressure first contact: icebreakers do the awkward part.
+5. Native iPhone conventions first; brand lives in color, type, and motion.
+6. Never leave people guessing what to do next: the validate action is always on screen, disabled with a reason when it can't run yet.
+
+## Accessibility & Inclusion
+
+Dynamic Type, VoiceOver labels on all controls and media, Reduce Motion respected, 44pt touch targets. Inclusive gender/orientation options in onboarding (not yet specified in detail; open decision).

@@ -1,0 +1,351 @@
+import SwiftUI
+
+/// The "You" tab: your card at the top, then settings grouped by what people come here to do.
+struct MeView: View {
+    @Environment(AppModel.self) private var app
+    @State private var sheet: MeSheet?
+    @State private var confirmLogout = false
+    @State private var scrollOffset: CGFloat = 0
+
+    enum MeSheet: String, Identifiable {
+        case edit, preview, filters, email, phone, password, export, delete, paywall, notifications, language
+        case blocked, safety, help, legal, subscription
+        var id: String { rawValue }
+    }
+
+    var body: some View {
+        @Bindable var app = app
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: DS.Space.md) {
+                    profileCard
+                    if !app.isPremium { plusCard }
+                    group(L("Discovery")) {
+                        row(L("Filters"), icon: "slider.horizontal.3", value: filtersSummary) { sheet = .filters }
+                        separator
+                        toggleRow(L("Pause my profile"), icon: "pause.fill",
+                                  detail: app.profilePaused ? L("Hidden from Discover. Your chats keep going.") : L("Hide from Discover without losing your matches."),
+                                  isOn: $app.profilePaused)
+                    }
+                    group(L("Preferences")) {
+                        row(L("Notifications"), icon: "bell.fill",
+                            value: NotificationService.shared.isAllowed ? L("Matches, messages, sessions") : L("Off")) { sheet = .notifications }
+                        separator
+                        row(L("Language"), icon: "globe", value: app.language.name) { sheet = .language }
+                    }
+                    group(L("Account")) {
+                        row(L("Email"), icon: "envelope.fill", value: app.email) { sheet = .email }
+                        separator
+                        row(L("Phone"), icon: "phone.fill", value: app.phoneNumber ?? L("Add your number")) { sheet = .phone }
+                        separator
+                        if app.usesSocialSignIn {
+                            // Nothing to change: read-only, no chevron.
+                            infoRow(L("Password"), icon: "key.fill", value: L("You sign in with \(app.signInMethod), no password"))
+                        } else {
+                            row(L("Password"), icon: "key.fill", value: L("Change your password")) { sheet = .password }
+                        }
+                        // Only while subscribed: without it, the tier card above is the way in.
+                        if let sub = app.subscription {
+                            separator
+                            row("drafft tempo", icon: MeView.sparkIcon,
+                                value: sub.willRenew
+                                    ? L("Renews \(sub.periodEnds.formatted(.dateTime.day().month(.abbreviated).locale(.app)))")
+                                    : L("Ends \(sub.periodEnds.formatted(.dateTime.day().month(.abbreviated).locale(.app)))")) { sheet = .subscription }
+                        }
+                    }
+                    group(L("Privacy & data")) {
+                        row(L("Blocked people"), icon: "hand.raised.fill", value: app.blockedCount == 0 ? L("No one") : "\(app.blockedCount)") { sheet = .blocked }
+                        separator
+                        row(L("Export my data"), icon: "square.and.arrow.down.fill",
+                            value: app.dataExportRequestedAt == nil ? L("Sent to you by email") : L("Requested, check your inbox")) { sheet = .export }
+                    }
+                    group(L("Help")) {
+                        row(L("Safety tips"), icon: "shield.lefthalf.filled", value: L("Meeting someone for the first time")) { sheet = .safety }
+                        separator
+                        row(L("Help center"), icon: "questionmark.circle.fill", value: nil) { sheet = .help }
+                        separator
+                        row(L("Terms & privacy policy"), icon: "doc.text.fill", value: nil) { sheet = .legal }
+                    }
+                    VStack(spacing: 0) {
+                        Button { confirmLogout = true } label: {
+                            Text("Log out")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(DS.Palette.ink)
+                                .frame(maxWidth: .infinity, minHeight: 52)
+                                .contentShape(.rect)
+                        }
+                        separator
+                        Button { sheet = .delete } label: {
+                            Text("Delete account")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(DS.Palette.negative)
+                                .frame(maxWidth: .infinity, minHeight: 52)
+                                .contentShape(.rect)
+                        }
+                        // Inside the block: no loose text on the sage page.
+                        Text(branded: L("drafft 0.1, demo build"), font: .caption)
+                            .foregroundStyle(DS.Palette.body)
+                            .padding(.bottom, DS.Space.md)
+                    }
+                    .padding(.horizontal, DS.Space.lg)
+                    .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+                }
+                .padding(.horizontal, DS.Space.lg)
+                .padding(.bottom, DS.Space.xxl)
+            }
+            .contentMargins(.top, DS.Space.xs, for: .scrollContent)
+            .trackingScrollOffset($scrollOffset)
+            .background(DS.Palette.canvasSoft)
+            .toolbarVisibility(.hidden, for: .navigationBar)
+            // No title on You: just the blur under the status bar.
+            .topBar { Color.clear.frame(height: DS.Space.xs) }
+            .drafftConfirm(isPresented: $confirmLogout, icon: "rectangle.portrait.and.arrow.right",
+                           title: L("Log out?"),
+                           message: L("Your matches and chats stay safe. Log back in to see them."),
+                           actions: [ConfirmAction(title: L("Log out"), kind: .destructive) { app.signOut() }])
+            .sheet(item: $sheet) { s in
+                Group {
+                    switch s {
+                    case .edit: EditProfileView(profile: app.me)
+                    case .preview:
+                        NavigationStack {
+                            ProfileDetailView(profile: app.me, mode: .me)
+                                .toolbar {
+                                    ToolbarItem(placement: .topBarTrailing) {
+                                        Button("Close", systemImage: "xmark") { sheet = nil }
+                                    }
+                                }
+                        }
+                    case .filters: FiltersSheet(filters: app.filters)
+                    case .email: ChangeEmailSheet()
+                    case .phone: ChangePhoneSheet()
+                    case .notifications: NotificationsSettingsView()
+                    case .language: LanguageSheet()
+                    case .password: ChangePasswordSheet()
+                    case .export: ExportDataSheet()
+                    case .delete: DeleteAccountSheet()
+                    case .paywall: PaywallView()
+                    case .subscription: SubscriptionSheet()
+                    case .blocked: BlockedPeopleSheet()
+                    case .safety: SafetyTipsSheet()
+                    case .help: SupportSheet(topic: L("General question"))
+                    case .legal: LegalDocsListSheet()
+                    }
+                }
+                .sheetSurface()
+            }
+        }
+    }
+
+    // MARK: Profile card
+
+    private var profileCard: some View {
+        let completion = app.profileCompletion
+        return VStack(alignment: .leading, spacing: DS.Space.lg) {
+            HStack(spacing: DS.Space.lg) {
+                Button { sheet = .preview } label: {
+                    Photo(name: app.me.portrait, side: 84)
+                        .frame(width: 84, height: 84)
+                        .clipShape(.circle)
+                        .overlay(Circle().strokeBorder(DS.Palette.lime, lineWidth: 3))
+                }
+                .buttonStyle(PressScaleStyle())
+                .accessibilityLabel("Preview my profile")
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("\(app.me.name), \(app.me.age)")
+                        .font(.display(26, relativeTo: .title))
+                        .foregroundStyle(.white)
+                    SportBadgeStack(sports: app.me.sports.map(\.sport))
+                        .padding(.top, 2)
+                    if app.profilePaused {
+                        Label("Paused", systemImage: "pause.fill")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(DS.Palette.night)
+                            .padding(.horizontal, 8).padding(.vertical, 3)
+                            .background(.white, in: .capsule)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+
+            if completion.value < 1 {
+                VStack(alignment: .leading, spacing: DS.Space.sm) {
+                    // The next step shares the line while it fits in full, under it otherwise.
+                    AdaptiveRow {
+                        Text("Profile \(Int(completion.value * 100))% complete")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.white)
+                    } trailing: {
+                        if let next = completion.next {
+                            Text(next).font(.footnote).foregroundStyle(DS.Palette.lime)
+                        }
+                    }
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(.white.opacity(0.14))
+                            Capsule().fill(DS.Palette.lime).frame(width: geo.size.width * completion.value)
+                        }
+                    }
+                    .frame(height: 6)
+                    .accessibilityElement()
+                    .accessibilityLabel("Profile \(Int(completion.value * 100)) percent complete")
+                }
+            }
+
+            HStack(spacing: DS.Space.sm) {
+                Button { sheet = .edit } label: {
+                    Label("Edit profile", systemImage: "pencil")
+                }
+                .buttonStyle(.drafftPrimary)
+                .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
+                .padding(.leading, 12)
+                Button { sheet = .preview } label: {
+                    Image(systemName: "eye.fill")
+                        .font(.body.weight(.bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 52, height: 52)
+                        .background(.white.opacity(0.14), in: .circle)
+                }
+                .buttonStyle(PressScaleStyle())
+                .accessibilityLabel("Preview my profile")
+            }
+        }
+        .padding(DS.Space.xl)
+        .draftBlock(DS.Palette.night, seed: BackdropSeed.me, tint: DS.Palette.lime)
+        .animation(Motion.snappy, value: app.profilePaused)
+    }
+
+    private var plusCard: some View {
+        Button { sheet = .paywall } label: {
+            HStack(spacing: DS.Space.md) {
+                // On an accent surface everything takes the on-accent colour: the glyph too, on
+                // a wash of it (never a night disc with an accent glyph dropped in).
+                SparkPlus()
+                    .fill(DS.Palette.onLime)
+                    .frame(width: 22, height: 16)
+                    .frame(width: 44, height: 44)
+                    .background(DS.Palette.onLimeWash, in: .circle)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(branded: L("Get drafft tempo"), font: .headline, brandWeight: .heavy, tierColor: DS.Palette.night)
+                        .foregroundStyle(DS.Palette.onLime)
+                    // White on the accent only in semibold or bolder, at full strength.
+                    Text("Undo swipes, see who liked you, unlimited likes.")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(DS.Palette.onLime)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(DS.Palette.onLime)
+            }
+            .padding(DS.Space.lg)
+            .background(DS.Palette.lime, in: .rect(cornerRadius: DS.Radius.xl))
+        }
+        .buttonStyle(PressScaleStyle(scale: 0.98))
+    }
+
+    private var filtersSummary: String {
+        let f = app.filters
+        let ages = "\(f.ages.lowerBound)–\(f.ages.upperBound)"
+        return "\(f.distanceLabel), \(ages), \(f.audience.title)"
+    }
+
+    // MARK: Rows
+
+    private func group<C: View>(_ title: String, @ViewBuilder _ content: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(title)
+                .font(.footnote.weight(.bold))
+                .foregroundStyle(DS.Palette.mute)
+                .padding(.top, DS.Space.lg)
+                .padding(.bottom, DS.Space.xs)
+                .accessibilityAddTraits(.isHeader)
+            content()
+        }
+        .padding(.horizontal, DS.Space.lg)
+        .padding(.bottom, DS.Space.xs)
+        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+    }
+
+    private var separator: some View {
+        Rectangle().fill(DS.Palette.hairline).frame(height: 1).padding(.leading, 52)
+    }
+
+    /// Marker for rows that use the drafft tempo spark instead of an SF Symbol.
+    static let sparkIcon = "drafft.spark"
+
+    @ViewBuilder
+    private func icon(_ name: String) -> some View {
+        Group {
+            if name == Self.sparkIcon {
+                SparkPlus().fill(DS.Palette.ink).frame(width: 18, height: 13)
+            } else {
+                Image(systemName: name)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(DS.Palette.ink)
+            }
+        }
+        .frame(width: 36, height: 36)
+        .background(DS.Palette.canvasSoft, in: .circle)
+    }
+
+    private func row(_ title: String, icon name: String, value: String?, action: @escaping () -> Void) -> some View {
+        Button {
+            Haptics.tap()
+            action()
+        } label: {
+            HStack(spacing: DS.Space.md) {
+                icon(name)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(branded: title, font: .body.weight(.semibold), brandWeight: .heavy).foregroundStyle(DS.Palette.ink)
+                    if let value {
+                        Text(value).font(.footnote).foregroundStyle(DS.Palette.body).lineLimit(2)
+                    }
+                }
+                Spacer(minLength: DS.Space.sm)
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(DS.Palette.mute)
+            }
+            .padding(.vertical, DS.Space.md)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+    }
+
+    /// Same layout as `row`, but nothing to open: not a button, no chevron.
+    private func infoRow(_ title: String, icon name: String, value: String) -> some View {
+        HStack(spacing: DS.Space.md) {
+            icon(name)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title).font(.body.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+                Text(value).font(.footnote).foregroundStyle(DS.Palette.body)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, DS.Space.md)
+        .accessibilityElement(children: .combine)
+    }
+
+    private func toggleRow(_ title: String, icon name: String, detail: String? = nil, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn.animation(Motion.snappy)) {
+            HStack(spacing: DS.Space.md) {
+                icon(name)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(title).font(.body.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+                    if let detail {
+                        Text(detail).font(.footnote).foregroundStyle(DS.Palette.body)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .contentTransition(.opacity)
+                    }
+                }
+            }
+        }
+        .tint(DS.Palette.lime)
+        .padding(.vertical, DS.Space.md)
+        .onChange(of: isOn.wrappedValue) { Haptics.select() }
+    }
+}
