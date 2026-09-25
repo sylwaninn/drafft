@@ -9,8 +9,9 @@ enum BackendConfig {
     static let publishableKey = info("SupabasePublishableKey")
     /// RevenueCat public SDK key of the matching project (its webhook feeds this backend).
     static let revenueCatAPIKey = info("RevenueCatAPIKey")
-    /// Whether Supabase Auth can text codes (SMS provider set up). Off: the phone step runs the demo.
-    static let smsEnabled = false
+    /// Whether Supabase Auth texts codes (the environment's Send SMS hook is set up). Off: the phone step
+    /// runs the demo. Per environment, from `SMS_ENABLED` in Config/*.xcconfig.
+    static let smsEnabled = info("SmsEnabled") == "YES"
     static var functionsURL: URL { url.appendingPathComponent("functions/v1") }
 
     private static func info(_ key: String) -> String {

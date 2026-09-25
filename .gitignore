@@ -13,3 +13,6 @@ Drafft.xcodeproj/-Xcc/
 *.p8
 *.p12
 *.mobileprovision
+
+# Machine-specific local backend (scripts/local-backend.sh)
+/Local.private.xcconfig

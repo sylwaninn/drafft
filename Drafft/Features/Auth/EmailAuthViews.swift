@@ -166,7 +166,7 @@ struct SignUpView: View {
                 }
             }
         }
-        .navigationDestination(isPresented: $confirming) { ConfirmEmailView(email: email, password: password) }
+        .navigationDestination(isPresented: $confirming) { ConfirmEmailView(email: email) }
         .onChange(of: email) { if problem == .emailTaken { problem = nil } }
         .onChange(of: password) { if problem != .emailTaken { problem = nil } }
     }
@@ -179,7 +179,9 @@ struct SignUpView: View {
         Task {
             defer { loading = false }
             do {
-                switch try await Backend.shared.signUp(email: email, password: password) {
+                switch try await Backend.shared.signUp(
+                    email: email, password: password, language: Localization.shared.language
+                ) {
                 case .signedIn:
                     Haptics.success()
                     app.email = email
@@ -196,74 +198,61 @@ struct SignUpView: View {
     }
 }
 
-/// After sign-up, when the account needs its email confirmed: the link in the email opens the app
-/// and carries on to sign-up by itself; "I've confirmed" covers opening it on another device.
+/// After sign-up, when the account needs its email confirmed: the 6-digit code from the email.
+/// The sixth digit checks it and signs in; Change goes back to the form.
 struct ConfirmEmailView: View {
     let email: String
-    let password: String
     @Environment(AppModel.self) private var app
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
-    @State private var loading = false
-    @State private var problem: AuthProblem?
-    @State private var resent = false
+    @State private var flow = EmailCodeModel()
 
     var body: some View {
         AuthScaffold(
             title: L("Check your inbox"),
-            subtitle: L("We sent a link to \(email). Open it on this iPhone to confirm your email and carry on."),
-            actionTitle: L("I've confirmed my email"),
-            actionEnabled: true,
-            loading: loading,
-            action: logIn,
+            subtitle: L("Enter the 6-digit code we sent you."),
+            actionTitle: L("Continue"),
+            actionEnabled: flow.stage == .code && flow.code.count == 6,
+            loading: flow.busy,
+            action: verify,
+            reason: flow.stage == .code && flow.code.count < 6 ? L("Enter the 6-digit code.") : nil,
             backdropSeed: "page-Create your account"
         ) {
-            VStack(alignment: .leading, spacing: DS.Space.md) {
-                if let problem {
-                    Label(problem.message, systemImage: "exclamationmark.circle.fill")
-                        .font(.footnote.weight(.medium))
-                        .foregroundStyle(DS.Palette.negative)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Button {
-                    if let url = URL(string: "message://") { openURL(url) }
-                } label: { Label("Open Mail", systemImage: "envelope.open.fill") }
-                    .buttonStyle(.drafftSecondary)
-                Button(resent ? L("Email sent again") : L("Resend the email")) { resend() }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(resent ? DS.Palette.body : DS.Palette.accentInk)
-                    .buttonStyle(.textLink)
-                    .disabled(resent)
+            if flow.stage == .locked {
+                CodeLockedCard(message: flow.error)
+            } else {
+                OneTimeCodeEntry(destination: email, code: flow.code, onCode: flow.enterCode,
+                                 busy: flow.busy, error: flow.error, needsHelp: flow.needsHelp,
+                                 helpTopic: L("Create your account"),
+                                 hint: L("Check your inbox, and your spam folder. The code works for 1 hour."),
+                                 resendIn: flow.resendIn,
+                                 onEdit: { dismiss() },
+                                 onResend: { Task { await flow.resend() } },
+                                 accessory: {
+                                     Button {
+                                         if let url = URL(string: "message://") { openURL(url) }
+                                     } label: { Label("Open Mail", systemImage: "envelope.open.fill") }
+                                         .buttonStyle(.drafftSecondary)
+                                 })
             }
         }
-    }
-
-    private func logIn() {
-        loading = true
-        problem = nil
-        Task {
-            defer { loading = false }
-            do {
-                try await Backend.shared.signIn(email: email, password: password)
-                Haptics.success()
-                app.email = email
-                app.signIn(onboard: true)
-            } catch {
-                Haptics.warning()
-                problem = AuthProblem(error)
-            }
-        }
-    }
-
-    private func resend() {
-        Task {
-            do {
+        .onAppear {
+            guard flow.stage == .form else { return }
+            let email = email
+            flow.awaitCode(sentTo: email) {
                 try await Backend.shared.resendConfirmation(to: email)
-                resent = true
-            } catch {
-                problem = AuthProblem(error)
+            } verify: { code in
+                try await Backend.shared.confirmSignUp(email, code: code)
             }
         }
+        .onChange(of: flow.stage) { _, stage in
+            guard stage == .done else { return }
+            app.email = email
+            app.signIn(onboard: true)
+        }
     }
+
+    private func verify() { Task { await flow.verify() } }
 }
 
 struct StrengthBar: View {

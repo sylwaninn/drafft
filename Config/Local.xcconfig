@@ -1,0 +1,10 @@
+// Local backend (`supabase start` in drafft-backend) with the staging services: RevenueCat, Stream, R2,
+// APNs and Rekognition come from the local Edge Functions' staging secrets (drafft-backend/scripts/local-env.sh).
+// SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY depend on the machine: scripts/local-backend.sh writes them to
+// Local.private.xcconfig at the repository root (gitignored). Without it the app stops at launch and says what's missing.
+REVENUECAT_API_KEY = appl_nPDeedcmfhgYnAvrGnLpAoYIQkm
+// Real SMS codes, shown in the local Mailpit (http://127.0.0.1:55424): no phone is texted.
+SMS_ENABLED = YES
+APP_DISPLAY_NAME = drafft local
+
+#include? "../Local.private.xcconfig"
