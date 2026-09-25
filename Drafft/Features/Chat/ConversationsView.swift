@@ -7,6 +7,8 @@ struct ConversationsView: View {
     @State private var scrollOffset: CGFloat = 0
 
     private var newMatches: [Conversation] { app.conversations.filter { $0.messages.isEmpty } }
+    /// The list's own side margin (inset grouped, iPhone), where its cards start.
+    private static let edge: CGFloat = 20
     private var threads: [Conversation] {
         app.conversations.filter { !$0.messages.isEmpty }
             .filter { query.isEmpty || $0.profile.name.localizedCaseInsensitiveContains(query) }
@@ -16,25 +18,34 @@ struct ConversationsView: View {
         NavigationStack(path: $path) {
             List {
                 if !newMatches.isEmpty && query.isEmpty {
+                    // Edge to edge: no section margin or card, so the row scrolls to the screen's
+                    // edges; the first avatar still lines up with the cards below.
                     Section {
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: DS.Space.lg) {
+                            HStack(alignment: .top, spacing: DS.Space.sm) {
                                 ForEach(newMatches) { c in
                                     Button { path.append(c.id) } label: {
                                         VStack(spacing: DS.Space.xs + 2) {
                                             Avatar(name: c.profile.portrait, size: 68, ring: true)
+                                            // A name is the person's own: two lines, then cut.
                                             Text(c.profile.name)
                                                 .font(.footnote.weight(.semibold))
                                                 .foregroundStyle(DS.Palette.ink)
+                                                .multilineTextAlignment(.center)
+                                                .lineLimit(2)
+                                                // design-lint: allow truncation - a person's name (content, not copy), asked cut after two lines
+                                                .truncationMode(.tail)
+                                                .frame(width: 72, alignment: .top)
                                         }
                                     }
                                     .buttonStyle(PressScaleStyle())
                                     .accessibilityLabel("New match, \(c.profile.name). Start chatting")
                                 }
                             }
-                            .padding(.horizontal, DS.Space.lg)
+                            .padding(.horizontal, Self.edge)
                             .padding(.vertical, DS.Space.xs)
                         }
+                        .scrollClipDisabled()
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
                     } header: {
@@ -42,8 +53,9 @@ struct ConversationsView: View {
                             .font(.subheadline.weight(.bold))
                             .foregroundStyle(DS.Palette.body)
                             .textCase(nil)
-                            .padding(.leading, DS.Space.xs)
+                            .padding(.leading, Self.edge + DS.Space.xs)
                     }
+                    .listSectionMargins(.horizontal, 0)
                 }
 
                 Section {
