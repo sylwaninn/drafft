@@ -12,7 +12,7 @@ struct ProfilePrompt: Hashable, Identifiable {
 
 /// What someone is looking for, in Drafft's training vocabulary. Optional: nil means "prefer not to say".
 enum Intent: String, CaseIterable, Identifiable, Hashable {
-    case marathon, warmUp, sprint, squad, stretching
+    case marathon, warmUp, sprint, stretching
 
     var id: String { rawValue }
 
@@ -21,18 +21,7 @@ enum Intent: String, CaseIterable, Identifiable, Hashable {
         case .marathon: L("In it for the marathon")
         case .warmUp: L("Warm-up first")
         case .sprint: L("Up for a sprint")
-        case .squad: L("Squad goals")
         case .stretching: L("Still stretching")
-        }
-    }
-
-    var detail: String {
-        switch self {
-        case .marathon: L("A long-term relationship")
-        case .warmUp: L("Training partner first, see where it goes")
-        case .sprint: L("Something casual, no pressure")
-        case .squad: L("New friends to train with")
-        case .stretching: L("Still figuring it out")
         }
     }
 
@@ -41,7 +30,6 @@ enum Intent: String, CaseIterable, Identifiable, Hashable {
         case .marathon: "flag.checkered"
         case .warmUp: "figure.cooldown"
         case .sprint: "hare.fill"
-        case .squad: "person.3.fill"
         case .stretching: "figure.flexibility"
         }
     }
@@ -286,7 +274,7 @@ extension MockData {
                 .init(question: "We'll get along if", answer: "You think a sunrise counts as a date.")
             ]),
         "tom": .init(
-            vitals: .init(intent: .squad, drinks: "Socially", smokes: "Never", diet: "Sandwich-based", chronotype: "Early bird"),
+            vitals: .init(intent: .warmUp, drinks: "Socially", smokes: "Never", diet: "Sandwich-based", chronotype: "Early bird"),
             prompts: [
                 .init(question: "My ideal Sunday session", answer: "Gravel loop, one wrong turn, one great view."),
                 .init(question: "A stat I'm weirdly proud of", answer: "3 years of bike commuting, zero rainy-day excuses.")

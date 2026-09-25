@@ -1152,21 +1152,13 @@ struct IntentPicker: View {
                     withAnimation(Motion.select) { selection = on ? nil : option }
                     onChange()
                 } label: {
-                    HStack(alignment: .firstTextBaseline, spacing: DS.Space.md) {
+                    HStack(alignment: .center, spacing: DS.Space.md) {
                         Image(systemName: option.symbol)
                             .font(.body.weight(.bold))
                             .frame(width: 24)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(option.label).font(.body.weight(.semibold))
-                            // White on the accent only in semibold, at full strength.
-                            Text(option.detail)
-                                .font(.footnote.weight(on ? .semibold : .regular))
-                                .instantWeight()
-                                .opacity(on ? 1 : 0.75)
-                        }
+                        Text(option.label).font(.body.weight(.semibold))
                         Spacer(minLength: 0)
                         CheckDisc(isOn: on, onLimeFill: on)
-                            .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + 6 }
                     }
                     .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
                     .padding(DS.Space.lg)
