@@ -1,22 +1,27 @@
 import SwiftUI
 
-/// Sign-up stepper: one bar per chapter, filling step by step, with the chapter names under
-/// it (the current one bold, finished ones ticked, the next ones quieter).
+/// Sign-up stepper, between Back and Skip in the header. Only the current chapter is open: its bar
+/// takes the free width, fills step by step, and names the chapter under it. The others fold to short
+/// ticks (solid when done, faint when ahead). Moving to the next chapter is one move: the finished bar
+/// fills and folds while the next one opens, and the name blurs across.
 struct ChapterStepper: View {
     let chapters: [(title: String, steps: Int)]
     /// Index of the current step across the whole flow.
     let current: Int
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// A folded chapter: long enough to count, short enough to leave the room to the open one.
+    private let tick: CGFloat = 18
+    static let barHeight: CGFloat = 5
+
     var body: some View {
-        HStack(alignment: .top, spacing: DS.Space.sm) {
+        HStack(alignment: .top, spacing: DS.Space.xs) {
             ForEach(Array(chapters.enumerated()), id: \.offset) { i, chapter in
                 let start = chapters.prefix(i).reduce(0) { $0 + $1.steps }
                 let done = current >= start + chapter.steps
                 let active = !done && current >= start
                 let fill = done ? 1 : active ? CGFloat(current - start + 1) / CGFloat(max(1, chapter.steps)) : 0
                 VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
-                    // The current chapter's bar is a touch thicker: the eye finds where it is.
                     Capsule()
                         .fill(DS.Palette.ink.opacity(0.12))
                         .overlay(alignment: .leading) {
@@ -24,27 +29,24 @@ struct ChapterStepper: View {
                                 Capsule().fill(DS.Palette.ink).frame(width: g.size.width * fill)
                             }
                         }
-                        .frame(height: active ? 6 : 4)
-                        .frame(height: 6, alignment: .center)
-                    HStack(spacing: 3) {
-                        if done {
-                            Image(systemName: "checkmark")
-                                .font(.caption2.weight(.heavy))
-                                .transition(.scale.combined(with: .opacity))
-                        }
+                        .frame(height: Self.barHeight)
+                    if active {
                         Text(chapter.title)
-                            .font(.caption.weight(active ? .bold : .semibold))
-                            .instantWeight()
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(DS.Palette.ink)
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
+                            .transition(reduceMotion ? .opacity : AnyTransition(.blurReplace))
                     }
-                    .foregroundStyle(active || done ? DS.Palette.ink : DS.Palette.body)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                // Open chapter takes the room left by the folded ones.
+                .frame(width: active ? nil : tick)
+                .frame(maxWidth: active ? .infinity : tick, alignment: .leading)
             }
         }
-        // Bars fill, the finished chapter ticks, the next one lights up: all in one visible move.
-        .animation(reduceMotion ? nil : Motion.progress, value: current)
+        // Reserve the name's line so the row never changes height as chapters open and fold.
+        .frame(minHeight: Self.barHeight + DS.Space.xs + 2 + 16, alignment: .top)
+        .animation(reduceMotion ? Motion.gentle : Motion.progress, value: current)
         .accessibilityElement()
         .accessibilityLabel(accessibilityText)
     }
