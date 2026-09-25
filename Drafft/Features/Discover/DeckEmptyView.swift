@@ -6,6 +6,9 @@ import SwiftUI
 /// icon; then the words rise. The actions sit at the bottom: widen the
 /// radius (the move that brings new people), or go to the chats.
 struct DeckEmptyView: View {
+    /// True when the last card was just swiped: the entrance plays. Coming back to Discover later
+    /// (another tab, the app reopened) shows the screen already in place.
+    let animate: Bool
     let onChats: () -> Void
     let onFilters: () -> Void
 
@@ -62,7 +65,7 @@ struct DeckEmptyView: View {
     private var message: some View {
         VStack(spacing: DS.Space.sm) {
             Text("No one new for now.")
-                .font(.display(28, relativeTo: .title))
+                .font(.display(22, relativeTo: .title2))
                 .foregroundStyle(DS.Palette.ink)
                 .accessibilityAddTraits(.isHeader)
             Text(app.filters.anyDistance
@@ -114,8 +117,10 @@ struct DeckEmptyView: View {
     // MARK: Entrance
 
     private func appear() {
-        guard !reduceMotion else {
-            iconIn = true; textIn = true
+        guard animate, !reduceMotion else {
+            var t = Transaction(animation: nil)
+            t.disablesAnimations = true
+            withTransaction(t) { iconIn = true; textIn = true }
             return
         }
         iconIn = false; textIn = false

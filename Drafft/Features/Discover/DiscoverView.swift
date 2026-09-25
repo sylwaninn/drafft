@@ -8,6 +8,9 @@ struct DiscoverView: View {
     /// wait for the previous card to land.
     @State private var flying: [FlyOut] = []
     @State private var deckSize: CGSize = .zero
+    /// Set by the swipe that empties the stack, cleared once the empty state has shown it: only that
+    /// moment plays the empty state's entrance.
+    @State private var emptiedBySwipe = false
     @State private var detail: Profile?
     @State private var likeBurst = 0
     @State private var passBurst = 0
@@ -224,6 +227,7 @@ struct DiscoverView: View {
         withTransaction(t) { drag = .zero }
         flying.append(flyOut)
         if liked { app.like(p, opener: opener, superLike: superLike) } else { app.pass(p) }
+        if app.deck.isEmpty { emptiedBySwipe = true }
         Task {
             try? await Task.sleep(for: .milliseconds(320))
             flying.removeAll { $0.id == flyOut.id }
@@ -392,7 +396,8 @@ struct DiscoverView: View {
 
     /// The stack ran out (filtered or not): the same screen either way.
     private var emptyState: some View {
-        DeckEmptyView(onChats: { app.tab = .chats }, onFilters: { showFilters = true })
+        DeckEmptyView(animate: emptiedBySwipe, onChats: { app.tab = .chats }, onFilters: { showFilters = true })
+            .onAppear { DispatchQueue.main.async { emptiedBySwipe = false } }
             .padding(.horizontal, DS.Space.md)
     }
 }
