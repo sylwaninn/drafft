@@ -162,6 +162,8 @@ enum Motion {
     static let snappy = Animation.spring(response: 0.22, dampingFraction: 0.86)
     static let bouncy = Animation.spring(response: 0.3, dampingFraction: 0.72)
     static let gentle = Animation.easeOut(duration: 0.18)
+    /// Progress that should be seen moving (sign-up stepper bars): longer than snappy, no overshoot.
+    static let progress = Animation.spring(response: 0.5, dampingFraction: 0.9)
 }
 
 // MARK: - Haptics
