@@ -46,9 +46,13 @@ actor Backend {
     enum SignUpResult { case signedIn, confirmEmail }
 
     /// A new account. With email confirmation on (production), there's no session until the link in
-    /// the email is opened: the app then asks the person to confirm and log in.
-    func signUp(email: String, password: String) async throws -> SignUpResult {
-        let response = try await client.auth.signUp(email: email, password: password, redirectTo: Self.authCallback)
+    /// the email is opened: the app then asks the person to confirm and log in. `language` starts the
+    /// profile in it, so the confirmation email (backend auth-email) is already in that language.
+    func signUp(email: String, password: String, language: AppLanguage) async throws -> SignUpResult {
+        let response = try await client.auth.signUp(
+            email: email, password: password, data: ["language": .string(language.rawValue)],
+            redirectTo: Self.authCallback
+        )
         return response.session == nil ? .confirmEmail : .signedIn
     }
 

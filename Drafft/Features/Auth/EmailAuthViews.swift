@@ -179,7 +179,9 @@ struct SignUpView: View {
         Task {
             defer { loading = false }
             do {
-                switch try await Backend.shared.signUp(email: email, password: password) {
+                switch try await Backend.shared.signUp(
+                    email: email, password: password, language: Localization.shared.language
+                ) {
                 case .signedIn:
                     Haptics.success()
                     app.email = email
