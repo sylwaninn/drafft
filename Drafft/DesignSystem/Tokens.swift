@@ -66,6 +66,8 @@ enum DS {
         static let onLike = Color(hex: 0x0E0F0C)
 
         static let ink = Color(light: 0x0E0F0C, dark: 0xF1F3EF)
+        /// Text on an ink fill (tab badges).
+        static let onInk = Color(light: 0xFFFFFF, dark: 0x0E0F0C)
         static let body = Color(light: 0x454745, dark: 0xB9BCB7)
         /// Secondary text: at least 4.5:1 on every surface, sage wells and raised sheets included.
         static let mute = Color(light: 0x626461, dark: 0x969994)
