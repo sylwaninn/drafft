@@ -3,6 +3,7 @@ import SwiftUI
 /// Settings › Notifications: the system permission first, then what to be notified about.
 struct NotificationsSettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppModel.self) private var app
     @State private var notifications = NotificationService.shared
 
     var body: some View {
@@ -32,9 +33,12 @@ struct NotificationsSettingsView: View {
                         divider
                         toggle(L("An hour before"), "alarm.fill", $notifications.sessionHourBefore)
                     }
-                    group(Brand.tierName) {
-                        toggle(L("Weekly boost"), "bolt.fill", $notifications.weeklyBoost,
-                               detail: L("When your free boost of the week is added."))
+                    // The weekly boost comes with drafft tempo: its notification only makes sense then.
+                    if app.isPremium {
+                        group(Brand.tierName) {
+                            toggle(L("Weekly boost"), "bolt.fill", $notifications.weeklyBoost,
+                                   detail: L("When your free boost of the week is added."))
+                        }
                     }
                 }
                 .padding(DS.Space.lg)
