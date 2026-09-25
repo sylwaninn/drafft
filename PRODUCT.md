@@ -38,7 +38,7 @@ Used on the go: between sessions, after a workout, on transit. One-handed, often
 ## Brand Commitments
 
 - Name: drafft, always lowercase (app name included), set one weight heavier than the sentence around it. Paid tier: drafft tempo, both lowercase, "tempo" in the accent colour.
-- Visual system pinned by the user: DESIGN.md (Wise-inspired: lime green `#9fe870` single accent, sage canvas, near-black ink, heavy 900 display, 24pt radius). Binding.
+- Visual system pinned by the user: DESIGN.md (Wise-inspired: one accent, near-black ink, heavy 900 display, 24pt radius). The accent is violet `#7D70FD` for now (lime `#9fe870` was the original); the page tone follows it (lilac mist `#ECEAFA` with violet). Binding.
 
 ## Evidence on Hand
 
