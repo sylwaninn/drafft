@@ -19,41 +19,43 @@ struct ConversationsView: View {
             List {
                 if !newMatches.isEmpty && query.isEmpty {
                     // Edge to edge: no section margin or card, so the row scrolls to the screen's
-                    // edges; the first avatar still lines up with the cards below.
+                    // edges. The title sits in the same row as the avatars, on the same margin, so
+                    // the two always line up (a section header has margins of its own).
                     Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(alignment: .top, spacing: DS.Space.sm) {
-                                ForEach(newMatches) { c in
-                                    Button { path.append(c.id) } label: {
-                                        VStack(spacing: DS.Space.xs + 2) {
-                                            Avatar(name: c.profile.portrait, size: 68, ring: true)
-                                            // A name is the person's own: two lines, then cut.
-                                            Text(c.profile.name)
-                                                .font(.footnote.weight(.semibold))
-                                                .foregroundStyle(DS.Palette.ink)
-                                                .multilineTextAlignment(.center)
-                                                .lineLimit(2)
-                                                // design-lint: allow truncation - a person's name (content, not copy), asked cut after two lines
-                                                .truncationMode(.tail)
-                                                .frame(width: 72, alignment: .top)
+                        VStack(alignment: .leading, spacing: DS.Space.sm) {
+                            Text("New matches")
+                                .font(.subheadline.weight(.bold))
+                                .foregroundStyle(DS.Palette.body)
+                                .padding(.horizontal, Self.edge)
+                                .accessibilityAddTraits(.isHeader)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(alignment: .top, spacing: DS.Space.sm) {
+                                    ForEach(newMatches) { c in
+                                        Button { path.append(c.id) } label: {
+                                            VStack(spacing: DS.Space.xs + 2) {
+                                                Avatar(name: c.profile.portrait, size: 68)
+                                                // A name is the person's own: two lines, then cut.
+                                                Text(c.profile.name)
+                                                    .font(.footnote.weight(.semibold))
+                                                    .foregroundStyle(DS.Palette.ink)
+                                                    .multilineTextAlignment(.center)
+                                                    .lineLimit(2)
+                                                    // design-lint: allow truncation - a person's name (content, not copy), asked cut after two lines
+                                                    .truncationMode(.tail)
+                                                    .frame(width: 72, alignment: .top)
+                                            }
                                         }
+                                        .buttonStyle(PressScaleStyle())
+                                        .accessibilityLabel("New match, \(c.profile.name). Start chatting")
                                     }
-                                    .buttonStyle(PressScaleStyle())
-                                    .accessibilityLabel("New match, \(c.profile.name). Start chatting")
                                 }
+                                .padding(.horizontal, Self.edge)
+                                .padding(.vertical, DS.Space.xs)
                             }
-                            .padding(.horizontal, Self.edge)
-                            .padding(.vertical, DS.Space.xs)
+                            .scrollClipDisabled()
                         }
-                        .scrollClipDisabled()
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
-                    } header: {
-                        Text("New matches")
-                            .font(.subheadline.weight(.bold))
-                            .foregroundStyle(DS.Palette.body)
-                            .textCase(nil)
-                            .padding(.leading, Self.edge + DS.Space.xs)
                     }
                     .listSectionMargins(.horizontal, 0)
                 }
