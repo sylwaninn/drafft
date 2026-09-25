@@ -15,8 +15,8 @@ struct OneTimeCodeEntry<Accessory: View>: View {
     var hint: String
     var resendIn: Int
     var editTitle = L("Change")
-    /// Canvas on the sage page; sage inside a white block.
-    var boxFill: Surface = DS.Palette.canvas
+    /// The lifted white, like every field (a page or a sheet alike).
+    var boxFill: Color = DS.Palette.white
     let onEdit: () -> Void
     let onResend: () -> Void
     /// Between the status line and Resend (the demo panel).
@@ -115,7 +115,7 @@ struct OneTimeCodeEntry<Accessory: View>: View {
 extension OneTimeCodeEntry where Accessory == EmptyView {
     init(destination: String, code: String, onCode: @escaping (String) -> Void, busy: Bool, error: String?,
          needsHelp: Bool = false, helpTopic: String, hint: String, resendIn: Int,
-         editTitle: String = L("Change"), boxFill: Surface = DS.Palette.canvas,
+         editTitle: String = L("Change"), boxFill: Color = DS.Palette.white,
          onEdit: @escaping () -> Void, onResend: @escaping () -> Void) {
         self.init(destination: destination, code: code, onCode: onCode, busy: busy, error: error,
                   needsHelp: needsHelp, helpTopic: helpTopic, hint: hint, resendIn: resendIn,

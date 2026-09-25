@@ -22,9 +22,9 @@ struct AccountSheet<Content: View>: View {
     var body: some View {
         NavigationStack {
             FocusScrollView {
-                VStack(spacing: DS.Space.md) { content }
-                    .padding(.horizontal, DS.Space.lg)
-                    .padding(.vertical, DS.Space.sm)
+                VStack(spacing: DS.Space.xl) { content }
+                    .padding(.horizontal, DS.Space.xl)
+                    .padding(.vertical, DS.Space.md)
             }
             .scrollDismissesKeyboard(.interactively)
             .background(DS.Palette.canvasSoft)
@@ -104,6 +104,8 @@ private struct DestructiveAwareStyle: ButtonStyle {
 }
 
 /// White block with a small title inside.
+/// A titled group in a settings sheet, straight on the white sheet: no grey well around it, the
+/// fields and rows carry their own edges. Groups are told apart by space, not boxes.
 struct SheetBlock<Content: View>: View {
     var title: String?
     @ViewBuilder var content: Content
@@ -114,9 +116,7 @@ struct SheetBlock<Content: View>: View {
             }
             content
         }
-        .padding(DS.Space.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
     }
 }
 
@@ -182,7 +182,7 @@ struct ChangeEmailSheet: View {
                                          busy: flow.busy, error: flow.error, needsHelp: flow.needsHelp,
                                          helpTopic: L("Email change"),
                                          hint: L("Check your inbox, and your spam folder. The code works for 1 hour."),
-                                         resendIn: flow.resendIn, boxFill: DS.Palette.canvasSoft,
+                                         resendIn: flow.resendIn,
                                          onEdit: { flow.edit() },
                                          onResend: { Task { await flow.resend() } })
                     }
@@ -301,7 +301,6 @@ struct ChangePasswordSheet: View {
                                          helpTopic: L("Password change"),
                                          hint: L("Check your inbox, and your spam folder. It's the code that confirms it's you."),
                                          resendIn: flow.resendIn, editTitle: L("Edit password"),
-                                         boxFill: DS.Palette.canvasSoft,
                                          onEdit: { flow.edit() },
                                          onResend: { Task { await flow.resend() } })
                     }
@@ -331,8 +330,8 @@ struct ChangePasswordSheet: View {
                         CheckDisc(isOn: ok, size: 22)
                         Text(rule.label).foregroundStyle(ok ? DS.Palette.ink : DS.Palette.body)
                     }
-                        .font(.footnote.weight(ok ? .semibold : .regular))
-                        .instantWeight()
+                        // One weight, done or not: the disc and the ink say it, the line never widens.
+                        .font(.footnote.weight(.medium))
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(rule.label)
                         .accessibilityValue(ok ? "Done" : "Not yet")
