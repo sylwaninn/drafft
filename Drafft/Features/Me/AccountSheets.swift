@@ -1,0 +1,543 @@
+import SwiftUI
+
+/// Shared chrome for account sheets: title, close on the right, content blocks,
+/// and a pinned primary action that stays visible (disabled with a reason when it can't run).
+struct AccountSheet<Content: View>: View {
+    let title: String
+    let actionTitle: String
+    var actionIcon: String?
+    var destructive = false
+    var enabled: Bool
+    var loading = false
+    var hint: String?
+    var hintIsError = false
+    /// Something typed that closing would lose: Close asks before discarding it.
+    var hasChanges = false
+    let action: () -> Void
+    @ViewBuilder var content: Content
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var confirmDiscard = false
+
+    var body: some View {
+        NavigationStack {
+            FocusScrollView {
+                VStack(spacing: DS.Space.md) { content }
+                    .padding(.horizontal, DS.Space.lg)
+                    .padding(.vertical, DS.Space.sm)
+            }
+            .scrollDismissesKeyboard(.interactively)
+            .background(DS.Palette.canvasSoft)
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Close", systemImage: "xmark") {
+                        if hasChanges { confirmDiscard = true } else { dismiss() }
+                    }
+                }
+            }
+            .drafftConfirm(isPresented: $confirmDiscard, icon: "trash",
+                           title: L("Discard your changes?"),
+                           message: L("What you typed here will be lost."),
+                           cancelTitle: L("Keep editing"),
+                           actions: [ConfirmAction(title: L("Discard changes"), kind: .destructive) { dismiss() }])
+            .blurredNavigationEdge()
+            .bottomBar {
+                VStack(spacing: DS.Space.sm) {
+                    Button(action: action) {
+                        if loading {
+                            ProgressView().tint(destructive ? .white : DS.Palette.onLime)
+                        } else if let actionIcon {
+                            Label(actionTitle, systemImage: actionIcon)
+                        } else {
+                            Text(actionTitle)
+                        }
+                    }
+                    .buttonStyle(DestructiveAwareStyle(destructive: destructive))
+                    .disabled(!enabled || loading)
+                    .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl),
+                                color: destructive ? DS.Palette.negative : DS.Palette.lime,
+                                step: CGSize(width: -6, height: 0))
+                    .padding(.leading, 12)
+                    if let hint {
+                        Text(hint)
+                            .font(.footnote)
+                            .foregroundStyle(hintIsError ? DS.Palette.negative : DS.Palette.body)
+                            .multilineTextAlignment(.center)
+                            .contentTransition(.opacity)
+                    }
+                }
+                .padding(.horizontal, DS.Space.xl)
+                .padding(.top, DS.Space.md)
+                .padding(.bottom, DS.Space.sm)
+            }
+        }
+        .presentationDragIndicator(.visible)
+        .interactiveDismissDisabled(hasChanges)
+    }
+}
+
+private struct DestructiveAwareStyle: ButtonStyle {
+    let destructive: Bool
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        if destructive {
+            configuration.label
+                .font(.body.weight(.semibold))
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.9)
+                .padding(.vertical, DS.Space.xs)
+                .frame(maxWidth: .infinity, minHeight: 52)
+                .padding(.horizontal, DS.Space.xl)
+                .foregroundStyle(.white)
+                .background(DS.Palette.negative, in: .rect(cornerRadius: DS.Radius.xl))
+                .opacity(isEnabled ? 1 : 0.4)
+                .scaleEffect(configuration.isPressed ? 0.97 : 1)
+                .animation(Motion.snappy, value: configuration.isPressed)
+        } else {
+            DrafftButtonStyle(kind: .primary).makeBody(configuration: configuration)
+        }
+    }
+}
+
+/// White block with a small title inside.
+struct SheetBlock<Content: View>: View {
+    var title: String?
+    @ViewBuilder var content: Content
+    var body: some View {
+        VStack(alignment: .leading, spacing: DS.Space.md) {
+            if let title {
+                Text(title).font(.headline).foregroundStyle(DS.Palette.ink).accessibilityAddTraits(.isHeader)
+            }
+            content
+        }
+        .padding(DS.Space.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+    }
+}
+
+// MARK: - Email
+
+/// New address and password, then the 6-digit code sent to the new address (as at sign-up).
+struct ChangeEmailSheet: View {
+    @Environment(AppModel.self) private var app
+    @Environment(\.dismiss) private var dismiss
+    @State private var newEmail = ""
+    @State private var password = ""
+    @State private var flow = EmailCodeModel()
+    @State private var showHelp = false
+
+    private var valid: Bool {
+        Validation.isEmail(newEmail) && newEmail.lowercased() != app.email.lowercased() && !password.isEmpty
+    }
+
+    private var actionTitle: String {
+        switch flow.stage {
+        case .form: L("Send code")
+        case .code: L("Verify")
+        case .done: L("Done")
+        case .locked: L("Get help")
+        }
+    }
+
+    private var enabled: Bool {
+        switch flow.stage {
+        case .form: valid
+        case .code: flow.code.count == 6
+        case .done, .locked: true
+        }
+    }
+
+    private var hint: String? {
+        switch flow.stage {
+        case .form:
+            if let error = flow.error { return error }
+            if newEmail.isEmpty { return L("Enter your new email to continue.") }
+            if !Validation.isEmail(newEmail) { return L("That doesn't look like an email address.") }
+            if newEmail.lowercased() == app.email.lowercased() { return L("That's already your email.") }
+            if password.isEmpty { return L("Confirm with your password.") }
+            return L("We'll email a 6-digit code to \(newEmail).")
+        case .code: return flow.code.count < 6 ? L("Enter the 6-digit code.") : nil
+        case .done: return L("Use it next time you log in.")
+        case .locked: return nil
+        }
+    }
+
+    var body: some View {
+        AccountSheet(title: L("Email"), actionTitle: actionTitle,
+                     actionIcon: flow.stage == .form ? "paperplane.fill" : flow.stage == .done ? "checkmark" : nil,
+                     enabled: enabled, loading: flow.busy, hint: hint,
+                     hintIsError: flow.stage == .form && (flow.error != nil || (!newEmail.isEmpty && !Validation.isEmail(newEmail))),
+                     hasChanges: flow.stage == .code || (flow.stage == .form && !(newEmail.isEmpty && password.isEmpty))) {
+            switch flow.stage {
+            case .form: send()
+            case .code: Task { await flow.verify() }
+            case .done: dismiss()
+            case .locked: showHelp = true
+            }
+        } content: {
+            Group {
+                switch flow.stage {
+                case .form: form
+                case .code:
+                    SheetBlock {
+                        OneTimeCodeEntry(destination: flow.sentTo, code: flow.code, onCode: flow.enterCode,
+                                         busy: flow.busy, error: flow.error, needsHelp: flow.needsHelp,
+                                         helpTopic: L("Email change"),
+                                         hint: L("Check your inbox, and your spam folder. The code works for 1 hour."),
+                                         resendIn: flow.resendIn, boxFill: DS.Palette.canvasSoft,
+                                         onEdit: { flow.edit() },
+                                         onResend: { Task { await flow.resend() } })
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .trailing)))
+                case .done: CodeVerifiedCard(title: L("Email updated"), detail: flow.sentTo)
+                case .locked: CodeLockedCard(message: flow.error)
+                }
+            }
+            .animation(Motion.snappy, value: flow.stage)
+        }
+        .onChange(of: flow.stage) { _, s in if s == .done { app.email = flow.sentTo } }
+        .onChange(of: newEmail) { if flow.stage == .form { flow.error = nil } }
+        .onChange(of: password) { if flow.stage == .form { flow.error = nil } }
+        .sheet(isPresented: $showHelp) { Group { SupportSheet(topic: L("Email change")) }.sheetSurface() }
+    }
+
+    @ViewBuilder
+    private var form: some View {
+        SheetBlock(title: L("Current email")) {
+            Text(app.email).font(.body.weight(.semibold)).foregroundStyle(DS.Palette.body)
+        }
+        SheetBlock(title: L("New email")) {
+            DrafftField(title: L("Email"), text: $newEmail, prompt: L("you@example.com"),
+                        contentType: .emailAddress, keyboard: .emailAddress)
+            DrafftField(title: L("Your password"), text: $password, prompt: L("To confirm it's you"),
+                        isSecure: true, contentType: .password, submitLabel: .send,
+                        onSubmit: { if valid { send() } })
+        }
+        if app.signInMethod != "Email" {
+            SheetBlock {
+                Text("You sign in with \(app.signInMethod). Changing your email here only affects notifications.")
+                    .font(.footnote)
+                    .foregroundStyle(DS.Palette.body)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private func send() {
+        let email = newEmail.trimmingCharacters(in: .whitespaces)
+        let current = app.email
+        let password = password
+        flow.messages = [.wrongCredentials: L("Your password is incorrect.")]
+        flow.formProblems = [.emailTaken]
+        Task {
+            await flow.send(to: email) {
+                // The password proves it's them; the code proves the new address is theirs.
+                try await Backend.shared.signIn(email: current, password: password)
+                try await Backend.shared.updateEmail(email)
+            } verify: { code in
+                try await Backend.shared.confirmEmailChange(email, code: code)
+            }
+        }
+    }
+}
+
+// MARK: - Password
+
+/// New password, then a 6-digit code sent to the account's email: the code proves it's them.
+struct ChangePasswordSheet: View {
+    @Environment(AppModel.self) private var app
+    @Environment(\.dismiss) private var dismiss
+    @State private var new = ""
+    @State private var confirm = ""
+    @State private var flow = EmailCodeModel()
+    @State private var showHelp = false
+
+    private var passed: Int { PasswordRule.all.filter { $0.test(new) }.count }
+    private var valid: Bool { passed == PasswordRule.all.count && new == confirm }
+
+    private var actionTitle: String {
+        switch flow.stage {
+        case .form: L("Send code")
+        case .code: L("Update password")
+        case .done: L("Done")
+        case .locked: L("Get help")
+        }
+    }
+
+    private var enabled: Bool {
+        switch flow.stage {
+        case .form: valid
+        case .code: flow.code.count == 6
+        case .done, .locked: true
+        }
+    }
+
+    private var hint: String? {
+        switch flow.stage {
+        case .form:
+            if let error = flow.error { return error }
+            if new.isEmpty { return L("Choose your new password.") }
+            if passed < PasswordRule.all.count { return L("Your new password needs all three checks.") }
+            if confirm.isEmpty { return L("Type the new password once more.") }
+            if new != confirm { return L("The two new passwords don't match.") }
+            return L("We'll email a 6-digit code to \(app.email) to confirm it's you.")
+        case .code: return flow.code.count < 6 ? L("Enter the 6-digit code.") : nil
+        case .done: return L("You'll stay logged in on this iPhone.")
+        case .locked: return nil
+        }
+    }
+
+    var body: some View {
+        AccountSheet(title: L("Password"), actionTitle: actionTitle,
+                     actionIcon: flow.stage == .form ? "paperplane.fill" : flow.stage == .code ? "lock.fill"
+                         : flow.stage == .done ? "checkmark" : nil,
+                     enabled: enabled, loading: flow.busy, hint: hint,
+                     hintIsError: flow.stage == .form && (flow.error != nil || (!confirm.isEmpty && new != confirm)),
+                     hasChanges: flow.stage == .code || (flow.stage == .form && !(new.isEmpty && confirm.isEmpty))) {
+            switch flow.stage {
+            case .form: send()
+            case .code: Task { await flow.verify() }
+            case .done: dismiss()
+            case .locked: showHelp = true
+            }
+        } content: {
+            Group {
+                switch flow.stage {
+                case .form: form
+                case .code:
+                    SheetBlock {
+                        OneTimeCodeEntry(destination: flow.sentTo, code: flow.code, onCode: flow.enterCode,
+                                         busy: flow.busy, error: flow.error, needsHelp: flow.needsHelp,
+                                         helpTopic: L("Password change"),
+                                         hint: L("Check your inbox, and your spam folder. It's the code that confirms it's you."),
+                                         resendIn: flow.resendIn, editTitle: L("Edit password"),
+                                         boxFill: DS.Palette.canvasSoft,
+                                         onEdit: { flow.edit() },
+                                         onResend: { Task { await flow.resend() } })
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .trailing)))
+                case .done:
+                    CodeVerifiedCard(title: L("Password updated"), detail: L("Use it next time you log in on another device."))
+                case .locked: CodeLockedCard(message: flow.error)
+                }
+            }
+            .animation(Motion.snappy, value: flow.stage)
+        }
+        .onChange(of: new) { if flow.stage == .form { flow.error = nil } }
+        .onChange(of: confirm) { if flow.stage == .form { flow.error = nil } }
+        .sheet(isPresented: $showHelp) { Group { SupportSheet(topic: L("Password change")) }.sheetSurface() }
+    }
+
+    private var form: some View {
+        SheetBlock {
+            DrafftField(title: L("New password"), text: $new, prompt: L("New password"),
+                        isSecure: true, contentType: .newPassword)
+            StrengthBar(passed: passed, total: PasswordRule.all.count)
+            VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
+                ForEach(PasswordRule.all) { rule in
+                    let ok = rule.test(new)
+                    HStack(spacing: DS.Space.sm) {
+                        // The one check mark in the app (bigger than the label, easy to read at a glance).
+                        CheckDisc(isOn: ok, size: 22)
+                        Text(rule.label).foregroundStyle(ok ? DS.Palette.ink : DS.Palette.body)
+                    }
+                        .font(.footnote.weight(ok ? .semibold : .regular))
+                        .instantWeight()
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(rule.label)
+                        .accessibilityValue(ok ? "Done" : "Not yet")
+                }
+            }
+            DrafftField(title: L("Confirm new password"), text: $confirm, prompt: L("Type it again"),
+                        isSecure: true,
+                        error: !confirm.isEmpty && confirm != new ? L("Doesn't match yet.") : nil,
+                        contentType: .newPassword, submitLabel: .send,
+                        onSubmit: { if valid { send() } })
+        }
+    }
+
+    private func send() {
+        let password = new
+        // Rules the server holds that the form can't check: back to the form to pick another.
+        flow.formProblems = [.samePassword, .weakPassword]
+        Task {
+            await flow.send(to: app.email) {
+                try await Backend.shared.sendReauthenticationCode()
+            } verify: { code in
+                try await Backend.shared.updatePassword(password, code: code)
+            }
+        }
+    }
+}
+
+// MARK: - Export
+
+struct ExportDataSheet: View {
+    @Environment(AppModel.self) private var app
+    @State private var sending = false
+
+    private var included: [(icon: String, title: String, detail: String)] { [
+        ("person.fill", L("Profile"), L("Name, bio, sports, prompts, lifestyle")),
+        ("photo.on.rectangle", L("Photos & voice"), L("Everything you've uploaded")),
+        ("bubble.left.and.bubble.right.fill", L("Messages"), L("Your conversations with matches")),
+        ("calendar", L("Sessions"), L("Invites you sent and received")),
+        ("heart.fill", L("Likes & matches"), L("Who you liked and matched with"))
+    ] }
+
+    private var requested: Date? { app.dataExportRequestedAt }
+
+    var body: some View {
+        AccountSheet(title: L("Export my data"),
+                     actionTitle: requested == nil ? L("Email me my export") : L("Export requested"),
+                     actionIcon: requested == nil ? "envelope.fill" : "checkmark",
+                     enabled: requested == nil && !sending, loading: sending,
+                     hint: requested == nil ? L("It goes to \(app.email).") : L("One export at a time. You can ask again once it arrives.")) {
+            sending = true
+            Task {
+                try? await Task.sleep(for: .milliseconds(300))
+                sending = false
+                Haptics.success()
+                withAnimation(Motion.bouncy) { app.dataExportRequestedAt = .now }
+            }
+        } content: {
+            if let requested {
+                SheetBlock {
+                    Label("Check your inbox", systemImage: "envelope.open.fill")
+                        .font(.headline)
+                        .foregroundStyle(DS.Palette.ink)
+                    Text("We're preparing your export. A download link goes to \(app.email), usually within 24 hours of \(requested.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened).locale(.app))). The link works for 7 days.")
+                        .font(.subheadline)
+                        .foregroundStyle(DS.Palette.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .transition(.opacity)
+            } else {
+                SheetBlock {
+                    Text(branded: L("Get a copy of everything you've shared on drafft. We'll email you a download link to a file you can keep or open elsewhere."), font: .subheadline)
+                        .foregroundStyle(DS.Palette.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            SheetBlock(title: L("What's included")) {
+                VStack(spacing: DS.Space.md) {
+                    ForEach(included, id: \.title) { item in
+                        HStack(alignment: .firstTextBaseline, spacing: DS.Space.md) {
+                            Image(systemName: item.icon)
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundStyle(DS.Palette.ink)
+                                .frame(width: 32, height: 32)
+                                .background(DS.Palette.canvasSoft, in: .circle)
+                                .alignmentGuide(.firstTextBaseline) { d in d[VerticalAlignment.center] + 5 }
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(item.title).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+                                Text(item.detail).font(.footnote).foregroundStyle(DS.Palette.body)
+                            }
+                            Spacer(minLength: 0)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Delete
+
+struct DeleteAccountSheet: View {
+    @Environment(AppModel.self) private var app
+    @Environment(\.dismiss) private var dismiss
+    @State private var reason: String?
+    @State private var understood = false
+    @State private var loading = false
+    @State private var failed = false
+
+    private var reasons: [String] { [L("I met someone"), L("I need a break"), L("Not enough people nearby"), L("Something else")] }
+
+    var body: some View {
+        AccountSheet(title: L("Delete account"), actionTitle: L("Delete my account"), actionIcon: "trash.fill",
+                     destructive: true, enabled: understood, loading: loading,
+                     hint: failed ? L("We couldn't delete your account. Check your connection and try again.")
+                         : understood ? L("This can't be undone.") : L("Tick the box above to continue.")) {
+            loading = true
+            failed = false
+            Task {
+                do {
+                    try await app.deleteAccount()
+                    Haptics.success()
+                    dismiss()
+                } catch {
+                    Haptics.warning()
+                    loading = false
+                    failed = true
+                }
+            }
+        } content: {
+            SheetBlock {
+                Text("We're sorry to see you go.")
+                    .font(.display(26, relativeTo: .title2))
+                    .foregroundStyle(DS.Palette.ink)
+                Text("Deleting removes your profile, photos, matches and messages for good. Your matches won't be able to reach you.")
+                    .font(.subheadline)
+                    .foregroundStyle(DS.Palette.body)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            SheetBlock(title: L("Just need a break?")) {
+                Text("Pausing hides you from Discover and keeps your matches and chats.")
+                    .font(.subheadline)
+                    .foregroundStyle(DS.Palette.body)
+                Button {
+                    Haptics.success()
+                    app.profilePaused = true
+                    dismiss()
+                } label: {
+                    Label(app.profilePaused ? "Your profile is paused" : "Pause my profile instead", systemImage: "pause.fill")
+                }
+                .buttonStyle(.drafftSecondary)
+                .disabled(app.profilePaused)
+            }
+
+            SheetBlock(title: L("Why are you leaving?")) {
+                FlowLayout(spacing: DS.Space.sm) {
+                    ForEach(reasons, id: \.self) { r in
+                        let on = reason == r
+                        Button {
+                            Haptics.select()
+                            withAnimation(Motion.snappy) { reason = on ? nil : r }
+                        } label: {
+                            Text(r)
+                                .font(.footnote.weight(.semibold))
+                                .lineLimit(1)
+                                .fixedSize()
+                                .padding(.horizontal, DS.Space.md)
+                                .frame(minHeight: 36)
+                                .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
+                                .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvasSoft), in: .capsule)
+                                .frame(minHeight: 44)
+                        }
+                        .buttonStyle(PressScaleStyle(scale: 0.94))
+                        .accessibilityAddTraits(on ? .isSelected : [])
+                    }
+                }
+                Text(branded: L("Optional. It helps us make drafft better."), font: .footnote)
+                    .foregroundStyle(DS.Palette.mute)
+            }
+
+            SheetBlock {
+                Toggle(isOn: $understood.animation(Motion.snappy)) {
+                    Text("I understand my account and all my data will be permanently deleted.")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(DS.Palette.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .tint(DS.Palette.negative)
+                .onChange(of: understood) { Haptics.select() }
+            }
+        }
+    }
+}

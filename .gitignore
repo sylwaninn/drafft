@@ -1,0 +1,15 @@
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+.DS_Store
+.impeccable/review/
+.impeccable/config.local.json
+Drafft.xcodeproj/-Xcc/
+.wrangler/
+# Secrets never live here, but just in case
+.env
+.env.*
+*.p8
+*.p12
+*.mobileprovision
