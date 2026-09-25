@@ -87,6 +87,9 @@ struct OnboardingView: View {
                     insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
                     removal: .move(edge: forward ? .leading : .trailing).combined(with: .opacity)))
         }
+        // One header for the whole flow, outside the sliding steps: it never moves with them, and the
+        // stepper stays the same view, so its bars fill and its chapters change in place.
+        .topBar { header }
         // A different terrain per step, cross-fading as the steps change.
         .background { PageContourBackdrop(seed: "signup-\(current)") }
         .onAppear(perform: restore)
@@ -454,8 +457,8 @@ struct OnboardingView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    /// Every step: its own scroll view with the header and the Continue bar attached as native
-    /// safe-area bars, so content scrolls under both with the system's progressive blur.
+    /// Every step: its own scroll view with the Continue bar attached as a native safe-area bar (the
+    /// header is pinned once, on the whole flow), so content scrolls under both with the progressive blur.
     private func page<C: View>(@ViewBuilder _ content: () -> C) -> some View {
         FocusScrollView {
             VStack(alignment: .leading, spacing: DS.Space.xxl) { content() }
@@ -464,7 +467,6 @@ struct OnboardingView: View {
                 .padding(.bottom, DS.Space.xl)
         }
         .scrollDismissesKeyboard(.interactively)
-        .topBar { header }
         .bottomBar { footer.padding(.top, DS.Space.md) }
     }
 
@@ -1138,63 +1140,6 @@ struct OnboardingView: View {
             stepTitle(L("Give them an easy opener"), L("Pick a format for your interactive prompt. Matches play it and reply in one tap."))
             IcebreakerEditor(icebreaker: $icebreaker)
         }
-    }
-}
-
-/// Sign-up stepper: one bar per chapter, filling step by step, with the chapter names under
-/// it (the current one bold, finished ones ticked, the next ones quieter).
-struct ChapterStepper: View {
-    let chapters: [(title: String, steps: Int)]
-    /// Index of the current step across the whole flow.
-    let current: Int
-
-    var body: some View {
-        HStack(alignment: .top, spacing: DS.Space.sm) {
-            ForEach(Array(chapters.enumerated()), id: \.offset) { i, chapter in
-                let start = chapters.prefix(i).reduce(0) { $0 + $1.steps }
-                let done = current >= start + chapter.steps
-                let active = !done && current >= start
-                let fill = done ? 1 : active ? CGFloat(current - start + 1) / CGFloat(max(1, chapter.steps)) : 0
-                VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
-                    Capsule()
-                        .fill(DS.Palette.ink.opacity(0.12))
-                        .overlay(alignment: .leading) {
-                            GeometryReader { g in
-                                Capsule().fill(DS.Palette.ink).frame(width: g.size.width * fill)
-                            }
-                        }
-                        .frame(height: 4)
-                    HStack(spacing: 3) {
-                        if done {
-                            Image(systemName: "checkmark")
-                                .font(.caption2.weight(.heavy))
-                                .transition(.scale.combined(with: .opacity))
-                        }
-                        Text(chapter.title)
-                            .font(.caption.weight(active ? .bold : .semibold))
-                            .instantWeight()
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                    }
-                    .foregroundStyle(active || done ? DS.Palette.ink : DS.Palette.body)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
-        .animation(Motion.snappy, value: current)
-        .accessibilityElement()
-        .accessibilityLabel(accessibilityText)
-    }
-
-    private var accessibilityText: String {
-        var start = 0
-        for (i, c) in chapters.enumerated() {
-            if current < start + c.steps {
-                return L("\(c.title), step \(current - start + 1) of \(c.steps). Part \(i + 1) of \(chapters.count).")
-            }
-            start += c.steps
-        }
-        return L("Sign-up complete")
     }
 }
 
