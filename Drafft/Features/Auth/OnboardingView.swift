@@ -87,7 +87,7 @@ struct OnboardingView: View {
         }
         // One header for the whole flow, outside the sliding steps: it never moves with them, and the
         // stepper stays the same view, so its bars fill and its chapters change in place.
-        .topBar { header }
+        .topBar { header.edgeHalo() }
         // A different terrain per step, cross-fading as the steps change.
         .background { PageContourBackdrop(seed: "signup-\(current)") }
         .onAppear(perform: restore)

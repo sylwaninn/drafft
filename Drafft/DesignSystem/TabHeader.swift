@@ -30,6 +30,7 @@ struct TabHeader<Leading: View, Trailing: View>: View {
             HStack(alignment: .center, spacing: DS.Space.sm) {
                 // Fixed height: only the scale changes, so the bar (and the insets) stay put.
                 leading
+                    .edgeHalo()
                     .scaleEffect(1 - collapse * 0.32, anchor: .leading)
                     .frame(height: 44, alignment: .leading)
                 Spacer(minLength: DS.Space.sm)
@@ -43,14 +44,14 @@ struct TabHeader<Leading: View, Trailing: View>: View {
                             .font(.body.weight(.semibold))
                             .foregroundStyle(DS.Palette.ink)
                             .frame(width: 40, height: 40)
-                            .background(DS.Palette.canvas, in: .circle)
+                            .glassEffect(.regular, in: .circle)
                             .frame(width: 44, height: 44)
                     }
                     .buttonStyle(PressScaleStyle())
                     .accessibilityLabel(searchPrompt)
                     .transition(.scale.combined(with: .opacity))
                 }
-                trailing
+                trailing.edgeHalo()
             }
 
             if let search, showsSearchField {
@@ -77,7 +78,9 @@ struct TabHeader<Leading: View, Trailing: View>: View {
                 // The whole capsule focuses the field, icon and padding included.
                 .contentShape(.capsule)
                 .onTapGesture { searchFocused = true }
-                .background(DS.Palette.ink.opacity(0.06), in: .capsule)
+                // Liquid Glass: it reads over anything scrolling under the header, where a faint
+                // tint vanished.
+                .glassEffect(.regular, in: .capsule)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
         }

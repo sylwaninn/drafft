@@ -131,7 +131,7 @@ private struct EdgeBlurModifier<Bar: View>: ViewModifier {
                     g.contentOffset.y + g.contentInsets.top > 1
                 } action: { _, v in withAnimation(.easeOut(duration: 0.2)) { covered = v } }
                 .safeAreaInset(edge: .top, spacing: 0) {
-                    bar.edgeHalo().background {
+                    bar.background {
                         ProgressiveBlur(edge: .top)
                             .padding(.bottom, -DS.Space.xl)
                             .ignoresSafeArea(edges: .top)
@@ -178,9 +178,9 @@ private struct EdgeHalo: ViewModifier {
 }
 
 extension View {
-    /// The edge halo, for text and icons on an edge the modifiers below don't own (a toolbar's
-    /// principal item). `topBar` applies it itself; bottom bars hold filled buttons and the glass
-    /// composer, legible on their own (and glass can't sit under a composited shadow).
+    /// The edge halo, for the text and icons of a header (TabHeader's title, the sign-up header, a
+    /// toolbar's principal item). Never on glass: a composited shadow would flatten it, and glass
+    /// (the search field, bottom bars' composer) stays legible on its own.
     func edgeHalo() -> some View { modifier(EdgeHalo()) }
 
     /// Pins `content` to the bottom (validate buttons, the chat composer, above the keyboard).
