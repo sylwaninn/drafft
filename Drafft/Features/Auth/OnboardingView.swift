@@ -219,16 +219,16 @@ struct OnboardingView: View {
 
     /// One line under the button: why it can't run yet. The line keeps its height when empty,
     /// so the button never jumps.
+    @ViewBuilder // Only a real error under Continue: the step itself says what's missing.
     private var footerReason: some View {
-        let r = blockedReason
-        return Text(branded: r?.text ?? " ", font: .footnote.weight(r?.error == true ? .medium : .regular))
-            .foregroundStyle(r?.error == true ? DS.Palette.negative : DS.Palette.body)
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, DS.Space.xl)
-            .contentTransition(.opacity)
-            .animation(Motion.snappy, value: r?.text)
-            .accessibilityHidden(r == nil)
+        if let r = blockedReason, r.error {
+            Text(branded: r.text, font: .footnote.weight(.medium))
+                .foregroundStyle(DS.Palette.negative)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, DS.Space.xl)
+                .transition(.opacity)
+        }
     }
 
     private var blockedReason: (text: String, error: Bool)? {

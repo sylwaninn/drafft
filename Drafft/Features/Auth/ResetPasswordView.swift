@@ -156,7 +156,6 @@ struct NewPasswordView: View {
             actionEnabled: passedRules == PasswordRule.all.count,
             loading: loading,
             action: save,
-            reason: password.isEmpty ? L("Create a password.") : L("Your password doesn't meet every rule yet."),
             backdropSeed: BackdropSeed.login
         ) {
             VStack(alignment: .leading, spacing: DS.Space.md) {

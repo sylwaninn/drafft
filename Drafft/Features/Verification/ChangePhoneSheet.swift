@@ -12,7 +12,7 @@ struct ChangePhoneSheet: View {
                      actionTitle: model.stage == .verified ? L("Done") : model.primaryTitle,
                      enabled: model.primaryEnabled,
                      loading: model.busy,
-                     hint: model.stage == .verified ? L("Your new number is saved.") : model.hint) {
+                     error: model.stage == .enterNumber && model.isSameAsCurrent ? L("That's already your number.") : nil) {
             switch model.stage {
             case .enterNumber: Task { await model.sendCode() }
             case .enterCode: Task { await model.verify() }

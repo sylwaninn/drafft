@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Shared chrome for account sheets: title, close on the right, content blocks,
-/// and a pinned primary action that stays visible (disabled with a reason when it can't run).
+/// and a pinned primary action that stays visible (disabled until it can run; only a real error under it).
 struct AccountSheet<Content: View>: View {
     let title: String
     let actionTitle: String
@@ -9,8 +9,8 @@ struct AccountSheet<Content: View>: View {
     var destructive = false
     var enabled: Bool
     var loading = false
-    var hint: String?
-    var hintIsError = false
+    /// A real problem (turned down, failed), in red under the action. Never why it's disabled.
+    var error: String?
     /// Something typed that closing would lose: Close asks before discarding it.
     var hasChanges = false
     let action: () -> Void
@@ -60,10 +60,10 @@ struct AccountSheet<Content: View>: View {
                                 color: destructive ? DS.Palette.negative : DS.Palette.lime,
                                 step: CGSize(width: -6, height: 0))
                     .padding(.leading, 12)
-                    if let hint {
-                        Text(hint)
-                            .font(.footnote)
-                            .foregroundStyle(hintIsError ? DS.Palette.negative : DS.Palette.body)
+                    if let error {
+                        Text(error)
+                            .font(.footnote.weight(.medium))
+                            .foregroundStyle(DS.Palette.negative)
                             .multilineTextAlignment(.center)
                             .contentTransition(.opacity)
                     }
@@ -152,26 +152,19 @@ struct ChangeEmailSheet: View {
         }
     }
 
-    private var hint: String? {
-        switch flow.stage {
-        case .form:
-            if let error = flow.error { return error }
-            if newEmail.isEmpty { return L("Enter your new email to continue.") }
-            if !Validation.isEmail(newEmail) { return L("That doesn't look like an email address.") }
-            if newEmail.lowercased() == app.email.lowercased() { return L("That's already your email.") }
-            if password.isEmpty { return L("Confirm with your password.") }
-            return L("We'll email a 6-digit code to \(newEmail).")
-        case .code: return flow.code.count < 6 ? L("Enter the 6-digit code.") : nil
-        case .done: return L("Use it next time you log in.")
-        case .locked: return nil
-        }
+    /// What's wrong with what was typed (nothing about what's missing: the form says it).
+    private var error: String? {
+        guard flow.stage == .form else { return nil }
+        if let error = flow.error { return error }
+        if !newEmail.isEmpty && !Validation.isEmail(newEmail) { return L("That doesn't look like an email address.") }
+        if !newEmail.isEmpty && newEmail.lowercased() == app.email.lowercased() { return L("That's already your email.") }
+        return nil
     }
 
     var body: some View {
         AccountSheet(title: L("Email"), actionTitle: actionTitle,
                      actionIcon: flow.stage == .form ? "paperplane.fill" : flow.stage == .done ? "checkmark" : nil,
-                     enabled: enabled, loading: flow.busy, hint: hint,
-                     hintIsError: flow.stage == .form && (flow.error != nil || (!newEmail.isEmpty && !Validation.isEmail(newEmail))),
+                     enabled: enabled, loading: flow.busy, error: error,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(newEmail.isEmpty && password.isEmpty))) {
             switch flow.stage {
             case .form: send()
@@ -277,27 +270,19 @@ struct ChangePasswordSheet: View {
         }
     }
 
-    private var hint: String? {
-        switch flow.stage {
-        case .form:
-            if let error = flow.error { return error }
-            if new.isEmpty { return L("Choose your new password.") }
-            if passed < PasswordRule.all.count { return L("Your new password needs all three checks.") }
-            if confirm.isEmpty { return L("Type the new password once more.") }
-            if new != confirm { return L("The two new passwords don't match.") }
-            return L("We'll email a 6-digit code to \(app.email) to confirm it's you.")
-        case .code: return flow.code.count < 6 ? L("Enter the 6-digit code.") : nil
-        case .done: return L("You'll stay logged in on this iPhone.")
-        case .locked: return nil
-        }
+    /// What's wrong with what was typed (nothing about what's missing: the form says it).
+    private var error: String? {
+        guard flow.stage == .form else { return nil }
+        if let error = flow.error { return error }
+        if !confirm.isEmpty && new != confirm { return L("The two new passwords don't match.") }
+        return nil
     }
 
     var body: some View {
         AccountSheet(title: L("Password"), actionTitle: actionTitle,
                      actionIcon: flow.stage == .form ? "paperplane.fill" : flow.stage == .code ? "lock.fill"
                          : flow.stage == .done ? "checkmark" : nil,
-                     enabled: enabled, loading: flow.busy, hint: hint,
-                     hintIsError: flow.stage == .form && (flow.error != nil || (!confirm.isEmpty && new != confirm)),
+                     enabled: enabled, loading: flow.busy, error: error,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(new.isEmpty && confirm.isEmpty))) {
             switch flow.stage {
             case .form: send()
@@ -395,8 +380,7 @@ struct ExportDataSheet: View {
         AccountSheet(title: L("Export my data"),
                      actionTitle: requested == nil ? L("Email me my export") : L("Export requested"),
                      actionIcon: requested == nil ? "envelope.fill" : "checkmark",
-                     enabled: requested == nil && !sending, loading: sending,
-                     hint: requested == nil ? L("It goes to \(app.email).") : L("One export at a time. You can ask again once it arrives.")) {
+                     enabled: requested == nil && !sending, loading: sending) {
             sending = true
             Task {
                 try? await Task.sleep(for: .milliseconds(300))
@@ -461,8 +445,7 @@ struct DeleteAccountSheet: View {
     var body: some View {
         AccountSheet(title: L("Delete account"), actionTitle: L("Delete my account"), actionIcon: "trash.fill",
                      destructive: true, enabled: understood, loading: loading,
-                     hint: failed ? L("We couldn't delete your account. Check your connection and try again.")
-                         : understood ? L("This can't be undone.") : L("Tick the box above to continue.")) {
+                     error: failed ? L("We couldn't delete your account. Check your connection and try again.") : nil) {
             loading = true
             failed = false
             Task {
