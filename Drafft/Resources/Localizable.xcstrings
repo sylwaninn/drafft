@@ -23596,6 +23596,46 @@
         }
       }
     },
+    "No one new for now." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerade niemand Neues."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadie nuevo por ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personne de nouveau pour l'instant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuno di nuovo per ora."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nu even niemand nieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguém novo por agora."
+          }
+        }
+      }
+    },
     "No pitch yet" : {
       "localizations" : {
         "de" : {
@@ -42399,6 +42439,46 @@
         }
       }
     },
+    "Within %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Umkreis von %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En un radio de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans un rayon de %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nel raggio di %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Binnen %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Num raio de %@"
+          }
+        }
+      }
+    },
     "WOD together, no mercy?" : {
       "localizations" : {
         "de" : {
@@ -46276,6 +46356,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Já tens drafft tempo."
+          }
+        }
+      }
+    },
+    "You've seen every profile that matches your filters. Come back later or change them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast alle Profile gesehen, die zu deinen Filtern passen. Schau später wieder vorbei oder ändere sie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has visto todos los perfiles que encajan con tus filtros. Vuelve más tarde o cámbialos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as vu tous les profils qui correspondent à tes filtres. Reviens plus tard ou modifie-les."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai visto tutti i profili che corrispondono ai tuoi filtri. Torna più tardi o modificali."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt alle profielen gezien die bij je filters passen. Kom later terug of pas ze aan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já viste todos os perfis que correspondem aos teus filtros. Volta mais tarde ou muda-os."
+          }
+        }
+      }
+    },
+    "You've seen every profile within %@. Widen it to see more." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast alle Profile im Umkreis von %@ gesehen. Erweitere ihn, um mehr zu sehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has visto todos los perfiles en un radio de %@. Amplíalo para ver más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as vu tous les profils dans un rayon de %@. Élargis-le pour en voir d'autres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai visto tutti i profili nel raggio di %@. Allargalo per vederne altri."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt alle profielen binnen %@ gezien. Vergroot je straal om meer te zien."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já viste todos os perfis num raio de %@. Alarga-o para veres mais."
           }
         }
       }
