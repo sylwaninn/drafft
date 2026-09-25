@@ -1,32 +1,40 @@
 import SwiftUI
 
-/// Discover when the stack runs out, filtered or not: one screen. A night block with lime contours
-/// (the house signature), its lime headline drafting like the app icon: the ghosts tuck in behind it
-/// as it arrives (the one authored moment here). Then the two ways on: your chats, or wider filters.
+/// Discover when the stack runs out, filtered or not: one screen, kept quiet. A white block like the
+/// app's other empty states, a round lime flag (the finish line), a short title and what to do next.
+/// The flag settles in as the screen appears; nothing else moves.
 struct DeckEmptyView: View {
     let onChats: () -> Void
     let onFilters: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var tucked = false
+    @State private var shown = false
 
     var body: some View {
         VStack(spacing: DS.Space.xl) {
             Spacer(minLength: 0)
 
-            // No loose text on the sage canvas: headline and message sit in the block.
-            VStack(spacing: DS.Space.lg) {
-                headline
+            // No loose text on the sage canvas: everything sits in the white block.
+            VStack(spacing: DS.Space.md) {
+                DraftGlyph(symbol: "flag.checkered", size: 56)
+                    .scaleEffect(shown ? 1 : 0.6)
+                    .opacity(shown ? 1 : 0)
+                    .padding(.bottom, DS.Space.xs)
+                Text("Finish line.")
+                    .font(.display(30, relativeTo: .title))
+                    .foregroundStyle(DS.Palette.ink)
+                    .multilineTextAlignment(.center)
+                    .accessibilityAddTraits(.isHeader)
                 Text("You've seen everyone around you for now. Widen your filters or catch up with your matches in Chats.")
                     .font(.body)
-                    .foregroundStyle(.white.opacity(0.72))
+                    .foregroundStyle(DS.Palette.body)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, DS.Space.xl)
             .padding(.vertical, DS.Space.xxl)
             .frame(maxWidth: .infinity)
-            .draftBlock(DS.Palette.night, seed: BackdropSeed.deckEmpty, tint: DS.Palette.lime)
+            .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
 
             Spacer(minLength: 0)
 
@@ -48,31 +56,8 @@ struct DeckEmptyView: View {
         .padding(.vertical, DS.Space.xl)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
-            guard !reduceMotion else { tucked = true; return }
-            tucked = false
-            withAnimation(Motion.progress.delay(0.12)) { tucked = true }
+            guard !reduceMotion else { shown = true; return }
+            withAnimation(Motion.bouncy.delay(0.1)) { shown = true }
         }
-    }
-
-    /// The lead line with two fading copies behind it, like riders in each other's slipstream. On
-    /// arrival the copies start stacked under the lead and slide back into place, one after the other.
-    private var headline: some View {
-        ZStack {
-            ForEach((0..<3).reversed(), id: \.self) { i in
-                Text("Finish line.")
-                    .font(.display(52, relativeTo: .largeTitle))
-                    .lineSpacing(-52 * 0.3)
-                    .tracking(-52 * 0.01)
-                    .multilineTextAlignment(.center)
-                    // Same lime for the lead and its ghosts, only fading, like the app icon.
-                    .foregroundStyle(DS.Palette.lime.opacity([1, 0.3, 0.14][i]))
-                    .offset(x: tucked ? -CGFloat(i) * 9 : 0)
-                    .opacity(i == 0 || tucked ? 1 : 0)
-                    .animation(reduceMotion ? nil : Motion.progress.delay(0.12 + Double(i) * 0.08), value: tucked)
-                    .accessibilityHidden(i > 0)
-            }
-        }
-        .padding(.vertical, DS.Space.xs)
-        .accessibilityAddTraits(.isHeader)
     }
 }
