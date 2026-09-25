@@ -76,6 +76,7 @@
 		A4437EF9B5C6CB7C5522AF73 /* intro_tom.m4a in Resources */ = {isa = PBXBuildFile; fileRef = D65082D908C7C095F90B0503 /* intro_tom.m4a */; };
 		A62680E5D282C96B912C1DA4 /* NotificationText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B74525F0A468F3258D52C2 /* NotificationText.swift */; };
 		A80F96969CFA53EEEAA5088C /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BC2911FFA7DE3135F8B4A4 /* Components.swift */; };
+		A8BA1914B4141EFEA113DE5C /* PackPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CA2E4C7B14850BB4435E22 /* PackPhotos.swift */; };
 		AB0F5897095930A03A4BB610 /* TabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDD95AF690348854AF18981 /* TabHeader.swift */; };
 		AD095C7A68E24E8B4CD28C12 /* SportPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45691EAF086604D51BDF558C /* SportPicker.swift */; };
 		AE44FBF649FF1A2179301868 /* AccountSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D9A77E15F0B5594795A792 /* AccountSheets.swift */; };
@@ -141,6 +142,7 @@
 		1FA14041C4D36B89A9545D16 /* intro_leo.m4a */ = {isa = PBXFileReference; path = intro_leo.m4a; sourceTree = "<group>"; };
 		201218E955E997711E0CBFFA /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		20B74525F0A468F3258D52C2 /* NotificationText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationText.swift; sourceTree = "<group>"; };
+		20CA2E4C7B14850BB4435E22 /* PackPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackPhotos.swift; sourceTree = "<group>"; };
 		20EBF74B57B3B01D28DE507C /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		214BEF0A582723680CE4ADD6 /* PromptPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptPickerSheet.swift; sourceTree = "<group>"; };
 		221DE3BB0D77782A2CD345C9 /* ProfileExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileExtras.swift; sourceTree = "<group>"; };
@@ -403,6 +405,7 @@
 				8DFBEF0E0124793C095719B8 /* DiscoverFilters.swift */,
 				1F95CE510EE4F3350759A7B9 /* MockData.swift */,
 				AB8B47536CCB68DFF6814C26 /* Models.swift */,
+				20CA2E4C7B14850BB4435E22 /* PackPhotos.swift */,
 				221DE3BB0D77782A2CD345C9 /* ProfileExtras.swift */,
 				A3C6F9EA8DABE48F135E0654 /* SportCatalog.swift */,
 			);
@@ -706,6 +709,7 @@
 				074BF52340FE6F1AB7AEBDF0 /* OnboardingStore.swift in Sources */,
 				8AFB996D3C93D1D599D85AEA /* OnboardingView.swift in Sources */,
 				61C36E7B0A28F4E261B1E11B /* OneTimeCodeEntry.swift in Sources */,
+				A8BA1914B4141EFEA113DE5C /* PackPhotos.swift in Sources */,
 				E4C3B7626EB1429C0679EBDC /* PaywallView.swift in Sources */,
 				2ABDAE78E695624AA8A10F12 /* PhoneVerificationView.swift in Sources */,
 				79DCA843E06D8835AD7B0734 /* PhotoCompressor.swift in Sources */,
