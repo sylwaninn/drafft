@@ -9,7 +9,6 @@ struct OnboardingView: View {
     @State private var step = 0
     @State private var forward = true
     @State private var birthday: Date?
-    @State private var editingBirthday = false
     @State private var acceptedTerms = false
     @State private var language: AppLanguage = .deviceDefault
     @State private var legalDoc: LegalDoc?
@@ -500,63 +499,11 @@ struct OnboardingView: View {
         }
     }
 
-    /// Looks and behaves like DrafftField: label, bordered white field, hint below. Tapping it
-    /// opens a wheel right under it. No date until the person picks one.
+    /// Typed in three boxes (no wheel, no made-up starting date), then the age it gives, or why not.
     private var birthdayField: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
             label(L("Birthday"))
-            Button {
-                Haptics.tap()
-                withAnimation(Motion.snappy) { editingBirthday.toggle() }
-            } label: {
-                HStack {
-                    Text(birthday.map { $0.formatted(Date.FormatStyle(date: .long, time: .omitted).locale(.app)) } ?? L("Select your birthday"))
-                        .font(.body)
-                        .foregroundStyle(birthday == nil ? DS.Palette.mute : DS.Palette.ink)
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .font(.footnote.weight(.bold))
-                        .foregroundStyle(DS.Palette.body)
-                        .rotationEffect(.degrees(editingBirthday ? 180 : 0))
-                }
-                .padding(.horizontal, DS.Space.lg)
-                .frame(minHeight: 52)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
-                .overlay {
-                    RoundedRectangle(cornerRadius: DS.Radius.md)
-                        .strokeBorder(editingBirthday ? DS.Palette.ink : DS.Palette.ink.opacity(0.35),
-                                      lineWidth: editingBirthday ? 2 : 1)
-                }
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(birthday.map { L("Birthday, \($0.formatted(Date.FormatStyle(date: .long, time: .omitted).locale(.app)))") } ?? L("Select your birthday"))
-
-            if editingBirthday {
-                VStack(spacing: 0) {
-                    DatePicker("Birthday",
-                               // Shows a starting point without choosing it: nothing is set until the wheel moves.
-                               selection: Binding(get: { birthday ?? Calendar.current.date(byAdding: .year, value: -25, to: .now)! },
-                                                  set: { birthday = $0 }),
-                               in: Self.oldestBirthday...Self.youngestBirthday, displayedComponents: .date)
-                        .datePickerStyle(.wheel)
-                        .labelsHidden()
-                        .frame(maxWidth: .infinity)
-                    Divider()
-                    Button {
-                        Haptics.tap()
-                        withAnimation(Motion.snappy) { editingBirthday = false }
-                    } label: {
-                        Text("Done")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(DS.Palette.accentInk)
-                            .frame(maxWidth: .infinity, minHeight: 48)
-                            .contentShape(.rect)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
+            BirthdateField(date: $birthday, oldest: Self.oldestBirthday)
 
             if let age, birthday != nil {
                 if isAdult { hint(L("Your profile will show \(age).")) }
@@ -636,8 +583,6 @@ struct OnboardingView: View {
         .task { await notifications.refresh() }
     }
 
-    /// Drafft is 18+: the wheel can't go past the date you turned 18.
-    static var youngestBirthday: Date { Calendar.current.date(byAdding: .year, value: -18, to: .now)! }
     static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now)! }
 
     /// Required consent, unchecked by default. The checkbox toggles; the document names in the

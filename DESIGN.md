@@ -619,7 +619,7 @@ One job per colour, everywhere:
 - A field takes touches on its whole box, padding included: the text field fills the box and a tap anywhere on it focuses it.
 - Never focus a field on arrival: the page opens whole, keyboard down, so the person sees everything first. The keyboard comes up when they tap a field.
 - Forms scroll with `FocusScrollView`: a field that gets focus scrolls itself to the upper third, clear of the keyboard and the pinned button. A pinned button never sits on top of the field being typed in. Any field that isn't a `DrafftField` gets `.revealsOnFocus(…)`; the scroll content always ends with a margin, so even the last field never touches the keyboard.
-- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). Pickers such as birthday look like fields and open inline.
+- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
 - One icon per meaning: never reuse the same symbol for two different items in a list or a switcher.
 
 ### Verification & support
@@ -632,7 +632,7 @@ One job per colour, everywhere:
 - Single and multiple choices are white blocks of rows with `CheckDisc` (language, gender, who to meet). Chips stay for sports.
 - An unfinished sign-up is saved as it goes and resumes at the first mandatory step not done (usually the SMS), otherwise where it stopped (`OnboardingStore`).
 - Location is required (at least While Using the App): sign-up can't continue without it (no typing an area), and if it's turned off later a blocking screen asks to turn it back on (`LocationGate`, `LocationRequiredView`).
-- Sign-up is 18+: the birthday wheel stops at 18 years ago, and a required, unchecked-by-default consent links each legal document inline.
+- Sign-up is 18+: under 18, the typed birthday shows why and Continue stays disabled; a required, unchecked-by-default consent links each legal document inline.
 - Demo builds show dashed "Demo only" panels (`DemoPanel`) to pick each check's outcome; they never ship.
 - Every account verifies a phone number at sign-up (mandatory, no Skip). The first photo must show a face (Vision, on device). No video check for now: it was removed until a provider is chosen.
 - The phone number can be replaced (after verifying the new one), never removed.
