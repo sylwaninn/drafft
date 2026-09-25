@@ -663,6 +663,7 @@ One job per colour, everywhere:
 
 ### Notifications
 - Asked during sign-up, on its own optional step at the end of Profile ("Don't miss a match"), with what they'll get before the system prompt. Continue needs them on; Skip passes.
+- System permissions share one pattern (`SystemPermission`, `PermissionButton`): the service keeps its state current by itself, back from Settings included, so screens only read it; the action asks the first time and opens Settings once refused, never a dead disabled button. Notifications use it today (sign-up and You › Notifications); location, camera, microphone and photos join the same way.
 - You › Notifications is a dedicated page: the permission state first (turn on, or open iPhone Settings if denied), then Activity (matches, likes, messages, message previews off by default) and Sessions (evening before at 20:00, an hour before).
 - Session reminders are real local notifications; tapping any notification opens its chat. Push is wired (capability + device token) and waits for the server.
 

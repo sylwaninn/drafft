@@ -168,11 +168,8 @@ struct OnboardingView: View {
                     else { Label(locator.state == .denied ? "Open Settings" : "Allow location", systemImage: "location.fill") }
                 }
                 .disabled(locator.state == .locating)
-            } else if current == .notifications && !notifications.isAllowed {
-                Button {
-                    Task { await notifications.requestPermission() }
-                } label: { Label("Turn on notifications", systemImage: "bell.fill") }
-                .disabled(notifications.isDenied)
+            } else if current == .notifications && notifications.permission != .allowed {
+                PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell.fill")
             } else {
                 Button(action: advance) {
                     if finishing { ProgressView().tint(DS.Palette.onLime) }
@@ -572,7 +569,6 @@ struct OnboardingView: View {
                 hint(L("You choose what you hear about in You › Notifications."))
             }
         }
-        .task { await notifications.refresh() }
     }
 
     static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now)! }

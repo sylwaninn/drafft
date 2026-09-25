@@ -3,8 +3,6 @@ import SwiftUI
 /// Settings › Notifications: the system permission first, then what to be notified about.
 struct NotificationsSettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
-    @Environment(\.scenePhase) private var scenePhase
     @State private var notifications = NotificationService.shared
 
     var body: some View {
@@ -50,8 +48,6 @@ struct NotificationsSettingsView: View {
                     Button("Close", systemImage: "xmark") { dismiss() }
                 }
             }
-            .task { await notifications.refresh() }
-            .onChange(of: scenePhase) { _, p in if p == .active { Task { await notifications.refresh() } } }
         }
     }
 
@@ -76,15 +72,9 @@ struct NotificationsSettingsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            if !notifications.isAllowed {
-                Button(notifications.isDenied ? "Open Settings" : "Turn on notifications") {
-                    if notifications.isDenied {
-                        if let url = URL(string: UIApplication.openNotificationSettingsURLString) { openURL(url) }
-                    } else {
-                        Task { await notifications.requestPermission() }
-                    }
-                }
-                .buttonStyle(.drafftPrimary)
+            if notifications.permission != .allowed {
+                PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell.fill")
+                    .buttonStyle(.drafftPrimary)
             }
         }
         .padding(DS.Space.xl)

@@ -12,7 +12,7 @@ struct ChapterStepper: View {
 
     /// A folded chapter: long enough to count, short enough to leave the room to the open one.
     private let tick: CGFloat = 18
-    static let barHeight: CGFloat = 5
+    nonisolated static let barHeight: CGFloat = 5
 
     var body: some View {
         HStack(alignment: .top, spacing: DS.Space.xs) {
