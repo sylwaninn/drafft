@@ -378,41 +378,10 @@ struct DiscoverView: View {
         .frame(maxWidth: .infinity)
     }
 
-    /// True when people remain in the queue but the filters hide them all.
-    private var filteredOut: Bool { !app.queue.isEmpty && app.deck.isEmpty }
-
+    /// The stack ran out (filtered or not): the same screen either way.
     private var emptyState: some View {
-        VStack(alignment: .leading, spacing: DS.Space.lg) {
-            if filteredOut {
-                @Bindable var app = app
-                TooTightCard(filters: $app.filters) { showFilters = true }
-                    .transition(.scale(scale: 0.95).combined(with: .opacity))
-            } else {
-                Spacer()
-                // No loose text on the sage canvas: the message sits in a white block.
-                VStack(alignment: .leading, spacing: DS.Space.lg) {
-                    Text("That's everyone nearby.")
-                        .font(.display(44))
-                        .displayLeading(44)
-                        .foregroundStyle(DS.Palette.ink)
-                        .accessibilityAddTraits(.isHeader)
-                    Text("New people join every morning. Meanwhile, your matches are waiting in Chats.")
-                        .font(.body)
-                        .foregroundStyle(DS.Palette.body)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding(DS.Space.xl)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
-                Spacer()
-                Button("Go to chats") { app.tab = .chats }
-                    .buttonStyle(.drafftPrimary)
-                Button("See profiles again") { withAnimation(Motion.bouncy) { app.resetDeck() } }
-                    .buttonStyle(.drafftSecondary)
-            }
-        }
-        .padding(.horizontal, DS.Space.md)
-        .frame(maxHeight: .infinity)
+        DeckEmptyView(onChats: { app.tab = .chats }, onFilters: { showFilters = true })
+            .padding(.horizontal, DS.Space.md)
     }
 }
 

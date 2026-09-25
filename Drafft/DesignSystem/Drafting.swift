@@ -73,7 +73,7 @@ struct ContourLines: View {
         BackdropSeed.sport: Style(summit: UnitPoint(x: 0.95, y: 0.4), hills: 4, levels: 14),
         BackdropSeed.session: Style(summit: UnitPoint(x: 0.9, y: 0.1), hills: 3, levels: 12),
         BackdropSeed.me: Style(summit: UnitPoint(x: 0.85, y: 0.05), hills: 3, levels: 13),
-        BackdropSeed.tooTight: Style(summit: UnitPoint(x: 0.5, y: 0.5), hills: 3, levels: 13),
+        BackdropSeed.deckEmpty: Style(summit: UnitPoint(x: 0.5, y: 0.5), hills: 3, levels: 13),
         BackdropSeed.nextSession: Style(summit: UnitPoint(x: 0.9, y: 0.1), hills: 3, levels: 13)
     ]
 
@@ -86,7 +86,7 @@ struct ContourLines: View {
         BackdropSeed.icebreaker: "relief-5",
         BackdropSeed.session: "relief-5",
         BackdropSeed.me: "relief-5",
-        BackdropSeed.tooTight: "relief-5",
+        BackdropSeed.deckEmpty: "relief-5",
         BackdropSeed.nextSession: "relief-5"
     ]
 
@@ -229,7 +229,7 @@ enum BackdropSeed {
     static let icebreaker = "icebreaker"
     static let goal = "goal"
     static let session = "session"
-    static let tooTight = "too-tight"
+    static let deckEmpty = "too-tight" // Discover's empty stack; value kept, the terrain is frozen
     static let me = "me"
     static let nextSession = "next-session"
     static let sport = "sport"
