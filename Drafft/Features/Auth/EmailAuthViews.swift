@@ -204,7 +204,6 @@ struct ConfirmEmailView: View {
     let email: String
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
     @State private var flow = EmailCodeModel()
 
     var body: some View {
@@ -227,13 +226,7 @@ struct ConfirmEmailView: View {
                                  hint: L("Check your inbox, and your spam folder. The code works for 1 hour."),
                                  resendIn: flow.resendIn,
                                  onEdit: { dismiss() },
-                                 onResend: { Task { await flow.resend() } },
-                                 accessory: {
-                                     Button {
-                                         if let url = URL(string: "message://") { openURL(url) }
-                                     } label: { Label("Open Mail", systemImage: "envelope.open.fill") }
-                                         .buttonStyle(.drafftSecondary)
-                                 })
+                                 onResend: { Task { await flow.resend() } })
             }
         }
         .onAppear {
