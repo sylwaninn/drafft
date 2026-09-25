@@ -43,8 +43,7 @@ struct ChangePhoneSheet: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
 
-            PhoneVerificationView(model: model)
-                .padding(.top, DS.Space.sm)
+            SheetBlock { PhoneVerificationView(model: model) }
         }
         .onAppear { model.currentNumber = app.phoneNumber?.filter { $0.isNumber || $0 == "+" } }
         .onChange(of: model.stage) { _, s in

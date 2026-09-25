@@ -62,7 +62,7 @@ struct BirthdateField: View {
                 + Text(String(placeholder(part).dropFirst(typed.count))).foregroundStyle(DS.Palette.mute))
             .font(.displayBold(26, relativeTo: .title2).monospacedDigit())
             .frame(maxWidth: .infinity, minHeight: 60)
-            .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
+            .background(DS.Palette.field, in: .rect(cornerRadius: DS.Radius.md))
             .overlay {
                 RoundedRectangle(cornerRadius: DS.Radius.md)
                     .strokeBorder(invalid ? DS.Palette.negative : current ? DS.Palette.ink : DS.Palette.ink.opacity(0.2),

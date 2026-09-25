@@ -700,7 +700,7 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, DS.Space.lg)
                 .frame(minHeight: 52)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
+                .background(DS.Palette.field, in: .rect(cornerRadius: DS.Radius.md))
                 .overlay {
                     RoundedRectangle(cornerRadius: DS.Radius.md)
                         .strokeBorder(locator.state == .denied ? DS.Palette.negative : DS.Palette.ink.opacity(0.35),
