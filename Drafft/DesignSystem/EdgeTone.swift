@@ -19,122 +19,76 @@ extension EnvironmentValues {
     @Entry var edgeTone: EdgeTone?
 }
 
-/// Reads the luminance of the scroll content under the top bar, a few times a second while it
-/// moves: the content layers are drawn into a tiny bitmap (32 × 8), over the page tone, and
-/// averaged. Hysteresis keeps it from flickering on a mid-grey.
-struct EdgeToneSampler: UIViewRepresentable {
-    let onChange: (EdgeTone) -> Void
+/// Reads what is on screen under the header, the way the status bar does: a tiny snapshot
+/// (32 × 8) of the window's band just below the status bar, averaged. The scroll view pokes it
+/// (`poke()`, from `onScrollGeometryChange`), at most a dozen times a second; hysteresis keeps a
+/// mid-grey from flickering.
+@MainActor
+final class EdgeToneProbe {
+    fileprivate weak var anchor: UIView?
+    var onChange: ((EdgeTone) -> Void)?
+    private var tone = EdgeTone.light
+    private var scheduled = false
 
-    func makeUIView(context: Context) -> SamplerView {
-        let view = SamplerView()
-        view.onChange = onChange
+    /// The header's text band: from the status bar down this far.
+    private let bandHeight: CGFloat = 56
+
+    func poke() {
+        guard !scheduled else { return }
+        scheduled = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
+            self?.scheduled = false
+            self?.sample()
+        }
+    }
+
+    private func sample() {
+        guard let window = anchor?.window, let luminance = luminance(in: window) else { return }
+        let next: EdgeTone = luminance < 0.42 ? .dark : luminance > 0.55 ? .light : tone
+        guard next != tone else { return }
+        tone = next
+        onChange?(next)
+    }
+
+    private func luminance(in window: UIWindow) -> Double? {
+        let band = CGRect(x: 0, y: window.safeAreaInsets.top, width: window.bounds.width * 0.7, height: bandHeight)
+        let size = CGSize(width: 32, height: 8)
+        let sx = size.width / band.width, sy = size.height / band.height
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = true
+        // 8-bit sRGB: on these screens the renderer defaults to 16-bit float (wide colour).
+        format.preferredRange = .standard
+        let image = UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            // The whole window, scaled so the band lands on the bitmap: what's really on screen.
+            window.drawHierarchy(in: CGRect(x: -band.minX * sx, y: -band.minY * sy,
+                                            width: window.bounds.width * sx, height: window.bounds.height * sy),
+                                 afterScreenUpdates: false)
+        }
+        guard let cg = image.cgImage, let data = cg.dataProvider?.data, let bytes = CFDataGetBytePtr(data) else { return nil }
+        let step = cg.bitsPerPixel / 8
+        guard step >= 3 else { return nil }
+        var total = 0.0
+        for y in 0..<cg.height {
+            for x in 0..<cg.width {
+                let p = y * cg.bytesPerRow + x * step
+                total += (Double(bytes[p]) + Double(bytes[p + 1]) + Double(bytes[p + 2])) / 3
+            }
+        }
+        return total / Double(cg.width * cg.height) / 255
+    }
+}
+
+/// Anchors the probe in the page's window.
+struct EdgeToneAnchor: UIViewRepresentable {
+    let probe: EdgeToneProbe
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.isUserInteractionEnabled = false
+        probe.anchor = view
         return view
     }
 
-    func updateUIView(_ view: SamplerView, context: Context) { view.onChange = onChange }
-
-    final class SamplerView: UIView {
-        var onChange: ((EdgeTone) -> Void)?
-        private weak var scrollView: UIScrollView?
-        private var observation: NSKeyValueObservation?
-        private var scheduled = false
-        private var tone = EdgeTone.light
-
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-            isUserInteractionEnabled = false
-            isHidden = true
-        }
-
-        required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            guard window != nil else { observation = nil; return }
-            // Attached next to the scroll view: the nearest one around it is the page.
-            DispatchQueue.main.async { [weak self] in self?.attach() }
-        }
-
-        private func attach() {
-            guard scrollView == nil, let found = nearestScrollView() else { return }
-            scrollView = found
-            observation = found.observe(\.contentOffset, options: [.new]) { [weak self] _, _ in
-                MainActor.assumeIsolated { self?.schedule() }
-            }
-            schedule()
-        }
-
-        private func nearestScrollView() -> UIScrollView? {
-            var node: UIView? = superview
-            for _ in 0..<8 {
-                guard let current = node else { return nil }
-                if let hit = Self.firstScrollView(in: current) { return hit }
-                node = current.superview
-            }
-            return nil
-        }
-
-        private static func firstScrollView(in view: UIView) -> UIScrollView? {
-            var queue = [view]
-            while !queue.isEmpty {
-                let next = queue.removeFirst()
-                if let scroll = next as? UIScrollView, !(scroll is UITextView) { return scroll }
-                queue.append(contentsOf: next.subviews)
-            }
-            return nil
-        }
-
-        /// At most every 80 ms while scrolling, plus once when it stops.
-        private func schedule() {
-            guard !scheduled else { return }
-            scheduled = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
-                self?.scheduled = false
-                self?.sample()
-            }
-        }
-
-        private func sample() {
-            guard let scroll = scrollView, let window = scroll.window else { return }
-            // The band under the bar: from the status bar down to where the content starts at rest.
-            let bottom = scroll.bounds.minY + scroll.adjustedContentInset.top
-            let top = scroll.convert(CGPoint(x: 0, y: window.safeAreaInsets.top), from: nil).y
-            guard bottom - top > 4 else { return }
-            // The title's side (leading 70 %), where the text sits.
-            let band = CGRect(x: scroll.bounds.minX, y: top, width: scroll.bounds.width * 0.7, height: bottom - top)
-            guard let luminance = Self.luminance(of: scroll.layer, in: band,
-                                                 page: UIColor(DS.Palette.sage).resolvedColor(with: traitCollection))
-            else { return }
-            let next: EdgeTone = luminance < 0.42 ? .dark : luminance > 0.55 ? .light : tone
-            guard next != tone else { return }
-            tone = next
-            onChange?(next)
-        }
-
-        private static func luminance(of layer: CALayer, in rect: CGRect, page: UIColor) -> Double? {
-            let width = 32, height = 8
-            var pixels = [UInt8](repeating: 0, count: width * height * 4)
-            let drawn: Bool = pixels.withUnsafeMutableBytes { buffer in
-                guard let context = CGContext(data: buffer.baseAddress, width: width, height: height,
-                                              bitsPerComponent: 8, bytesPerRow: width * 4,
-                                              space: CGColorSpaceCreateDeviceRGB(),
-                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
-                else { return false }
-                // Flip to UIKit's coordinates, then map the band onto the bitmap.
-                context.translateBy(x: 0, y: CGFloat(height))
-                context.scaleBy(x: CGFloat(width) / rect.width, y: -CGFloat(height) / rect.height)
-                context.translateBy(x: -rect.minX, y: -rect.minY)
-                context.setFillColor(page.cgColor)
-                context.fill(rect)
-                layer.render(in: context)
-                return true
-            }
-            guard drawn else { return nil }
-            var total = 0.0
-            for i in stride(from: 0, to: pixels.count, by: 4) {
-                total += 0.2126 * Double(pixels[i]) + 0.7152 * Double(pixels[i + 1]) + 0.0722 * Double(pixels[i + 2])
-            }
-            return total / Double(width * height) / 255
-        }
-    }
+    func updateUIView(_ view: UIView, context: Context) { probe.anchor = view }
 }
