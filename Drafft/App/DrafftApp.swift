@@ -41,22 +41,29 @@ struct DrafftApp: App {
             blurred: MockData.deck.map(\.portrait).flatMap { [(name: $0, fraction: 0.1), (name: $0, fraction: 4.0 / 24)] })
     }
 
-    /// Large titles in the display face, inline titles in its extra-bold cut, both in ink.
+    /// Large titles in the display face, inline titles in its extra-bold cut, both in ink, with the
+    /// edge halo (see `edgeHalo`): a page-tone glow that keeps them readable over dark content.
     /// Only text attributes are set, so the system bar keeps its glass and scroll-edge blur.
     private static func styleNavigationBars() {
         let ink = UIColor(DS.Palette.ink)
+        let halo = NSShadow()
+        halo.shadowColor = UIColor(DS.Palette.sage)
+        halo.shadowBlurRadius = 6
+        halo.shadowOffset = .zero
         let bar = UINavigationBar.appearance()
         if let large = UIFont(name: DisplayFont.black, size: 34) {
             bar.largeTitleTextAttributes = [
                 .font: UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: large),
                 .foregroundColor: ink,
-                .kern: -0.5
+                .kern: -0.5,
+                .shadow: halo
             ]
         }
         if let inline = UIFont(name: DisplayFont.extraBold, size: 17) {
             bar.titleTextAttributes = [
                 .font: UIFontMetrics(forTextStyle: .headline).scaledFont(for: inline),
-                .foregroundColor: ink
+                .foregroundColor: ink,
+                .shadow: halo
             ]
         }
         // Tab badges in ink, not the system red: the tab bar stays monochrome.

@@ -262,8 +262,8 @@ struct ChatView: View {
                 Button { showProfile = true } label: {
                     HStack(spacing: DS.Space.sm) {
                         Avatar(name: convo.profile.portrait, size: 32)
-                        // No capsule behind: the bar's own blur is the only backdrop, so the text
-                        // uses the page's inks (ink, then body at 4.5:1 on sage), not system greys.
+                        // No capsule behind: the bar's blur and the edge halo are the only backdrop, so
+                        // the text uses the page's inks (ink, then body at 4.5:1 on sage), not greys.
                         VStack(alignment: .leading, spacing: 0) {
                             // Long names (Alexandre-Maxime) shrink a little, then end with "…":
                             // the header never pushes the bar's buttons away.
@@ -280,7 +280,7 @@ struct ChatView: View {
                         }
                     }
                     .frame(maxWidth: 210, alignment: .leading)
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 4).edgeHalo()
                     .contentShape(.rect)
                 }
                 // Plain: a bar button paints its label in the accent tint, over the styles above.
