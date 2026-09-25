@@ -51,7 +51,7 @@ No real users, testimonials, photos, or metrics. All people, photos, and convers
 3. Chat is instant: no spinner between tap and feedback.
 4. Low-pressure first contact: icebreakers do the awkward part.
 5. Native iPhone conventions first; brand lives in color, type, and motion.
-6. Never leave people guessing what to do next: the validate action is always on screen, disabled with a reason when it can't run yet.
+6. Never leave people guessing what to do next: the validate action is always on screen, disabled until it can run (the screen itself says what's missing, not a line under the button).
 
 ## Accessibility & Inclusion
 
