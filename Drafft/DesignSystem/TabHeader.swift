@@ -103,13 +103,16 @@ extension TabHeader where Trailing == EmptyView {
     }
 }
 
-/// Title text used as a TabHeader leading view.
+/// Title text used as a TabHeader leading view. Like the status bar, it turns white over a night
+/// block or a photo scrolling under it, and back to ink over the page (`EdgeTone`).
 struct TabTitle: View {
     let text: String
+    @Environment(\.edgeTone) private var tone
+
     var body: some View {
         Text(text)
             .font(.display(34, relativeTo: .largeTitle))
-            .foregroundStyle(DS.Palette.ink)
+            .foregroundStyle(tone.map { AnyShapeStyle($0.ink) } ?? AnyShapeStyle(DS.Palette.ink))
             .lineLimit(1)
             .minimumScaleFactor(0.75) // one-word tab names; never "…" in a longer language
             .accessibilityAddTraits(.isHeader)

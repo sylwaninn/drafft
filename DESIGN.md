@@ -573,6 +573,7 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
   - `.blurredNavigationEdge()`: screens with the system navigation bar (chat, sheets): the blur covers the status bar and the whole bar, avatar and title included.
 - Attach them to the scroll view itself. The system scroll-edge effects are hidden where these apply.
 - The blur only appears when content actually sits under the bar (read from the scroll position): at the top of a page, or on a page shorter than the screen, nothing is blurred. It fades in over 0.2 s.
+- **Header titles flip like the status bar.** `topBar` samples the luminance of the content scrolling under it (`EdgeToneSampler`: a 32 × 8 render of the band, a few times a second, with hysteresis) and passes `edgeTone` to the bar: `TabTitle` turns white over a night block or a dark photo and back to ink over light content, with a 0.2 s fade. At rest it keeps the page's ink.
 - No halo, glow or shadow on titles or header text: tried (a page-tone glow for legibility over dark content) and rejected by the user as a coloured rim. Header search fields and the search button are Liquid Glass (`.glassEffect(.regular)`), never a faint tint that vanishes over content.
 - Never put `.interactive()` glass on a button's label: interactive glass handles the touch itself and can swallow the button's action. Buttons use plain `.glassEffect(.regular)`.
 - Controls on a bar stay opaque or Liquid Glass (lime validate, glass field and buttons), so their contrast never depends on what scrolls under.

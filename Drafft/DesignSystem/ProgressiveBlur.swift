@@ -105,6 +105,8 @@ private struct EdgeBlurModifier<Bar: View>: ViewModifier {
     let kind: Kind
     let bar: Bar
     @State private var covered = false
+    /// Top bars only: light or dark content under the header, sampled like the status bar does.
+    @State private var tone = EdgeTone.light
 
     func body(content: Content) -> some View {
         switch kind {
@@ -130,8 +132,12 @@ private struct EdgeBlurModifier<Bar: View>: ViewModifier {
                 .onScrollGeometryChange(for: Bool.self) { g in
                     g.contentOffset.y + g.contentInsets.top > 1
                 } action: { _, v in withAnimation(.easeOut(duration: 0.2)) { covered = v } }
+                .background {
+                    EdgeToneSampler { t in withAnimation(.easeOut(duration: 0.2)) { tone = t } }
+                        .frame(width: 0, height: 0)
+                }
                 .safeAreaInset(edge: .top, spacing: 0) {
-                    bar.background {
+                    bar.environment(\.edgeTone, covered ? tone : nil).background {
                         ProgressiveBlur(edge: .top)
                             .padding(.bottom, -DS.Space.xl)
                             .ignoresSafeArea(edges: .top)
