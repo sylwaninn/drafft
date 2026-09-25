@@ -146,6 +146,7 @@ enum ProfileSync {
             name: row.name,
             age: age,
             pronouns: row.pronouns,
+            birthday: row.birthdate.flatMap(Self.day.date(from:)),
             gender: row.gender.flatMap(DiscoverFilters.Audience.init(answer:)),
             neighborhood: row.neighborhood,
             distanceKm: 0,

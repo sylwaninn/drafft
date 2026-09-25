@@ -325,8 +325,11 @@ struct EditProfileView: View {
             }
             divider
             // The birthday is set once, at sign-up (the server keeps it from changing).
-            LockedField(title: L("Age"), value: L("\(draft.age) years old"),
-                        hint: L("From the birthday you gave at sign-up. It can't be changed."))
+            LockedField(title: L("Birthday"),
+                        value: draft.birthday.map {
+                            $0.formatted(Date.FormatStyle(date: .long, time: .omitted, timeZone: .gmt).locale(.app))
+                        } ?? L("\(draft.age) years old"),
+                        hint: L("Set at sign-up. It can't be changed."))
         }
     }
 
@@ -649,8 +652,9 @@ extension View {
 
 struct PromptSlot: Identifiable { let id: Int }
 
-/// A value you can see but not change, laid out like the fields around it: the same label, but an
-/// outlined box instead of a filled one, with a lock, and why it's locked underneath.
+/// A value you can see but not change, laid out like the fields around it (same label, same box),
+/// but plainly disabled: a greyed box sunk into the block instead of the white of a live field,
+/// greyed text, a lock, and why it's locked underneath.
 private struct LockedField: View {
     let title: String
     let value: String
@@ -660,17 +664,17 @@ private struct LockedField: View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
             VStack(alignment: .leading, spacing: DS.Space.sm) {
                 Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
-                HStack {
-                    Text(value).font(.body).foregroundStyle(DS.Palette.ink)
+                HStack(spacing: DS.Space.sm) {
+                    Text(value).font(.body).foregroundStyle(DS.Palette.mute)
                     Spacer()
                     Image(systemName: "lock.fill").font(.footnote.weight(.semibold)).foregroundStyle(DS.Palette.mute)
                 }
                 .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
                 .padding(.vertical, 2)
                 .padding(.horizontal, DS.Space.md)
-                .overlay {
-                    RoundedRectangle(cornerRadius: DS.Radius.md).strokeBorder(DS.Palette.hairline, lineWidth: 1)
-                }
+                .background(DS.Palette.ink.opacity(0.06), in: .rect(cornerRadius: DS.Radius.md))
+                .accessibilityAddTraits(.isStaticText)
+                .accessibilityValue(L("Can't be changed"))
             }
             Text(hint)
                 .font(.footnote)

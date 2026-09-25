@@ -355,7 +355,7 @@ struct OnboardingView: View {
             id: "me",
             name: name.trimmingCharacters(in: .whitespaces),
             age: age ?? 18,
-            pronouns: nil, gender: identity.flatMap(DiscoverFilters.Audience.init(answer:)),
+            pronouns: nil, birthday: birthday, gender: identity.flatMap(DiscoverFilters.Audience.init(answer:)),
             neighborhood: area?.name ?? "",
             distanceKm: 0,
             portrait: photos.first ?? "",
