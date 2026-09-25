@@ -38479,6 +38479,46 @@
         }
       }
     },
+    "This number is already used by another drafft account." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Nummer wird schon von einem anderen drafft-Konto verwendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este número ya lo usa otra cuenta de drafft."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce numéro est déjà utilisé par un autre compte drafft."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo numero è già usato da un altro account drafft."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit nummer wordt al gebruikt door een ander drafft-account."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este número já é usado por outra conta drafft."
+          }
+        }
+      }
+    },
     "This one is true" : {
       "localizations" : {
         "de" : {

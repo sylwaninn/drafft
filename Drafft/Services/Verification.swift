@@ -1,10 +1,11 @@
 import Foundation
 import Observation
+import Supabase
 
 // MARK: - Contracts (to be backed by the real API later)
 
 enum VerificationError: Error, Equatable {
-    case invalidNumber, sendFailed, wrongCode, expired, tooManyAttempts, network
+    case invalidNumber, sendFailed, wrongCode, expired, tooManyAttempts, network, numberTaken
 }
 
 protocol PhoneVerifying: Sendable {
@@ -47,6 +48,7 @@ struct BackendPhoneVerifier: PhoneVerifying {
 extension VerificationError {
     init(_ error: Error) {
         if error is URLError { self = .network; return }
+        if (error as? AuthError)?.errorCode == .phoneExists { self = .numberTaken; return }
         switch AuthProblem(error) {
         case .wrongCode: self = .wrongCode
         case .offline: self = .network
@@ -192,6 +194,10 @@ final class PhoneVerificationModel {
             stage = .enterCode
             startResendTimer()
             Haptics.success()
+        } catch VerificationError.numberTaken {
+            self.error = L("This number is already used by another drafft account.")
+            needsHelp = true
+            Haptics.warning()
         } catch {
             self.error = L("We couldn't text this number. Check it, or get help if it keeps failing.")
             needsHelp = true
