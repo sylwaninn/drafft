@@ -87,6 +87,7 @@ struct ExtrasSheet: View {
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled(purchasing || receipt != nil)
         // Over this sheet: closing it comes back here (boosts: to the launch page).
+        // design-lint: allow sheet-surface - PurchaseConfirmation sets its raised surface itself
         .sheet(item: $receipt, onDismiss: afterReceipt) { r in
             receiptView(r)
         }

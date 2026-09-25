@@ -66,6 +66,7 @@ struct WelcomeView: View {
                 Photo(name: name)
                     .opacity(i == photoIndex ? 1 : 0)
             }
+            // design-lint: allow gradient - photo scrim under the wordmark
             LinearGradient(
                 // Eased top scrim, deep enough under the wordmark for any photo.
                 stops: [.init(color: DS.Palette.night.opacity(0.78), location: 0),

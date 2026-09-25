@@ -17,6 +17,7 @@ struct SwipeCard: View {
             Photo(name: profile.portrait)
 
             // Scrims so the identity (top) and sports (bottom) stay readable on any photo.
+            // design-lint: allow gradient - photo scrims for the identity and sports
             LinearGradient(stops: [
                 .init(color: DS.Palette.night.opacity(0.72), location: 0),
                 .init(color: .clear, location: 0.3),

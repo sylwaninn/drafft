@@ -153,11 +153,13 @@ struct SuperLikeComposer: View {
                 // Same photo, heavily blurred, revealed progressively toward the bottom.
                 Photo(name: profile.portrait)
                     .blur(radius: 28, opaque: true)
+                    // design-lint: allow gradient - blur mask over the photo
                     .mask(LinearGradient(stops: [.init(color: .clear, location: 0.66),
                                                  .init(color: .black.opacity(0.6), location: 0.76),
                                                  .init(color: .black, location: 0.84)],
                                          startPoint: .top, endPoint: .bottom))
                 // Soft tint for legibility: light at the top for the name, deeper under the text.
+                // design-lint: allow gradient - photo scrim for legibility
                 LinearGradient(stops: [.init(color: DS.Palette.night.opacity(0.45), location: 0),
                                        .init(color: DS.Palette.night.opacity(0), location: 0.28),
                                        .init(color: DS.Palette.night.opacity(0), location: 0.64),

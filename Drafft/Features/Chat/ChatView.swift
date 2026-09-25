@@ -270,6 +270,7 @@ struct ChatView: View {
                             Text(convo.profile.name).font(.headline).foregroundStyle(.primary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
+                                // design-lint: allow truncation - a person's name (content, not copy) after scaling down
                                 .truncationMode(.tail)
                             Text(convo.isTyping ? "Typing…" : "Active now")
                                 .font(convo.isTyping ? .caption.weight(.semibold) : .caption)

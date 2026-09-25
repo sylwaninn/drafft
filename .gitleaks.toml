@@ -1,0 +1,8 @@
+# Secret scanning (CI). Only public keys live in this repository: they're allowed by value, nothing else.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Public client keys: Supabase publishable keys and RevenueCat public SDK keys"
+regexTarget = "match"
+regexes = ['''sb_publishable_[A-Za-z0-9_-]+''', '''appl_[A-Za-z0-9]+''']
