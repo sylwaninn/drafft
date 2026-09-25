@@ -3,7 +3,11 @@ import SwiftUI
 struct DiscoverView: View {
     @Environment(AppModel.self) private var app
     @State private var drag: CGSize = .zero
-    @State private var flying: FlyOut?
+    /// Cards on their way out. Each one leaves the deck (and the data) the moment it's swiped and
+    /// finishes its flight in its own layer, so the next card is in play at once: fast swipes never
+    /// wait for the previous card to land.
+    @State private var flying: [FlyOut] = []
+    @State private var deckSize: CGSize = .zero
     @State private var detail: Profile?
     @State private var likeBurst = 0
     @State private var passBurst = 0
@@ -16,7 +20,15 @@ struct DiscoverView: View {
     /// Waiting for confirmation before spending a super like.
     @State private var superLikeTarget: Profile?
 
-    struct FlyOut: Equatable { let id: String; let liked: Bool; var superLike = false; var dy: CGFloat = 0 }
+    struct FlyOut: Identifiable, Equatable {
+        let id = UUID()
+        let profile: Profile
+        let liked: Bool
+        var superLike = false
+        /// Where the drag left it: the flight starts from there.
+        var start: CGSize = .zero
+        static func == (l: FlyOut, r: FlyOut) -> Bool { l.id == r.id }
+    }
 
     private let threshold: CGFloat = 110
     /// Likes moved to their own tab (test). The header chip is kept for that variant; flip to bring it back.
@@ -32,17 +44,24 @@ struct DiscoverView: View {
             VStack(spacing: 0) {
                 topBar
                     .zIndex(0)
-                if app.deck.isEmpty {
-                    emptyState
-                        .padding(.bottom, DS.Space.xl)
-                } else {
-                    deck
-                        .zIndex(1)
-                    // Same space above and below: centred between the cards and the tab bar.
-                    actions
-                        .padding(.vertical, DS.Space.lg)
-                        .zIndex(2)
+                ZStack(alignment: .top) {
+                    if app.deck.isEmpty {
+                        // Right away, even while the last card is still flying over it.
+                        emptyState
+                            .padding(.bottom, DS.Space.xl)
+                    } else {
+                        VStack(spacing: 0) {
+                            deck
+                                .zIndex(1)
+                            // Same space above and below: centred between the cards and the tab bar.
+                            actions
+                                .padding(.vertical, DS.Space.lg)
+                                .zIndex(2)
+                        }
+                    }
+                    flyingLayer
                 }
+                .zIndex(1)
             }
             .padding(.horizontal, DS.Space.md)
             .background(DS.Palette.canvasSoft)
@@ -107,9 +126,8 @@ struct DiscoverView: View {
     /// glides forward instead of snapping once the top card is gone.
     private func depth(_ i: Int) -> CGFloat {
         if i == 0 { return 0 }
-        let promoted: CGFloat = flying != nil ? 1 : 0
-        let follow: CGFloat = (i == 1 && flying == nil) ? abs(progress) * 0.5 : 0
-        return max(0, CGFloat(i) - promoted - follow)
+        let follow: CGFloat = i == 1 ? abs(progress) * 0.5 : 0
+        return max(0, CGFloat(i) - follow)
     }
 
     private var deck: some View {
@@ -119,9 +137,7 @@ struct DiscoverView: View {
                 ForEach(Array(app.deck.prefix(4).enumerated().reversed()), id: \.element.id) { i, p in
                     let isTop = i == 0
                     let d = depth(i)
-                    // A card flying out keeps its LIKE/PASS stamp fully shown.
-                    let stamp: CGFloat = flying?.id == p.id ? (flying?.liked == true ? 1 : -1) : progress
-                    SwipeCard(profile: p, me: app.me, progress: isTop ? stamp : 0, isTop: isTop) {
+                    SwipeCard(profile: p, me: app.me, progress: isTop ? progress : 0, isTop: isTop) {
                         detail = p
                     }
                     .frame(width: geo.size.width, height: geo.size.height - 28)
@@ -132,8 +148,8 @@ struct DiscoverView: View {
                     .offset(y: d * 14)
                     .opacity(d > 2.5 ? 0 : 1)
                     .frame(maxHeight: .infinity, alignment: .top)
-                    .offset(isTop ? topOffset(p, width: geo.size.width) : .zero)
-                    .rotationEffect(.degrees(isTop ? topRotation(p) : 0), anchor: .bottom)
+                    .offset(isTop ? drag : .zero)
+                    .rotationEffect(.degrees(isTop ? Double(drag.width / 18) : 0), anchor: .bottom)
                     .gesture(isTop ? swipe(p) : nil)
                     .allowsHitTesting(isTop)
                     .zIndex(isTop ? 10 : Double(4 - i))
@@ -148,24 +164,29 @@ struct DiscoverView: View {
                     .transition(.asymmetric(insertion: .scale(scale: 0.92).combined(with: .opacity), removal: .identity))
                 }
             }
+            // The stack moves up as each swiped card leaves the data.
+            .animation(.smooth(duration: 0.26, extraBounce: 0.04), value: app.deck.first?.id)
+            .onAppear { deckSize = geo.size }
+            .onChange(of: geo.size) { _, size in deckSize = size }
         }
+    }
+
+    /// Swiped cards finishing their flight above everything, the empty state included. Never
+    /// touchable: the card under them is already in play.
+    private var flyingLayer: some View {
+        ZStack {
+            ForEach(flying) { f in
+                FlyingCard(flyOut: f, me: app.me, width: deckSize.width)
+                    .frame(width: deckSize.width, height: max(0, deckSize.height - 28))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .top)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     private func veilAmount(_ d: CGFloat) -> Double {
         Double(min(d, 1)) * 0.55 + Double(max(0, d - 1)) * 0.2
-    }
-
-    private func topOffset(_ p: Profile, width: CGFloat) -> CGSize {
-        if let flying, flying.id == p.id {
-            if flying.superLike { return CGSize(width: 0, height: -width * 2.2) }
-            return CGSize(width: (flying.liked ? 1 : -1) * width * 1.6, height: flying.dy + 40)
-        }
-        return drag
-    }
-
-    private func topRotation(_ p: Profile) -> Double {
-        if let flying, flying.id == p.id { return flying.superLike ? 0 : (flying.liked ? 18 : -18) }
-        return Double(drag.width / 18)
     }
 
     private func swipe(_ p: Profile) -> some Gesture {
@@ -186,7 +207,6 @@ struct DiscoverView: View {
     }
 
     private func commit(_ p: Profile, liked: Bool, superLike: Bool = false, opener: MessageContent? = nil) {
-        guard flying == nil else { return }
         // Out of likes or super likes: the card springs back and the extras sheet explains why.
         if superLike && app.superLikes == 0 || liked && !superLike && !app.canLike {
             Haptics.warning()
@@ -196,25 +216,17 @@ struct DiscoverView: View {
         }
         liked ? Haptics.thump() : Haptics.tap()
         if superLike { superBurst += 1 } else if liked { likeBurst += 1 } else { passBurst += 1 }
-        // One smooth spring moves everything at once: the top card flies out while the
-        // stack behind glides forward into place.
-        withAnimation(.smooth(duration: 0.26, extraBounce: 0.04)) {
-            // The drag is released in the same animation, so the buttons ease back to rest
-            // while the card flies (it keeps its own vertical offset in `dy`).
-            flying = FlyOut(id: p.id, liked: liked, superLike: superLike, dy: drag.height)
-            drag = .zero
-        }
+        // The card leaves the deck and the data now; its flight carries on in `flyingLayer`, so the
+        // next card is in play at once and a quick run of swipes never waits.
+        let flyOut = FlyOut(profile: p, liked: liked, superLike: superLike, start: drag)
+        var t = Transaction(animation: nil)
+        t.disablesAnimations = true
+        withTransaction(t) { drag = .zero }
+        flying.append(flyOut)
+        if liked { app.like(p, opener: opener, superLike: superLike) } else { app.pass(p) }
         Task {
-            try? await Task.sleep(for: .milliseconds(260))
-            // By now the next card already sits exactly where the top card goes, so swapping
-            // the data without animation is invisible.
-            var t = Transaction(animation: nil)
-            t.disablesAnimations = true
-            withTransaction(t) {
-                liked ? app.like(p, opener: opener, superLike: superLike) : app.pass(p)
-                drag = .zero
-                flying = nil
-            }
+            try? await Task.sleep(for: .milliseconds(320))
+            flying.removeAll { $0.id == flyOut.id }
         }
     }
 
@@ -383,6 +395,30 @@ struct DiscoverView: View {
         DeckEmptyView(onChats: { app.tab = .chats }, onFilters: { showFilters = true })
             .padding(.horizontal, DS.Space.md)
     }
+}
+
+/// A swiped card finishing its flight: starts where the drag left it and leaves the screen with
+/// its LIKE/PASS stamp fully shown, in one smooth move.
+private struct FlyingCard: View {
+    let flyOut: DiscoverView.FlyOut
+    let me: Profile
+    let width: CGFloat
+    @State private var gone = false
+
+    var body: some View {
+        SwipeCard(profile: flyOut.profile, me: me, progress: flyOut.liked ? 1 : -1, isTop: true) {}
+            .shadow(color: .black.opacity(0.22), radius: 20, y: 12)
+            .offset(gone ? end : flyOut.start)
+            .rotationEffect(.degrees(gone ? endRotation : Double(flyOut.start.width / 18)), anchor: .bottom)
+            .onAppear { withAnimation(.smooth(duration: 0.26, extraBounce: 0.04)) { gone = true } }
+    }
+
+    private var end: CGSize {
+        if flyOut.superLike { return CGSize(width: 0, height: -width * 2.2) }
+        return CGSize(width: (flyOut.liked ? 1 : -1) * width * 1.6, height: flyOut.start.height + 40)
+    }
+
+    private var endRotation: Double { flyOut.superLike ? 0 : (flyOut.liked ? 18 : -18) }
 }
 
 /// Small hearts that pop out of the like button.

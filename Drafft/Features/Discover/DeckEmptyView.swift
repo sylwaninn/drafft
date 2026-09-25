@@ -1,9 +1,9 @@
 import SwiftUI
 
 /// Discover when the stack runs out, filtered or not: one screen, the message in the middle. It shows
-/// once the last profile card you swiped has flown off (DiscoverView swaps the deck for this after
-/// the card's flight), so the icon drafts straight into the spot it left, its two ghosts tucking in
-/// behind it like the app icon; then the words rise. The actions sit at the bottom: widen the
+/// the moment the last profile card is swiped, while that card is still flying off above it, so the
+/// icon drafts straight into the spot it leaves, its two ghosts tucking in behind it like the app
+/// icon; then the words rise. The actions sit at the bottom: widen the
 /// radius (the move that brings new people), or go to the chats.
 struct DeckEmptyView: View {
     let onChats: () -> Void
@@ -120,6 +120,6 @@ struct DeckEmptyView: View {
         }
         iconIn = false; textIn = false
         iconIn = true // each disc carries its own delayed spring
-        withAnimation(.easeOut(duration: 0.5).delay(0.45)) { textIn = true }
+        withAnimation(.easeOut(duration: 0.4).delay(0.3)) { textIn = true }
     }
 }
