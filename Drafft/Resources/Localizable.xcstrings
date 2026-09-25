@@ -13114,6 +13114,46 @@
         }
       }
     },
+    "Finish line." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziellinie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Línea de meta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ligne d'arrivée."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traguardo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linha de chegada."
+          }
+        }
+      }
+    },
     "Finish your interactive prompt." : {
       "localizations" : {
         "de" : {
@@ -46116,6 +46156,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Já tens drafft tempo."
+          }
+        }
+      }
+    },
+    "You've seen everyone around you for now. Widen your filters or catch up with your matches in Chats." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast vorerst alle in deiner Nähe gesehen. Erweitere deine Filter oder schreib deinen Matches in Chats."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por ahora has visto a todo el mundo cerca de ti. Amplía tus filtros o habla con tus matches en Chats."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as vu tout le monde autour de toi pour l'instant. Élargis tes filtres ou retrouve tes matchs dans Discussions."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per ora hai visto tutti quelli vicino a te. Allarga i filtri o scrivi ai tuoi match in Chat."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt voorlopig iedereen in de buurt gezien. Verruim je filters of praat met je matches in Chats."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por agora já viste toda a gente perto de ti. Alarga os filtros ou fala com os teus matches nas Conversas."
           }
         }
       }
