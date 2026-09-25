@@ -722,7 +722,7 @@ One job per colour, everywhere:
 - Photos shown small pass their size (`Photo(name:side:)`, `Avatar` does it): a downsampled copy is drawn, never a 1400 px JPEG for a 56 pt avatar. Blurred photos (locked likes) pass `blur:` and get the blur baked into a small copy, never a live `.blur` on each card. `ImageStore` prepares, in the background at launch, the welcome photos, the top of the deck, every avatar size and the locked-like copies, so a tab's first visit draws without decoding and the tab bar answers at once.
 
 ### Layout
-- **No loose text on the sage canvas.** Section titles and their content live inside a block (white card, or night/lime feature block).
+- **No loose text on the sage canvas.** Section titles and their content live inside a block (white card, or night/lime feature block). Exceptions the user asked for: Discover's empty stack, and on You the build line ("drafft 1.0 (12)", the environment in the name off production) as a small mute caption under the Log out / Delete account block.
 - Long settings are split into categories that push sub-pages, not one endless page.
 - Icons sit in round badges, never squares. Glyphs keep padding and never touch their badge's edge.
 - Nothing hangs off a block: counts, dots and badges sit inside their button, chip or card (the filter count is inside the filter pill, the super-like count inside its disc, the "new" dot inside the likes chip).
