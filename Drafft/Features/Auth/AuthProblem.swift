@@ -6,22 +6,28 @@ enum AuthProblem: Equatable {
     case wrongCredentials, emailNotConfirmed, emailTaken, weakPassword, tooManyEmails, samePassword, wrongCode, offline, other
 
     init(_ error: Error) {
-        if let e = error as? AuthError {
-            switch e.errorCode {
-            case .invalidCredentials: self = .wrongCredentials
-            case .emailNotConfirmed: self = .emailNotConfirmed
-            case .userAlreadyExists, .emailExists: self = .emailTaken
-            case .weakPassword: self = .weakPassword
-            case .overEmailSendRateLimit: self = .tooManyEmails
-            case .samePassword: self = .samePassword
-            // Supabase answers the same for a mistyped code and an old one.
-            case .otpExpired, .reauthenticationNotValid: self = .wrongCode
-            default: self = .other
-            }
+        if error is Backend.EmailAlreadyRegistered {
+            self = .emailTaken
+        } else if let e = error as? AuthError {
+            self = Self.from(e.errorCode)
         } else if error is URLError {
             self = .offline
         } else {
             self = .other
+        }
+    }
+
+    private static func from(_ code: ErrorCode) -> AuthProblem {
+        switch code {
+        case .invalidCredentials: .wrongCredentials
+        case .emailNotConfirmed: .emailNotConfirmed
+        case .userAlreadyExists, .emailExists: .emailTaken
+        case .weakPassword: .weakPassword
+        case .overEmailSendRateLimit: .tooManyEmails
+        case .samePassword: .samePassword
+        // Supabase answers the same for a mistyped code and an old one.
+        case .otpExpired, .reauthenticationNotValid: .wrongCode
+        default: .other
         }
     }
 

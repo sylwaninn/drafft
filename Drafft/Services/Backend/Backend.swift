@@ -44,6 +44,7 @@ actor Backend {
     // MARK: Account
 
     enum SignUpResult { case signedIn, confirmEmail }
+    struct EmailAlreadyRegistered: Error {}
 
     /// A new account. With email confirmation on, there's no session until the 6-digit code in the
     /// email is typed in (`confirmSignUp`). `language` starts the
@@ -53,6 +54,9 @@ actor Backend {
             email: email, password: password, data: ["language": .string(language.rawValue)],
             redirectTo: Self.authCallback
         )
+        // An address that already has an account: Supabase doesn't say so (that would tell who's signed up),
+        // it answers like a new sign-up with no identity and sends nothing. The app says it plainly.
+        if response.session == nil, response.user.identities?.isEmpty == true { throw EmailAlreadyRegistered() }
         return response.session == nil ? .confirmEmail : .signedIn
     }
 

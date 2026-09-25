@@ -187,6 +187,9 @@ final class EmailCodeModel {
     private(set) var needsHelp = false
     private(set) var resendIn = 0
     private(set) var attemptsLeft = 5
+    /// When the last code went out: Supabase answers the same for a mistyped code and an old one, so the
+    /// time says which it was.
+    private var sentAt = Date.distantPast
     private(set) var sentTo = ""
 
     /// Host wording for a problem ("Your password is incorrect." rather than the log-in message).
@@ -254,7 +257,10 @@ final class EmailCodeModel {
             code = ""
             Haptics.warning()
             let problem = AuthProblem(error)
-            if problem == .wrongCode {
+            if problem == .wrongCode && Date.now.timeIntervalSince(sentAt) > BackendConfig.emailCodeLifetime {
+                // Past its lifetime: not a typo, and not a try used up.
+                self.error = L("This code has expired. Send a new one.")
+            } else if problem == .wrongCode {
                 attemptsLeft -= 1
                 if attemptsLeft <= 0 {
                     stage = .locked
@@ -262,8 +268,8 @@ final class EmailCodeModel {
                     self.error = L("Too many wrong codes. For your security, this change is paused.")
                     needsHelp = true
                 } else {
-                    self.error = attemptsLeft == 1 ? L("Wrong or expired code. 1 try left.")
-                        : L("Wrong or expired code. \(attemptsLeft) tries left.")
+                    self.error = attemptsLeft == 1 ? L("Wrong code. 1 try left.")
+                        : L("Wrong code. \(attemptsLeft) tries left.")
                 }
             } else if formProblems.contains(problem) {
                 edit(error: message(for: problem))
@@ -302,8 +308,10 @@ final class EmailCodeModel {
 
     private func message(for problem: AuthProblem) -> String { messages[problem] ?? problem.message }
 
+    /// A code just went out: its lifetime and the Resend countdown start now.
     private func startResendTimer() {
         timer?.cancel()
+        sentAt = .now
         resendIn = 30
         timer = Task { [weak self] in
             while let self, self.resendIn > 0, !Task.isCancelled {

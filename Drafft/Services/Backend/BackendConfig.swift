@@ -12,6 +12,10 @@ enum BackendConfig {
     /// Whether Supabase Auth texts codes (the environment's Send SMS hook is set up). Off: the phone step
     /// runs the demo. Per environment, from `SMS_ENABLED` in Config/*.xcconfig.
     static let smsEnabled = info("SmsEnabled") == "YES"
+    /// How long an email code works (Auth's email OTP expiry, 1 hour everywhere).
+    static let emailCodeLifetime: TimeInterval = 3600
+    /// How long an SMS code works: Auth's SMS OTP expiry, per environment (`SMS_CODE_LIFETIME`, seconds).
+    static let smsCodeLifetime = TimeInterval(info("SmsCodeLifetime")) ?? 600
     static var functionsURL: URL { url.appendingPathComponent("functions/v1") }
 
     private static func info(_ key: String) -> String {
