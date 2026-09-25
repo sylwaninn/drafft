@@ -8722,19 +8722,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Código enviado al %@"
+            "value" : "Código enviado a %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Code envoyé au %@"
+            "value" : "Code envoyé à %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Codice inviato al %@"
+            "value" : "Codice inviato a %@"
           }
         },
         "nl" : {
