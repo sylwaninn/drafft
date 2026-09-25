@@ -8,8 +8,6 @@ struct AuthScaffold<Content: View>: View {
     var actionEnabled: Bool
     var loading: Bool
     let action: () -> Void
-    /// One line under the action saying why it can't run yet (shown only while it's disabled).
-    var reason: String? = nil
     /// Small print under the action (demo hints).
     var footnote: String? = nil
     /// Terrain for the page background (defaults to one derived from the title).
@@ -43,16 +41,6 @@ struct AuthScaffold<Content: View>: View {
                 }
                 .buttonStyle(.drafftPrimary)
                 .disabled(!actionEnabled || loading)
-                // Why it's disabled. The line keeps its height when empty, so the button never jumps.
-                let why = actionEnabled || loading ? nil : reason
-                Text(why ?? " ")
-                    .font(.footnote)
-                    .foregroundStyle(DS.Palette.body)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .contentTransition(.opacity)
-                    .animation(Motion.snappy, value: why)
-                    .accessibilityHidden(why == nil)
                 if let footnote {
                     Text(footnote)
                         .font(.caption)
@@ -114,14 +102,6 @@ struct SignUpView: View {
     private var passedRules: Int { PasswordRule.all.filter { $0.test(password) }.count }
     private var canSubmit: Bool { Validation.isEmail(email) && passedRules == PasswordRule.all.count }
 
-    private var reason: String? {
-        if email.isEmpty { return L("Enter your email.") }
-        if !Validation.isEmail(email) { return L("Check your email address.") }
-        if password.isEmpty { return L("Create a password.") }
-        if passedRules < PasswordRule.all.count { return L("Your password doesn't meet every rule yet.") }
-        return nil
-    }
-
     var body: some View {
         AuthScaffold(
             title: L("Create your account"),
@@ -130,7 +110,6 @@ struct SignUpView: View {
             actionEnabled: canSubmit,
             loading: loading,
             action: submit,
-            reason: reason,
             backdropSeed: "page-Create your account"
         ) {
             VStack(alignment: .leading, spacing: DS.Space.xl) {
@@ -156,8 +135,7 @@ struct SignUpView: View {
                                 // Met: the one selection mark (CheckDisc), not an SF tick.
                                 CheckDisc(isOn: ok, size: 22)
                             }
-                                .font(.footnote.weight(ok ? .semibold : .regular))
-                                .instantWeight()
+                                .font(.footnote.weight(.medium))
                                 .animation(Motion.snappy, value: ok)
                                 .accessibilityElement(children: .combine)
                                 .accessibilityValue(ok ? "Met" : "Not met yet")
@@ -214,7 +192,6 @@ struct ConfirmEmailView: View {
             actionEnabled: flow.stage == .code && flow.code.count == 6,
             loading: flow.busy,
             action: verify,
-            reason: flow.stage == .code && flow.code.count < 6 ? L("Enter the 6-digit code.") : nil,
             backdropSeed: "page-Create your account"
         ) {
             if flow.stage == .locked {
@@ -292,7 +269,6 @@ struct LogInView: View {
             actionEnabled: !email.isEmpty && !password.isEmpty,
             loading: loading,
             action: submit,
-            reason: email.isEmpty ? L("Enter your email.") : password.isEmpty ? L("Enter your password.") : nil,
             backdropSeed: BackdropSeed.login
         ) {
             VStack(alignment: .leading, spacing: DS.Space.xl) {

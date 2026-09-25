@@ -30,15 +30,13 @@ struct DiscoverFilters: Equatable {
     var maxDistanceKm = 10.0
     var ages = 25...40
     var audience: Audience = .everyone
-    var intents: Set<Intent> = []
     var sports: Set<Sport> = []
     var sharedSportsOnly = false
 
-    /// Resets distance, age, sports and schedule, keeping who you want to meet and what you're looking for.
+    /// Resets distance, age, sports and schedule, keeping who you want to meet.
     func loosened() -> DiscoverFilters {
         var f = DiscoverFilters()
         f.audience = audience
-        f.intents = intents
         return f
     }
 
@@ -46,15 +44,12 @@ struct DiscoverFilters: Equatable {
     var activeCount: Int {
         let d = DiscoverFilters()
         return [maxDistanceKm != d.maxDistanceKm, ages != d.ages, audience != d.audience,
-                !intents.isEmpty, !sports.isEmpty, sharedSportsOnly].filter { $0 }.count
+                !sports.isEmpty, sharedSportsOnly].filter { $0 }.count
     }
 
     func matches(_ p: Profile, me: Profile) -> Bool {
         guard anyDistance || p.distanceKm <= maxDistanceKm, ages.contains(p.age) else { return false }
         if audience != .everyone && Self.audience(of: p) != audience { return false }
-        if !intents.isEmpty {
-            guard let i = p.vitals?.intent, intents.contains(i) else { return false }
-        }
         if !sports.isEmpty && !p.sports.contains(where: { sports.contains($0.sport) }) { return false }
         if sharedSportsOnly && !p.sports.contains(where: { s in me.sports.contains { $0.sport == s.sport } }) {
             return false

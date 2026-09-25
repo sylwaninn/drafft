@@ -11,7 +11,6 @@ struct OnboardingProgress: Codable, Equatable {
     var identity: String?
     var interestedIn: [String] = []
     var area: String?
-    var intent: String?
     var sports: [SavedSport] = []
     var photos: [String] = []
     var voicePath: String?

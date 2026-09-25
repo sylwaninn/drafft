@@ -6,7 +6,7 @@ import Observation
 /// the push plumbing (device token) ready for the server. Tapping a notification opens its chat.
 @MainActor
 @Observable
-final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
+final class NotificationService: NSObject, UNUserNotificationCenterDelegate, SystemPermission {
     static let shared = NotificationService()
 
     private(set) var status: UNAuthorizationStatus = .notDetermined
@@ -36,12 +36,22 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     var isAllowed: Bool { status == .authorized || status == .provisional || status == .ephemeral }
     var isDenied: Bool { status == .denied }
 
+    // SystemPermission
+    var permission: PermissionStatus { isAllowed ? .allowed : isDenied ? .denied : .notAsked }
+    var settingsURL: URL? { URL(string: UIApplication.openNotificationSettingsURLString) }
+
     private let center = UNUserNotificationCenter.current()
     private var lastSessions: [(id: UUID, title: String, date: Date, chatID: String)] = []
 
     override init() {
         super.init()
         center.delegate = self
+        // Always current: every return to the app (from Settings too) re-reads the permission, so no
+        // screen has to refresh it.
+        NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil,
+                                               queue: .main) { [weak self] _ in
+            Task { @MainActor in await self?.refresh() }
+        }
         if let data = UserDefaults.standard.data(forKey: Self.settingsKey),
            let saved = try? JSONDecoder().decode(NotificationSettings.self, from: data) {
             applying = true

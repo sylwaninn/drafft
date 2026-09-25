@@ -9,13 +9,11 @@ struct OnboardingView: View {
     @State private var step = 0
     @State private var forward = true
     @State private var birthday: Date?
-    @State private var editingBirthday = false
     @State private var acceptedTerms = false
     @State private var language: AppLanguage = .deviceDefault
     @State private var legalDoc: LegalDoc?
     @State private var identity: String?
     @State private var interestedIn: Set<String> = []
-    @State private var intent: Intent?
     @State private var locator = AreaLocator()
     @State private var notifications = NotificationService.shared
     @State private var phone = PhoneVerificationModel()
@@ -36,7 +34,7 @@ struct OnboardingView: View {
     @State private var icebreaker: Icebreaker = Icebreaker.Kind.twoTruths.blank
     /// Written prompts (up to 3): a question from the library and their answer.
     @State private var prompts: [ProfilePrompt] = []
-    /// Lifestyle answers (intent lives in its own step).
+    /// Lifestyle answers.
     @State private var lifestyle = Vitals.blank
     @State private var bio = ""
     @State private var pickingPrompt: Int?
@@ -49,7 +47,7 @@ struct OnboardingView: View {
     /// account, say who you are, how you move, then what people see.
     enum Step: Int, CaseIterable {
         case language, rules, phone
-        case name, birthday, gender, showMe, intent, lifestyle, area
+        case name, birthday, gender, showMe, lifestyle, area
         case sports, rhythm
         case photos, bio, voice, prompts, icebreaker, notifications
 
@@ -67,7 +65,7 @@ struct OnboardingView: View {
         var chapter: Chapter {
             switch self {
             case .language, .rules, .phone: .account
-            case .name, .birthday, .gender, .showMe, .intent, .lifestyle, .area: .you
+            case .name, .birthday, .gender, .showMe, .lifestyle, .area: .you
             case .sports, .rhythm: .sports
             case .photos, .bio, .voice, .prompts, .icebreaker, .notifications: .profile
             }
@@ -87,6 +85,9 @@ struct OnboardingView: View {
                     insertion: .move(edge: forward ? .trailing : .leading).combined(with: .opacity),
                     removal: .move(edge: forward ? .leading : .trailing).combined(with: .opacity)))
         }
+        // One header for the whole flow, outside the sliding steps: it never moves with them, and the
+        // stepper stays the same view, so its bars fill and its chapters change in place.
+        .topBar { header }
         // A different terrain per step, cross-fading as the steps change.
         .background { PageContourBackdrop(seed: "signup-\(current)") }
         .onAppear(perform: restore)
@@ -108,7 +109,6 @@ struct OnboardingView: View {
         case .gender: genderStep
         case .showMe: showMeStep
         case .area: areaStep
-        case .intent: intentStep
         case .lifestyle: lifestyleStep
         case .bio: bioStep
         case .sports: sportsStep
@@ -124,54 +124,20 @@ struct OnboardingView: View {
     // MARK: Chrome
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: DS.Space.xs) {
-            HStack {
-                // Always a way back: previous step, or out of sign-up from the first one.
-                Button {
-                    if step > 0 { go(to: step - 1) } else { confirmLeave = true }
-                } label: {
-                    Image(systemName: "chevron.left").font(.body.weight(.semibold))
-                        .frame(minWidth: 80, minHeight: 48, alignment: .leading)
-                        .contentShape(.rect)
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(DS.Palette.ink)
-                .accessibilityLabel(step > 0 ? "Back" : "Leave sign-up")
-                .drafftConfirm(isPresented: $confirmLeave, icon: "arrow.uturn.backward",
-                               title: L("Leave sign-up?"),
-                               message: L("Your answers won't be kept. You'll start over next time."),
-                               cancelTitle: L("Keep going"),
-                               actions: [ConfirmAction(title: L("Leave"), kind: .destructive) {
-                                   // Leaving on purpose starts over: nothing is kept.
-                                   OnboardingStore.clear()
-                                   app.socialIdentity = nil
-                                   app.signOut()
-                               }])
-                Spacer()
-                Button { advance() } label: {
-                    Text("Skip")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(DS.Palette.body)
-                        // Generous invisible hit area around the word.
-                        .frame(minWidth: 80, minHeight: 48, alignment: .trailing)
-                        .contentShape(.rect)
-                }
-                .buttonStyle(.plain)
-                    .opacity(skippable ? 1 : 0)
-                    .disabled(!skippable)
-                    .accessibilityHidden(!skippable)
-            }
-            ChapterStepper(chapters: Step.Chapter.allCases.map { c in
-                (c.title, steps.filter { $0.chapter == c }.count)
-            }, current: step)
-        }
-        .padding(.horizontal, DS.Space.lg)
-        .padding(.bottom, DS.Space.sm)
+        OnboardingHeader(chapters: Step.Chapter.allCases.map { c in (c.title, steps.filter { $0.chapter == c }.count) },
+                         step: step, skippable: skippable, confirmLeave: $confirmLeave,
+                         back: { go(to: step - 1) }, skip: advance,
+                         leave: {
+                             // Leaving on purpose starts over: nothing is kept.
+                             OnboardingStore.clear()
+                             app.socialIdentity = nil
+                             app.signOut()
+                         })
     }
 
     /// The phone check is mandatory: never skippable.
     private var skippable: Bool { Self.optional.contains(current) }
-    private static let optional: Set<Step> = [.intent, .lifestyle, .bio, .voice, .prompts, .icebreaker, .notifications]
+    private static let optional: Set<Step> = [.lifestyle, .bio, .voice, .prompts, .icebreaker, .notifications]
 
     private var footer: some View {
         VStack(spacing: DS.Space.sm) {
@@ -202,11 +168,8 @@ struct OnboardingView: View {
                     else { Label(locator.state == .denied ? "Open Settings" : "Allow location", systemImage: "location.fill") }
                 }
                 .disabled(locator.state == .locating)
-            } else if current == .notifications && !notifications.isAllowed {
-                Button {
-                    Task { await notifications.requestPermission() }
-                } label: { Label("Turn on notifications", systemImage: "bell.fill") }
-                .disabled(notifications.isDenied)
+            } else if current == .notifications && notifications.permission != .allowed {
+                PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell.fill")
             } else {
                 Button(action: advance) {
                     if finishing { ProgressView().tint(DS.Palette.onLime) }
@@ -219,16 +182,16 @@ struct OnboardingView: View {
 
     /// One line under the button: why it can't run yet. The line keeps its height when empty,
     /// so the button never jumps.
+    @ViewBuilder // Only a real error under Continue: the step itself says what's missing.
     private var footerReason: some View {
-        let r = blockedReason
-        return Text(branded: r?.text ?? " ", font: .footnote.weight(r?.error == true ? .medium : .regular))
-            .foregroundStyle(r?.error == true ? DS.Palette.negative : DS.Palette.body)
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, DS.Space.xl)
-            .contentTransition(.opacity)
-            .animation(Motion.snappy, value: r?.text)
-            .accessibilityHidden(r == nil)
+        if let r = blockedReason, r.error {
+            Text(branded: r.text, font: .footnote.weight(.medium))
+                .foregroundStyle(DS.Palette.negative)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, DS.Space.xl)
+                .transition(.opacity)
+        }
     }
 
     private var blockedReason: (text: String, error: Bool)? {
@@ -251,7 +214,6 @@ struct OnboardingView: View {
             return isAdult ? nil : (L("drafft is for people 18 and over."), true)
         case .gender: return identity == nil ? (L("Pick the one that fits you best."), false) : nil
         case .showMe: return interestedIn.isEmpty ? (L("Pick at least one."), false) : nil
-        case .intent: return intent == nil ? (L("Pick one, or skip it for now."), false) : nil
         case .lifestyle: return lifestyle.hasLifestyle ? nil : (L("Answer one, or skip it for now."), false)
         case .bio:
             if bio.count > 200 { return (L("Keep it under 200 characters."), true) }
@@ -303,7 +265,6 @@ struct OnboardingView: View {
         case .gender: identity != nil
         case .showMe: !interestedIn.isEmpty
         case .area: area != nil
-        case .intent: intent != nil
         case .sports, .rhythm: !sports.isEmpty
         case .photos: !photos.isEmpty && (mainFace == .face || resuming && mainFace == nil)
         case .voice: voice != nil
@@ -337,7 +298,6 @@ struct OnboardingView: View {
         p.identity = identity
         p.interestedIn = Array(interestedIn)
         p.area = area?.name
-        p.intent = intent.map { "\($0)" }
         p.sports = sports.map { .init(sport: $0.sport.rawValue, perWeek: $0.perWeek) }
         p.photos = photos
         p.voicePath = voice?.url.path
@@ -362,7 +322,6 @@ struct OnboardingView: View {
         identity = p.identity
         interestedIn = Set(p.interestedIn)
         if let a = p.area { area = Area(name: a, city: a) }
-        intent = Intent.allCases.first { "\($0)" == p.intent }
         sports = p.sports.compactMap { s in Sport(rawValue: s.sport).map { SportEntry(sport: $0, perWeek: s.perWeek) } }
         photos = p.photos.filter { FileManager.default.fileExists(atPath: $0) }
         prompts = p.prompts.map { ProfilePrompt(question: $0.question, answer: $0.answer) }
@@ -392,7 +351,6 @@ struct OnboardingView: View {
     /// The new profile holds only what the person answered: nothing from the demo profile.
     private func finish() {
         var vitals = lifestyle
-        vitals.intent = intent
         let p = Profile(
             id: "me",
             name: name.trimmingCharacters(in: .whitespaces),
@@ -417,7 +375,7 @@ struct OnboardingView: View {
         guard let birthday else { return }
         let signUp = ProfileSync.SignUp(
             name: p.name, birthday: birthday, gender: identity, interestedIn: interestedIn,
-            neighborhood: area?.name ?? "", location: locator.blurred, intent: intent, bio: p.bio,
+            neighborhood: area?.name ?? "", location: locator.blurred, bio: p.bio,
             lifestyle: lifestyle, icebreaker: icebreaker.isComplete ? icebreaker : nil, sports: sports,
             prompts: answeredPrompts, photos: photos, voice: voice, language: language)
         finishError = nil
@@ -454,8 +412,8 @@ struct OnboardingView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    /// Every step: its own scroll view with the header and the Continue bar attached as native
-    /// safe-area bars, so content scrolls under both with the system's progressive blur.
+    /// Every step: its own scroll view with the Continue bar attached as a native safe-area bar (the
+    /// header is pinned once, on the whole flow), so content scrolls under both with the progressive blur.
     private func page<C: View>(@ViewBuilder _ content: () -> C) -> some View {
         FocusScrollView {
             VStack(alignment: .leading, spacing: DS.Space.xxl) { content() }
@@ -464,7 +422,6 @@ struct OnboardingView: View {
                 .padding(.bottom, DS.Space.xl)
         }
         .scrollDismissesKeyboard(.interactively)
-        .topBar { header }
         .bottomBar { footer.padding(.top, DS.Space.md) }
     }
 
@@ -532,63 +489,11 @@ struct OnboardingView: View {
         }
     }
 
-    /// Looks and behaves like DrafftField: label, bordered white field, hint below. Tapping it
-    /// opens a wheel right under it. No date until the person picks one.
+    /// Typed in three boxes (no wheel, no made-up starting date), then the age it gives, or why not.
     private var birthdayField: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
             label(L("Birthday"))
-            Button {
-                Haptics.tap()
-                withAnimation(Motion.snappy) { editingBirthday.toggle() }
-            } label: {
-                HStack {
-                    Text(birthday.map { $0.formatted(Date.FormatStyle(date: .long, time: .omitted).locale(.app)) } ?? L("Select your birthday"))
-                        .font(.body)
-                        .foregroundStyle(birthday == nil ? DS.Palette.mute : DS.Palette.ink)
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .font(.footnote.weight(.bold))
-                        .foregroundStyle(DS.Palette.body)
-                        .rotationEffect(.degrees(editingBirthday ? 180 : 0))
-                }
-                .padding(.horizontal, DS.Space.lg)
-                .frame(minHeight: 52)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
-                .overlay {
-                    RoundedRectangle(cornerRadius: DS.Radius.md)
-                        .strokeBorder(editingBirthday ? DS.Palette.ink : DS.Palette.ink.opacity(0.35),
-                                      lineWidth: editingBirthday ? 2 : 1)
-                }
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(birthday.map { L("Birthday, \($0.formatted(Date.FormatStyle(date: .long, time: .omitted).locale(.app)))") } ?? L("Select your birthday"))
-
-            if editingBirthday {
-                VStack(spacing: 0) {
-                    DatePicker("Birthday",
-                               // Shows a starting point without choosing it: nothing is set until the wheel moves.
-                               selection: Binding(get: { birthday ?? Calendar.current.date(byAdding: .year, value: -25, to: .now)! },
-                                                  set: { birthday = $0 }),
-                               in: Self.oldestBirthday...Self.youngestBirthday, displayedComponents: .date)
-                        .datePickerStyle(.wheel)
-                        .labelsHidden()
-                        .frame(maxWidth: .infinity)
-                    Divider()
-                    Button {
-                        Haptics.tap()
-                        withAnimation(Motion.snappy) { editingBirthday = false }
-                    } label: {
-                        Text("Done")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(DS.Palette.accentInk)
-                            .frame(maxWidth: .infinity, minHeight: 48)
-                            .contentShape(.rect)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
+            BirthdateField(date: $birthday, oldest: Self.oldestBirthday)
 
             if let age, birthday != nil {
                 if isAdult { hint(L("Your profile will show \(age).")) }
@@ -614,8 +519,7 @@ struct OnboardingView: View {
                         DispatchQueue.main.async { app.language = l }
                     } label: {
                         HStack {
-                            Text(l.name).font(.body.weight(language == l ? .semibold : .regular)).foregroundStyle(DS.Palette.ink)
-                                .instantWeight()
+                            Text(l.name).font(.body.weight(.medium)).foregroundStyle(DS.Palette.ink)
                             Spacer()
                             CheckDisc(isOn: language == l)
                         }
@@ -665,11 +569,8 @@ struct OnboardingView: View {
                 hint(L("You choose what you hear about in You › Notifications."))
             }
         }
-        .task { await notifications.refresh() }
     }
 
-    /// Drafft is 18+: the wheel can't go past the date you turned 18.
-    static var youngestBirthday: Date { Calendar.current.date(byAdding: .year, value: -18, to: .now)! }
     static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now)! }
 
     /// Required consent, unchecked by default. The checkbox toggles; the document names in the
@@ -758,7 +659,7 @@ struct OnboardingView: View {
                     withAnimation(Motion.select) { toggle(o) }
                 } label: {
                     HStack {
-                        Text(choiceTitle(o)).font(.body.weight(isOn(o) ? .semibold : .regular)).foregroundStyle(DS.Palette.ink)
+                        Text(choiceTitle(o)).font(.body.weight(.medium)).foregroundStyle(DS.Palette.ink)
                         Spacer()
                         CheckDisc(isOn: isOn(o))
                     }
@@ -865,13 +766,6 @@ struct OnboardingView: View {
             if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
         } else {
             locator.locate()
-        }
-    }
-
-    private var intentStep: some View {
-        page {
-            stepTitle(L("What are you training for?"), L("Shown on your profile so nobody's guessing. Skip it to keep it private."))
-            IntentPicker(selection: $intent)
         }
     }
 
@@ -1141,63 +1035,6 @@ struct OnboardingView: View {
     }
 }
 
-/// Sign-up stepper: one bar per chapter, filling step by step, with the chapter names under
-/// it (the current one bold, finished ones ticked, the next ones quieter).
-struct ChapterStepper: View {
-    let chapters: [(title: String, steps: Int)]
-    /// Index of the current step across the whole flow.
-    let current: Int
-
-    var body: some View {
-        HStack(alignment: .top, spacing: DS.Space.sm) {
-            ForEach(Array(chapters.enumerated()), id: \.offset) { i, chapter in
-                let start = chapters.prefix(i).reduce(0) { $0 + $1.steps }
-                let done = current >= start + chapter.steps
-                let active = !done && current >= start
-                let fill = done ? 1 : active ? CGFloat(current - start + 1) / CGFloat(max(1, chapter.steps)) : 0
-                VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
-                    Capsule()
-                        .fill(DS.Palette.ink.opacity(0.12))
-                        .overlay(alignment: .leading) {
-                            GeometryReader { g in
-                                Capsule().fill(DS.Palette.ink).frame(width: g.size.width * fill)
-                            }
-                        }
-                        .frame(height: 4)
-                    HStack(spacing: 3) {
-                        if done {
-                            Image(systemName: "checkmark")
-                                .font(.caption2.weight(.heavy))
-                                .transition(.scale.combined(with: .opacity))
-                        }
-                        Text(chapter.title)
-                            .font(.caption.weight(active ? .bold : .semibold))
-                            .instantWeight()
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                    }
-                    .foregroundStyle(active || done ? DS.Palette.ink : DS.Palette.body)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
-        .animation(Motion.snappy, value: current)
-        .accessibilityElement()
-        .accessibilityLabel(accessibilityText)
-    }
-
-    private var accessibilityText: String {
-        var start = 0
-        for (i, c) in chapters.enumerated() {
-            if current < start + c.steps {
-                return L("\(c.title), step \(current - start + 1) of \(c.steps). Part \(i + 1) of \(chapters.count).")
-            }
-            start += c.steps
-        }
-        return L("Sign-up complete")
-    }
-}
-
 /// Compact − n× a week + control.
 struct FrequencyStepper: View {
     @Binding var value: Int
@@ -1278,51 +1115,6 @@ struct FlowLayout: Layout {
             v.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(s))
             x += s.width + spacing
             rowH = max(rowH, s.height)
-        }
-    }
-}
-
-/// Pick what you're looking for, in Drafft's training vocabulary. Tapping the selected option clears it.
-struct IntentPicker: View {
-    @Binding var selection: Intent?
-    var onChange: () -> Void = {}
-
-    var body: some View {
-        VStack(spacing: DS.Space.sm) {
-            ForEach(Intent.allCases) { option in
-                let on = selection == option
-                Button {
-                    Haptics.select()
-                    withAnimation(Motion.select) { selection = on ? nil : option }
-                    onChange()
-                } label: {
-                    HStack(alignment: .firstTextBaseline, spacing: DS.Space.md) {
-                        Image(systemName: option.symbol)
-                            .font(.body.weight(.bold))
-                            .frame(width: 24)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(option.label).font(.body.weight(.semibold))
-                            // White on the accent only in semibold, at full strength.
-                            Text(option.detail)
-                                .font(.footnote.weight(on ? .semibold : .regular))
-                                .instantWeight()
-                                .opacity(on ? 1 : 0.75)
-                        }
-                        Spacer(minLength: 0)
-                        CheckDisc(isOn: on, onLimeFill: on)
-                            .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + 6 }
-                    }
-                    .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
-                    .padding(DS.Space.lg)
-                    .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvas), in: .rect(cornerRadius: DS.Radius.lg))
-                }
-                .buttonStyle(PressScaleStyle(scale: 0.98))
-                .accessibilityAddTraits(on ? .isSelected : [])
-            }
-            Text("Tap again to unselect.")
-                .font(.footnote)
-                .foregroundStyle(DS.Palette.body)
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

@@ -97,8 +97,7 @@ struct PromptPickerSheet: View {
             // unselected too). Never truncated.
             ZStack(alignment: .topLeading) {
                 Text(ProfilePrompt.text(for: q)).font(.body.weight(.bold)).hidden()
-                Text(ProfilePrompt.text(for: q)).font(.body.weight(isSelected ? .bold : .medium))
-                    .instantWeight()
+                Text(ProfilePrompt.text(for: q)).font(.body.weight(.medium))
             }
             .foregroundStyle(DS.Palette.ink)
             .multilineTextAlignment(.leading)

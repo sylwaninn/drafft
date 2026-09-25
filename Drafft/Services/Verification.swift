@@ -165,19 +165,6 @@ final class PhoneVerificationModel {
         }
     }
 
-    /// Why the primary action is disabled, or what happens next.
-    var hint: String? {
-        switch stage {
-        case .enterNumber:
-            if number.isEmpty { return L("Enter your mobile number.") }
-            if isSameAsCurrent { return L("That's already your number.") }
-            if !numberValid { return L("That number looks incomplete.") }
-            return L("We'll text a 6-digit code to \(displayNumber).")
-        case .enterCode: return code.count < 6 ? L("Enter the 6-digit code.") : nil
-        case .verified, .locked: return nil
-        }
-    }
-
     func sendCode() async {
         guard numberValid else { error = L("Check the number, it looks incomplete."); return }
         busy = true

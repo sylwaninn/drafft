@@ -78,8 +78,15 @@ enum DS {
         static let canvasSoft = Surface.page
         /// The fixed tones, for the rare place that needs a `Color` whatever the surface.
         static let white = Color(light: 0xFFFFFF, dark: 0x1A1C18)
-        static let sage = Color(light: 0xE8EBE6, dark: 0x0E0F0C)
-        static let hairline = Color(light: 0xD6DAD3, dark: 0x2C2F29)
+        /// The page tone follows the accent, so the page never keeps the colour of a former one:
+        /// violet gets a cool grey with a touch of violet (#EDECF2). Same lightness as the old sage, so
+        /// white blocks still stand out; body 7.8:1, mute 5.1:1 and accent ink 4.6:1 on it.
+        static let sage = pick(Color(light: 0xE8EBE6, dark: 0x0E0F0C), plum: Color(light: 0xF1E9F4, dark: 0x120D14),
+                               tangerine: Color(light: 0xF6EDE6, dark: 0x14100C),
+                               violet: Color(light: 0xEDECF2, dark: 0x0E0E11))
+        static let hairline = pick(Color(light: 0xD6DAD3, dark: 0x2C2F29), plum: Color(light: 0xE0D5E5, dark: 0x2E2830),
+                                   tangerine: Color(light: 0xE6DBD2, dark: 0x302A25),
+                                   violet: Color(light: 0xD9D8E0, dark: 0x2A2A30))
 
         /// Always-dark surface used for the polarity-flipped moments. In dark mode it's lifted a
         /// step above the page (which is near-black there too), so night blocks stay distinct.
@@ -90,7 +97,9 @@ enum DS {
             ? UIColor.white.withAlphaComponent(0.09) : .clear })
         /// Veil over the cards waiting behind the top one on Discover: sage in light mode, a
         /// lifted grey in dark mode so they don't sink into the black page.
-        static let deckVeil = Color(light: 0xE8EBE6, dark: 0x1A1C18)
+        static let deckVeil = pick(Color(light: 0xE8EBE6, dark: 0x1A1C18), plum: Color(light: 0xF1E9F4, dark: 0x1D1820),
+                                   tangerine: Color(light: 0xF6EDE6, dark: 0x1F1A16),
+                                   violet: Color(light: 0xEDECF2, dark: 0x1B1B20))
         /// Short modal sheets (confirmations, purchase confirmation, photo refused) sit a step
         /// above anything under them, other sheets included. Light mode: white; dark mode: a grey
         /// lifted above the page, night blocks and regular sheets (`Surface`).
@@ -162,6 +171,8 @@ enum Motion {
     static let snappy = Animation.spring(response: 0.22, dampingFraction: 0.86)
     static let bouncy = Animation.spring(response: 0.3, dampingFraction: 0.72)
     static let gentle = Animation.easeOut(duration: 0.18)
+    /// Progress that should be seen moving (sign-up stepper bars): longer than snappy, no overshoot.
+    static let progress = Animation.spring(response: 0.5, dampingFraction: 0.9)
 }
 
 // MARK: - Haptics

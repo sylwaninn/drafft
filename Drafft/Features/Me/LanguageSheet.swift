@@ -20,8 +20,7 @@ struct LanguageSheet: View {
                             DispatchQueue.main.async { app.language = l }
                         } label: {
                             HStack {
-                                Text(l.name).font(.body.weight(on ? .semibold : .regular)).foregroundStyle(DS.Palette.ink)
-                                    .instantWeight()
+                                Text(l.name).font(.body.weight(.medium)).foregroundStyle(DS.Palette.ink)
                                 Spacer()
                                 CheckDisc(isOn: on)
                             }

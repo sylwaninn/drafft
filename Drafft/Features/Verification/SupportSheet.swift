@@ -20,8 +20,7 @@ struct SupportSheet: View {
                      actionTitle: sent ? L("Done") : L("Send to support"),
                      actionIcon: sent ? "checkmark" : "paperplane.fill",
                      enabled: sent || hasMessage,
-                     loading: sending,
-                     hint: sent ? nil : (!hasMessage ? L("Tell us what happened to send your request.") : L("We usually reply within a day."))) {
+                     loading: sending) {
             if sent { dismiss(); return }
             sending = true
             Task {

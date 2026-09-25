@@ -38,7 +38,7 @@ Used on the go: between sessions, after a workout, on transit. One-handed, often
 ## Brand Commitments
 
 - Name: drafft, always lowercase (app name included), set one weight heavier than the sentence around it. Paid tier: drafft tempo, both lowercase, "tempo" in the accent colour.
-- Visual system pinned by the user: DESIGN.md (Wise-inspired: lime green `#9fe870` single accent, sage canvas, near-black ink, heavy 900 display, 24pt radius). Binding.
+- Visual system pinned by the user: DESIGN.md (Wise-inspired: one accent, near-black ink, heavy 900 display, 24pt radius). The accent is violet `#7D70FD` for now (lime `#9fe870` was the original); the page tone follows it (a cool grey touched with violet, `#EDECF2`, with violet). Binding.
 
 ## Evidence on Hand
 
@@ -51,7 +51,7 @@ No real users, testimonials, photos, or metrics. All people, photos, and convers
 3. Chat is instant: no spinner between tap and feedback.
 4. Low-pressure first contact: icebreakers do the awkward part.
 5. Native iPhone conventions first; brand lives in color, type, and motion.
-6. Never leave people guessing what to do next: the validate action is always on screen, disabled with a reason when it can't run yet.
+6. Never leave people guessing what to do next: the validate action is always on screen, disabled until it can run (the screen itself says what's missing, not a line under the button).
 
 ## Accessibility & Inclusion
 

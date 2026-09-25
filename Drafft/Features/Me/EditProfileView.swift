@@ -51,7 +51,7 @@ struct EditProfileView: View {
     /// Pages follow the profile as others read it: who you are and what you're after, then how
     /// you move, then what you say in your own words.
     enum Page: String, CaseIterable, Hashable, Identifiable {
-        case photos, identity, intent, lifestyle, sports, goal, bio, prompts, voice
+        case photos, identity, lifestyle, sports, goal, bio, prompts, voice
         var id: String { rawValue }
         var title: String {
             switch self {
@@ -63,7 +63,6 @@ struct EditProfileView: View {
             case .goal: L("Training for")
             case .identity: L("Name & age")
             case .lifestyle: L("Lifestyle")
-            case .intent: L("Looking for")
             }
         }
         var icon: String {
@@ -76,13 +75,12 @@ struct EditProfileView: View {
             case .goal: "flag.checkered"
             case .identity: "person.text.rectangle"
             case .lifestyle: "leaf.fill"
-            case .intent: "heart.fill"
             }
         }
     }
 
     private var groups: [(title: String, pages: [Page])] { [
-        (L("The basics"), [.photos, .identity, .intent, .lifestyle]),
+        (L("The basics"), [.photos, .identity, .lifestyle]),
         (L("Your sport"), [.sports, .goal]),
         (L("In your words"), [.bio, .prompts, .voice])
     ] }
@@ -94,7 +92,6 @@ struct EditProfileView: View {
         case .bio: draft.bio.isEmpty ? L("Add a few words about how you move") : draft.bio
         case .identity: "\(draft.name.isEmpty ? L("No name") : draft.name), \(draft.age)"
         case .lifestyle: lifestyleSummary
-        case .intent: vitals.intent?.label ?? L("Not shown")
         case .sports: draft.sports.map(\.sport.name).joined(separator: ", ")
         case .voice: voice != nil || draft.voiceIntro != nil ? L("Recorded") : L("Not recorded yet")
         case .prompts: draft.icebreaker.isBlank && prompts.isEmpty ? L("Add a prompt")
@@ -243,8 +240,6 @@ struct EditProfileView: View {
                     block(L("Name & age"), icon: page.icon) { identitySection }
                 case .lifestyle:
                     block(L("Lifestyle"), icon: page.icon, note: L("Shown on your profile")) { lifestyleSection }
-                case .intent:
-                    block(L("Looking for"), icon: page.icon, note: L("Optional")) { IntentPicker(selection: $vitals.intent) }
                 case .sports:
                     block(L("Your sports"), icon: page.icon, note: L("Up to 5")) { sportsSection }
                 case .voice:

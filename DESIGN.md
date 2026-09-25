@@ -562,6 +562,7 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
 ### Dark mode
 - The page is near-black in dark mode, so night blocks are lifted a step (`night` dark = #23261F, `nightRaised` #2E3229) and every coloured block (`draftBlock`) gets a faint hairline (`blockEdge`, white 9 %, invisible in light mode).
 - Selection is shown by fills, never by frames or outlines. A selected tile or chip turns solid accent with on-accent content (reads the same in light and dark). On a night surface, a selected row takes the accent wash `selectedOnNight` (accent at 26 %).
+- Selected or not, a label keeps one weight: nothing widens or shifts when it is picked. The check disc, the fill and the ink say it.
 - Discover's action buttons sit centred between the cards and the tab bar (same space above and below).
 - Discover's waiting cards use `deckVeil` (sage in light, #1A1C18 in dark, close to the page so they recede) plus the same hairline, so the stack never sinks into the page.
 
@@ -588,6 +589,8 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
 
 ### Confirmations
 - Short sheets keep the system corner radius (never `presentationCornerRadius`): floating sheets then follow the screen's corners with even side and bottom margins.
+- **The page tone follows the accent.** "Sage" in these rules means the page tone (`DS.Palette.sage`, `canvasSoft`), which is tuned to the active accent so it never keeps a former one's colour: violet (current) gets a cool grey with a touch of violet `#EDECF2` (dark `#0E0E11`), lime keeps `#E8EBE6`. Same lightness as the old sage, so white blocks still stand out; body, mute and accent ink stay at 4.5:1 or more on it.
+- **Discover's empty stack is one screen, filtered or not** (`DeckEmptyView`): the message in the middle of the page (a user-requested exception to "no loose text on the sage canvas"), with the real radius ("You've seen every profile within 10 km."). It shows once the last profile card you swiped has flown off, and a round accent disc (binoculars) drafts straight into the spot it left (no extra card: the real swipe is the first half of the moment), its two ghosts tucking in behind like the app icon; then the words rise. That entrance plays only right after the swipe that empties the stack; coming back to Discover later shows the screen already in place. Title at 22 pt. Actions at the bottom: "Widen to 25 km" (then 50, then any distance; "Go to chats" first once at any distance, with "Adjust filters"), and "Go to chats". Reduce Motion: everything already in place. No invented numbers, no pep talk.
 - **A sheet never shares the page's colour.** Screens are a sage page with white blocks; a sheet flips the pair: the sheet itself is white (lifted `#1A1C18` in dark mode) and its blocks sink into sage wells (`#0E0F0C` in dark). `DS.Palette.canvasSoft` / `canvas` are `Surface` styles that resolve by context, so the same view reads right pushed or presented. Every `.sheet` content ends with `.sheetSurface()`; nothing else is needed.
 - Short modal sheets (confirmations, purchase confirmations, photo refused) sit one step higher still (`sheetRaised`: white, `#2A2D26` in dark), so they stand out over another sheet too.
 - Never the system action sheet or alert. Use `.drafftConfirm`: a short sheet sized to its content, raised (`sheetRaised`), with an icon disc (red for destructive, lime otherwise), a display title, the consequence in one sentence, full-width buttons and a plain Cancel. Used for log out, leave sign-up, discard changes, report/block.
@@ -612,27 +615,27 @@ One job per colour, everywhere:
 - The product is **drafft**, always lowercase, in copy and as the app name on the home screen. In running text it is set one weight above the sentence (semibold in regular text, heavy in semibold text) so it reads as a name: use `Text(branded:font:)`, which does it for every occurrence.
 - The paid tier is **drafft tempo**: both words lowercase, same face and weight, "tempo" in the accent colour so the pair reads as one name. `Text(branded:)` colours it: `accentInk` on light surfaces, `lime` on night, `night` on an accent fill (the tier card on You, the paywall button). Never "Plus", "plus" or "+". The paywall lockup is the wordmark followed by "tempo" in Inter Display Black at the same size, in the accent. The spark stays the tier's icon.
 - Liking stays green (`like`, `#9fe870`) whatever the brand accent: like buttons, the heart pop, "Send like", "Like with this answer" and the like markers in chat.
-- Never pre-select an answer for the person (identity, who to meet, intent, birthday, photos). Empty until they choose.
+- Never pre-select an answer for the person (identity, who to meet, birthday, photos). Empty until they choose.
 - On an optional step, Continue stays disabled until something is filled in; Skip is the way past it.
 - Multi-step flows move only with Back / Continue / Skip: no swipe between steps.
 - One question per step: when a step asks two things (sports, then how often), split it.
 - A field takes touches on its whole box, padding included: the text field fills the box and a tap anywhere on it focuses it.
 - Never focus a field on arrival: the page opens whole, keyboard down, so the person sees everything first. The keyboard comes up when they tap a field.
 - Forms scroll with `FocusScrollView`: a field that gets focus scrolls itself to the upper third, clear of the keyboard and the pinned button. A pinned button never sits on top of the field being typed in. Any field that isn't a `DrafftField` gets `.revealsOnFocus(…)`; the scroll content always ends with a margin, so even the last field never touches the keyboard.
-- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). Pickers such as birthday look like fields and open inline.
+- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). The field is always the lifted white, in a sheet too (never the sheet's sage well); settings sheets set their groups straight on the white sheet, told apart by space, not grey boxes. A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
 - One icon per meaning: never reuse the same symbol for two different items in a list or a switcher.
 
 ### Verification & support
-- Sign-up runs in four chapters, never mixed, one question per step: Account (language, preselected from the phone or English; ground rules + consent; phone), About you (first name, birthday, gender, who to meet, intent, lifestyle, area), Sports (sports, then how often), Profile (photos, bio, voice, written prompts, interactive prompt, notifications). 18 steps. Lifestyle is one step (rhythm, food, drinking, smoking, each optional, tap again to clear) shared with Edit profile (`LifestylePicker`).
+- Sign-up runs in four chapters, never mixed, one question per step: Account (language, preselected from the phone or English; ground rules + consent; phone), About you (first name, birthday, gender, who to meet, lifestyle, area), Sports (sports, then how often), Profile (photos, bio, voice, written prompts, interactive prompt, notifications). 17 steps. No "looking for" question: drafft doesn't ask it, show it or filter by it. Lifestyle is one step (rhythm, food, drinking, smoking, each optional, tap again to clear) shared with Edit profile (`LifestylePicker`).
 - A finished sign-up creates a profile holding only the answers: no bio, goal, pronouns, lifestyle or prompts borrowed from demo data. Skipped prompts stay empty and are hidden on the profile (the interactive prompt shows only when complete); Edit profile accepts them empty.
 - The stepper (`ChapterStepper`) shows one bar per chapter, same width each, filling step by step, with the chapter names under the bars: current in bold, finished ones ticked, next ones in body grey. Back on the left, Skip on the right (optional steps only). Entering a new chapter gives a success haptic. The last step's button says "Start swiping".
-- Under the pinned button, one line says why it's disabled ("Pick your birthday.", "Put a clear photo of your face first."), red only for a real error. The line keeps its height when empty.
+- No line under the pinned button to say why it's disabled: the screen already says what to do, repeating it is noise. Only a real error goes there, in red (the server turned the profile down).
 - Exception to the pinned button: while a prompt answer is being typed, Continue leaves the keyboard bar (it would skip the other prompts); a lime check button next to the field closes the keyboard, and Continue comes back.
 - Community rules come before anything personal: four short rules in a white block, then the required consent in its own block.
 - Single and multiple choices are white blocks of rows with `CheckDisc` (language, gender, who to meet). Chips stay for sports.
 - An unfinished sign-up is saved as it goes and resumes at the first mandatory step not done (usually the SMS), otherwise where it stopped (`OnboardingStore`).
 - Location is required (at least While Using the App): sign-up can't continue without it (no typing an area), and if it's turned off later a blocking screen asks to turn it back on (`LocationGate`, `LocationRequiredView`).
-- Sign-up is 18+: the birthday wheel stops at 18 years ago, and a required, unchecked-by-default consent links each legal document inline.
+- Sign-up is 18+: under 18, the typed birthday shows why and Continue stays disabled; a required, unchecked-by-default consent links each legal document inline.
 - Demo builds show dashed "Demo only" panels (`DemoPanel`) to pick each check's outcome; they never ship.
 - Every account verifies a phone number at sign-up (mandatory, no Skip). The first photo must show a face (Vision, on device). No video check for now: it was removed until a provider is chosen.
 - The phone number can be replaced (after verifying the new one), never removed.
@@ -662,6 +665,7 @@ One job per colour, everywhere:
 
 ### Notifications
 - Asked during sign-up, on its own optional step at the end of Profile ("Don't miss a match"), with what they'll get before the system prompt. Continue needs them on; Skip passes.
+- System permissions share one pattern (`SystemPermission`, `PermissionButton`): the service keeps its state current by itself, back from Settings included, so screens only read it; the action asks the first time and opens Settings once refused, never a dead disabled button. Notifications use it today (sign-up and You › Notifications); location, camera, microphone and photos join the same way.
 - You › Notifications is a dedicated page: the permission state first (turn on, or open iPhone Settings if denied), then Activity (matches, likes, messages, message previews off by default) and Sessions (evening before at 20:00, an hour before).
 - Session reminders are real local notifications; tapping any notification opens its chat. Push is wired (capability + device token) and waits for the server.
 

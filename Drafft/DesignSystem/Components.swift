@@ -197,7 +197,8 @@ struct DrafftField: View {
             // The padding around the text counts too: the whole field focuses it.
             .contentShape(.rect(cornerRadius: DS.Radius.md))
             .onTapGesture { focused = true }
-            .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
+            // Always the lifted white, on a page or in a sheet (where the block tone is a sage well).
+            .background(DS.Palette.white, in: .rect(cornerRadius: DS.Radius.md))
             .overlay {
                 RoundedRectangle(cornerRadius: DS.Radius.md)
                     .strokeBorder(borderColor, lineWidth: focused || error != nil ? 2 : 1)

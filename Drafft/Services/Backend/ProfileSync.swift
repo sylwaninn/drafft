@@ -41,7 +41,6 @@ enum ProfileSync {
         var interestedIn: Set<String>
         var neighborhood: String
         var location: CLLocationCoordinate2D?
-        var intent: Intent?
         var bio: String
         var lifestyle: Vitals
         var icebreaker: Icebreaker?
@@ -63,7 +62,7 @@ enum ProfileSync {
             "language": s.language.rawValue
         ]
         if let g = s.gender.flatMap(Self.genderValue) { fields["gender"] = g }
-        fields.merge(vitalsFields(s.lifestyle, intent: s.intent)) { $1 }
+        fields.merge(vitalsFields(s.lifestyle)) { $1 }
         if let ice = s.icebreaker { fields["icebreaker"] = ice.json }
         if let voice = s.voice { fields.merge(try await uploadVoice(voice)) { $1 } }
         do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
@@ -87,7 +86,7 @@ enum ProfileSync {
             "favorite_spot": p.favoriteSpot,
             "icebreaker": p.icebreaker.isComplete ? p.icebreaker.json : NSNull()
         ]
-        fields.merge(vitalsFields(p.vitals ?? .blank, intent: p.vitals?.intent)) { $1 }
+        fields.merge(vitalsFields(p.vitals ?? .blank)) { $1 }
         if let voice { fields.merge(try await uploadVoice(voice)) { $1 } }
         do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
         if p.sports != previous.sports { try await setSports(p.sports) }
@@ -109,7 +108,6 @@ enum ProfileSync {
             let bio: String
             let goal: String
             let favorite_spot: String
-            let intent: String?
             let drinks: String
             let smokes: String
             let diet: String
@@ -124,7 +122,8 @@ enum ProfileSync {
 
         let decoder = JSONDecoder()
         guard let row = try decoder.decode([Row].self, from: await Backend.shared.select(
-            "profiles?id=eq.\(id)&select=name,birthdate,pronouns,neighborhood,bio,goal,favorite_spot,intent,drinks,smokes,diet,chronotype,icebreaker,voice_intro_key,voice_duration"
+            "profiles?id=eq.\(id)&select=name,birthdate,pronouns,neighborhood,bio,goal,favorite_spot,"
+                + "drinks,smokes,diet,chronotype,icebreaker,voice_intro_key,voice_duration"
         )).first else { return nil }
         let sports = try decoder.decode([SportRow].self, from: await Backend.shared.select(
             "profile_sports?user_id=eq.\(id)&select=sport_id,per_week&order=position"))
@@ -139,9 +138,8 @@ enum ProfileSync {
         let age = row.birthdate.flatMap(Self.day.date(from:)).map {
             Calendar.current.dateComponents([.year], from: $0, to: .now).year ?? 18
         } ?? 18
-        var vitals = Vitals(intent: row.intent.flatMap(Intent.init(rawValue:)), drinks: row.drinks, smokes: row.smokes,
-                            diet: row.diet, chronotype: row.chronotype)
-        if vitals.intent == nil && !vitals.hasLifestyle { vitals = .blank }
+        var vitals = Vitals(drinks: row.drinks, smokes: row.smokes, diet: row.diet, chronotype: row.chronotype)
+        if !vitals.hasLifestyle { vitals = .blank }
         return Profile(
             id: "me",
             name: row.name,
@@ -211,9 +209,8 @@ enum ProfileSync {
         EdgeFunctionTicketProvider(functionsURL: BackendConfig.functionsURL) { try await Backend.shared.accessToken() }
     }
 
-    private static func vitalsFields(_ v: Vitals, intent: Intent?) -> [String: Any] {
-        ["intent": intent?.rawValue ?? NSNull(), "drinks": v.drinks, "smokes": v.smokes, "diet": v.diet,
-         "chronotype": v.chronotype]
+    private static func vitalsFields(_ v: Vitals) -> [String: Any] {
+        ["drinks": v.drinks, "smokes": v.smokes, "diet": v.diet, "chronotype": v.chronotype]
     }
 
     /// Sign-up's gender answers (kept in English) as the server's values.
