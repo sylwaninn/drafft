@@ -262,36 +262,33 @@ struct ChatView: View {
                 Button { showProfile = true } label: {
                     HStack(spacing: DS.Space.sm) {
                         Avatar(name: convo.profile.portrait, size: 32)
-                        // Hierarchical styles, not fixed colours: the bar's glass turns them dark
-                        // over light messages and light over photos or accent bubbles.
+                        // No capsule behind: the bar's own blur is the only backdrop, so the text
+                        // uses the page's inks (ink, then body at 4.5:1 on sage), not system greys.
                         VStack(alignment: .leading, spacing: 0) {
                             // Long names (Alexandre-Maxime) shrink a little, then end with "…":
-                            // the capsule never pushes the bar's buttons away.
-                            Text(convo.profile.name).font(.headline).foregroundStyle(.primary)
+                            // the header never pushes the bar's buttons away.
+                            Text(convo.profile.name).font(.headline).foregroundStyle(DS.Palette.ink)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
                                 // design-lint: allow truncation - a person's name (content, not copy) after scaling down
                                 .truncationMode(.tail)
                             Text(convo.isTyping ? "Typing…" : "Active now")
-                                .font(convo.isTyping ? .caption.weight(.semibold) : .caption)
-                                .foregroundStyle(convo.isTyping ? .primary : .secondary)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(convo.isTyping ? DS.Palette.accentInk : DS.Palette.body)
                                 .lineLimit(1)
                                 .contentTransition(.opacity)
                         }
                     }
                     .frame(maxWidth: 210, alignment: .leading)
-                    .padding(.leading, 4)
-                    .padding(.trailing, DS.Space.md)
                     .padding(.vertical, 4)
-                    // On glass like the back and action buttons beside it: the glass reads what
-                    // scrolls under it and turns its content light over dark, dark over light.
-                    .glassEffect(.regular.interactive(), in: .capsule)
-                    .contentShape(.capsule)
+                    .contentShape(.rect)
                 }
                 // Plain: a bar button paints its label in the accent tint, over the styles above.
                 .buttonStyle(.plain)
                 .accessibilityLabel("View \(convo.profile.name)'s profile")
             }
+            // iOS 26 puts bar items on a shared glass pill: not this one.
+            .sharedBackgroundVisibility(.hidden)
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Propose a session", systemImage: "calendar.badge.plus") { proposing = true }
             }
