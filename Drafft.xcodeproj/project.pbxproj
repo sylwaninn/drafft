@@ -94,6 +94,7 @@
 		BEE38D62F7953A42F1336EE9 /* ExtrasSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14910247DD924874A18AAF3E /* ExtrasSheet.swift */; };
 		BFDC5BD3E41A1197C4255063 /* PhotoRefusal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2834BD053D417127E27144CC /* PhotoRefusal.swift */; };
 		C1A434588334F84CAF90D507 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC5F052F0BE7A40E05B7913 /* Store.swift */; };
+		C30FCAF1D3FA2E921AE2B9EB /* SystemPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2136EB803DE17624FFA4B2 /* SystemPermission.swift */; };
 		C4F8001A66A960980E10B957 /* DiscoverFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFBEF0E0124793C095719B8 /* DiscoverFilters.swift */; };
 		CBAFEB2B30DA895FCEFEA4BA /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED475785E5CCE3685F02ACA3 /* ChatView.swift */; };
 		CD89C283C8A690A2CE3132DE /* ThumbHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2499D2C98B44F3EE58B2A9D5 /* ThumbHash.swift */; };
@@ -170,6 +171,7 @@
 		5E5BD9EC2C3061FD3CEAE415 /* LanguageSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSheet.swift; sourceTree = "<group>"; };
 		5E9D0DD72984D1FFF602DF34 /* CameraCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCapture.swift; sourceTree = "<group>"; };
 		5EE5E6EBC0F5138F51DDEF11 /* intro_chloe.m4a */ = {isa = PBXFileReference; path = intro_chloe.m4a; sourceTree = "<group>"; };
+		5F2136EB803DE17624FFA4B2 /* SystemPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemPermission.swift; sourceTree = "<group>"; };
 		628DE53831E012E4755CBAA5 /* ReplySwipeGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplySwipeGesture.swift; sourceTree = "<group>"; };
 		636CF74E7E9549F28521EAC1 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		646C043358D988DC5BAD8922 /* intro_nina.m4a */ = {isa = PBXFileReference; path = intro_nina.m4a; sourceTree = "<group>"; };
@@ -378,6 +380,7 @@
 				C35EBB2EBA07E965FB072B2C /* OnboardingStore.swift */,
 				A1FF08B169F3A5A050174583 /* SocialAuth.swift */,
 				FEC5F052F0BE7A40E05B7913 /* Store.swift */,
+				5F2136EB803DE17624FFA4B2 /* SystemPermission.swift */,
 				4922CED91EA5716E8B4AF00B /* Verification.swift */,
 				C192B628A9C1BD6B562740AF /* Backend */,
 				84D40FE4AEE7DB157755B4C2 /* Media */,
@@ -730,6 +733,7 @@
 				ED0ED19D3A1D0BE84B0CFCB3 /* SuperLikeComposer.swift in Sources */,
 				EE8FDFF1AB2E53D88B307416 /* SupportSheet.swift in Sources */,
 				F94D59466B3C55E65B5B93C1 /* SwipeCard.swift in Sources */,
+				C30FCAF1D3FA2E921AE2B9EB /* SystemPermission.swift in Sources */,
 				AB0F5897095930A03A4BB610 /* TabHeader.swift in Sources */,
 				CD89C283C8A690A2CE3132DE /* ThumbHash.swift in Sources */,
 				2099EF8A6E549DCFF32C1384 /* Tokens.swift in Sources */,
