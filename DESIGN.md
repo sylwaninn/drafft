@@ -562,6 +562,7 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
 ### Dark mode
 - The page is near-black in dark mode, so night blocks are lifted a step (`night` dark = #23261F, `nightRaised` #2E3229) and every coloured block (`draftBlock`) gets a faint hairline (`blockEdge`, white 9 %, invisible in light mode).
 - Selection is shown by fills, never by frames or outlines. A selected tile or chip turns solid accent with on-accent content (reads the same in light and dark). On a night surface, a selected row takes the accent wash `selectedOnNight` (accent at 26 %).
+- Selected or not, a label keeps one weight: nothing widens or shifts when it is picked. The check disc, the fill and the ink say it.
 - Discover's action buttons sit centred between the cards and the tab bar (same space above and below).
 - Discover's waiting cards use `deckVeil` (sage in light, #1A1C18 in dark, close to the page so they recede) plus the same hairline, so the stack never sinks into the page.
 
@@ -619,7 +620,7 @@ One job per colour, everywhere:
 - A field takes touches on its whole box, padding included: the text field fills the box and a tap anywhere on it focuses it.
 - Never focus a field on arrival: the page opens whole, keyboard down, so the person sees everything first. The keyboard comes up when they tap a field.
 - Forms scroll with `FocusScrollView`: a field that gets focus scrolls itself to the upper third, clear of the keyboard and the pinned button. A pinned button never sits on top of the field being typed in. Any field that isn't a `DrafftField` gets `.revealsOnFocus(…)`; the scroll content always ends with a margin, so even the last field never touches the keyboard.
-- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
+- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). The field is always the lifted white, in a sheet too (never the sheet's sage well); settings sheets set their groups straight on the white sheet, told apart by space, not grey boxes. A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
 - One icon per meaning: never reuse the same symbol for two different items in a list or a switcher.
 
 ### Verification & support
