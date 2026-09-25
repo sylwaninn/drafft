@@ -135,8 +135,7 @@ struct SignUpView: View {
                                 // Met: the one selection mark (CheckDisc), not an SF tick.
                                 CheckDisc(isOn: ok, size: 22)
                             }
-                                .font(.footnote.weight(ok ? .semibold : .regular))
-                                .instantWeight()
+                                .font(.footnote.weight(.medium))
                                 .animation(Motion.snappy, value: ok)
                                 .accessibilityElement(children: .combine)
                                 .accessibilityValue(ok ? "Met" : "Not met yet")

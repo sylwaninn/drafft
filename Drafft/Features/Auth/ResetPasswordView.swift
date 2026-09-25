@@ -170,7 +170,7 @@ struct NewPasswordView: View {
                         } icon: {
                             CheckDisc(isOn: ok, size: 22)
                         }
-                        .font(.footnote.weight(ok ? .semibold : .regular))
+                        .font(.footnote.weight(.medium))
                         .accessibilityElement(children: .combine)
                         .accessibilityValue(ok ? "Met" : "Not met yet")
                     }

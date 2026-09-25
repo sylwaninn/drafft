@@ -529,8 +529,7 @@ struct OnboardingView: View {
                         DispatchQueue.main.async { app.language = l }
                     } label: {
                         HStack {
-                            Text(l.name).font(.body.weight(language == l ? .semibold : .regular)).foregroundStyle(DS.Palette.ink)
-                                .instantWeight()
+                            Text(l.name).font(.body.weight(.medium)).foregroundStyle(DS.Palette.ink)
                             Spacer()
                             CheckDisc(isOn: language == l)
                         }
@@ -671,7 +670,7 @@ struct OnboardingView: View {
                     withAnimation(Motion.select) { toggle(o) }
                 } label: {
                     HStack {
-                        Text(choiceTitle(o)).font(.body.weight(isOn(o) ? .semibold : .regular)).foregroundStyle(DS.Palette.ink)
+                        Text(choiceTitle(o)).font(.body.weight(.medium)).foregroundStyle(DS.Palette.ink)
                         Spacer()
                         CheckDisc(isOn: isOn(o))
                     }
