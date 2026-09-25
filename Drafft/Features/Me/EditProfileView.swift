@@ -325,18 +325,8 @@ struct EditProfileView: View {
             }
             divider
             // The birthday is set once, at sign-up (the server keeps it from changing).
-            VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text("Age").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
-                    Spacer()
-                    Text(draft.age, format: .number).font(.body.weight(.semibold)).foregroundStyle(DS.Palette.ink)
-                }
-                Text("From the birthday you gave at sign-up. It can't be changed.")
-                    .font(.footnote)
-                    .foregroundStyle(DS.Palette.mute)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .accessibilityElement(children: .combine)
+            LockedField(title: L("Age"), value: L("\(draft.age) years old"),
+                        hint: L("From the birthday you gave at sign-up. It can't be changed."))
         }
     }
 
@@ -658,3 +648,35 @@ extension View {
 }
 
 struct PromptSlot: Identifiable { let id: Int }
+
+/// A value you can see but not change, laid out like the fields around it: the same label, but an
+/// outlined box instead of a filled one, with a lock, and why it's locked underneath.
+private struct LockedField: View {
+    let title: String
+    let value: String
+    let hint: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DS.Space.xs) {
+            VStack(alignment: .leading, spacing: DS.Space.sm) {
+                Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
+                HStack {
+                    Text(value).font(.body).foregroundStyle(DS.Palette.ink)
+                    Spacer()
+                    Image(systemName: "lock.fill").font(.footnote.weight(.semibold)).foregroundStyle(DS.Palette.mute)
+                }
+                .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                .padding(.vertical, 2)
+                .padding(.horizontal, DS.Space.md)
+                .overlay {
+                    RoundedRectangle(cornerRadius: DS.Radius.md).strokeBorder(DS.Palette.hairline, lineWidth: 1)
+                }
+            }
+            Text(hint)
+                .font(.footnote)
+                .foregroundStyle(DS.Palette.mute)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
