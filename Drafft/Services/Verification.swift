@@ -109,6 +109,9 @@ final class PhoneVerificationModel {
 
     private let service: PhoneVerifying
     private var timer: Task<Void, Never>?
+    /// When the last code went out: Supabase answers the same for a mistyped code and an old one, so the
+    /// time says which it was.
+    private var sentAt = Date.distantPast
 
     /// Sign-up and You share this: flip `BackendConfig.smsEnabled` once the project has an SMS provider.
     init(service: PhoneVerifying = BackendConfig.smsEnabled ? BackendPhoneVerifier() as PhoneVerifying : DemoPhoneVerifier()) {
@@ -210,7 +213,11 @@ final class PhoneVerificationModel {
                 case .expired: throw VerificationError.expired
                 }
             } else {
-                try await service.verify(code: code, for: e164)
+                do {
+                    try await service.verify(code: code, for: e164)
+                } catch VerificationError.wrongCode where Date.now.timeIntervalSince(sentAt) > BackendConfig.smsCodeLifetime {
+                    throw VerificationError.expired
+                }
             }
             verifiedNumber = e164
             stage = .verified
@@ -256,8 +263,10 @@ final class PhoneVerificationModel {
         needsHelp = false
     }
 
+    /// A code just went out: its lifetime and the Resend countdown start now.
     private func startResendTimer() {
         timer?.cancel()
+        sentAt = .now
         resendIn = 30
         timer = Task { [weak self] in
             while let self, self.resendIn > 0, !Task.isCancelled {

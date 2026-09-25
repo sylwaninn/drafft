@@ -3,8 +3,11 @@
 // SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY depend on the machine: scripts/local-backend.sh writes them to
 // Local.private.xcconfig at the repository root (gitignored). Without it the app stops at launch and says what's missing.
 REVENUECAT_API_KEY = appl_nPDeedcmfhgYnAvrGnLpAoYIQkm
-// Real SMS codes, shown in the local Mailpit (http://127.0.0.1:55424): no phone is texted.
+// Real SMS codes: in the local Mailpit (http://127.0.0.1:55424), or on the phone with SMS_REAL=true in
+// drafft-backend's supabase/functions/.env.local.
 SMS_ENABLED = YES
+// How long an SMS code works, in seconds: the local Auth's SMS OTP expiry (GOTRUE_SMS_OTP_EXP, 6000).
+SMS_CODE_LIFETIME = 6000
 APP_DISPLAY_NAME = drafft local
 
 #include? "../Local.private.xcconfig"
