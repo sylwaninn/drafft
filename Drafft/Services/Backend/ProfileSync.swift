@@ -104,6 +104,7 @@ enum ProfileSync {
             let name: String
             let birthdate: String?
             let pronouns: String?
+            let gender: String?
             let neighborhood: String
             let bio: String
             let goal: String
@@ -122,7 +123,7 @@ enum ProfileSync {
 
         let decoder = JSONDecoder()
         guard let row = try decoder.decode([Row].self, from: await Backend.shared.select(
-            "profiles?id=eq.\(id)&select=name,birthdate,pronouns,neighborhood,bio,goal,favorite_spot,"
+            "profiles?id=eq.\(id)&select=name,birthdate,pronouns,gender,neighborhood,bio,goal,favorite_spot,"
                 + "drinks,smokes,diet,chronotype,icebreaker,voice_intro_key,voice_duration"
         )).first else { return nil }
         let sports = try decoder.decode([SportRow].self, from: await Backend.shared.select(
@@ -145,6 +146,7 @@ enum ProfileSync {
             name: row.name,
             age: age,
             pronouns: row.pronouns,
+            gender: row.gender.flatMap(DiscoverFilters.Audience.init(answer:)),
             neighborhood: row.neighborhood,
             distanceKm: 0,
             portrait: photos.first ?? "",

@@ -1,12 +1,13 @@
 import UIKit
 
 /// The people behind your card in the boost, super like and likes sheets: photos made ahead of
-/// time of athletes mid-effort (HYROX, running, cycling, trail…), diverse in origin, skin and build,
-/// matching who you want to meet. Women or men only for one of them; both mixed for everyone or
-/// non-binary people. Never real users.
+/// time of athletes mid-effort (HYROX, running, cycling, trail…), diverse in origin, skin and build.
+/// It's the pile you stand out from, so they share your gender: women for a woman, men for a man,
+/// both mixed for a non-binary person. Never real users.
 enum PackPhotos {
     static let women = (1...6).map { "pack_woman_\($0)" }
     static let men = (1...6).map { "pack_man_\($0)" }
+    // Missing numbers are skipped: the pool grows as photos are added.
 
     /// A fresh pick each time the sheet opens.
     static func pick(for audience: DiscoverFilters.Audience, count: Int = 3) -> [String] {

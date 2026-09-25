@@ -116,6 +116,8 @@ struct Profile: Identifiable, Hashable {
     var name: String
     var age: Int
     var pronouns: String?
+    /// Their own answer at sign-up (the server's `gender`). Nil on demo profiles: see `audience(of:)`.
+    var gender: DiscoverFilters.Audience?
     var neighborhood: String
     var distanceKm: Double
     var portrait: String

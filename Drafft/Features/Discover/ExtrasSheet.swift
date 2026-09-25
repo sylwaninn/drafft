@@ -573,8 +573,8 @@ struct ExtrasSheet: View {
     }
 }
 
-/// Three dimmed athletes (`PackPhotos`, people like the ones you want to meet), fanned; yours lifts
-/// out in front with the extra's badge.
+/// Three dimmed athletes (`PackPhotos`, the pile you stand out from, so your own gender), fanned;
+/// yours lifts out in front with the extra's badge.
 private struct PackFan<Badge: View>: View {
     let lifted: Bool
     @ViewBuilder var badge: Badge
@@ -610,6 +610,6 @@ private struct PackFan<Badge: View>: View {
         }
         .frame(height: 170)
         .accessibilityHidden(true)
-        .onAppear { if others.isEmpty { others = PackPhotos.pick(for: app.filters.audience) } }
+        .onAppear { if others.isEmpty { others = PackPhotos.pick(for: DiscoverFilters.audience(of: app.me)) } }
     }
 }
