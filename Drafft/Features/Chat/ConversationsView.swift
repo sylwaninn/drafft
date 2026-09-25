@@ -56,8 +56,11 @@ struct ConversationsView: View {
                         }
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
                     }
                     .listSectionMargins(.horizontal, 0)
+                    // No list lines above or below the row: it isn't a card.
+                    .listSectionSeparator(.hidden)
                 }
 
                 Section {
