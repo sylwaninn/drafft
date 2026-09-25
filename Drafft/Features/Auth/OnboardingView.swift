@@ -691,7 +691,7 @@ struct OnboardingView: View {
                 .foregroundStyle(DS.Palette.ink)
                 .tint(DS.Palette.accentInk)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 11)
+                .padding(.vertical, 11) // Level with the box on top, the same room under the last line.
                 .environment(\.openURL, OpenURLAction { url in
                     legalDoc = LegalDoc(rawValue: url.lastPathComponent)
                     return .handled
