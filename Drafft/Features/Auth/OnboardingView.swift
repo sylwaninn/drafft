@@ -127,49 +127,15 @@ struct OnboardingView: View {
     // MARK: Chrome
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: DS.Space.xs) {
-            HStack {
-                // Always a way back: previous step, or out of sign-up from the first one.
-                Button {
-                    if step > 0 { go(to: step - 1) } else { confirmLeave = true }
-                } label: {
-                    Image(systemName: "chevron.left").font(.body.weight(.semibold))
-                        .frame(minWidth: 80, minHeight: 48, alignment: .leading)
-                        .contentShape(.rect)
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(DS.Palette.ink)
-                .accessibilityLabel(step > 0 ? "Back" : "Leave sign-up")
-                .drafftConfirm(isPresented: $confirmLeave, icon: "arrow.uturn.backward",
-                               title: L("Leave sign-up?"),
-                               message: L("Your answers won't be kept. You'll start over next time."),
-                               cancelTitle: L("Keep going"),
-                               actions: [ConfirmAction(title: L("Leave"), kind: .destructive) {
-                                   // Leaving on purpose starts over: nothing is kept.
-                                   OnboardingStore.clear()
-                                   app.socialIdentity = nil
-                                   app.signOut()
-                               }])
-                Spacer()
-                Button { advance() } label: {
-                    Text("Skip")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(DS.Palette.body)
-                        // Generous invisible hit area around the word.
-                        .frame(minWidth: 80, minHeight: 48, alignment: .trailing)
-                        .contentShape(.rect)
-                }
-                .buttonStyle(.plain)
-                    .opacity(skippable ? 1 : 0)
-                    .disabled(!skippable)
-                    .accessibilityHidden(!skippable)
-            }
-            ChapterStepper(chapters: Step.Chapter.allCases.map { c in
-                (c.title, steps.filter { $0.chapter == c }.count)
-            }, current: step)
-        }
-        .padding(.horizontal, DS.Space.lg)
-        .padding(.bottom, DS.Space.sm)
+        OnboardingHeader(chapters: Step.Chapter.allCases.map { c in (c.title, steps.filter { $0.chapter == c }.count) },
+                         step: step, skippable: skippable, confirmLeave: $confirmLeave,
+                         back: { go(to: step - 1) }, skip: advance,
+                         leave: {
+                             // Leaving on purpose starts over: nothing is kept.
+                             OnboardingStore.clear()
+                             app.socialIdentity = nil
+                             app.signOut()
+                         })
     }
 
     /// The phone check is mandatory: never skippable.

@@ -88,6 +88,7 @@
 		B26B61EF256F5CA97419108A /* SessionTimeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A8F866D02AAE8740CEFE48 /* SessionTimeSheet.swift */; };
 		B2FA06FE76A6F00F0F1859AC /* intro_ines.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A1A2AF8F7CF05C694A683229 /* intro_ines.m4a */; };
 		B52C8A9F07D65F9FB576AD3A /* IcebreakerEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14AA0694FAB995C135E6D8D5 /* IcebreakerEditor.swift */; };
+		BABD3DB9BFC21C2E1C3FD556 /* OnboardingHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCE0B80624AA43E45340546 /* OnboardingHeader.swift */; };
 		BD7E5EBC6B4DBA64B27E7B8E /* VoiceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3FAFF42A58C11A213BBC35 /* VoiceViews.swift */; };
 		BE331625B808FB2071D1D64A /* SocialSignInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC638A04EB47EA27116DCD /* SocialSignInSheet.swift */; };
 		BEE38D62F7953A42F1336EE9 /* ExtrasSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14910247DD924874A18AAF3E /* ExtrasSheet.swift */; };
@@ -145,6 +146,7 @@
 		2499D2C98B44F3EE58B2A9D5 /* ThumbHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHash.swift; sourceTree = "<group>"; };
 		2834BD053D417127E27144CC /* PhotoRefusal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoRefusal.swift; sourceTree = "<group>"; };
 		2CA6B7E6A2698EBD0AF79ADD /* intro_maya.m4a */ = {isa = PBXFileReference; path = intro_maya.m4a; sourceTree = "<group>"; };
+		2CCE0B80624AA43E45340546 /* OnboardingHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingHeader.swift; sourceTree = "<group>"; };
 		2D133A6D33B9D7069982A713 /* InterDisplay-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterDisplay-ExtraBold.ttf"; sourceTree = "<group>"; };
 		2EC4303A01AD8846C3663633 /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
 		2F67C7243864D4ECBE44AAAE /* ProfileDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetailView.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				36927D19CDF512251256102E /* EmailAuthViews.swift */,
 				03909E50C5DF79B191416C61 /* LegalDocs.swift */,
 				8B1B12F6AC99ED293F06B107 /* LocationRequiredView.swift */,
+				2CCE0B80624AA43E45340546 /* OnboardingHeader.swift */,
 				C0FC074582CCD1BBDFC15863 /* OnboardingView.swift */,
 				2EC4303A01AD8846C3663633 /* ResetPasswordView.swift */,
 				59CC638A04EB47EA27116DCD /* SocialSignInSheet.swift */,
@@ -691,6 +694,7 @@
 				A62680E5D282C96B912C1DA4 /* NotificationText.swift in Sources */,
 				FA58D647C3C66F6041379F00 /* Notifications.swift in Sources */,
 				1290898EA123758FCE5E922C /* NotificationsSettingsView.swift in Sources */,
+				BABD3DB9BFC21C2E1C3FD556 /* OnboardingHeader.swift in Sources */,
 				074BF52340FE6F1AB7AEBDF0 /* OnboardingStore.swift in Sources */,
 				8AFB996D3C93D1D599D85AEA /* OnboardingView.swift in Sources */,
 				61C36E7B0A28F4E261B1E11B /* OneTimeCodeEntry.swift in Sources */,
