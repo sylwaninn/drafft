@@ -119,7 +119,7 @@ struct BirthdateField: View {
             return
         }
         let value = { (part: Part) in Int(digits.dropFirst(range(of: part).lowerBound).prefix(range(of: part).count)) ?? 0 }
-        let calendar = Calendar(identifier: .gregorian)
+        let calendar = Self.calendar
         let parts = DateComponents(year: value(.year), month: value(.month), day: value(.day))
         // Real day only (no 31/02), and a birthday a person can have.
         if let d = calendar.date(from: parts), calendar.dateComponents([.year, .month, .day], from: d) == parts,
@@ -134,8 +134,16 @@ struct BirthdateField: View {
         }
     }
 
+    /// A birthday is a calendar day, not an instant: kept at midnight UTC, the way the server writes
+    /// it back (`yyyy-MM-dd`). Local midnight in Paris was the previous day in UTC.
+    static let calendar: Calendar = {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone(identifier: "UTC") ?? .gmt
+        return c
+    }()
+
     static func digits(of date: Date, order: [Part]) -> String {
-        let c = Calendar(identifier: .gregorian).dateComponents([.year, .month, .day], from: date)
+        let c = Self.calendar.dateComponents([.year, .month, .day], from: date)
         return order.map { part in
             switch part {
             case .day: String(format: "%02d", c.day ?? 0)
