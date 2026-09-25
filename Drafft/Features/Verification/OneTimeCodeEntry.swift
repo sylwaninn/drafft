@@ -221,6 +221,18 @@ final class EmailCodeModel {
         busy = false
     }
 
+    /// The code already went out with something else (sign-up): wait for it, `resend` sends another.
+    func awaitCode(sentTo address: String, resend: @escaping () async throws -> Void,
+                   verify: @escaping (String) async throws -> Void) {
+        sender = resend
+        checker = verify
+        sentTo = address
+        code = ""
+        attemptsLeft = 5
+        stage = .code
+        startResendTimer()
+    }
+
     func enterCode(_ raw: String) {
         let clean = String(raw.filter(\.isNumber).prefix(6))
         let wasShort = code.count < 6

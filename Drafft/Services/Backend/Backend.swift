@@ -45,8 +45,8 @@ actor Backend {
 
     enum SignUpResult { case signedIn, confirmEmail }
 
-    /// A new account. With email confirmation on (production), there's no session until the link in
-    /// the email is opened: the app then asks the person to confirm and log in. `language` starts the
+    /// A new account. With email confirmation on, there's no session until the 6-digit code in the
+    /// email is typed in (`confirmSignUp`). `language` starts the
     /// profile in it, so the confirmation email (backend auth-email) is already in that language.
     func signUp(email: String, password: String, language: AppLanguage) async throws -> SignUpResult {
         let response = try await client.auth.signUp(
@@ -58,6 +58,11 @@ actor Backend {
 
     func signIn(email: String, password: String) async throws {
         try await client.auth.signIn(email: email, password: password)
+    }
+
+    /// The 6-digit code from the sign-up email: the account is confirmed and signed in.
+    func confirmSignUp(_ email: String, code: String) async throws {
+        try await client.auth.verifyOTP(email: email, token: code, type: .signup)
     }
 
     func resendConfirmation(to email: String) async throws {
