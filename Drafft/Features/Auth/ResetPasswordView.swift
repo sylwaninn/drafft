@@ -1,12 +1,11 @@
 import SwiftUI
 
 /// Forgot password: one field, one action, then a clear "check your inbox" state with a way to
-/// open Mail, resend (after a short wait) or go back to log in. The message never says whether
+/// resend (after a short wait) or go back to log in. The message never says whether
 /// the address has an account (no account enumeration).
 struct ResetPasswordView: View {
     @State var email: String
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
     @FocusState private var focused: Bool
 
     enum Stage: Equatable { case enter, sending, sent, failed }
@@ -62,11 +61,6 @@ struct ResetPasswordView: View {
         .bottomBar {
             VStack(spacing: DS.Space.sm) {
                 if stage == .sent {
-                    // One action that moves things forward; the rest are quiet links.
-                    Button {
-                        if let url = URL(string: "message://") { openURL(url) }
-                    } label: { Label("Open Mail", systemImage: "envelope.open.fill") }
-                        .buttonStyle(.drafftPrimary)
                     Button {
                         Task { await sendLink(resend: true) }
                     } label: {
