@@ -129,6 +129,10 @@ struct RootView: View {
                     SplashView(isReady: tabsMounted && sessionChecked) { splashShown = false }
                 }
             }
+            // The server turned an action down because the profile is paused: grey the tabs.
+            .onReceive(NotificationCenter.default.publisher(for: .profilePausedByServer)) { _ in
+                app.applyServerPause(true)
+            }
             // Banners that must sit above everything (sheets included) live in their own window.
             .onAppear { TopOverlayWindow.shared.install() }
             .task {
@@ -209,23 +213,23 @@ struct MainTabs: View {
         @Bindable var app = app
         TabView(selection: $app.tab) {
             Tab(value: AppModel.Tab.discover) {
-                DiscoverView().tint(DS.Palette.accentInk)
+                DiscoverView().tint(DS.Palette.accentInk).pausedLock()
             } label: {
                 tabLabel(L("Discover"), "flame", .discover)
             }
             Tab(value: AppModel.Tab.likes) {
-                LikesTabView().tint(DS.Palette.accentInk)
+                LikesTabView().tint(DS.Palette.accentInk).pausedLock()
             } label: {
                 tabLabel(L("Likes"), "heart", .likes)
             }
             .badge(app.likedMe.count)
             Tab(value: AppModel.Tab.sessions) {
-                SessionsView().tint(DS.Palette.accentInk)
+                SessionsView().tint(DS.Palette.accentInk).pausedLock()
             } label: {
                 tabLabel(L("Sessions"), "flag.2.crossed", .sessions)
             }
             Tab(value: AppModel.Tab.chats) {
-                ConversationsView().tint(DS.Palette.accentInk)
+                ConversationsView().tint(DS.Palette.accentInk).pausedLock()
             } label: {
                 tabLabel(L("Chats"), "bubble.left.and.bubble.right", .chats)
             }

@@ -15618,42 +15618,42 @@
         }
       }
     },
-    "Hidden from Discover. Your chats keep going." : {
+    "Hidden from everyone. Likes, chats and sessions are on hold." : {
       "localizations" : {
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unsichtbar in Entdecken. Deine Chats laufen weiter."
+            "value" : "Invisible pour tous. Likes, discussions et séances sont en pause."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perfil oculto en Descubrir. Tus chats siguen activos."
+            "value" : "Oculto para todos. Likes, chats y sesiones, en pausa."
           }
         },
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Masqué de Découvrir. Tes discussions continuent."
+            "value" : "Für alle unsichtbar. Likes, Chats und Sessions pausieren."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nascosto da Scopri. Le tue chat continuano."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verborgen in Ontdekken. Je chats gaan gewoon door."
+            "value" : "Invisibile a tutti. Like, chat e sessioni sono in pausa."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oculto em Descobrir. As tuas conversas continuam."
+            "value" : "Invisível para todos. Likes, conversas e sessões ficam em pausa."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voor iedereen verborgen. Likes, chats en sessies staan op pauze."
           }
         }
       }
@@ -15694,46 +15694,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ocultar o meu e-mail"
-          }
-        }
-      }
-    },
-    "Hide from Discover without losing your matches." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verbirg dich in Entdecken, ohne deine Matches zu verlieren."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ocúltate en Descubrir sin perder tus matches."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Masque-toi de Découvrir sans perdre tes matchs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nasconditi da Scopri senza perdere i tuoi match."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verberg je in Ontdekken zonder je matches kwijt te raken."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oculta-te em Descobrir sem perderes os teus matches."
           }
         }
       }
@@ -24146,6 +24106,46 @@
         }
       }
     },
+    "Nobody sees you, and you can't like, message or plan sessions until you resume." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personne ne te voit, et tu ne peux ni liker, ni écrire, ni proposer de séance tant que tu n'as pas repris."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadie te ve, y no puedes dar like, escribir ni proponer sesiones hasta que vuelvas."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niemand sieht dich, und du kannst weder liken noch schreiben noch Sessions planen, bis du weitermachst."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuno ti vede, e non puoi mettere like, scrivere o proporre sessioni finché non riprendi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguém te vê, e não podes dar like, escrever nem propor sessões até retomares."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niemand ziet je, en je kunt niet liken, berichten sturen of sessies plannen tot je hervat."
+          }
+        }
+      }
+    },
     "Non-binary" : {
       "localizations" : {
         "de" : {
@@ -31641,6 +31641,46 @@
         }
       }
     },
+    "Resume my profile" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réactiver mon profil"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reactivar mi perfil"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil reaktivieren"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Riattiva il profilo"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reativar o perfil"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profiel hervatten"
+          }
+        }
+      }
+    },
     "Retry" : {
       "localizations" : {
         "de" : {
@@ -36831,6 +36871,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tai chi"
+          }
+        }
+      }
+    },
+    "Take a break: you disappear and everything waits for you." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais une pause : tu disparais et tout t'attend."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tómate un respiro: desapareces y todo te espera."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach eine Pause: Du verschwindest, und alles wartet auf dich."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prenditi una pausa: sparisci e tutto ti aspetta."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faz uma pausa: desapareces e tudo fica à tua espera."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neem een pauze: je verdwijnt en alles wacht op je."
           }
         }
       }

@@ -162,6 +162,14 @@ actor Backend {
 
     // MARK: HTTP
 
+    /// The server refused because the profile is paused: a database function's hint `paused`, an
+    /// edge function's 403 with code `paused`, or the chat service's "user is banned" (the pause ban).
+    static func saysPaused(status: Int, body: [String: Any]?) -> Bool {
+        let hint = body?["hint"] as? String, code = body?["code"] as? String
+        let text = ((body?["message"] ?? body?["msg"] ?? body?["error"]) as? String ?? "").lowercased()
+        return hint == "paused" || (status == 403 && code == "paused") || text.contains("user is banned")
+    }
+
     private func request(_ method: String, _ path: String, json: [String: Any]?) async throws -> Data {
         var request = URLRequest(url: URL(string: path, relativeTo: BackendConfig.url)!)
         request.httpMethod = method
@@ -172,10 +180,18 @@ actor Backend {
         let (data, response) = try await URLSession.shared.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200..<300).contains(status) else {
-            let message = (try? JSONSerialization.jsonObject(with: data) as? [String: Any])
-                .flatMap { $0["hint"] ?? $0["msg"] ?? $0["message"] ?? $0["code"] } as? String
+            let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+            let message = body.flatMap { $0["hint"] ?? $0["msg"] ?? $0["message"] ?? $0["code"] } as? String
+            if Self.saysPaused(status: status, body: body) {
+                await MainActor.run { NotificationCenter.default.post(name: .profilePausedByServer, object: nil) }
+            }
             throw BackendError.http(status, message ?? String(decoding: data.prefix(200), as: UTF8.self))
         }
         return data
     }
+}
+
+extension Notification.Name {
+    /// Posted when the server turns an action down because the profile is paused.
+    static let profilePausedByServer = Notification.Name("profilePausedByServer")
 }
