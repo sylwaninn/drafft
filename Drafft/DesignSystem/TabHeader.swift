@@ -43,7 +43,7 @@ struct TabHeader<Leading: View, Trailing: View>: View {
                             .font(.body.weight(.semibold))
                             .foregroundStyle(DS.Palette.ink)
                             .frame(width: 40, height: 40)
-                            .background(DS.Palette.canvas, in: .circle)
+                            .glassEffect(.regular, in: .circle)
                             .frame(width: 44, height: 44)
                     }
                     .buttonStyle(PressScaleStyle())
@@ -54,30 +54,50 @@ struct TabHeader<Leading: View, Trailing: View>: View {
             }
 
             if let search, showsSearchField {
-                HStack(spacing: DS.Space.sm) {
-                    Image(systemName: "magnifyingglass").foregroundStyle(DS.Palette.body)
-                    TextField(searchPrompt, text: search)
-                        .focused($searchFocused)
-                        .submitLabel(.search)
-                        .autocorrectionDisabled()
-                    if !search.wrappedValue.isEmpty || searchExpanded {
-                        Button {
-                            search.wrappedValue = ""
-                            searchFocused = false
-                            withAnimation(Motion.snappy) { searchExpanded = false }
-                        } label: {
-                            Image(systemName: "xmark.circle.fill").foregroundStyle(DS.Palette.mute)
+                // One glass container: the field and its clear button morph into each other, the
+                // field giving up the button's width as it appears.
+                GlassEffectContainer(spacing: DS.Space.sm) {
+                    HStack(spacing: DS.Space.sm) {
+                        HStack(spacing: DS.Space.sm) {
+                            Image(systemName: "magnifyingglass").foregroundStyle(DS.Palette.body)
+                            TextField(searchPrompt, text: search)
+                                .focused($searchFocused)
+                                .submitLabel(.search)
+                                .autocorrectionDisabled()
                         }
-                        .accessibilityLabel("Clear search")
+                        .font(.body)
+                        .padding(.horizontal, DS.Space.md)
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        // The whole capsule focuses the field, icon and padding included.
+                        .contentShape(.capsule)
+                        .onTapGesture { searchFocused = true }
+                        // Liquid Glass: it reads over anything scrolling under the header, where a
+                        // faint tint vanished.
+                        .glassEffect(.regular, in: .capsule)
+
+                        if !search.wrappedValue.isEmpty || searchExpanded {
+                            Button {
+                                Haptics.tap()
+                                withAnimation(Motion.bouncy) {
+                                    search.wrappedValue = ""
+                                    searchExpanded = false
+                                }
+                                searchFocused = false
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.body.weight(.bold))
+                                    .foregroundStyle(DS.Palette.onLime)
+                                    .frame(width: 40, height: 40)
+                                    .glassEffect(.regular.tint(DS.Palette.lime), in: .circle)
+                                    .contentShape(.circle)
+                            }
+                            .buttonStyle(PressScaleStyle())
+                            .accessibilityLabel("Clear search")
+                            .transition(.scale(scale: 0.4).combined(with: .opacity))
+                        }
                     }
                 }
-                .font(.body)
-                .padding(.horizontal, DS.Space.md)
-                .frame(minHeight: 40)
-                // The whole capsule focuses the field, icon and padding included.
-                .contentShape(.capsule)
-                .onTapGesture { searchFocused = true }
-                .background(DS.Palette.ink.opacity(0.06), in: .capsule)
+                .animation(Motion.bouncy, value: search.wrappedValue.isEmpty)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
@@ -101,13 +121,16 @@ extension TabHeader where Trailing == EmptyView {
     }
 }
 
-/// Title text used as a TabHeader leading view.
+/// Title text used as a TabHeader leading view. Like the status bar, it turns white over a night
+/// block or a photo scrolling under it, and back to ink over the page (`EdgeTone`).
 struct TabTitle: View {
     let text: String
+    @Environment(\.edgeTone) private var tone
+
     var body: some View {
         Text(text)
             .font(.display(34, relativeTo: .largeTitle))
-            .foregroundStyle(DS.Palette.ink)
+            .foregroundStyle(tone.map { AnyShapeStyle($0.ink) } ?? AnyShapeStyle(DS.Palette.ink))
             .lineLimit(1)
             .minimumScaleFactor(0.75) // one-word tab names; never "…" in a longer language
             .accessibilityAddTraits(.isHeader)

@@ -210,7 +210,7 @@ struct ExtrasSheet: View {
                 .accessibilityLabel("Close")
             }
 
-            pack3D
+            PackFan(lifted: lifted) { badge }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, DS.Space.sm)
 
@@ -281,37 +281,6 @@ struct ExtrasSheet: View {
         case .superLike: L("They see you first, with a red heart on your profile. It doesn't use a daily like.")
         case .likes: app.isPremium ? L("drafft tempo has no daily limit.") : L("Your likes refill at midnight, or go unlimited with drafft tempo.")
         }
-    }
-
-    /// Three dimmed cards from the deck, fanned; yours lifts out in front with the extra's badge.
-    private var pack3D: some View {
-        let others = MockData.deck.prefix(3).map(\.portrait)
-        let angles: [Double] = [-14, 0, 14]
-        let xs: [CGFloat] = [-78, 0, 78]
-        return ZStack {
-            ForEach(Array(others.enumerated()), id: \.offset) { i, portrait in
-                Photo(name: portrait, side: 84)
-                    .frame(width: 84, height: 112)
-                    .clipShape(.rect(cornerRadius: DS.Radius.lg))
-                    .saturation(0)
-                    .opacity(0.4)
-                    .rotationEffect(.degrees(angles[i]), anchor: .bottom)
-                    .offset(x: xs[i], y: i == 1 ? -6 : 8)
-            }
-            Photo(name: app.me.portrait, side: 108)
-                .frame(width: 108, height: 144)
-                .clipShape(.rect(cornerRadius: DS.Radius.lg))
-                // The badge sits inside the card's corner: nothing hangs off a block.
-                .overlay(alignment: .topTrailing) {
-                    badge.padding(DS.Space.sm)
-                }
-                .shadow(color: .black.opacity(0.4), radius: 18, y: 10)
-                .scaleEffect(lifted ? 1 : 0.82)
-                .offset(y: lifted ? -4 : 30)
-                .rotationEffect(.degrees(lifted ? -3 : 0))
-        }
-        .frame(height: 170)
-        .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -442,7 +411,7 @@ struct ExtrasSheet: View {
             withAnimation(Motion.select) { pack = on ? nil : p }
         } label: {
             HStack(spacing: DS.Space.md) {
-                CheckDisc(isOn: on)
+                CheckDisc(isOn: on, onLimeFill: true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(alignment: .firstTextBaseline, spacing: 5) {
@@ -451,20 +420,21 @@ struct ExtrasSheet: View {
                         Text(p.count == 1 ? singular : plural)
                             .font(.body.weight(.semibold))
                     }
-                    .foregroundStyle(DS.Palette.ink)
+                    .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
                     HStack(spacing: 6) {
                         if let save = saving(p) {
                             Text(save)
                                 .font(.caption.weight(.bold))
-                                .foregroundStyle(DS.Palette.accentInk)
+                                .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.accentInk)
                         }
                         if best {
                             Text("Best value")
                                 .font(.caption2.weight(.heavy))
-                                .foregroundStyle(DS.Palette.onLime)
+                                // Inverted on the selected (accent) row so the badge never melts into it.
+                                .foregroundStyle(on ? DS.Palette.accentInk : DS.Palette.onLime)
                                 .padding(.horizontal, 6)
                                 .frame(minHeight: 18)
-                                .background(DS.Palette.lime, in: .capsule)
+                                .background(on ? AnyShapeStyle(DS.Palette.onLime) : AnyShapeStyle(DS.Palette.lime), in: .capsule)
                         }
                     }
                 }
@@ -474,16 +444,17 @@ struct ExtrasSheet: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(p.price)
                         .font(.headline.monospacedDigit())
-                        .foregroundStyle(DS.Palette.ink)
+                        .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
                     Text(p.each ?? L("Single"))
                         .font(.caption.monospacedDigit())
-                        .foregroundStyle(DS.Palette.mute)
+                        .foregroundStyle(on ? DS.Palette.onLime.opacity(0.85) : DS.Palette.mute)
                 }
             }
             .lineLimit(2)
             .padding(.horizontal, DS.Space.md)
             .padding(.vertical, DS.Space.md)
-            .background(on ? DS.Palette.limePale : .clear, in: .rect(cornerRadius: DS.Radius.lg))
+            // Selected: solid accent, like every other selection (a pale wash vanished on the sheet's well).
+            .background(on ? DS.Palette.lime : .clear, in: .rect(cornerRadius: DS.Radius.lg))
             .contentShape(.rect(cornerRadius: DS.Radius.lg))
         }
         .buttonStyle(PressScaleStyle(scale: 0.98))
@@ -601,5 +572,46 @@ struct ExtrasSheet: View {
             try? await Task.sleep(for: .milliseconds(250))
             withAnimation(Motion.bouncy) { app.startBoost() }
         }
+    }
+}
+
+/// Three dimmed athletes (`PackPhotos`, the pile you stand out from, so your own gender), fanned;
+/// yours lifts out in front with the extra's badge.
+private struct PackFan<Badge: View>: View {
+    let lifted: Bool
+    @ViewBuilder var badge: Badge
+
+    @Environment(AppModel.self) private var app
+    /// Picked once per opening.
+    @State private var others: [String] = []
+
+    var body: some View {
+        let angles: [Double] = [-14, 0, 14]
+        let xs: [CGFloat] = [-78, 0, 78]
+        ZStack {
+            ForEach(Array(others.enumerated()), id: \.offset) { i, portrait in
+                Photo(name: portrait, side: 84)
+                    .frame(width: 84, height: 112)
+                    .clipShape(.rect(cornerRadius: DS.Radius.lg))
+                    .saturation(0)
+                    .opacity(0.4)
+                    .rotationEffect(.degrees(angles[i]), anchor: .bottom)
+                    .offset(x: xs[i], y: i == 1 ? -6 : 8)
+            }
+            Photo(name: app.me.portrait, side: 108)
+                .frame(width: 108, height: 144)
+                .clipShape(.rect(cornerRadius: DS.Radius.lg))
+                // The badge sits inside the card's corner: nothing hangs off a block.
+                .overlay(alignment: .topTrailing) {
+                    badge.padding(DS.Space.sm)
+                }
+                .shadow(color: .black.opacity(0.4), radius: 18, y: 10)
+                .scaleEffect(lifted ? 1 : 0.82)
+                .offset(y: lifted ? -4 : 30)
+                .rotationEffect(.degrees(lifted ? -3 : 0))
+        }
+        .frame(height: 170)
+        .accessibilityHidden(true)
+        .onAppear { if others.isEmpty { others = PackPhotos.pick(for: DiscoverFilters.audience(of: app.me)) } }
     }
 }

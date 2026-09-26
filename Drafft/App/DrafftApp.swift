@@ -13,7 +13,7 @@ struct DrafftApp: App {
         Self.styleNavigationBars()
         Self.prewarmPhotos()
         let args = ProcessInfo.processInfo.arguments
-        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya
+        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya, -empty, -deck 2
         if args.contains("-skipAuth") { _app = State(initialValue: Self.demoModel(args)) }
     }
 
@@ -41,7 +41,8 @@ struct DrafftApp: App {
             blurred: MockData.deck.map(\.portrait).flatMap { [(name: $0, fraction: 0.1), (name: $0, fraction: 4.0 / 24)] })
     }
 
-    /// Large titles in the display face, inline titles in its extra-bold cut, both in ink.
+    /// Large titles in the display face, inline titles in its extra-bold cut, both in ink. No halo:
+    /// a UIKit shadow can't tell a sheet from a page, and showed as a coloured rim on white sheets.
     /// Only text attributes are set, so the system bar keeps its glass and scroll-edge blur.
     private static func styleNavigationBars() {
         let ink = UIColor(DS.Palette.ink)
@@ -83,16 +84,31 @@ struct DrafftApp: App {
             m.tab = .chats
             m.chatRequest = args[i + 1]
         }
+        applyDemoData(args, to: m)
+        if let i = args.firstIndex(of: "-match"), i + 1 < args.count {
+            m.matchScreen = MockData.profile(args[i + 1])
+        }
+        return m
+    }
+
+    /// Demo data shortcuts: -tight, -empty, -deck <n>.
+    @MainActor
+    private static func applyDemoData(_ args: [String], to m: AppModel) {
         if args.contains("-tight") {
             // Demo: filters that hide everyone, to show the too-tight state.
             m.filters.maxDistanceKm = 2
             m.filters.sports = [.triathlon, .padel]
             m.filters.sharedSportsOnly = true
         }
-        if let i = args.firstIndex(of: "-match"), i + 1 < args.count {
-            m.matchScreen = MockData.profile(args[i + 1])
+        if args.contains("-empty") {
+            // Demo: a brand-new account, to check every tab's empty state.
+            m.queue = []
+            m.conversations = []
         }
-        return m
+        if let i = args.firstIndex(of: "-deck"), i + 1 < args.count, let n = Int(args[i + 1]) {
+            // Demo: only a few cards left, to swipe to the empty state.
+            m.queue = Array(MockData.deck.prefix(n))
+        }
     }
 }
 

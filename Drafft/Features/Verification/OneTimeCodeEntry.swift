@@ -15,8 +15,7 @@ struct OneTimeCodeEntry<Accessory: View>: View {
     var hint: String
     var resendIn: Int
     var editTitle = L("Change")
-    /// The lifted white, like every field (a page or a sheet alike).
-    var boxFill: Color = DS.Palette.white
+    var boxFill: Color = DS.Palette.field
     let onEdit: () -> Void
     let onResend: () -> Void
     /// Between the status line and Resend (the demo panel).
@@ -115,7 +114,7 @@ struct OneTimeCodeEntry<Accessory: View>: View {
 extension OneTimeCodeEntry where Accessory == EmptyView {
     init(destination: String, code: String, onCode: @escaping (String) -> Void, busy: Bool, error: String?,
          needsHelp: Bool = false, helpTopic: String, hint: String, resendIn: Int,
-         editTitle: String = L("Change"), boxFill: Color = DS.Palette.white,
+         editTitle: String = L("Change"), boxFill: Color = DS.Palette.field,
          onEdit: @escaping () -> Void, onResend: @escaping () -> Void) {
         self.init(destination: destination, code: code, onCode: onCode, busy: busy, error: error,
                   needsHelp: needsHelp, helpTopic: helpTopic, hint: hint, resendIn: resendIn,

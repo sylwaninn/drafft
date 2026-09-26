@@ -1,9 +1,8 @@
 import SwiftUI
 
 /// Discover when the stack runs out, filtered or not: one screen, the message in the middle. It shows
-/// the moment the last profile card is swiped, while that card is still flying off above it, so the
-/// icon drafts straight into the spot it leaves, its two ghosts tucking in behind it like the app
-/// icon; then the words rise. The actions sit at the bottom: widen the
+/// the moment the last profile card is swiped: three athlete photos are dealt into the spot it
+/// leaves and fan out; then the words rise. The actions sit at the bottom: widen the
 /// radius (the move that brings new people), or go to the chats.
 struct DeckEmptyView: View {
     /// True when the last card was just swiped: the entrance plays. Coming back to Discover later
@@ -14,16 +13,16 @@ struct DeckEmptyView: View {
 
     @Environment(AppModel.self) private var app
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var iconIn = false
+    @State private var fanIn = false
     @State private var textIn = false
-
-    private let disc: CGFloat = 72
+    /// Picked once per showing.
+    @State private var photos: [String] = []
 
     var body: some View {
         VStack(spacing: DS.Space.xl) {
             Spacer(minLength: 0)
             VStack(spacing: DS.Space.xl) {
-                icon
+                fan
                 message
             }
             Spacer(minLength: 0)
@@ -33,31 +32,39 @@ struct DeckEmptyView: View {
         .onAppear(perform: appear)
     }
 
-    // MARK: Icon
+    // MARK: Fan
 
-    private var icon: some View {
-        ZStack {
-            // Two ghosts behind, then the lead: they arrive one after the other.
-            ForEach((0..<3).reversed(), id: \.self) { i in
-                Circle()
-                    .fill(DS.Palette.lime)
-                    .frame(width: disc, height: disc)
-                    .overlay {
-                        if i == 0 {
-                            Image(systemName: "binoculars.fill")
-                                .font(.system(size: disc * 0.36, weight: .bold))
-                                .foregroundStyle(DS.Palette.onLime)
-                        }
-                    }
-                    .opacity(iconIn ? [1, 0.45, 0.2][i] : 0)
-                    .offset(x: iconIn ? -CGFloat(i) * 12 : -30)
-                    .animation(reduceMotion ? nil : .spring(response: 0.6, dampingFraction: 0.9)
-                        .delay(0.05 + Double(i) * 0.07), value: iconIn)
+    /// Three athletes from the pack photos, the people you're looking for (per your filters), in
+    /// the boost sheet's fan: same card sizes, angles and shadow. After the last swipe they are
+    /// dealt in quickly, one after the other. A new pile whenever the filters change.
+    private var fan: some View {
+        let angles: [Double] = [-14, 14, 0]
+        let xs: [CGFloat] = [-78, 78, 0]
+        let ys: [CGFloat] = [8, 8, -4]
+        return ZStack {
+            ForEach(Array(photos.enumerated()), id: \.element) { index, name in
+                // The last photo leads in the middle; a pile of two keeps the left slot only.
+                let i = index == photos.count - 1 ? 2 : index
+                let lead = i == 2
+                Photo(name: name, side: lead ? 108 : 84)
+                    .frame(width: lead ? 108 : 84, height: lead ? 144 : 112)
+                    .clipShape(.rect(cornerRadius: DS.Radius.lg))
+                    .shadow(color: .black.opacity(lead ? 0.4 : 0), radius: 18, y: 10)
+                    .rotationEffect(.degrees(fanIn ? angles[i] : 0), anchor: .bottom)
+                    .offset(x: fanIn ? xs[i] : 0, y: fanIn ? ys[i] : -40)
+                    .scaleEffect(fanIn ? 1 : 0.7)
+                    .opacity(fanIn ? 1 : 0)
+                    .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.72)
+                        .delay(Double(index) * 0.07), value: fanIn)
+                    .transition(.scale(scale: 0.85).combined(with: .opacity))
             }
         }
-        .frame(width: disc + 24, height: disc)
-        .offset(x: 12) // the ghosts reach left: keep the lead on the centre line
+        .frame(height: 170)
         .accessibilityHidden(true)
+        .onAppear { if photos.isEmpty { photos = PackPhotos.pick(for: app.filters.audience) } }
+        .onChange(of: app.filters) {
+            withAnimation(reduceMotion ? nil : Motion.bouncy) { photos = PackPhotos.pick(for: app.filters.audience) }
+        }
     }
 
     // MARK: Message
@@ -92,11 +99,11 @@ struct DeckEmptyView: View {
                 } label: {
                     Text(next >= DiscoverFilters.anyDistance ? L("Widen to any distance") : L("Widen to \(L("\(Int(next)) km"))"))
                 }
-                .buttonStyle(.drafftPrimary)
+                .buttonStyle(.drafftPrimaryFit)
                 link(L("Go to chats"), action: onChats)
             } else {
                 Button("Go to chats", action: onChats)
-                    .buttonStyle(.drafftPrimary)
+                    .buttonStyle(.drafftPrimaryFit)
                 link(L("Adjust filters"), action: onFilters)
             }
         }
@@ -106,7 +113,7 @@ struct DeckEmptyView: View {
         Button(title, action: action)
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(DS.Palette.accentInk)
-            .buttonStyle(.textLink(fullWidth: true))
+            .buttonStyle(.textLink(fullWidth: false))
     }
 
     /// The next step out: 25 km, 50 km, then any distance. Nil once already at any distance.
@@ -120,11 +127,12 @@ struct DeckEmptyView: View {
         guard animate, !reduceMotion else {
             var t = Transaction(animation: nil)
             t.disablesAnimations = true
-            withTransaction(t) { iconIn = true; textIn = true }
+            withTransaction(t) { fanIn = true; textIn = true }
             return
         }
-        iconIn = false; textIn = false
-        iconIn = true // each disc carries its own delayed spring
-        withAnimation(.easeOut(duration: 0.4).delay(0.3)) { textIn = true }
+        fanIn = false; textIn = false
+        // Quickly after the last card flies off: each photo carries its own delayed spring.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { fanIn = true }
+        withAnimation(.easeOut(duration: 0.4).delay(0.35)) { textIn = true }
     }
 }

@@ -22,9 +22,9 @@ struct AccountSheet<Content: View>: View {
     var body: some View {
         NavigationStack {
             FocusScrollView {
-                VStack(spacing: DS.Space.xl) { content }
-                    .padding(.horizontal, DS.Space.xl)
-                    .padding(.vertical, DS.Space.md)
+                VStack(spacing: DS.Space.md) { content }
+                    .padding(.horizontal, DS.Space.lg)
+                    .padding(.vertical, DS.Space.sm)
             }
             .scrollDismissesKeyboard(.interactively)
             .background(DS.Palette.canvasSoft)
@@ -103,9 +103,8 @@ private struct DestructiveAwareStyle: ButtonStyle {
     }
 }
 
-/// White block with a small title inside.
-/// A titled group in a settings sheet, straight on the white sheet: no grey well around it, the
-/// fields and rows carry their own edges. Groups are told apart by space, not boxes.
+/// A group in a sheet, with an optional small title: a sage well on the white sheet (a white block
+/// on a page), like every sheet in You. Its fields stay white, so they stand out of the well.
 struct SheetBlock<Content: View>: View {
     var title: String?
     @ViewBuilder var content: Content
@@ -116,7 +115,9 @@ struct SheetBlock<Content: View>: View {
             }
             content
         }
+        .padding(DS.Space.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
     }
 }
 

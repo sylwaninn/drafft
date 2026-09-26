@@ -573,6 +573,8 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
   - `.blurredNavigationEdge()`: screens with the system navigation bar (chat, sheets): the blur covers the status bar and the whole bar, avatar and title included.
 - Attach them to the scroll view itself. The system scroll-edge effects are hidden where these apply.
 - The blur only appears when content actually sits under the bar (read from the scroll position): at the top of a page, or on a page shorter than the screen, nothing is blurred. It fades in over 0.2 s.
+- **Header titles flip like the status bar.** `topBar` samples the luminance of the content scrolling under it (`EdgeToneSampler`: a 32 × 8 render of the band, a few times a second, with hysteresis) and passes `edgeTone` to the bar: `TabTitle` turns white over a night block or a dark photo and back to ink over light content, with a 0.2 s fade. At rest it keeps the page's ink.
+- No halo, glow or shadow on titles or header text: tried (a page-tone glow for legibility over dark content) and rejected by the user as a coloured rim. Header search fields and the search button are Liquid Glass (`.glassEffect(.regular)`), never a faint tint that vanishes over content.
 - Never put `.interactive()` glass on a button's label: interactive glass handles the touch itself and can swallow the button's action. Buttons use plain `.glassEffect(.regular)`.
 - Controls on a bar stay opaque or Liquid Glass (lime validate, glass field and buttons), so their contrast never depends on what scrolls under.
 - Screens that don't scroll (Discover) pin their header without blur. Exception: the profile detail's like/pass buttons float with no blur at all.
@@ -622,7 +624,7 @@ One job per colour, everywhere:
 - A field takes touches on its whole box, padding included: the text field fills the box and a tap anywhere on it focuses it.
 - Never focus a field on arrival: the page opens whole, keyboard down, so the person sees everything first. The keyboard comes up when they tap a field.
 - Forms scroll with `FocusScrollView`: a field that gets focus scrolls itself to the upper third, clear of the keyboard and the pinned button. A pinned button never sits on top of the field being typed in. Any field that isn't a `DrafftField` gets `.revealsOnFocus(…)`; the scroll content always ends with a margin, so even the last field never touches the keyboard.
-- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). The field is always the lifted white, in a sheet too (never the sheet's sage well); settings sheets set their groups straight on the white sheet, told apart by space, not grey boxes. A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
+- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). Every input uses `DS.Palette.field`, the lifted white, on a page and in a sheet. Sheets group their content in `SheetBlock`s, sage wells on the white sheet (like Language, Phone number and Get help), so the white fields always stand out of what's around them: never a field the colour of its background. A value that can't be changed (the birthday in Edit profile) is a `LockedField`: same label and box as a field, but greyed (ink at 6 %, mute text) with a lock and the reason under it. A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
 - One icon per meaning: never reuse the same symbol for two different items in a list or a switcher.
 
 ### Verification & support
@@ -650,6 +652,7 @@ One job per colour, everywhere:
 ### Purchases
 - Every completed purchase (drafft tempo, boost packs, super like packs) opens `PurchaseConfirmation` over the screen it was bought on: a raised sheet (`sheetRaised`: white, lifted grey in dark mode) sized to its content, the item's mark popping in with its trail, a display title ("You're on drafft tempo.", "5 boosts added."), what it does in one sentence, a receipt-like recap (plan, price, renewal; or added, balance, paid), one next step and "Apple emails your receipt."
 - The next step fits where the purchase started: the paywall's `unlockedTitle` ("Undo my last swipe", "See who likes you", "Continue"), "Boost now" with "Later" for boosts, "Got it" for super likes. Closing it returns to the origin.
+- The boost, super like and likes sheets fan three dimmed people behind your own photo: pre-made photorealistic athletes mid-effort (`PackPhotos`, `pack_woman_*` / `pack_man_*`, from `scripts/generate-pack-photos.py`), never real profiles. They're the pile you stand out from, so they share your gender: women for a woman, men for a man, both mixed for a non-binary person (boost, super like and likes alike). Diverse in origin, skin tone, age and build.
 
 ### Safety
 - One set of safety tips (`SafetyTips.meeting`), same words everywhere: the Safety tips page, a "Meet safely" block in every session invite (new or other times), the "Meet safely" sheet shown right after you confirm a time, and a "Meet safely" link on every confirmed session card.
@@ -720,7 +723,7 @@ One job per colour, everywhere:
 - Photos shown small pass their size (`Photo(name:side:)`, `Avatar` does it): a downsampled copy is drawn, never a 1400 px JPEG for a 56 pt avatar. Blurred photos (locked likes) pass `blur:` and get the blur baked into a small copy, never a live `.blur` on each card. `ImageStore` prepares, in the background at launch, the welcome photos, the top of the deck, every avatar size and the locked-like copies, so a tab's first visit draws without decoding and the tab bar answers at once.
 
 ### Layout
-- **No loose text on the sage canvas.** Section titles and their content live inside a block (white card, or night/lime feature block).
+- **No loose text on the sage canvas.** Section titles and their content live inside a block (white card, or night/lime feature block). Exceptions the user asked for: Discover's empty stack, and on You the build line ("drafft 1.0 (12)", the environment in the name off production) as a small mute caption under the Log out / Delete account block.
 - Long settings are split into categories that push sub-pages, not one endless page.
 - Icons sit in round badges, never squares. Glyphs keep padding and never touch their badge's edge.
 - Nothing hangs off a block: counts, dots and badges sit inside their button, chip or card (the filter count is inside the filter pill, the super-like count inside its disc, the "new" dot inside the likes chip).

@@ -82,13 +82,14 @@ struct MeView: View {
                                 .frame(maxWidth: .infinity, minHeight: 52)
                                 .contentShape(.rect)
                         }
-                        // Inside the block: no loose text on the sage page.
-                        Text(branded: L("drafft 0.1, demo build"), font: .caption)
-                            .foregroundStyle(DS.Palette.body)
-                            .padding(.bottom, DS.Space.md)
                     }
                     .padding(.horizontal, DS.Space.lg)
                     .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+                    // Under the last block, the page's one quiet footnote (a user-requested exception
+                    // to "no loose text"): which app this is, down to the build.
+                    Text(branded: Self.buildLabel, font: .caption)
+                        .foregroundStyle(DS.Palette.mute)
+                        .padding(.top, DS.Space.xs)
                 }
                 .padding(.horizontal, DS.Space.lg)
                 .padding(.bottom, DS.Space.xxl)
@@ -136,6 +137,15 @@ struct MeView: View {
             }
         }
     }
+
+    /// "drafft 1.0 (12)", with the environment in the name off production ("drafft β", "drafft local").
+    private static let buildLabel: String = {
+        let info = Bundle.main.infoDictionary ?? [:]
+        let name = info["CFBundleDisplayName"] as? String ?? "drafft"
+        let version = info["CFBundleShortVersionString"] as? String ?? ""
+        let build = info["CFBundleVersion"] as? String ?? ""
+        return "\(name) \(version) (\(build))"
+    }()
 
     // MARK: Profile card
 

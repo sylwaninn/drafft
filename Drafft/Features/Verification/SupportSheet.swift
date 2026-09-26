@@ -65,8 +65,7 @@ struct SupportSheet: View {
                 .padding(DS.Space.lg)
                 .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
 
-                VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
-                    Text("What happened?").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+                SheetBlock(title: L("What happened?")) {
                     TextField("A few words help us fix it faster", text: $message, axis: .vertical)
                         .lineLimit(4...8)
                         .font(.body)
@@ -76,7 +75,7 @@ struct SupportSheet: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(.rect)
                         .onTapGesture { messageFocused = true }
-                        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
+                        .background(DS.Palette.field, in: .rect(cornerRadius: DS.Radius.md))
                         .overlay {
                             // Same focus ring as DrafftField.
                             RoundedRectangle(cornerRadius: DS.Radius.md)
@@ -85,7 +84,6 @@ struct SupportSheet: View {
                         }
                         .animation(Motion.gentle, value: messageFocused)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

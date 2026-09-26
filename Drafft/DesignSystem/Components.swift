@@ -54,6 +54,8 @@ struct DrafftButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == DrafftButtonStyle {
     static var drafftPrimary: DrafftButtonStyle { .init(kind: .primary) }
+    /// Primary, sized to its label: a single action in the middle of a page (empty states).
+    static var drafftPrimaryFit: DrafftButtonStyle { .init(kind: .primary, fullWidth: false) }
     static var drafftSecondary: DrafftButtonStyle { .init(kind: .secondary) }
     static var drafftTertiary: DrafftButtonStyle { .init(kind: .tertiary) }
     static var drafftDark: DrafftButtonStyle { .init(kind: .dark) }
@@ -197,8 +199,7 @@ struct DrafftField: View {
             // The padding around the text counts too: the whole field focuses it.
             .contentShape(.rect(cornerRadius: DS.Radius.md))
             .onTapGesture { focused = true }
-            // Always the lifted white, on a page or in a sheet (where the block tone is a sage well).
-            .background(DS.Palette.white, in: .rect(cornerRadius: DS.Radius.md))
+            .background(DS.Palette.field, in: .rect(cornerRadius: DS.Radius.md))
             .overlay {
                 RoundedRectangle(cornerRadius: DS.Radius.md)
                     .strokeBorder(borderColor, lineWidth: focused || error != nil ? 2 : 1)

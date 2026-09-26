@@ -325,18 +325,11 @@ struct EditProfileView: View {
             }
             divider
             // The birthday is set once, at sign-up (the server keeps it from changing).
-            VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text("Age").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
-                    Spacer()
-                    Text(draft.age, format: .number).font(.body.weight(.semibold)).foregroundStyle(DS.Palette.ink)
-                }
-                Text("From the birthday you gave at sign-up. It can't be changed.")
-                    .font(.footnote)
-                    .foregroundStyle(DS.Palette.mute)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .accessibilityElement(children: .combine)
+            LockedField(title: L("Birthday"),
+                        value: draft.birthday.map {
+                            $0.formatted(Date.FormatStyle(date: .long, time: .omitted, timeZone: .gmt).locale(.app))
+                        } ?? L("\(draft.age) years old"),
+                        hint: L("Set at sign-up. It can't be changed."))
         }
     }
 
@@ -658,3 +651,36 @@ extension View {
 }
 
 struct PromptSlot: Identifiable { let id: Int }
+
+/// A value you can see but not change, laid out like the fields around it (same label, same box),
+/// but plainly disabled: a greyed box sunk into the block instead of the white of a live field,
+/// greyed text, a lock, and why it's locked underneath.
+private struct LockedField: View {
+    let title: String
+    let value: String
+    let hint: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DS.Space.xs) {
+            VStack(alignment: .leading, spacing: DS.Space.sm) {
+                Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
+                HStack(spacing: DS.Space.sm) {
+                    Text(value).font(.body).foregroundStyle(DS.Palette.mute)
+                    Spacer()
+                    Image(systemName: "lock.fill").font(.footnote.weight(.semibold)).foregroundStyle(DS.Palette.mute)
+                }
+                .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                .padding(.vertical, 2)
+                .padding(.horizontal, DS.Space.md)
+                .background(DS.Palette.ink.opacity(0.06), in: .rect(cornerRadius: DS.Radius.md))
+                .accessibilityAddTraits(.isStaticText)
+                .accessibilityValue(L("Can't be changed"))
+            }
+            Text(hint)
+                .font(.footnote)
+                .foregroundStyle(DS.Palette.mute)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityElement(children: .combine)
+    }
+}

@@ -355,7 +355,7 @@ struct OnboardingView: View {
             id: "me",
             name: name.trimmingCharacters(in: .whitespaces),
             age: age ?? 18,
-            pronouns: nil,
+            pronouns: nil, birthday: birthday, gender: identity.flatMap(DiscoverFilters.Audience.init(answer:)),
             neighborhood: area?.name ?? "",
             distanceKm: 0,
             portrait: photos.first ?? "",
@@ -700,7 +700,7 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, DS.Space.lg)
                 .frame(minHeight: 52)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.md))
+                .background(DS.Palette.field, in: .rect(cornerRadius: DS.Radius.md))
                 .overlay {
                     RoundedRectangle(cornerRadius: DS.Radius.md)
                         .strokeBorder(locator.state == .denied ? DS.Palette.negative : DS.Palette.ink.opacity(0.35),

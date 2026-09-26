@@ -78,6 +78,9 @@ enum DS {
         static let canvasSoft = Surface.page
         /// The fixed tones, for the rare place that needs a `Color` whatever the surface.
         static let white = Color(light: 0xFFFFFF, dark: 0x1A1C18)
+        /// Every input (text field, code and date boxes, pickers dressed as fields): the lifted
+        /// white on a page, in a sheet's sage well, anywhere. Never the colour of what's around it.
+        static let field = white
         /// The page tone follows the accent, so the page never keeps the colour of a former one:
         /// violet gets a cool grey with a touch of violet (#EDECF2). Same lightness as the old sage, so
         /// white blocks still stand out; body 7.8:1, mute 5.1:1 and accent ink 4.6:1 on it.

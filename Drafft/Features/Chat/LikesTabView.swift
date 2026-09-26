@@ -89,17 +89,13 @@ struct LikesTabView: View {
     }
 
     private var emptyState: some View {
-        VStack(alignment: .leading, spacing: DS.Space.sm) {
-            Text("No likes yet.")
-                .font(.display(30))
-                .foregroundStyle(DS.Palette.ink)
-            Text("A sport photo and a voice intro help. New likes land here.")
-                .font(.body)
-                .foregroundStyle(DS.Palette.body)
+        EmptyStateView(art: .likes, title: "No likes yet.",
+                       message: "A sport photo and a voice intro help. New likes land here.") {
+            Button("Back to Discover") { app.tab = .discover }
+                .buttonStyle(.drafftPrimaryFit)
         }
-        .padding(DS.Space.xl)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+        // The middle of the visible page, under the header.
+        .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
     }
 
     private func card(_ p: Profile) -> some View {

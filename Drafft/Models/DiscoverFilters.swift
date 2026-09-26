@@ -5,6 +5,15 @@ struct DiscoverFilters: Equatable {
     enum Audience: String, CaseIterable, Identifiable {
         case women = "Women", men = "Men", nonBinary = "Non-binary people", everyone = "Everyone"
         var id: String { rawValue }
+        /// A gender as sign-up asks it ("Woman") or the server stores it ("woman").
+        init?(answer: String) {
+            switch answer.lowercased() {
+            case "woman", "women": self = .women
+            case "man", "men": self = .men
+            case "non-binary", "nonbinary", "non-binary people": self = .nonBinary
+            default: return nil
+            }
+        }
         /// Shown in the app's language; `rawValue` stays the stable identity.
         var title: String {
             switch self {
@@ -57,9 +66,10 @@ struct DiscoverFilters: Equatable {
         return true
     }
 
-    /// Demo: derived from pronouns until profiles carry an explicit gender.
+    /// The person's own gender; demo profiles without one fall back on their pronouns.
     static func audience(of p: Profile) -> Audience {
-        switch p.pronouns {
+        if let gender = p.gender { return gender }
+        return switch p.pronouns {
         case "she/her": .women
         case "he/him": .men
         default: .nonBinary
