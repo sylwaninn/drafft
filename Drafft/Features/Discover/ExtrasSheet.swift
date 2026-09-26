@@ -411,7 +411,7 @@ struct ExtrasSheet: View {
             withAnimation(Motion.select) { pack = on ? nil : p }
         } label: {
             HStack(spacing: DS.Space.md) {
-                CheckDisc(isOn: on)
+                CheckDisc(isOn: on, onLimeFill: true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(alignment: .firstTextBaseline, spacing: 5) {
@@ -420,20 +420,21 @@ struct ExtrasSheet: View {
                         Text(p.count == 1 ? singular : plural)
                             .font(.body.weight(.semibold))
                     }
-                    .foregroundStyle(DS.Palette.ink)
+                    .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
                     HStack(spacing: 6) {
                         if let save = saving(p) {
                             Text(save)
                                 .font(.caption.weight(.bold))
-                                .foregroundStyle(DS.Palette.accentInk)
+                                .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.accentInk)
                         }
                         if best {
                             Text("Best value")
                                 .font(.caption2.weight(.heavy))
-                                .foregroundStyle(DS.Palette.onLime)
+                                // Inverted on the selected (accent) row so the badge never melts into it.
+                                .foregroundStyle(on ? DS.Palette.accentInk : DS.Palette.onLime)
                                 .padding(.horizontal, 6)
                                 .frame(minHeight: 18)
-                                .background(DS.Palette.lime, in: .capsule)
+                                .background(on ? AnyShapeStyle(DS.Palette.onLime) : AnyShapeStyle(DS.Palette.lime), in: .capsule)
                         }
                     }
                 }
@@ -443,16 +444,17 @@ struct ExtrasSheet: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text(p.price)
                         .font(.headline.monospacedDigit())
-                        .foregroundStyle(DS.Palette.ink)
+                        .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
                     Text(p.each ?? L("Single"))
                         .font(.caption.monospacedDigit())
-                        .foregroundStyle(DS.Palette.mute)
+                        .foregroundStyle(on ? DS.Palette.onLime.opacity(0.85) : DS.Palette.mute)
                 }
             }
             .lineLimit(2)
             .padding(.horizontal, DS.Space.md)
             .padding(.vertical, DS.Space.md)
-            .background(on ? DS.Palette.limePale : .clear, in: .rect(cornerRadius: DS.Radius.lg))
+            // Selected: solid accent, like every other selection (a pale wash vanished on the sheet's well).
+            .background(on ? DS.Palette.lime : .clear, in: .rect(cornerRadius: DS.Radius.lg))
             .contentShape(.rect(cornerRadius: DS.Radius.lg))
         }
         .buttonStyle(PressScaleStyle(scale: 0.98))
