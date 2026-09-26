@@ -70,7 +70,11 @@ targets:
         UIAppFonts:
           - InterDisplay-Black.ttf
           - InterDisplay-ExtraBold.ttf
-        UILaunchScreen: {}
+        # The first frame of SplashView: page tone and the word, centred (the relief then forms).
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+          UIImageName: LaunchMark
+          UIImageRespectsSafeAreaInsets: false
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         CFBundleDisplayName: $(APP_DISPLAY_NAME)
         # Read by BackendConfig; values from Config/*.xcconfig.

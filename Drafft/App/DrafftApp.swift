@@ -116,10 +116,19 @@ struct RootView: View {
     @Environment(AppModel.self) private var app
     /// The tabs exist from shortly after launch, invisible under the welcome screen or sign-up.
     @State private var tabsMounted = false
+    /// The saved session has been checked (signed in straight away, or the welcome screen).
+    @State private var sessionChecked = false
+    @State private var splashShown = true
     private var inMain: Bool { app.phase == .main }
 
     var body: some View {
         rootStack
+            // The launch: it covers the first screen until it's ready, then fades onto it.
+            .overlay {
+                if splashShown {
+                    SplashView(isReady: tabsMounted && sessionChecked) { splashShown = false }
+                }
+            }
             // Banners that must sit above everything (sheets included) live in their own window.
             .onAppear { TopOverlayWindow.shared.install() }
             .task {
@@ -169,7 +178,10 @@ struct RootView: View {
             tabsMounted = true
         }
         // Signed in on this device before: straight in.
-        .task { await app.restoreSession() }
+        .task {
+            await app.restoreSession()
+            sessionChecked = true
+        }
         // Links in auth emails (confirm sign-up, reset password).
         .onOpenURL { url in Task { await app.handleAuthLink(url) } }
         .sheet(isPresented: Binding(get: { app.choosingNewPassword }, set: { app.choosingNewPassword = $0 })) {

@@ -56,14 +56,16 @@ struct DeckEmptyView: View {
                     .opacity(fanIn ? 1 : 0)
                     .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.72)
                         .delay(Double(index) * 0.07), value: fanIn)
-                    .transition(.scale(scale: 0.85).combined(with: .opacity))
             }
         }
         .frame(height: 170)
         .accessibilityHidden(true)
         .onAppear { if photos.isEmpty { photos = PackPhotos.pick(for: app.filters.audience) } }
         .onChange(of: app.filters) {
-            withAnimation(reduceMotion ? nil : Motion.bouncy) { photos = PackPhotos.pick(for: app.filters.audience) }
+            // New people for new filters, swapped in place: the deal only plays after the last swipe.
+            var quiet = Transaction(animation: nil)
+            quiet.disablesAnimations = true
+            withTransaction(quiet) { photos = PackPhotos.pick(for: app.filters.audience) }
         }
     }
 
