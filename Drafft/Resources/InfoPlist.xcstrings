@@ -19,7 +19,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft uses the camera to take photos for your profile and chats."
+            "value" : "drafft uses your camera to take photos for your profile and chats."
           }
         },
         "es" : {
@@ -43,13 +43,13 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft gebruikt de camera om foto's te maken voor je profiel en chats."
+            "value" : "drafft gebruikt je camera om foto's te maken voor je profiel en chats."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft usa a câmara para tirar fotos para o teu perfil e as tuas conversas."
+            "value" : "O drafft usa a câmara para tirar fotos para o teu perfil e as tuas conversas."
           }
         }
       }
@@ -78,7 +78,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft affiche ton secteur, jamais ton adresse, et arrondit les distances."
+            "value" : "drafft affiche ton quartier, jamais ton adresse, et arrondit les distances."
           }
         },
         "it" : {
@@ -96,7 +96,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft mostra a tua zona, nunca a tua morada, e arredonda as distâncias."
+            "value" : "O drafft mostra a tua zona, nunca a tua morada, e arredonda as distâncias."
           }
         }
       }
@@ -113,7 +113,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft uses the microphone to record voice messages and your voice intro."
+            "value" : "drafft uses your microphone to record voice messages and your voice intro."
           }
         },
         "es" : {
@@ -137,13 +137,13 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft gebruikt de microfoon om spraakberichten en je spraakintro op te nemen."
+            "value" : "drafft gebruikt je microfoon om spraakberichten en je spraakintro op te nemen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft usa o microfone para gravar mensagens de voz e a tua apresentação de voz."
+            "value" : "O drafft usa o microfone para gravar mensagens de voz e a tua apresentação de voz."
           }
         }
       }
@@ -154,13 +154,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit drafft kannst du Fotos und Videos im Chat teilen und zu deinem Profil hinzufügen."
+            "value" : "Mit drafft kannst du Fotos und Videos in Chats teilen und zu deinem Profil hinzufügen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft lets you share photos and videos in chat and add them to your profile."
+            "value" : "drafft lets you share photos and videos in chats and add them to your profile."
           }
         },
         "es" : {
@@ -172,7 +172,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft te permet de partager des photos et des vidéos dans les discussions et de les ajouter à ton profil."
+            "value" : "drafft te permet de partager des photos et des vidéos dans tes discussions et de les ajouter à ton profil."
           }
         },
         "it" : {
@@ -184,13 +184,13 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Met drafft kun je foto's en video's delen in chats en ze aan je profiel toevoegen."
+            "value" : "Met drafft deel je foto's en video's in chats en voeg je ze toe aan je profiel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft permite-te partilhar fotos e vídeos nas conversas e adicioná-los ao teu perfil."
+            "value" : "O drafft permite-te partilhar fotos e vídeos nas conversas e adicioná-los ao teu perfil."
           }
         }
       }
