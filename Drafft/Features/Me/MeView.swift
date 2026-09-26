@@ -24,7 +24,9 @@ struct MeView: View {
                         row(L("Filters"), icon: "slider.horizontal.3", value: filtersSummary) { sheet = .filters }
                         separator
                         toggleRow(L("Pause my profile"), icon: "pause.fill",
-                                  detail: app.profilePaused ? L("Hidden from Discover. Your chats keep going.") : L("Hide from Discover without losing your matches."),
+                                  detail: app.profilePaused
+                                      ? L("Hidden from everyone. Likes, chats and sessions are on hold.")
+                                      : L("Take a break: you disappear and everything waits for you."),
                                   isOn: $app.profilePaused)
                     }
                     group(L("Preferences")) {
