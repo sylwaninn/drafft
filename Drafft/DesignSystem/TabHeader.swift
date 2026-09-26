@@ -54,32 +54,50 @@ struct TabHeader<Leading: View, Trailing: View>: View {
             }
 
             if let search, showsSearchField {
-                HStack(spacing: DS.Space.sm) {
-                    Image(systemName: "magnifyingglass").foregroundStyle(DS.Palette.body)
-                    TextField(searchPrompt, text: search)
-                        .focused($searchFocused)
-                        .submitLabel(.search)
-                        .autocorrectionDisabled()
-                    if !search.wrappedValue.isEmpty || searchExpanded {
-                        Button {
-                            search.wrappedValue = ""
-                            searchFocused = false
-                            withAnimation(Motion.snappy) { searchExpanded = false }
-                        } label: {
-                            Image(systemName: "xmark.circle.fill").foregroundStyle(DS.Palette.mute)
+                // One glass container: the field and its clear button morph into each other, the
+                // field giving up the button's width as it appears.
+                GlassEffectContainer(spacing: DS.Space.sm) {
+                    HStack(spacing: DS.Space.sm) {
+                        HStack(spacing: DS.Space.sm) {
+                            Image(systemName: "magnifyingglass").foregroundStyle(DS.Palette.body)
+                            TextField(searchPrompt, text: search)
+                                .focused($searchFocused)
+                                .submitLabel(.search)
+                                .autocorrectionDisabled()
                         }
-                        .accessibilityLabel("Clear search")
+                        .font(.body)
+                        .padding(.horizontal, DS.Space.md)
+                        .frame(maxWidth: .infinity, minHeight: 40)
+                        // The whole capsule focuses the field, icon and padding included.
+                        .contentShape(.capsule)
+                        .onTapGesture { searchFocused = true }
+                        // Liquid Glass: it reads over anything scrolling under the header, where a
+                        // faint tint vanished.
+                        .glassEffect(.regular, in: .capsule)
+
+                        if !search.wrappedValue.isEmpty || searchExpanded {
+                            Button {
+                                Haptics.tap()
+                                withAnimation(Motion.bouncy) {
+                                    search.wrappedValue = ""
+                                    searchExpanded = false
+                                }
+                                searchFocused = false
+                            } label: {
+                                Image(systemName: "xmark")
+                                    .font(.body.weight(.bold))
+                                    .foregroundStyle(DS.Palette.onLime)
+                                    .frame(width: 40, height: 40)
+                                    .glassEffect(.regular.tint(DS.Palette.lime), in: .circle)
+                                    .contentShape(.circle)
+                            }
+                            .buttonStyle(PressScaleStyle())
+                            .accessibilityLabel("Clear search")
+                            .transition(.scale(scale: 0.4).combined(with: .opacity))
+                        }
                     }
                 }
-                .font(.body)
-                .padding(.horizontal, DS.Space.md)
-                .frame(minHeight: 40)
-                // The whole capsule focuses the field, icon and padding included.
-                .contentShape(.capsule)
-                .onTapGesture { searchFocused = true }
-                // Liquid Glass: it reads over anything scrolling under the header, where a faint
-                // tint vanished.
-                .glassEffect(.regular, in: .capsule)
+                .animation(Motion.bouncy, value: search.wrappedValue.isEmpty)
                 .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
