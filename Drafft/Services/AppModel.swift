@@ -59,12 +59,11 @@ final class AppModel {
     /// Sessions the person saved to their calendar (demo: in memory).
     var sessionsInCalendar: Set<UUID> = []
 
-    var canLike: Bool { isPremium || likesLeft > 0 }
     func isBoosting(at date: Date = .now) -> Bool { (boostEndsAt ?? .distantPast) > date }
 
     /// 30 minutes at the top of decks nearby.
     func startBoost() {
-        guard boosts > 0, !isBoosting() else { return }
+        guard !profilePaused, boosts > 0, !isBoosting() else { return }
         boosts -= 1
         boostEndsAt = .now.addingTimeInterval(Self.boostDuration)
         Haptics.success()
@@ -105,7 +104,12 @@ final class AppModel {
         // Returning accounts go straight in (unless their sign-up isn't finished).
         signIn(onboard: identity.isNewUser)
     }
-    var profilePaused = false
+    /// Paused: hidden from everyone, and nothing goes out (no like, pass, message, reaction, boost or
+    /// session) until it's resumed. The tabs show a greyed lock over their content (`pausedLock`).
+    var profilePaused = false { didSet { pauseChanged(from: oldValue) } }
+    /// Set while applying the server's own state, so it isn't sent back.
+    @ObservationIgnored var pauseFromServer = false
+
     var notifyMatches = true
     var notifyMessages = true
     var notifySessions = true
@@ -215,6 +219,7 @@ final class AppModel {
         // A finished profile on the server is the one shown in You (another device, a reinstall).
         if target == .main {
             Task { if let saved = try? await ProfileSync.load() { me = saved } }
+            Task { await loadPause() }
         }
         // Put the keyboard away first, so the next screen lays out at full height.
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -281,7 +286,7 @@ final class AppModel {
     var likedMe: [Profile] { queue.filter { $0.interest == .alreadyLikes || $0.superLikedMe } }
 
     func pass(_ profile: Profile) {
-        guard let i = queue.firstIndex(of: profile) else { return }
+        guard !profilePaused, let i = queue.firstIndex(of: profile) else { return }
         queue.remove(at: i)
         history.append((profile, false))
     }
@@ -289,7 +294,7 @@ final class AppModel {
     /// A super like doesn't use a daily like; it puts you first in their deck with a star, which
     /// in the demo turns someone undecided into a like-back.
     func like(_ profile: Profile, opener: MessageContent? = nil, superLike: Bool = false) {
-        guard let i = queue.firstIndex(of: profile) else { return }
+        guard !profilePaused, let i = queue.firstIndex(of: profile) else { return }
         queue.remove(at: i)
         history.append((profile, true))
         if let opener { pendingOpeners[profile.id] = opener }
@@ -329,10 +334,8 @@ final class AppModel {
         }
     }
 
-    var canUndo: Bool { !history.isEmpty }
-
     func undo() {
-        guard let last = history.popLast() else { return }
+        guard !profilePaused, let last = history.popLast() else { return }
         pendingOpeners[last.profile.id] = nil
         // A match that already happened stays; the card still comes back for another look.
         queue.insert(last.profile, at: 0)
@@ -412,7 +415,7 @@ final class AppModel {
 
     /// Optimistic send: the bubble appears immediately, delivery ticks catch up.
     func send(_ content: MessageContent, in id: String, replyTo: UUID? = nil) {
-        guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
+        guard !profilePaused, let i = conversations.firstIndex(where: { $0.id == id }) else { return }
         let msg = Message(content, fromMe: true, state: .sending, replyTo: replyTo)
         conversations[i].messages.append(msg)
         let convo = conversations.remove(at: i)
@@ -439,7 +442,7 @@ final class AppModel {
 
     /// Your reaction on one of their messages (never on your own: WhatsApp-style, minus self-reactions).
     func react(_ emoji: String?, to messageID: UUID, in id: String) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }),
+        guard !profilePaused, let c = conversations.firstIndex(where: { $0.id == id }),
               let m = conversations[c].messages.firstIndex(where: { $0.id == messageID }),
               !conversations[c].messages[m].fromMe else { return }
         conversations[c].messages[m].reaction = conversations[c].messages[m].reaction == emoji ? nil : emoji
@@ -452,7 +455,7 @@ final class AppModel {
     }
 
     private func updateSession(_ sessionID: UUID, in id: String, _ change: (inout SessionProposal) -> Void) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }),
+        guard !profilePaused, let c = conversations.firstIndex(where: { $0.id == id }),
               let m = conversations[c].messages.firstIndex(where: {
                   if case .session(let s) = $0.content { return s.id == sessionID }
                   return false
@@ -622,7 +625,6 @@ extension Array where Element: Identifiable {
     }
 }
 
-
 /// What the App Store says about the subscription: the plan, when it started, the end of the
 /// current period, and whether it renews (turned off when cancelled in the App Store).
 struct TempoSubscription: Equatable {
@@ -639,4 +641,9 @@ struct TempoSubscription: Equatable {
         self.billing = billing
         periodEnds = Calendar.current.date(byAdding: .month, value: plan.months, to: started) ?? started
     }
+}
+
+extension AppModel {
+    var canLike: Bool { isPremium || likesLeft > 0 }
+    var canUndo: Bool { !history.isEmpty }
 }
