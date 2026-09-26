@@ -221,27 +221,12 @@ struct SessionsView: View {
     }
 
     private var emptyState: some View {
-        VStack(alignment: .leading, spacing: DS.Space.lg) {
-            Image(systemName: "calendar")
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(DS.Palette.onLime)
-                .frame(width: 44, height: 44)
-                .background(DS.Palette.lime, in: .circle)
-                .accessibilityHidden(true)
-            Text("No sessions yet.")
-                .font(.display(30, relativeTo: .title))
-                .foregroundStyle(DS.Palette.ink)
-            Text("Open a chat with a match and propose a session. Confirmed ones show up here.")
-                .font(.subheadline)
-                .foregroundStyle(DS.Palette.body)
-                .fixedSize(horizontal: false, vertical: true)
+        EmptyStateView(art: .sessions, title: "No sessions yet.",
+                       message: "Open a chat with a match and propose a session. Confirmed ones show up here.") {
             Button("Go to chats") { app.tab = .chats }
-                .buttonStyle(.drafftPrimary)
-                .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-                .padding(.leading, 12)
+                .buttonStyle(.drafftPrimaryFit)
         }
-        .padding(DS.Space.xl)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl)) // no texture on empty states
+        // The middle of the visible page, under the header.
+        .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
     }
 }

@@ -54,6 +54,8 @@ struct DrafftButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == DrafftButtonStyle {
     static var drafftPrimary: DrafftButtonStyle { .init(kind: .primary) }
+    /// Primary, sized to its label: a single action in the middle of a page (empty states).
+    static var drafftPrimaryFit: DrafftButtonStyle { .init(kind: .primary, fullWidth: false) }
     static var drafftSecondary: DrafftButtonStyle { .init(kind: .secondary) }
     static var drafftTertiary: DrafftButtonStyle { .init(kind: .tertiary) }
     static var drafftDark: DrafftButtonStyle { .init(kind: .dark) }

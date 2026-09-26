@@ -64,12 +64,10 @@ struct ConversationsView: View {
                 }
 
                 Section {
-                    if threads.isEmpty {
-                        ContentUnavailableView(query.isEmpty ? "No chats yet" : "No chats match “\(query)”",
+                    if threads.isEmpty && query.isEmpty && !newMatches.isEmpty {
+                        ContentUnavailableView("No chats yet",
                                                systemImage: "bubble.left.and.bubble.right",
-                                               description: Text(query.isEmpty
-                                                                 ? (newMatches.isEmpty ? "Match with someone on Discover to start chatting." : "Say hi to a new match to start chatting.")
-                                                                 : "Try a different name."))
+                                               description: Text("Say hi to a new match to start chatting."))
                             // Inside the white list card, never loose on the sage page.
                             .listRowBackground(Rectangle().fill(DS.Palette.canvas))
                     }
@@ -97,6 +95,23 @@ struct ConversationsView: View {
             .background(DS.Palette.canvasSoft)
             .listSectionSpacing(.compact)
             .contentMargins(.top, DS.Space.xs, for: .scrollContent)
+            // A search with no result: two words in the middle of what's visible (between the
+            // header and the keyboard), on the page itself.
+            .overlay {
+                if app.conversations.isEmpty {
+                    EmptyStateView(art: .chats, title: "No chats yet",
+                                   message: "Match with someone on Discover to start chatting.") {
+                        Button("Back to Discover") { app.tab = .discover }
+                            .buttonStyle(.drafftPrimaryFit)
+                    }
+                } else if threads.isEmpty && !query.isEmpty {
+                    Text("No results")
+                        .font(.body)
+                        .foregroundStyle(DS.Palette.body)
+                        .transition(.opacity)
+                }
+            }
+            .animation(Motion.gentle, value: threads.isEmpty && !query.isEmpty)
             .trackingScrollOffset($scrollOffset)
             .toolbarVisibility(.hidden, for: .navigationBar)
             .topBar {
