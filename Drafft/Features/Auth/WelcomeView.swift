@@ -2,15 +2,17 @@ import SwiftUI
 
 struct WelcomeView: View {
     @Environment(AppModel.self) private var app
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var route: [AuthRoute] = []
     @State private var pending: Provider?
     @State private var providerSheet: SocialIdentity.Provider?
-    @State private var photoIndex = 0
-
-    static let photos = ["sport_sunsetrun", "sport_boulder", "sport_clay", "sport_swim"]
-    private let photos = WelcomeView.photos
+    /// Framed portrait crops, women and men alternating. The splash shows the same ones.
+    static let photos = ["hero_1", "hero_2", "hero_3", "hero_4", "hero_5", "hero_6"]
+    /// Per photo, the height (0 top, 1 bottom) of what must stay in view when the frame is shorter
+    /// than the photo, as in the log-in's hero: the head and body of each athlete.
+    static let focus: [String: CGFloat] = [
+        "hero_1": 0.5, "hero_2": 0.45, "hero_3": 0.55, "hero_4": 0.3, "hero_5": 0.45, "hero_6": 0.45
+    ]
 
     enum Provider { case apple, google }
 
@@ -53,19 +55,9 @@ struct WelcomeView: View {
         .tint(DS.Palette.accentInk)
     }
 
-    /// Session photos rotate on their own, one crossfade every few seconds.
-    private func show(_ i: Int) {
-        let next = (i + photos.count) % photos.count
-        guard next != photoIndex else { return }
-        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.45)) { photoIndex = next }
-    }
-
     private func hero(height: CGFloat) -> some View {
         ZStack(alignment: .topLeading) {
-            ForEach(Array(photos.enumerated()), id: \.offset) { i, name in
-                Photo(name: name)
-                    .opacity(i == photoIndex ? 1 : 0)
-            }
+            HeroSlideshow(photos: Self.photos)
             // design-lint: allow gradient - photo scrim under the wordmark
             LinearGradient(
                 // Eased top scrim, deep enough under the wordmark for any photo.
@@ -87,7 +79,7 @@ struct WelcomeView: View {
                         .init(color: DS.Palette.night, location: 1)],
                 startPoint: .top, endPoint: .bottom
             )
-            Wordmark(color: .white, trail: DS.Palette.lime)
+            Wordmark(color: .white, trail: DS.Palette.night)
                 // Soft halo: keeps the white legible on bright photos without a visible box.
                 .shadow(color: DS.Palette.night.opacity(0.45), radius: 12, y: 2)
                 .padding(.horizontal, DS.Space.xl)
@@ -95,11 +87,6 @@ struct WelcomeView: View {
         }
         .frame(height: height)
         .clipped()
-        // Photos rotate on their own; nothing to swipe or tap here.
-        .task(id: photoIndex) {
-            try? await Task.sleep(for: .seconds(4))
-            show(photoIndex + 1)
-        }
         .accessibilityHidden(true)
     }
 
@@ -168,6 +155,65 @@ struct WelcomeView: View {
     private func socialSignIn(_ p: Provider) {
         Haptics.tap()
         providerSheet = p == .apple ? .apple : .google
+    }
+}
+
+/// Photos rotating on their own, one quick crossfade every few seconds; nothing to swipe or tap.
+struct HeroSlideshow: View {
+    let photos: [String]
+    var interval: Duration = .seconds(4)
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var index: Int
+
+    init(photos: [String], interval: Duration = .seconds(4)) {
+        self.photos = photos
+        self.interval = interval
+        _index = State(initialValue: Self.freshStart(count: photos.count))
+    }
+
+    /// A random first photo, never the one the previous slideshow opened on (even across launches).
+    private static let lastStartKey = "heroSlideshow.lastStart"
+    private static func freshStart(count: Int) -> Int {
+        let last = UserDefaults.standard.object(forKey: lastStartKey) as? Int
+        return (0..<count).filter { $0 != last }.randomElement() ?? 0
+    }
+
+    var body: some View {
+        ZStack {
+            ForEach(Array(photos.enumerated()), id: \.offset) { i, name in
+                FocusedPhoto(name: name, focus: WelcomeView.focus[name] ?? 0.5)
+                    .opacity(i == index ? 1 : 0)
+            }
+        }
+        // Recorded once shown: a re-render's init only proposes a start, it never counts.
+        .onAppear { UserDefaults.standard.set(index, forKey: Self.lastStartKey) }
+        .task(id: index) {
+            try? await Task.sleep(for: interval)
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.45)) { index = (index + 1) % photos.count }
+        }
+    }
+}
+
+/// A photo filling its frame, cropped around a focus height rather than its centre: the focus sits
+/// at 40 % of the frame, without ever showing past the photo's edges.
+private struct FocusedPhoto: View {
+    let name: String
+    let focus: CGFloat
+
+    var body: some View {
+        GeometryReader { geo in
+            if let img = ImageStore.preparedFull(name) ?? UIImage(named: name) {
+                let scale = max(geo.size.width / img.size.width, geo.size.height / img.size.height)
+                let h = img.size.height * scale
+                let y = min(0, max(geo.size.height - h, geo.size.height * 0.4 - focus * h))
+                Image(uiImage: img)
+                    .resizable()
+                    .frame(width: img.size.width * scale, height: h)
+                    .offset(x: (geo.size.width - img.size.width * scale) / 2, y: y)
+            }
+        }
+        .clipped()
     }
 }
 
