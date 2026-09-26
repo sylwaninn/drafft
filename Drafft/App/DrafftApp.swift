@@ -13,7 +13,7 @@ struct DrafftApp: App {
         Self.styleNavigationBars()
         Self.prewarmPhotos()
         let args = ProcessInfo.processInfo.arguments
-        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya
+        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya, -empty, -deck 2
         if args.contains("-skipAuth") { _app = State(initialValue: Self.demoModel(args)) }
     }
 
@@ -84,16 +84,31 @@ struct DrafftApp: App {
             m.tab = .chats
             m.chatRequest = args[i + 1]
         }
+        applyDemoData(args, to: m)
+        if let i = args.firstIndex(of: "-match"), i + 1 < args.count {
+            m.matchScreen = MockData.profile(args[i + 1])
+        }
+        return m
+    }
+
+    /// Demo data shortcuts: -tight, -empty, -deck <n>.
+    @MainActor
+    private static func applyDemoData(_ args: [String], to m: AppModel) {
         if args.contains("-tight") {
             // Demo: filters that hide everyone, to show the too-tight state.
             m.filters.maxDistanceKm = 2
             m.filters.sports = [.triathlon, .padel]
             m.filters.sharedSportsOnly = true
         }
-        if let i = args.firstIndex(of: "-match"), i + 1 < args.count {
-            m.matchScreen = MockData.profile(args[i + 1])
+        if args.contains("-empty") {
+            // Demo: a brand-new account, to check every tab's empty state.
+            m.queue = []
+            m.conversations = []
         }
-        return m
+        if let i = args.firstIndex(of: "-deck"), i + 1 < args.count, let n = Int(args[i + 1]) {
+            // Demo: only a few cards left, to swipe to the empty state.
+            m.queue = Array(MockData.deck.prefix(n))
+        }
     }
 }
 
