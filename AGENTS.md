@@ -37,5 +37,14 @@ drafft-backend with its staging services: `supabase start` there, then `scripts/
 `--device` for an iPhone on the same Wi-Fi) writes the machine's URL and key to the gitignored
 `Local.private.xcconfig`. Never put a secret in the app: only public keys go there.
 
+**Run the app on the local backend, always.** Every build an agent installs or launches (Simulator
+or iPhone) is `-scheme "Drafft Local" -configuration Local`. NEVER build, install or launch against
+production or staging (`Drafft`, `Drafft Staging`, `-configuration Release`, `Debug` or `Staging`)
+unless the user explicitly asks for that environment in the current request. All schemes share the
+bundle id `so.drafft.app`, so any other build silently replaces the local app and sends real actions
+(sign-ups, likes, messages) to that backend. Before installing, check the built app's
+`Info.plist`: `SupabaseURL` must be the local machine's address. Compile-only checks (the verify
+command above, no install, no launch) are the one exception.
+
 @.agents/rules/commits.md
 @.agents/rules/github.md
