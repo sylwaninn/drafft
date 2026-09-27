@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    @Environment(AppModel.self) private var app
-
     @State private var route: [AuthRoute] = []
     /// Framed portrait crops, women and men alternating. The splash shows the same ones.
     static let photos = ["hero_1", "hero_2", "hero_3", "hero_4", "hero_5", "hero_6"]
@@ -11,7 +9,6 @@ struct WelcomeView: View {
     static let focus: [String: CGFloat] = [
         "hero_1": 0.5, "hero_2": 0.45, "hero_3": 0.55, "hero_4": 0.3, "hero_5": 0.45, "hero_6": 0.45
     ]
-
 
     var body: some View {
         NavigationStack(path: $route) {
