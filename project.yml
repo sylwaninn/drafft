@@ -81,7 +81,6 @@ targets:
         SupabaseURL: $(SUPABASE_URL)
         SupabasePublishableKey: $(SUPABASE_PUBLISHABLE_KEY)
         RevenueCatAPIKey: $(REVENUECAT_API_KEY)
-        SmsEnabled: $(SMS_ENABLED)
         SmsCodeLifetime: $(SMS_CODE_LIFETIME)
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, fr, es, de, it, pt, nl]

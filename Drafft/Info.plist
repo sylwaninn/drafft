@@ -47,8 +47,6 @@
 	<string>$(REVENUECAT_API_KEY)</string>
 	<key>SmsCodeLifetime</key>
 	<string>$(SMS_CODE_LIFETIME)</string>
-	<key>SmsEnabled</key>
-	<string>$(SMS_ENABLED)</string>
 	<key>SupabasePublishableKey</key>
 	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
 	<key>SupabaseURL</key>

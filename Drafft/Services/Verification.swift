@@ -2,7 +2,7 @@ import Foundation
 import Observation
 import Supabase
 
-// MARK: - Contracts (to be backed by the real API later)
+// MARK: - Contracts
 
 enum VerificationError: Error, Equatable {
     case invalidNumber, sendFailed, wrongCode, expired, tooManyAttempts, network, numberTaken
@@ -12,25 +12,6 @@ protocol PhoneVerifying: Sendable {
     /// Texts a 6-digit code to an E.164 number.
     func sendCode(to e164: String) async throws
     func verify(code: String, for e164: String) async throws
-}
-
-// MARK: - Demo implementations (no backend yet)
-
-/// Demo stand-in. The outcomes are chosen in the demo panels (PhoneVerificationModel.demoSend / demoCode).
-struct DemoPhoneVerifier: PhoneVerifying {
-    func sendCode(to e164: String) async throws {
-        try? await Task.sleep(for: .milliseconds(400))
-        if e164.hasSuffix("0000") { throw VerificationError.sendFailed }
-    }
-
-    func verify(code: String, for e164: String) async throws {
-        try? await Task.sleep(for: .milliseconds(400))
-        switch code {
-        case "123456": return
-        case "000000": throw VerificationError.expired
-        default: throw VerificationError.wrongCode
-        }
-    }
 }
 
 /// The real one: Supabase Auth phone change. Sets the number on the account once the code checks
@@ -93,12 +74,6 @@ final class PhoneVerificationModel {
     /// Set through `enterCode(_:)` (digits only, max 6). No didSet rewriting itself here: with
     /// @Observable that recursed forever and crashed the app when a code was sent.
     private(set) var code = ""
-    /// Demo only: what the next "send" and the next code do, to try every state.
-    enum DemoSend: String, CaseIterable { case works = "Sends", fails = "Fails" }
-    enum DemoCode: String, CaseIterable { case accepted = "Accepted", wrong = "Wrong", expired = "Expired" }
-    var demoSend: DemoSend = .works
-    var demoCode: DemoCode = .accepted
-    var isDemo: Bool { service is DemoPhoneVerifier }
     private(set) var busy = false
     private(set) var error: String?
     /// Shown with a L("Get help") button (sending failed, too many tries).
@@ -115,8 +90,8 @@ final class PhoneVerificationModel {
     /// time says which it was.
     private var sentAt = Date.distantPast
 
-    /// Sign-up and You share this: flip `BackendConfig.smsEnabled` once the project has an SMS provider.
-    init(service: PhoneVerifying = BackendConfig.smsEnabled ? BackendPhoneVerifier() as PhoneVerifying : DemoPhoneVerifier()) {
+    /// Sign-up and You share this.
+    init(service: PhoneVerifying = BackendPhoneVerifier()) {
         self.service = service
     }
 
@@ -171,12 +146,7 @@ final class PhoneVerificationModel {
         error = nil
         needsHelp = false
         do {
-            if isDemo {
-                try? await Task.sleep(for: .milliseconds(400))
-                if demoSend == .fails { throw VerificationError.sendFailed }
-            } else {
-                try await service.sendCode(to: e164)
-            }
+            try await service.sendCode(to: e164)
             code = ""
             stage = .enterCode
             startResendTimer()
@@ -198,19 +168,10 @@ final class PhoneVerificationModel {
         busy = true
         error = nil
         do {
-            if isDemo {
-                try? await Task.sleep(for: .milliseconds(300))
-                switch demoCode {
-                case .accepted: break
-                case .wrong: throw VerificationError.wrongCode
-                case .expired: throw VerificationError.expired
-                }
-            } else {
-                do {
-                    try await service.verify(code: code, for: e164)
-                } catch VerificationError.wrongCode where Date.now.timeIntervalSince(sentAt) > BackendConfig.smsCodeLifetime {
-                    throw VerificationError.expired
-                }
+            do {
+                try await service.verify(code: code, for: e164)
+            } catch VerificationError.wrongCode where Date.now.timeIntervalSince(sentAt) > BackendConfig.smsCodeLifetime {
+                throw VerificationError.expired
             }
             verifiedNumber = e164
             stage = .verified

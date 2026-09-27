@@ -67,10 +67,6 @@ struct PhoneVerificationView: View {
                                   lineWidth: focus == .number || model.error != nil ? 2 : 1)
             }
             errorOrHint(default: L("We'll text you a code. Your number never shows on your profile."))
-            if model.isDemo {
-                DemoPanel(title: L("Sending the SMS"), selection: $model.demoSend)
-                    .padding(.top, DS.Space.sm)
-            }
         }
         .sheet(isPresented: $pickingCountry) {
             Group {
@@ -90,11 +86,7 @@ struct PhoneVerificationView: View {
                          hint: L("Check your messages. The code works for 10 minutes."),
                          resendIn: model.resendIn,
                          onEdit: model.changeNumber,
-                         onResend: { Task { await model.resend() } }) {
-            if model.isDemo {
-                DemoPanel(title: L("The code I type is"), selection: $model.demoCode)
-            }
-        }
+                         onResend: { Task { await model.resend() } })
     }
 
     // MARK: Results
@@ -164,32 +156,6 @@ struct CountryPickerSheet: View {
                     Button("Close", systemImage: "xmark") { dismiss() }
                 }
             }
-        }
-    }
-}
-
-/// Demo-only control: pick the outcome of the next step, to walk through every state.
-/// Dashed warning frame so it never passes for real UI.
-struct DemoPanel<Option: RawRepresentable & CaseIterable & Hashable>: View
-where Option.RawValue == String, Option.AllCases: RandomAccessCollection {
-    let title: String
-    @Binding var selection: Option
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: DS.Space.sm) {
-            Label("Demo only: \(title)", systemImage: "wrench.adjustable.fill")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(DS.Palette.ink)
-            Picker(title, selection: $selection) {
-                ForEach(Array(Option.allCases), id: \.self) { Text(LocalizedStringKey($0.rawValue)).tag($0) }
-            }
-            .pickerStyle(.segmented)
-        }
-        .padding(DS.Space.md)
-        .background(DS.Palette.warning.opacity(0.18), in: .rect(cornerRadius: DS.Radius.md))
-        .overlay {
-            RoundedRectangle(cornerRadius: DS.Radius.md)
-                .strokeBorder(DS.Palette.warning, style: .init(lineWidth: 1, dash: [4, 3]))
         }
     }
 }
