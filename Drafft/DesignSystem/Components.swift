@@ -350,33 +350,6 @@ struct Avatar: View {
 
 // MARK: - Google mark
 
-/// Four-colour Google "G" drawn from arcs, per Google's sign-in branding.
-struct GoogleMark: View {
-    var size: CGFloat = 20
-    var body: some View {
-        let w = size * 0.2
-        ZStack {
-            arc(0.625, 0.875, .init(hex: 0xEA4335))
-            arc(0.375, 0.625, .init(hex: 0xFBBC05))
-            arc(0.125, 0.375, .init(hex: 0x34A853))
-            arc(0.0, 0.125, .init(hex: 0x4285F4))
-            Rectangle()
-                .fill(Color(hex: 0x4285F4))
-                .frame(width: size * 0.48, height: w)
-                .offset(x: size * 0.22)
-        }
-        .frame(width: size, height: size)
-        .accessibilityHidden(true)
-    }
-
-    private func arc(_ from: CGFloat, _ to: CGFloat, _ color: Color) -> some View {
-        Circle()
-            .trim(from: from, to: to)
-            .stroke(color, style: .init(lineWidth: size * 0.2, lineCap: .butt))
-            .padding(size * 0.1)
-    }
-}
-
 // MARK: - Text that never truncates
 
 /// A label and a trailing value side by side while both fit in full; otherwise the value moves

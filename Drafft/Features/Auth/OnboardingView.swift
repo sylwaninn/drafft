@@ -28,8 +28,6 @@ struct OnboardingView: View {
     @State private var photos: [String] = []
     /// Face check on the first photo: nil while checking or with no photo.
     @State private var mainFace: FaceCheck.Result?
-    enum DemoFace: String, CaseIterable { case real = "Real check", pass = "Face", fail = "No face" }
-    @State private var demoFace: DemoFace = .real
     @State private var voice: (url: URL, duration: TimeInterval, levels: [Float])?
     @State private var icebreaker: Icebreaker = Icebreaker.Kind.twoTruths.blank
     /// Written prompts (up to 3): a question from the library and their answer.
@@ -130,7 +128,6 @@ struct OnboardingView: View {
                          leave: {
                              // Leaving on purpose starts over: nothing is kept.
                              OnboardingStore.clear()
-                             app.socialIdentity = nil
                              app.signOut()
                          })
     }
@@ -311,8 +308,6 @@ struct OnboardingView: View {
 
     /// Back where they stopped: the first mandatory step not done yet (usually the SMS), otherwise the furthest step reached.
     private func restore() {
-        // Apple / Google: prefill only what they really shared (first name, for now).
-        if name.isEmpty, let given = app.socialIdentity?.givenName { name = given }
         guard !restored, let p = OnboardingStore.load() else { restored = true; return }
         name = p.name
         if let l = p.language.flatMap(AppLanguage.init(rawValue:)) { language = l; app.language = l }
@@ -453,9 +448,6 @@ struct OnboardingView: View {
             stepTitle(L("What should we call you?"), L("First name only. It's what your matches see."))
             VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
                 DrafftField(title: L("First name"), text: $name, prompt: L("Alex"), contentType: .givenName, submitLabel: .done)
-                if let id = app.socialIdentity, id.givenName != nil, name == id.givenName {
-                    hint(L("From your \(id.provider.rawValue) account. You can change it."))
-                }
             }
         }
     }
@@ -828,9 +820,8 @@ struct OnboardingView: View {
                 )
                 mainFaceHint
             }
-            DemoPanel(title: L("Face on the first photo"), selection: $demoFace)
         }
-        .task(id: [photos.first ?? "", demoFace.rawValue]) { await checkMainFace() }
+        .task(id: photos.first ?? "") { await checkMainFace() }
     }
 
     /// The first photo must show a face: it's the one people see first.
@@ -859,11 +850,7 @@ struct OnboardingView: View {
     private func checkMainFace() async {
         mainFace = nil
         guard let first = photos.first else { return }
-        switch demoFace {
-        case .pass: mainFace = .face
-        case .fail: mainFace = .noFace
-        case .real: mainFace = await FaceCheck.check(photo: first)
-        }
+        mainFace = await FaceCheck.check(photo: first)
     }
 
 
