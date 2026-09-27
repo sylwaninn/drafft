@@ -365,6 +365,7 @@ struct ChangePasswordSheet: View {
 struct ExportDataSheet: View {
     @Environment(AppModel.self) private var app
     @State private var sending = false
+    @State private var exportError: String?
 
     private var included: [(icon: String, title: String, detail: String)] { [
         ("person.fill", L("Profile"), L("Name, bio, sports, prompts, lifestyle")),
@@ -380,13 +381,20 @@ struct ExportDataSheet: View {
         AccountSheet(title: L("Export my data"),
                      actionTitle: requested == nil ? L("Email me my export") : L("Export requested"),
                      actionIcon: requested == nil ? "envelope.fill" : "checkmark",
-                     enabled: requested == nil && !sending, loading: sending) {
+                     enabled: requested == nil && !sending, loading: sending, error: exportError) {
             sending = true
+            exportError = nil
             Task {
-                try? await Task.sleep(for: .milliseconds(300))
-                sending = false
-                Haptics.success()
-                withAnimation(Motion.bouncy) { app.dataExportRequestedAt = .now }
+                defer { sending = false }
+                do {
+                    // The server keeps one open request and says when it was made.
+                    _ = try await Backend.shared.rpc("request_data_export", [:])
+                    Haptics.success()
+                    withAnimation(Motion.bouncy) { app.dataExportRequestedAt = .now }
+                } catch {
+                    Haptics.warning()
+                    exportError = L("Your request couldn't be sent. Check your connection and try again.")
+                }
             }
         } content: {
             if let requested {
