@@ -13,7 +13,7 @@ struct DrafftApp: App {
         Self.styleNavigationBars()
         Self.prewarmPhotos()
         let args = ProcessInfo.processInfo.arguments
-        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya, -empty, -deck 2, -hold review
+        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya, -empty, -deck 2
         if args.contains("-skipAuth") { _app = State(initialValue: Self.demoModel(args)) }
     }
 
@@ -85,10 +85,6 @@ struct DrafftApp: App {
             m.chatRequest = args[i + 1]
         }
         applyDemoData(args, to: m)
-        // Demo: -hold review / -hold banned shows the moderation screen.
-        if let i = args.firstIndex(of: "-hold"), i + 1 < args.count {
-            AccountModeration.shared.hold = AccountHold(rawValue: args[i + 1])
-        }
         if let i = args.firstIndex(of: "-match"), i + 1 < args.count {
             m.matchScreen = MockData.profile(args[i + 1])
         }
@@ -165,9 +161,6 @@ struct RootView: View {
                 TopOverlayWindow.shared.install()
                 HoldWindow.shared.install(app)
             }
-            #if LOCAL_BACKEND
-            .task { await LocalLaunch.signIn(app) }
-            #endif
             .task {
                 // Probe: sign in by itself after a few seconds, like a person on the welcome screen.
                 guard Probe.on, ProcessInfo.processInfo.arguments.contains("-autoLogin") else { return }

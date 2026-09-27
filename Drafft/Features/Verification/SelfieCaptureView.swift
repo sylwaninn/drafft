@@ -50,11 +50,7 @@ struct SelfieCaptureView: View {
                 case let .captured(image), let .sending(image):
                     Image(uiImage: image).resizable().scaledToFill()
                 case .live:
-                    if let still = model.demoPhoto {
-                        Image(uiImage: still).resizable().scaledToFill()
-                    } else {
-                        CameraPreview(session: model.camera.session)
-                    }
+                    CameraPreview(session: model.camera.session)
                 default:
                     DS.Palette.nightRaised
                 }
@@ -180,16 +176,6 @@ final class SelfieCaptureModel {
     private(set) var sent = false
     @ObservationIgnored let camera = SelfieCamera()
 
-    /// Demo for screenshots (no camera on the Simulator): `-selfieDemo guiding|ready|captured|retry`
-    /// opens this screen at that step, a sample portrait standing in for the camera.
-    enum Demo: String { case guiding, ready, captured, retry }
-    @ObservationIgnored private let demo: Demo? = {
-        let args = ProcessInfo.processInfo.arguments
-        guard let i = args.firstIndex(of: "-selfieDemo"), i + 1 < args.count else { return nil }
-        return Demo(rawValue: args[i + 1])
-    }()
-    var demoPhoto: UIImage? { demo == nil ? nil : UIImage(named: "portrait_maya") }
-
     var isCaptured: Bool { if case .captured = stage { true } else { false } }
     var isSending: Bool { if case .sending = stage { true } else { false } }
 
@@ -206,7 +192,6 @@ final class SelfieCaptureModel {
 
     func start() async {
         error = nil
-        if let demo, let photo = demoPhoto { return startDemo(demo, photo: photo) }
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
             guard await AVCaptureDevice.requestAccess(for: .video) else { stage = .denied; return }
@@ -223,18 +208,6 @@ final class SelfieCaptureModel {
     }
 
     func stop() { camera.stop() }
-
-    private func startDemo(_ demo: Demo, photo: UIImage) {
-        switch demo {
-        case .guiding: framing = .tooFar; stage = .live
-        case .ready: framing = .ready; stage = .live
-        case .captured: stage = .captured(photo)
-        case .retry:
-            framing = .noFace
-            stage = .live
-            error = L("We couldn't see your face clearly. Try again.")
-        }
-    }
 
     /// Takes the photo, then checks it again: what's sent must show the face as the live check saw it.
     func shoot() async {

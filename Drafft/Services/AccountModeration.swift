@@ -20,8 +20,8 @@ enum AccountHold: String, Decodable {
 final class AccountModeration {
     static let shared = AccountModeration()
 
-    /// Shown as is by the hold window. Set directly only by the demo launch (`-hold review`).
-    var hold: AccountHold?
+    /// Shown as is by the hold window.
+    private(set) var hold: AccountHold?
 
     /// Reads the hold. A failed read changes nothing (offline: the last known state stays).
     func load() async {

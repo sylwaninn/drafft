@@ -11,7 +11,3 @@ SMS_CODE_LIFETIME = 6000
 APP_DISPLAY_NAME = drafft local
 
 #include? "../Local.private.xcconfig"
-
-// Local builds only: launch shortcuts for testing on a device (App/LocalLaunch.swift). Never in staging
-// or production builds.
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) LOCAL_BACKEND

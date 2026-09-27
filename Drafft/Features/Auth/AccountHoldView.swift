@@ -12,9 +12,6 @@ struct AccountHoldView: View {
     @State private var askingHelp = false
     @State private var confirmingLogOut = false
     @State private var takingSelfie = false
-    /// Tests: `-selfieDemo <step>` (sample photo) or `-openSelfie` (real camera) open the selfie camera
-    /// by themselves, once per launch, the first time the selfie hold shows.
-    @MainActor private static var openedForTests = false
 
     private var title: String {
         switch hold {
@@ -99,14 +96,7 @@ struct AccountHoldView: View {
         }
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
         .background(DS.Palette.night.ignoresSafeArea())
-        .onAppear {
-            appeared = true
-            let args = ProcessInfo.processInfo.arguments
-            if hold == .selfie, !Self.openedForTests, args.contains("-selfieDemo") || args.contains("-openSelfie") {
-                Self.openedForTests = true
-                takingSelfie = true
-            }
-        }
+        .onAppear { appeared = true }
         .sheet(isPresented: $askingHelp) {
             SupportSheet(topic: hold == .banned ? L("Closed account") : L("Account check"))
                 .sheetSurface()

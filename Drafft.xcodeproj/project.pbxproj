@@ -66,7 +66,6 @@
 		74F2FD432001286F8C985957 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7186BB2F3676CD699A59C3F8 /* SplashView.swift */; };
 		75480B51539547897822F7F3 /* intro_sam.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0742E09492430A753500A82D /* intro_sam.m4a */; };
 		76F6C2D2496B1D7D72A515EC /* SocialAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FF08B169F3A5A050174583 /* SocialAuth.swift */; };
-		7855E7E132BC36BCE25447DF /* LocalLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B696D22505579BC2C9B72CA /* LocalLaunch.swift */; };
 		79DCA843E06D8835AD7B0734 /* PhotoCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C633B64178A8325E4B7210C /* PhotoCompressor.swift */; };
 		7B0A0F2B2215F42297EFD1F7 /* intro_noah.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C034150C332EBE04554AB77E /* intro_noah.m4a */; };
 		7C84EDCEA76BE441AFD42E4C /* PhotoModeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1253938196232F9A95943AB6 /* PhotoModeration.swift */; };
@@ -211,7 +210,6 @@
 		844C35E96E96E5DC3A59A588 /* BirthdateField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdateField.swift; sourceTree = "<group>"; };
 		8A069B545F5EF61CC1D5CC9F /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		8B1B12F6AC99ED293F06B107 /* LocationRequiredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRequiredView.swift; sourceTree = "<group>"; };
-		8B696D22505579BC2C9B72CA /* LocalLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalLaunch.swift; sourceTree = "<group>"; };
 		8DFBEF0E0124793C095719B8 /* DiscoverFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverFilters.swift; sourceTree = "<group>"; };
 		8EACE86DA994D351B5917634 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		8EC1F88AB1013AABDF6534D2 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
@@ -316,7 +314,6 @@
 			isa = PBXGroup;
 			children = (
 				792049807B76E8A0BF54D064 /* DrafftApp.swift */,
-				8B696D22505579BC2C9B72CA /* LocalLaunch.swift */,
 				929F8B0B6926F83C1D30BF40 /* Probe.swift */,
 			);
 			path = App;
@@ -739,7 +736,6 @@
 				0B9405144736422BC446F413 /* LikesChip.swift in Sources */,
 				15A09D3C87499FACC9D5881F /* LikesTabView.swift in Sources */,
 				0C551FD229D9D25741B5AB96 /* LikesYouView.swift in Sources */,
-				7855E7E132BC36BCE25447DF /* LocalLaunch.swift in Sources */,
 				35EBAD86CE678D24B45B097D /* LocationRequiredView.swift in Sources */,
 				F5EEFDF989B3849985528A5A /* MatchViews.swift in Sources */,
 				D228CEBCE72D5C7E0E5ECDC9 /* MeInfoSheets.swift in Sources */,
