@@ -99,11 +99,10 @@ struct ProfileDetailView: View {
                         .buttonStyle(.plain)
                         .frame(maxWidth: .infinity)
                         .accessibilityLabel("Report or block \(profile.name)")
-                        .drafftConfirm(isPresented: $showSafety, icon: "shield.lefthalf.filled",
-                                       title: L("Report or block \(profile.name)?"),
-                                       message: L("They won't be notified, and you won't see each other again. Reports go to our safety team."),
-                                       actions: [ConfirmAction(title: L("Report"), kind: .destructive) { blockAndLeave() },
-                                                 ConfirmAction(title: L("Block"), kind: .destructive) { blockAndLeave() }])
+                        .sheet(isPresented: $showSafety) {
+                            ReportSheet(profile: profile) { blockAndLeave() }
+                                .sheetSurface()
+                        }
                     }
 
                 }

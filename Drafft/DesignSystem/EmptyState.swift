@@ -53,6 +53,10 @@ struct EmptyStateArt {
 /// a gap in the terrain, with only a thin accent outline drawn. Nothing else around it.
 struct EmptyStateIllustration: View {
     let art: EmptyStateArt
+    /// The map's lines and the outline. The accent, but for a closed account (negative).
+    var tint: Color = DS.Palette.lime
+    /// How much the map shows: 1 on the page, more on a night background.
+    var strength = 1.0
 
     private let width: CGFloat = 200
     private let height: CGFloat = 150
@@ -62,7 +66,7 @@ struct EmptyStateIllustration: View {
         ZStack {
             MorphingContours(from: TerrainField(seed: "empty-\(art.seed)"),
                              to: TerrainField(seed: "empty-\(art.seed)"),
-                             progress: 1, tint: DS.Palette.lime, levels: 12)
+                             progress: 1, tint: tint, levels: 12, strength: strength)
                 .mask {
                     ZStack {
                         // design-lint: allow gradient - a mask: the map's edge melts into the page
@@ -76,7 +80,7 @@ struct EmptyStateIllustration: View {
                 }
             Image(systemName: art.symbol)
                 .font(.system(size: glyph, weight: .light))
-                .foregroundStyle(DS.Palette.lime)
+                .foregroundStyle(tint)
         }
         .frame(width: width, height: height)
         .accessibilityHidden(true)

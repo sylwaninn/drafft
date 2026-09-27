@@ -350,26 +350,6 @@ final class AppModel {
 
     // MARK: Safety
 
-    /// Block (a report blocks too): they leave your deck, your likes and your chats, and undo
-    /// can't bring them back.
-    func block(_ profile: Profile) {
-        guard !blocked.contains(where: { $0.id == profile.id }) else { return }
-        withAnimation(Motion.snappy) {
-            blocked.insert(profile, at: 0)
-            queue.removeAll { $0.id == profile.id }
-            history.removeAll { $0.profile.id == profile.id }
-            conversations.removeAll { $0.id == profile.id }
-        }
-        pendingOpeners[profile.id] = nil
-        if banner?.profile.id == profile.id { banner = nil }
-    }
-
-    /// Unblocking puts them back at the end of Discover; the old chat doesn't come back.
-    func unblock(_ profile: Profile) {
-        withAnimation(Motion.snappy) { blocked.removeAll { $0.id == profile.id } }
-        if !queue.contains(where: { $0.id == profile.id }) { queue.append(profile) }
-    }
-
     /// Mutual like: a conversation appears in Chats, with the icebreaker answer as its first message.
     private func createMatch(with profile: Profile) {
         guard conversation(profile.id) == nil else { return }

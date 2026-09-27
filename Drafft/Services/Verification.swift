@@ -282,14 +282,17 @@ enum FaceCheck {
     static func check(photo path: String) async -> Result {
         let image: UIImage? = path.hasPrefix("/") ? UIImage(contentsOfFile: path) : UIImage(named: path)
         guard let cg = image?.cgImage else { return .noFace }
-        return await Task.detached(priority: .userInitiated) {
+        guard let biggest = await faces(in: cg).map({ $0.width * $0.height }).max() else { return .noFace }
+        // At least ~2% of the frame: a face you could actually recognise.
+        return biggest >= 0.02 ? .face : .tooSmall
+    }
+
+    /// The faces Vision finds, as boxes in 0...1 of the upright image (origin at the bottom left).
+    static func faces(in image: CGImage, orientation: CGImagePropertyOrientation = .up) async -> [CGRect] {
+        await Task.detached(priority: .userInitiated) {
             let request = VNDetectFaceRectanglesRequest()
-            let handler = VNImageRequestHandler(cgImage: cg, orientation: .up)
-            try? handler.perform([request])
-            let faces = request.results ?? []
-            guard let biggest = faces.map({ $0.boundingBox.width * $0.boundingBox.height }).max() else { return Result.noFace }
-            // At least ~2% of the frame: a face you could actually recognise.
-            return biggest >= 0.02 ? .face : .tooSmall
+            try? VNImageRequestHandler(cgImage: image, orientation: orientation).perform([request])
+            return (request.results ?? []).map(\.boundingBox)
         }.value
     }
 }

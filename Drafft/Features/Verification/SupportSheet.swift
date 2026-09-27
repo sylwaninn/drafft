@@ -1,36 +1,42 @@
 import SwiftUI
 
-/// "Get help" from anywhere a check fails: the topic and a reference are filled in, the person
-/// adds a few words, and it goes to support. Demo: nothing is sent.
+/// "Get help" from anywhere a check fails or an account is on hold: the topic is filled in, the person
+/// adds a few words, and it goes to the team (backend `support`), which replies by email. Signed out (a
+/// stuck sign-up or reset), the form also asks where to reply. The reference comes back from the server
+/// and is emailed too.
 struct SupportSheet: View {
     let topic: String
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     @State private var message = ""
+    @State private var replyEmail = ""
+    /// Signed in, the reply goes to the account's email; signed out, to one typed here.
+    enum Session { case unknown, signedIn, signedOut }
+    @State private var session = Session.unknown
     @State private var sending = false
-    @State private var sent = false
-    @State private var reference = "DR-" + String(UUID().uuidString.prefix(6))
+    @State private var reference: String?
+    @State private var error: String?
     @FocusState private var messageFocused: Bool
 
     /// Newlines count as empty too: the field is multi-line.
     private var hasMessage: Bool { !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    private var hasEmail: Bool {
+        session == .signedIn || replyEmail.trimmingCharacters(in: .whitespaces).wholeMatch(of: /[^\s@]+@[^\s@]+\.[^\s@]+/) != nil
+    }
+    private var replyTo: String { session == .signedIn ? app.email : replyEmail.trimmingCharacters(in: .whitespaces) }
 
     var body: some View {
         AccountSheet(title: L("Get help"),
-                     actionTitle: sent ? L("Done") : L("Send to support"),
-                     actionIcon: sent ? "checkmark" : "paperplane.fill",
-                     enabled: sent || hasMessage,
-                     loading: sending) {
-            if sent { dismiss(); return }
-            sending = true
-            Task {
-                try? await Task.sleep(for: .milliseconds(400))
-                sending = false
-                Haptics.success()
-                withAnimation(Motion.bouncy) { sent = true }
-            }
+                     actionTitle: reference != nil ? L("Done") : L("Send to support"),
+                     actionIcon: reference != nil ? "checkmark" : "paperplane.fill",
+                     enabled: reference != nil || (hasMessage && hasEmail && session != .unknown),
+                     loading: sending,
+                     error: error,
+                     hasChanges: reference == nil && hasMessage) {
+            if reference != nil { dismiss(); return }
+            Task { await send() }
         } content: {
-            if sent {
+            if let reference {
                 VStack(alignment: .leading, spacing: DS.Space.sm) {
                     Image(systemName: "checkmark")
                         .font(.title3.weight(.heavy))
@@ -40,7 +46,7 @@ struct SupportSheet: View {
                     Text("Message sent.")
                         .font(.display(28))
                         .foregroundStyle(.white)
-                    Text("We'll reply at \(app.email). Your reference is \(reference).")
+                    Text("We'll reply at \(replyTo). Your reference is \(reference).")
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.72))
                 }
@@ -49,42 +55,79 @@ struct SupportSheet: View {
                 .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
                 .transition(.scale(scale: 0.95).combined(with: .opacity))
             } else {
-                VStack(alignment: .leading, spacing: DS.Space.md) {
-                    HStack {
-                        Text("Topic").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
-                        Spacer()
-                        Text(topic).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
-                    }
-                    Divider()
-                    HStack {
-                        Text("Reference").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
-                        Spacer()
-                        Text(reference).font(.subheadline.monospacedDigit()).foregroundStyle(DS.Palette.ink)
-                    }
-                }
-                .padding(DS.Space.lg)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+                form
+            }
+        }
+        .task { session = await Backend.shared.hasSession ? .signedIn : .signedOut }
+    }
 
-                SheetBlock(title: L("What happened?")) {
-                    TextField("A few words help us fix it faster", text: $message, axis: .vertical)
-                        .lineLimit(4...8)
-                        .font(.body)
-                        .focused($messageFocused)
-                        .revealsOnFocus(messageFocused)
-                        .padding(DS.Space.lg)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(.rect)
-                        .onTapGesture { messageFocused = true }
-                        .background(DS.Palette.field, in: .rect(cornerRadius: DS.Radius.md))
-                        .overlay {
-                            // Same focus ring as DrafftField.
-                            RoundedRectangle(cornerRadius: DS.Radius.md)
-                                .strokeBorder(messageFocused ? DS.Palette.ink : DS.Palette.ink.opacity(0.35),
-                                              lineWidth: messageFocused ? 2 : 1)
-                        }
-                        .animation(Motion.gentle, value: messageFocused)
+    private var form: some View {
+        VStack(alignment: .leading, spacing: DS.Space.md) {
+            HStack {
+                Text("Topic").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
+                Spacer()
+                Text(topic).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+            }
+            .padding(DS.Space.lg)
+            .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+
+            if session == .signedOut {
+                SheetBlock(title: L("Where should we reply?")) {
+                    DrafftField(title: L("Email"), text: $replyEmail, prompt: L("you@example.com"),
+                                contentType: .emailAddress, keyboard: .emailAddress)
                 }
             }
+
+            SheetBlock(title: L("What happened?")) {
+                TextField("A few words help us fix it faster", text: $message, axis: .vertical)
+                    .lineLimit(4...8)
+                    .font(.body)
+                    .focused($messageFocused)
+                    .revealsOnFocus(messageFocused)
+                    .padding(DS.Space.lg)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(.rect)
+                    .onTapGesture { messageFocused = true }
+                    .background(DS.Palette.field, in: .rect(cornerRadius: DS.Radius.md))
+                    .overlay {
+                        // Same focus ring as DrafftField.
+                        RoundedRectangle(cornerRadius: DS.Radius.md)
+                            .strokeBorder(messageFocused ? DS.Palette.ink : DS.Palette.ink.opacity(0.35),
+                                          lineWidth: messageFocused ? 2 : 1)
+                    }
+                    .animation(Motion.gentle, value: messageFocused)
+            }
+
+        }
+    }
+
+    private func send() async {
+        sending = true
+        error = nil
+        defer { sending = false }
+        var context: [String: Any] = [
+            "app": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
+            "screen": topic
+        ]
+        if let hold = AccountModeration.shared.hold { context["hold"] = hold.rawValue }
+        var body: [String: Any] = [
+            "topic": topic,
+            "message": message.trimmingCharacters(in: .whitespacesAndNewlines),
+            "language": app.language.rawValue,
+            "context": context
+        ]
+        if session != .signedIn { body["email"] = replyTo }
+        do {
+            let data = try await Backend.shared.publicFunction("support", body)
+            let answer = try JSONDecoder().decode([String: String].self, from: data)
+            Haptics.success()
+            withAnimation(Motion.bouncy) { reference = answer["reference"] ?? "" }
+        } catch Backend.BackendError.http(429, _) {
+            Haptics.warning()
+            error = L("You've sent several messages already. Try again in an hour.")
+        } catch {
+            Haptics.warning()
+            self.error = L("Your message couldn't be sent. Check your connection and try again.")
         }
     }
 }

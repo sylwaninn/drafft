@@ -339,11 +339,10 @@ struct ChatView: View {
         }
         .fullScreenCover(item: $viewer) { MediaViewer(items: MediaItem.gallery(of: convo), start: $0) }
         .sheet(item: $safetyFor) { r in Group { SessionSafetySheet(session: r.session, date: r.date, partner: convo.profile.name) }.sheetSurface() }
-        .drafftConfirm(isPresented: $showSafety, icon: "shield.lefthalf.filled",
-                       title: L("Report or block \(convo.profile.name)?"),
-                       message: L("They won't be notified. The chat closes and you won't see each other again. Reports go to our safety team."),
-                       actions: [ConfirmAction(title: L("Report"), kind: .destructive) { blockFromChat(convo.profile) },
-                                 ConfirmAction(title: L("Block"), kind: .destructive) { blockFromChat(convo.profile) }])
+        .sheet(isPresented: $showSafety) {
+            ReportSheet(profile: convo.profile) { blockFromChat(convo.profile) }
+                .sheetSurface()
+        }
         // Clear cover, no system slide: the overlay fades itself over the nav bar and composer.
         .fullScreenCover(item: $focused) { f in
             MessageFocusOverlay(focus: f, convo: convo, onReact: { e in

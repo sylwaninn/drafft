@@ -387,6 +387,8 @@ struct MorphingContours: View, Animatable {
     var progress: Double
     var tint: Color
     var levels = 16
+    /// Multiplies the lines' opacity (15 % and 30 % for index lines): above 1 on a night page.
+    var strength = 1.0
 
     nonisolated var animatableData: Double {
         get { progress }
@@ -396,7 +398,7 @@ struct MorphingContours: View, Animatable {
     var body: some View {
         Canvas { ctx, size in
             for line in Self.lines(from: from, to: to, progress: progress, size: size, levels: levels) {
-                ctx.stroke(line.path, with: .color(tint.opacity(line.index ? 0.3 : 0.15)),
+                ctx.stroke(line.path, with: .color(tint.opacity(min(1, (line.index ? 0.3 : 0.15) * strength))),
                            style: StrokeStyle(lineWidth: line.index ? 1.2 : 0.8, lineCap: .round, lineJoin: .round))
             }
         }

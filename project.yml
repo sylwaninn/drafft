@@ -62,7 +62,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: $(APP_DISPLAY_NAME)
         INFOPLIST_KEY_NSMicrophoneUsageDescription: drafft uses the microphone to record voice messages and your voice intro.
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: drafft lets you share photos and videos in chat and add them to your profile.
-        INFOPLIST_KEY_NSCameraUsageDescription: drafft uses the camera to take photos for your profile and chats.
+        INFOPLIST_KEY_NSCameraUsageDescription: drafft uses your camera for photos in your profile and chats, and for the selfie that confirms it's you.
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: drafft shows your area, never your address, and rounds distances.
     info:
       path: Drafft/Info.plist

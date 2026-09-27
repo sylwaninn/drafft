@@ -104,7 +104,8 @@ final class PhotoModeration {
 
     /// Asks a person to look at a refused photo again. It stays off the profile meanwhile.
     func requestReview(_ path: String) async throws {
-        guard let id = mediaIDs[path] else { return }
+        // Not uploaded (yet): nothing the team could look at, so never say it was sent.
+        guard let id = mediaIDs[path] else { throw Backend.BackendError.http(404, "photo not on the server") }
         _ = try await Backend.shared.rpc("request_media_review", ["p_media": id])
         states[path] = .inReview
     }
