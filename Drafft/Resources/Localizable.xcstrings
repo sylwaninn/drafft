@@ -986,6 +986,46 @@
         }
       }
     },
+    "%@ won't be notified, and you won't see each other again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wird nicht benachrichtigt, und ihr seht euch nicht mehr."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ no recibirá ningún aviso y no volveréis a veros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune notification ne sera envoyée à %@, et vous ne vous verrez plus."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ non riceverà alcuna notifica e non vi vedrete più."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ krijgt geen melding, en jullie zien elkaar niet meer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não será enviado nenhum aviso a %@, e não voltam a ver-se."
+          }
+        }
+      }
+    },
     "%@%@" : {
       "localizations" : {
         "en" : {
@@ -3666,6 +3706,46 @@
         }
       }
     },
+    "A mistake? Contact us" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Fehler? Schreib uns"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Un error? Escríbenos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur ? Écris-nous"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un errore? Scrivici"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een vergissing? Laat het ons weten"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um erro? Escreve-nos"
+          }
+        }
+      }
+    },
     "A photo couldn't be sent. Tap it to see why, then try again." : {
       "localizations" : {
         "fr" : {
@@ -4075,6 +4155,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conta"
+          }
+        }
+      }
+    },
+    "Account check" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontoprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisión de la cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification du compte"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifica dell'account"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accountcontrole"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verificação da conta"
           }
         }
       }
@@ -5659,6 +5779,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Qualquer distância"
+          }
+        }
+      }
+    },
+    "Anything else? (optional)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch etwas? (optional)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Algo más? (opcional)"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autre chose ? (facultatif)"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altro? (facoltativo)"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nog iets? (optioneel)"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais alguma coisa? (opcional)"
           }
         }
       }
@@ -7715,6 +7875,46 @@
         }
       }
     },
+    "Center your face in the oval." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zentriere dein Gesicht im Oval."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centra tu cara en el óvalo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centre ton visage dans l'ovale."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centra il viso nell'ovale."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zet je gezicht midden in het ovaal."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Centra o rosto na oval."
+          }
+        }
+      }
+    },
     "Change" : {
       "localizations" : {
         "de" : {
@@ -8881,6 +9081,46 @@
         }
       }
     },
+    "Closed account" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesperrtes Konto"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta cerrada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compte fermé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account chiuso"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesloten account"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conta encerrada"
+          }
+        }
+      }
+    },
     "Code sent to %@" : {
       "localizations" : {
         "de" : {
@@ -8917,6 +9157,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Código enviado para %@"
+          }
+        }
+      }
+    },
+    "Come a little closer." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Komm etwas näher."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acércate un poco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapproche-toi un peu."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avvicinati un po'."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kom iets dichterbij."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aproxima-te um pouco."
           }
         }
       }
@@ -11247,6 +11527,46 @@
         }
       }
     },
+    "drafft needs the camera for your selfie. Allow it in Settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft braucht die Kamera für dein Selfie. Erlaube sie in den Einstellungen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft necesita la cámara para tu selfie. Permítelo en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft a besoin de l'appareil photo pour ton selfie. Autorise-le dans Réglages."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ha bisogno della fotocamera per il tuo selfie. Consentila in Impostazioni."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft heeft de camera nodig voor je selfie. Sta hem toe in Instellingen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft precisa da câmara para a tua selfie. Permite-a nas Definições."
+          }
+        }
+      }
+    },
     "Drinking" : {
       "localizations" : {
         "de" : {
@@ -13052,6 +13372,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Falha"
+          }
+        }
+      }
+    },
+    "Fake profile or scam" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fake-Profil oder Betrug"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil falso o estafa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faux profil ou arnaque"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilo falso o truffa"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nepprofiel of oplichting"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil falso ou burla"
           }
         }
       }
@@ -15378,6 +15738,46 @@
         }
       }
     },
+    "Harassment or threats" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belästigung oder Drohungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acoso o amenazas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Harcèlement ou menaces"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Molestie o minacce"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intimidatie of bedreigingen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assédio ou ameaças"
+          }
+        }
+      }
+    },
     "HIIT" : {
       "localizations" : {
         "de" : {
@@ -17682,6 +18082,46 @@
         }
       }
     },
+    "Inappropriate photos" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unangemessene Fotos"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos inapropiadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photos inappropriées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto inappropriate"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ongepaste foto's"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos impróprias"
+          }
+        }
+      }
+    },
     "Included" : {
       "localizations" : {
         "de" : {
@@ -17878,6 +18318,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Convites que enviaste e recebeste"
+          }
+        }
+      }
+    },
+    "Is your face clear and well lit?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ist dein Gesicht scharf und gut beleuchtet?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Tu cara se ve nítida y bien iluminada?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton visage est-il net et bien éclairé ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo viso è nitido e ben illuminato?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Is je gezicht scherp en goed belicht?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teu rosto está nítido e bem iluminado?"
+          }
+        }
+      }
+    },
+    "It broke the drafft community rules. This decision is final." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es hat gegen die Community-Regeln von drafft verstoßen. Diese Entscheidung ist endgültig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incumplía las normas de la comunidad de drafft. Esta decisión es definitiva."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il ne respectait pas les règles de la communauté drafft. Cette décision est définitive."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Violava le regole della community di drafft. Questa decisione è definitiva."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Het overtrad de communityregels van drafft. Dit besluit is definitief."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Violava as regras da comunidade drafft. Esta decisão é definitiva."
           }
         }
       }
@@ -18214,6 +18734,46 @@
         }
       }
     },
+    "Just block, without a report" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur blockieren, ohne Meldung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo bloquear, sin denunciar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seulement bloquer, sans signaler"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocca soltanto, senza segnalare"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alleen blokkeren, zonder melding"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só bloquear, sem denunciar"
+          }
+        }
+      }
+    },
     "Just for fun" : {
       "localizations" : {
         "de" : {
@@ -18290,6 +18850,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Só precisas de uma pausa?"
+          }
+        }
+      }
+    },
+    "Just you in the frame." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur du im Bild."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo tú en la imagen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seulement toi dans le cadre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo tu nell'inquadratura."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alleen jij in beeld."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só tu no enquadramento."
+          }
+        }
+      }
+    },
+    "Just your face, well lit, nothing covering it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur dein Gesicht, gut beleuchtet, nichts verdeckt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo tu cara, bien iluminada y sin nada que la tape."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seulement ton visage, bien éclairé, sans rien pour le cacher."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo il tuo viso, ben illuminato, senza niente che lo copra."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alleen je gezicht, goed belicht, niets dat het bedekt."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só o teu rosto, bem iluminado, sem nada a tapá-lo."
           }
         }
       }
@@ -19896,6 +20536,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Localização ainda não partilhada"
+          }
+        }
+      }
+    },
+    "Log back in any time to see where the check is." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich jederzeit wieder an, um den Stand der Prüfung zu sehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a iniciar sesión cuando quieras para ver cómo va la revisión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnecte-toi quand tu veux pour voir où en est la vérification."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accedi di nuovo quando vuoi per vedere a che punto è la verifica."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log op elk moment weer in om te zien hoe ver de controle is."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volta a iniciar sessão quando quiseres para ver o estado da verificação."
+          }
+        }
+      }
+    },
+    "Log back in any time to send your selfie." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich jederzeit wieder an, um dein Selfie zu senden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a iniciar sesión cuando quieras para enviar tu selfie."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnecte-toi quand tu veux pour envoyer ton selfie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accedi di nuovo quando vuoi per inviare il tuo selfie."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log op elk moment weer in om je selfie te sturen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volta a iniciar sessão quando quiseres para enviar a tua selfie."
           }
         }
       }
@@ -25638,6 +26358,46 @@
         }
       }
     },
+    "Only the drafft team sees it, never other members." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur das drafft-Team sieht es, nie andere Mitglieder."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo lo ve el equipo de drafft, nunca otros miembros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seule l'équipe drafft le voit, jamais les autres membres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo vede solo il team di drafft, mai gli altri membri."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alleen het drafft-team ziet hem, nooit andere leden."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só a equipa do drafft a vê, nunca outros membros."
+          }
+        }
+      }
+    },
     "Only your first name is shown." : {
       "localizations" : {
         "de" : {
@@ -25960,6 +26720,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Um mergulho em águas abertas, se tiveres coragem?"
+          }
+        }
+      }
+    },
+    "Opening the camera." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kamera wird geöffnet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abriendo la cámara."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouverture de l'appareil photo."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apertura della fotocamera."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera wordt geopend."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A abrir a câmara."
           }
         }
       }
@@ -26326,6 +27126,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A nossa equipa pode desbloqueá-lo por ti."
+          }
+        }
+      }
+    },
+    "Our team needs a little time to make sure your account follows the drafft rules. It usually takes less than 48 hours." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unser Team braucht etwas Zeit, um sicherzugehen, dass dein Konto die Regeln von drafft einhält. Das dauert meist weniger als 48 Stunden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuestro equipo necesita un poco de tiempo para comprobar que tu cuenta cumple las normas de drafft. Suele tardar menos de 48 horas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notre équipe a besoin d'un peu de temps pour s'assurer que ton compte respecte les règles de drafft. Cela prend généralement moins de 48 heures."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il nostro team ha bisogno di un po' di tempo per assicurarsi che il tuo account rispetti le regole di drafft. Di solito ci vogliono meno di 48 ore."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ons team heeft even tijd nodig om te controleren of je account de regels van drafft volgt. Dat duurt meestal minder dan 48 uur."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A nossa equipa precisa de algum tempo para confirmar que a tua conta cumpre as regras do drafft. Normalmente demora menos de 48 horas."
+          }
+        }
+      }
+    },
+    "Our team needs a quick selfie to check that your photos are really you." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unser Team braucht ein kurzes Selfie, um zu prüfen, dass deine Fotos wirklich dich zeigen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuestro equipo necesita un selfie rápido para comprobar que tus fotos son realmente tuyas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notre équipe a besoin d'un selfie rapide pour vérifier que tes photos sont bien les tiennes."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il nostro team ha bisogno di un selfie veloce per verificare che le tue foto siano davvero tue."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ons team heeft een snelle selfie nodig om te controleren of je foto's echt van jou zijn."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A nossa equipa precisa de uma selfie rápida para confirmar que as tuas fotos são mesmo tuas."
           }
         }
       }
@@ -27378,6 +28258,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "For 30 minutes, you're first for everyone training nearby."
+          }
+        }
+      }
+    },
+    "Perfect. Hold still and take it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfekt. Halt still und nimm es auf."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfecto. No te muevas y hazla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parfait. Ne bouge plus et prends-le."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfetto. Non muoverti e scatta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfect. Blijf stil en maak hem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfeito. Não te mexas e tira."
           }
         }
       }
@@ -28544,6 +29464,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apresenta a ideia"
+          }
+        }
+      }
+    },
+    "Place your face in the oval." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring dein Gesicht ins Oval."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coloca tu cara dentro del óvalo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place ton visage dans l'ovale."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metti il viso nell'ovale."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plaats je gezicht in het ovaal."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coloca o rosto dentro da oval."
           }
         }
       }
@@ -31001,6 +31961,46 @@
         }
       }
     },
+    "Report and block" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melden und blockieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denunciar y bloquear"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signaler et bloquer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segnala e blocca"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melden en blokkeren"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denunciar e bloquear"
+          }
+        }
+      }
+    },
     "Report anything off" : {
       "localizations" : {
         "de" : {
@@ -31677,6 +32677,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Profiel hervatten"
+          }
+        }
+      }
+    },
+    "Retake" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neu aufnehmen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprendre"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rifai"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opnieuw"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetir"
           }
         }
       }
@@ -33386,6 +34426,46 @@
         }
       }
     },
+    "Send my selfie" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selfie senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar mi selfie"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer mon selfie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invia il mio selfie"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selfie versturen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar a minha selfie"
+          }
+        }
+      }
+    },
     "Send new times" : {
       "localizations" : {
         "de" : {
@@ -34321,6 +35401,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostrar palavra-passe"
+          }
+        }
+      }
+    },
+    "Show us it's you." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeig uns, dass du es bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demuéstranos que eres tú."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montre-nous que c'est toi."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostraci che sei tu."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laat zien dat jij het bent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra-nos que és tu."
           }
         }
       }
@@ -35373,6 +36493,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Às vezes"
+          }
+        }
+      }
+    },
+    "Spam or selling" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spam oder Verkauf"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spam o venta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spam ou vente"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spam o vendita"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spam of verkoop"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spam ou venda"
           }
         }
       }
@@ -36995,6 +38155,86 @@
         }
       }
     },
+    "Take my selfie" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selfie aufnehmen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer mi selfie"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prendre mon selfie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scatta il mio selfie"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selfie maken"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tirar a minha selfie"
+          }
+        }
+      }
+    },
+    "Take the selfie" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selfie aufnehmen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer el selfie"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prendre le selfie"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scatta il selfie"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selfie maken"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tirar a selfie"
+          }
+        }
+      }
+    },
     "Tap Report or block on their profile or in the chat. Reports are confidential." : {
       "localizations" : {
         "de" : {
@@ -38013,6 +39253,46 @@
         }
       }
     },
+    "The app opens again by itself once it's done." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App entsperrt sich von selbst, sobald wir fertig sind."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La app se desbloqueará sola en cuanto terminemos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'app se débloque d'elle-même dès que c'est terminé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'app si sblocca da sola appena abbiamo finito."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De app gaat vanzelf weer open zodra we klaar zijn."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A app desbloqueia-se sozinha assim que terminarmos."
+          }
+        }
+      }
+    },
     "The basics" : {
       "localizations" : {
         "de" : {
@@ -38089,6 +39369,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O melhor conselho que um treinador me deu"
+          }
+        }
+      }
+    },
+    "The camera isn't available on this device." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Kamera ist auf diesem Gerät nicht verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La cámara no está disponible en este dispositivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'appareil photo n'est pas disponible sur cet appareil."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fotocamera non è disponibile su questo dispositivo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De camera is niet beschikbaar op dit apparaat."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A câmara não está disponível neste dispositivo."
           }
         }
       }
@@ -41181,6 +42501,46 @@
         }
       }
     },
+    "Under 18" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unter 18"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menor de 18 años"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moins de 18 ans"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minore di 18 anni"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jonger dan 18"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menor de 18 anos"
+          }
+        }
+      }
+    },
     "Undo any swipe" : {
       "localizations" : {
         "de" : {
@@ -42875,6 +44235,206 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voleibol"
+          }
+        }
+      }
+    },
+    "We couldn't see your face clearly. Try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten dein Gesicht nicht gut erkennen. Versuch es noch mal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos visto bien tu cara. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n'avons pas bien vu ton visage. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a vedere bene il tuo viso. Riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We konden je gezicht niet goed zien. Probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos ver bem o teu rosto. Tenta de novo."
+          }
+        }
+      }
+    },
+    "We're checking your account." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir prüfen dein Konto."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos revisando tu cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous vérifions ton compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stiamo verificando il tuo account."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We controleren je account."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos a verificar a tua conta."
+          }
+        }
+      }
+    },
+    "What happened, in a few words" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was passiert ist, in ein paar Worten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué ha pasado, en pocas palabras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui s'est passé, en quelques mots"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cos'è successo, in poche parole"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat er gebeurde, in een paar woorden"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que aconteceu, em poucas palavras"
+          }
+        }
+      }
+    },
+    "What's wrong?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was ist los?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué ocurre?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quel est le problème ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qual è il problema?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat is er aan de hand?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qual é o problema?"
+          }
+        }
+      }
+    },
+    "Where should we reply?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wohin sollen wir antworten?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Dónde te respondemos?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Où devons-nous te répondre ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dove ti rispondiamo?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waar moeten we antwoorden?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para onde respondemos?"
           }
         }
       }
@@ -46276,6 +47836,46 @@
         }
       }
     },
+    "You can't create a new drafft account." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst kein neues drafft-Konto mehr erstellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podrás volver a crear una cuenta en drafft."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne pourras plus créer de compte drafft."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non potrai più creare un account drafft."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je kunt geen nieuw drafft-account meer aanmaken."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não poderás voltar a criar uma conta drafft."
+          }
+        }
+      }
+    },
     "You choose what you hear about in You › Notifications." : {
       "localizations" : {
         "de" : {
@@ -47128,6 +48728,46 @@
         }
       }
     },
+    "You've sent several messages already. Try again in an hour." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast uns schon mehrere Nachrichten geschickt. Versuch es in einer Stunde noch mal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya nos has enviado varios mensajes. Inténtalo de nuevo dentro de una hora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nous as déjà envoyé plusieurs messages. Réessaie dans une heure."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci hai già inviato diversi messaggi. Riprova tra un'ora."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt ons al een paar berichten gestuurd. Probeer het over een uur opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já nos enviaste várias mensagens. Tenta de novo daqui a uma hora."
+          }
+        }
+      }
+    },
     "You: " : {
       "localizations" : {
         "de" : {
@@ -47204,6 +48844,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A tua conta"
+          }
+        }
+      }
+    },
+    "Your account has been closed." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Konto wurde gesperrt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hemos cerrado tu cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compte a été fermé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo account è stato chiuso."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je account is gesloten."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua conta foi encerrada."
           }
         }
       }
@@ -47734,6 +49414,46 @@
         }
       }
     },
+    "Your matches and chats are kept." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Matches und Chats bleiben erhalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus matches y chats se quedan guardados."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes matchs et tes discussions sont conservés."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I tuoi match e le tue chat restano al sicuro."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je matches en chats blijven bewaard."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os teus matches e conversas ficam guardados."
+          }
+        }
+      }
+    },
     "Your matches and chats stay safe. Log back in to see them." : {
       "localizations" : {
         "de" : {
@@ -47770,6 +49490,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Os teus matches e conversas ficam guardados. Volta a iniciar sessão para os veres."
+          }
+        }
+      }
+    },
+    "Your message couldn't be sent. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Nachricht konnte nicht gesendet werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton message n'a pas pu être envoyé. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile inviare il messaggio. Controlla la connessione e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bericht kon niet worden verstuurd. Controleer je verbinding en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar a tua mensagem. Verifica a ligação e tenta de novo."
           }
         }
       }
@@ -48186,6 +49946,126 @@
         }
       }
     },
+    "Your profile and chats are no longer visible." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Profil und deine Chats sind nicht mehr sichtbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu perfil y tus chats ya no son visibles."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton profil et tes discussions ne sont plus visibles."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo profilo e le tue chat non sono più visibili."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je profiel en chats zijn niet meer zichtbaar."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teu perfil e as tuas conversas deixaram de estar visíveis."
+          }
+        }
+      }
+    },
+    "Your profile is hidden until then." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis dahin ist dein Profil ausgeblendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu perfil está oculto hasta entonces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton profil est masqué d'ici là."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fino ad allora il tuo profilo è nascosto."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tot die tijd is je profiel verborgen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até lá, o teu perfil fica oculto."
+          }
+        }
+      }
+    },
+    "Your profile is hidden while we check." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Profil ist während der Prüfung ausgeblendet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu perfil está oculto mientras lo revisamos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton profil est masqué pendant la vérification."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo profilo è nascosto durante la verifica."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je profiel is verborgen tijdens de controle."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teu perfil fica oculto durante a verificação."
+          }
+        }
+      }
+    },
     "Your profile is paused" : {
       "localizations" : {
         "de" : {
@@ -48386,6 +50266,86 @@
         }
       }
     },
+    "Your report couldn't be sent. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Meldung konnte nicht gesendet werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido enviar tu denuncia. Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton signalement n'a pas pu être envoyé. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile inviare la segnalazione. Controlla la connessione e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je melding kon niet worden verstuurd. Controleer je verbinding en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar a tua denúncia. Verifica a ligação e tenta de novo."
+          }
+        }
+      }
+    },
+    "Your request couldn't be sent. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Anfrage konnte nicht gesendet werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta demande n'a pas pu être envoyée. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile inviare la richiesta. Controlla la connessione e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je verzoek kon niet worden verstuurd. Controleer je verbinding en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar o teu pedido. Verifica a ligação e tenta de novo."
+          }
+        }
+      }
+    },
     "Your rights" : {
       "localizations" : {
         "de" : {
@@ -48468,6 +50428,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your week"
+          }
+        }
+      }
+    },
+    "Your selfie couldn't be sent. Try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Selfie konnte nicht gesendet werden. Versuch es noch mal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido enviar tu selfie. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton selfie n'a pas pu être envoyé. Réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile inviare il selfie. Riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je selfie kon niet worden verstuurd. Probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar a tua selfie. Tenta de novo."
           }
         }
       }
