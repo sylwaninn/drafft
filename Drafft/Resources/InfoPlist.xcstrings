@@ -13,43 +13,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft nutzt die Kamera, um Fotos für dein Profil und deine Chats aufzunehmen."
+            "value" : "drafft nutzt die Kamera für Fotos in deinem Profil und deinen Chats und für das Selfie, das bestätigt, dass du es bist."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft uses your camera to take photos for your profile and chats."
+            "value" : "drafft uses your camera for photos in your profile and chats, and for the selfie that confirms it's you."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft usa la cámara para hacer fotos para tu perfil y tus chats."
+            "value" : "drafft usa la cámara para las fotos de tu perfil y tus chats, y para el selfie que confirma que eres tú."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft utilise l'appareil photo pour prendre des photos pour ton profil et tes discussions."
+            "value" : "drafft utilise l'appareil photo pour les photos de ton profil et de tes discussions, et pour le selfie qui confirme que c'est toi."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft usa la fotocamera per scattare foto per il tuo profilo e le tue chat."
+            "value" : "drafft usa la fotocamera per le foto del tuo profilo e delle chat, e per il selfie che conferma che sei tu."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft gebruikt je camera om foto's te maken voor je profiel en chats."
+            "value" : "drafft gebruikt je camera voor foto's in je profiel en chats, en voor de selfie die bevestigt dat jij het bent."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O drafft usa a câmara para tirar fotos para o teu perfil e as tuas conversas."
+            "value" : "O drafft usa a câmara para as fotos do teu perfil e das conversas, e para a selfie que confirma que és tu."
           }
         }
       }
