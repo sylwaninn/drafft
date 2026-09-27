@@ -1,11 +1,7 @@
 import SwiftUI
 
 struct WelcomeView: View {
-    @Environment(AppModel.self) private var app
-
     @State private var route: [AuthRoute] = []
-    @State private var pending: Provider?
-    @State private var providerSheet: SocialIdentity.Provider?
     /// Framed portrait crops, women and men alternating. The splash shows the same ones.
     static let photos = ["hero_1", "hero_2", "hero_3", "hero_4", "hero_5", "hero_6"]
     /// Per photo, the height (0 top, 1 bottom) of what must stay in view when the frame is shorter
@@ -13,8 +9,6 @@ struct WelcomeView: View {
     static let focus: [String: CGFloat] = [
         "hero_1": 0.5, "hero_2": 0.45, "hero_3": 0.55, "hero_4": 0.3, "hero_5": 0.45, "hero_6": 0.45
     ]
-
-    enum Provider { case apple, google }
 
     var body: some View {
         NavigationStack(path: $route) {
@@ -39,19 +33,6 @@ struct WelcomeView: View {
         }
         // The stack's own background shows in the rounded corners during pushes: make it ours.
         .containerBackground(DS.Palette.night, for: .navigation)
-        .sheet(item: $providerSheet) { p in
-            Group {
-                SocialSignInSheet(provider: p) { identity in
-                    pending = p == .apple ? .apple : .google
-                    Task {
-                        try? await Task.sleep(for: .milliseconds(300))
-                        pending = nil
-                        app.signIn(with: identity)
-                    }
-                }
-            }
-            .sheetSurface()
-        }
         .tint(DS.Palette.accentInk)
     }
 
@@ -100,28 +81,9 @@ struct WelcomeView: View {
             }
 
             VStack(spacing: DS.Space.sm + 2) {
-                Button {
-                    socialSignIn(.apple)
-                } label: {
-                    providerLabel(.apple, text: L("Continue with Apple")) {
-                        Image(systemName: "apple.logo").font(.title3)
-                    }
-                }
-                .buttonStyle(ProviderButtonStyle(background: .white, foreground: .black))
-
-                Button {
-                    socialSignIn(.google)
-                } label: {
-                    providerLabel(.google, text: L("Continue with Google")) {
-                        GoogleMark(size: 18)
-                    }
-                }
-                .buttonStyle(ProviderButtonStyle(background: DS.Palette.nightRaised, foreground: .white, border: .white.opacity(0.18)))
-
                 Button("Sign up with email") { route.append(.signUpEmail) }
                     .buttonStyle(.drafftPrimary)
             }
-            .disabled(pending != nil)
 
             HStack(spacing: DS.Space.xs) {
                 Text("Already training with us?")
@@ -136,25 +98,6 @@ struct WelcomeView: View {
         }
         .padding(.horizontal, DS.Space.xl)
         .padding(.bottom, DS.Space.sm)
-    }
-
-    @ViewBuilder
-    private func providerLabel(_ p: Provider, text: String, @ViewBuilder icon: () -> some View) -> some View {
-        HStack(spacing: DS.Space.sm + 2) {
-            if pending == p {
-                ProgressView().tint(p == .apple ? .black : .white)
-                Text("Connecting…")
-            } else {
-                icon()
-                Text(text)
-            }
-        }
-    }
-
-    /// Demo: the provider's sheet is simulated and returns only what Apple / Google really share.
-    private func socialSignIn(_ p: Provider) {
-        Haptics.tap()
-        providerSheet = p == .apple ? .apple : .google
     }
 }
 
@@ -218,30 +161,6 @@ private struct FocusedPhoto: View {
 }
 
 enum AuthRoute: Hashable { case signUpEmail, logIn }
-
-struct ProviderButtonStyle: ButtonStyle {
-    var background: Color
-    var foreground: Color
-    var border: Color = .clear
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.body.weight(.semibold))
-            // A long translation takes a second, centred line, never "…".
-            .lineLimit(2)
-            .multilineTextAlignment(.center)
-            .minimumScaleFactor(0.9)
-            .padding(.vertical, DS.Space.xs)
-            .frame(maxWidth: .infinity, minHeight: 52)
-            .foregroundStyle(foreground)
-            .background(background, in: .rect(cornerRadius: DS.Radius.xl))
-            .overlay { RoundedRectangle(cornerRadius: DS.Radius.xl).strokeBorder(border, lineWidth: 1) }
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .opacity(configuration.isPressed ? 0.85 : 1)
-            .animation(Motion.snappy, value: configuration.isPressed)
-            .contentShape(.rect(cornerRadius: DS.Radius.xl))
-    }
-}
 
 /// "drafft" set in the display face with a trailing ghost: the drafting motif from the app icon.
 struct Wordmark: View {

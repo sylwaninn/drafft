@@ -9,9 +9,6 @@ enum BackendConfig {
     static let publishableKey = info("SupabasePublishableKey")
     /// RevenueCat public SDK key of the matching project (its webhook feeds this backend).
     static let revenueCatAPIKey = info("RevenueCatAPIKey")
-    /// Whether Supabase Auth texts codes (the environment's Send SMS hook is set up). Off: the phone step
-    /// runs the demo. Per environment, from `SMS_ENABLED` in Config/*.xcconfig.
-    static let smsEnabled = info("SmsEnabled") == "YES"
     /// How long an email code works (Auth's email OTP expiry, 1 hour everywhere).
     static let emailCodeLifetime: TimeInterval = 3600
     /// How long an SMS code works: Auth's SMS OTP expiry, per environment (`SMS_CODE_LIFETIME`, seconds).

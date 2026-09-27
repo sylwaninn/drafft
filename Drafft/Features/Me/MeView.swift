@@ -40,12 +40,7 @@ struct MeView: View {
                         separator
                         row(L("Phone"), icon: "phone.fill", value: app.phoneNumber ?? L("Add your number")) { sheet = .phone }
                         separator
-                        if app.usesSocialSignIn {
-                            // Nothing to change: read-only, no chevron.
-                            infoRow(L("Password"), icon: "key.fill", value: L("You sign in with \(app.signInMethod), no password"))
-                        } else {
-                            row(L("Password"), icon: "key.fill", value: L("Change your password")) { sheet = .password }
-                        }
+                        row(L("Password"), icon: "key.fill", value: L("Change your password")) { sheet = .password }
                         // Only while subscribed: without it, the tier card above is the way in.
                         if let sub = app.subscription {
                             separator

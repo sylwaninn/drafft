@@ -100,11 +100,6 @@ struct DiscoverView: View {
                 }
                 .presentationBackground(.clear)
             }
-            .onAppear {
-                // Demo shortcut for screenshots: -profile <id>
-                let args = ProcessInfo.processInfo.arguments
-                if let i = args.firstIndex(of: "-profile"), i + 1 < args.count { detail = MockData.profile(args[i + 1]) }
-            }
             .sheet(item: $detail) { p in
                 Group {
                     NavigationStack {

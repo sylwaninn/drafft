@@ -7,14 +7,9 @@ struct DrafftApp: App {
     @State private var app = AppModel()
 
     init() {
-        Probe.start()
-        Probe.mark("app init")
         Store.configure()
         Self.styleNavigationBars()
         Self.prewarmPhotos()
-        let args = ProcessInfo.processInfo.arguments
-        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya, -empty, -deck 2
-        if args.contains("-skipAuth") { _app = State(initialValue: Self.demoModel(args)) }
     }
 
     var body: some Scene {
@@ -66,50 +61,6 @@ struct DrafftApp: App {
         tabItem.badgeColor = ink
         tabItem.setBadgeTextAttributes([.foregroundColor: onInk], for: .normal)
     }
-
-    @MainActor
-    private static func demoModel(_ args: [String]) -> AppModel {
-        let m = AppModel()
-        m.phase = args.contains("-onboarding") ? .onboarding : .main
-        if let i = args.firstIndex(of: "-tab"), i + 1 < args.count {
-            m.tab = switch args[i + 1] {
-            case "chats": .chats
-            case "sessions": .sessions
-            case "me": .me
-            case "likes": .likes
-            default: .discover
-            }
-        }
-        if let i = args.firstIndex(of: "-chat"), i + 1 < args.count {
-            m.tab = .chats
-            m.chatRequest = args[i + 1]
-        }
-        applyDemoData(args, to: m)
-        if let i = args.firstIndex(of: "-match"), i + 1 < args.count {
-            m.matchScreen = MockData.profile(args[i + 1])
-        }
-        return m
-    }
-
-    /// Demo data shortcuts: -tight, -empty, -deck <n>.
-    @MainActor
-    private static func applyDemoData(_ args: [String], to m: AppModel) {
-        if args.contains("-tight") {
-            // Demo: filters that hide everyone, to show the too-tight state.
-            m.filters.maxDistanceKm = 2
-            m.filters.sports = [.triathlon, .padel]
-            m.filters.sharedSportsOnly = true
-        }
-        if args.contains("-empty") {
-            // Demo: a brand-new account, to check every tab's empty state.
-            m.queue = []
-            m.conversations = []
-        }
-        if let i = args.firstIndex(of: "-deck"), i + 1 < args.count, let n = Int(args[i + 1]) {
-            // Demo: only a few cards left, to swipe to the empty state.
-            m.queue = Array(MockData.deck.prefix(n))
-        }
-    }
 }
 
 struct RootView: View {
@@ -160,13 +111,6 @@ struct RootView: View {
             .onAppear {
                 TopOverlayWindow.shared.install()
                 HoldWindow.shared.install(app)
-            }
-            .task {
-                // Probe: sign in by itself after a few seconds, like a person on the welcome screen.
-                guard Probe.on, ProcessInfo.processInfo.arguments.contains("-autoLogin") else { return }
-                try? await Task.sleep(for: .seconds(4))
-                Probe.mark("auto login")
-                app.signIn(onboard: false)
             }
     }
 
@@ -272,7 +216,6 @@ struct MainTabs: View {
         // the like green and the red. Each tab's content gets the accent tint back.
         .tint(DS.Palette.ink)
         .tabBarMinimizeBehavior(.onScrollDown)
-        .onChange(of: app.tab) { _, t in Probe.mark("tab -> \(t)") }
         .task {
             // Built in the background: open each tab once, so each one's screen exists before
             // the first tap. Stops as soon as the person is in (and they land on Discover).
@@ -280,17 +223,6 @@ struct MainTabs: View {
             for t in [AppModel.Tab.likes, .sessions, .chats, .me, .discover] {
                 try? await Task.sleep(for: .milliseconds(300))
                 guard app.phase != .main else { return }
-                Probe.mark("prebuild tab \(t)")
-                app.tab = t
-            }
-        }
-        .task(id: isActive) {
-            // Probe: switch through every tab, as taps would.
-            guard isActive, Probe.on, ProcessInfo.processInfo.arguments.contains("-cycleTabs") else { return }
-            Probe.mark("main tabs appeared")
-            for t in [AppModel.Tab.chats, .me, .sessions, .likes, .discover, .chats, .me] {
-                try? await Task.sleep(for: .seconds(1.5))
-                Probe.mark("set tab \(t)")
                 app.tab = t
             }
         }
@@ -307,10 +239,6 @@ struct MainTabs: View {
             guard isActive else { return }
             await NotificationService.shared.loadSettings()
             await NotificationService.shared.refresh()
-            // Demo: -askNotifications shows the system prompt right away (to test pushes).
-            if ProcessInfo.processInfo.arguments.contains("-askNotifications") {
-                await NotificationService.shared.requestPermission()
-            }
         }
         .task(id: "\(isActive)" + app.upcomingSessions.map { "\($0.1.id)\($0.1.status)" }.joined()) {
             guard isActive else { return }

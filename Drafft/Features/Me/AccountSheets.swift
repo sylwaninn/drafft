@@ -212,14 +212,6 @@ struct ChangeEmailSheet: View {
                         isSecure: true, contentType: .password, submitLabel: .send,
                         onSubmit: { if valid { send() } })
         }
-        if app.signInMethod != "Email" {
-            SheetBlock {
-                Text("You sign in with \(app.signInMethod). Changing your email here only affects notifications.")
-                    .font(.footnote)
-                    .foregroundStyle(DS.Palette.body)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
     }
 
     private func send() {

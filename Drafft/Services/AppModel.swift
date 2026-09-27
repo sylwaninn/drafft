@@ -90,20 +90,6 @@ final class AppModel {
     }
     /// Verified at sign-up, can be replaced (after verifying the new one), never removed.
     var phoneNumber: String? = "+33 6 12 34 56 78"
-    var signInMethod = "Email"
-    /// What Apple / Google shared at sign-in (demo), to prefill sign-up.
-    var socialIdentity: SocialIdentity?
-
-    /// Signed in with Apple or Google: the account has no Drafft password.
-    var usesSocialSignIn: Bool { signInMethod != "Email" }
-
-    func signIn(with identity: SocialIdentity) {
-        socialIdentity = identity
-        signInMethod = identity.provider.rawValue
-        if let e = identity.email { email = e }
-        // Returning accounts go straight in (unless their sign-up isn't finished).
-        signIn(onboard: identity.isNewUser)
-    }
     /// Paused: hidden from everyone, and nothing goes out (no like, pass, message, reaction, boost or
     /// session) until it's resumed. The tabs show a greyed lock over their content (`pausedLock`).
     var profilePaused = false { didSet { pauseChanged(from: oldValue) } }

@@ -3,8 +3,6 @@
 SUPABASE_URL = https:/$()/rjlghcuspdtrmbimyioe.supabase.co
 SUPABASE_PUBLISHABLE_KEY = sb_publishable_W_B8sz0iJ29s3NvbBlRDLQ_VMsaunzy
 REVENUECAT_API_KEY = appl_nPDeedcmfhgYnAvrGnLpAoYIQkm
-// Real SMS codes through the staging Send SMS hook (auth-sms, Twilio).
-SMS_ENABLED = YES
 // How long an SMS code works, in seconds: Auth > Providers > Phone > SMS OTP Expiry.
 SMS_CODE_LIFETIME = 600
 APP_DISPLAY_NAME = drafft β
