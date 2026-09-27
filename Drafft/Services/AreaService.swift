@@ -28,11 +28,11 @@ enum LocationPrivacy {
     }
 }
 
-/// Stand-in for the server while the demo has no backend. The real server does a
+/// Resolved on the device until the server does it. The server will do a
 /// point-in-polygon test against official boundaries (IGN / INSEE / OpenStreetMap); here the
 /// arrondissements of Paris, Lyon and Marseille are approximated by their centres, and any other
 /// place falls back to the city name from the system geocoder, never the street.
-struct DemoAreaServer: AreaResolving {
+struct OnDeviceAreaResolver: AreaResolving {
     private struct City { let name: String; let radiusKm: Double; let centres: [CLLocationCoordinate2D] }
 
     private static let cities: [City] = [
@@ -100,7 +100,7 @@ final class AreaLocator: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     private let server: AreaResolving
 
-    init(server: AreaResolving = DemoAreaServer()) {
+    init(server: AreaResolving = OnDeviceAreaResolver()) {
         self.server = server
         super.init()
         manager.delegate = self
