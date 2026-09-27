@@ -638,13 +638,14 @@ One job per colour, everywhere:
 - An unfinished sign-up is saved as it goes and resumes at the first mandatory step not done (usually the SMS), otherwise where it stopped (`OnboardingStore`).
 - Location is required (at least While Using the App): sign-up can't continue without it (no typing an area), and if it's turned off later a blocking screen asks to turn it back on (`LocationGate`, `LocationRequiredView`).
 - Sign-up is 18+: under 18, the typed birthday shows why and Continue stays disabled; a required, unchecked-by-default consent links each legal document inline.
-- Demo builds show dashed "Demo only" panels (`DemoPanel`) to pick each check's outcome; they never ship.
+- No demo or test mode ships: no "Demo only" panels, no launch shortcuts, no simulated sign-in; every check runs for real.
 - Every account verifies a phone number at sign-up (mandatory, no Skip). The first photo must show a face (Vision, on device). No video check for now: it was removed until a provider is chosen.
 - The phone number can be replaced (after verifying the new one), never removed.
 - Any failed check or error offers "Get help", which opens a prefilled support request (topic + reference).
-- Front-end state machines (`PhoneVerificationModel`) sit on protocols (`PhoneVerifying`); demo implementations stand in until the API exists.
+- Front-end state machines (`PhoneVerificationModel`) sit on protocols (`PhoneVerifying`), implemented by the backend.
 
 ### Apple / Google sign-in
+- Not in the app yet: the simulated sheet was removed. It comes back with the real Sign in with Apple / Google (id token, `signInWithIdToken`), following these rules.
 - Use only what the provider really shares (`SocialIdentity`). Apple: a stable ID, a verified email or a private relay address, and the name only on the first sign-in if shared; no photo, birthday or phone. Google (openid, email, profile): ID, email, name, picture URL, locale; nothing else without extra reviewed scopes.
 - Prefill only that (first name, email), say where it came from ("From your Apple account. You can change it."), and still ask for everything else (birthday, phone). Social accounts have no Drafft password.
 - Every sign-up step has a way back; on the first one it leaves sign-up, and leaving on purpose discards the answers (you start over). Progress is only kept when the app is closed mid-sign-up.
@@ -664,7 +665,6 @@ One job per colour, everywhere:
 - You shows the tier card (entry to the paywall) while not subscribed, and a "drafft tempo" row under Account only while subscribed ("Renews 24 Oct", or "Ends 24 Oct" once cancelled).
 - The row opens `SubscriptionSheet`: a night status block (lockup, Active/Ending pill, price, renewal or end date), what's included, the App Store billing terms (renews unless cancelled 24 h before the period ends; deleting the app doesn't cancel), "Open App Store subscriptions", Restore purchases, Terms, Privacy. The pinned action is "Manage subscription", which opens Apple's own sheet (`manageSubscriptionsSheet`).
 - The paywall carries the same auto-renewal terms under its button, plus Restore, Terms and Privacy.
-- Demo builds simulate the App Store's answer with a `DemoPanel` (Renews, Cancelled, Expired).
 
 ### Notifications
 - Asked during sign-up, on its own optional step at the end of Profile ("Don't miss a match"), with what they'll get before the system prompt. Continue needs them on; Skip passes.
@@ -719,7 +719,6 @@ One job per colour, everywhere:
 - A press that tracks the finger (holding the mic) also ends when the system cancels the touch (`@GestureState` resets), never only in `onEnded`, so it can't stay stuck.
 - Decoded images are cached (`PhotoCache`, `MessageImageCache`); waveforms are drawn in one `Canvas`.
 - The tabs never build on a tap. `MainTabs` is mounted 0.8 s after launch, invisible and untouchable under the welcome screen (and sign-up), and opens each tab once in the background (`isActive` false: no permission prompt, no cover, no banner, no notification work until signed in). Signing in reveals screens that already exist and lands on Discover. Measured on device: the first visit of a tab froze the tab bar 50 to 125 ms before, 0 after. Sign-out and account deletion rebuild the tabs fresh (`AppModel.sessionID`).
-- `Probe` (launch argument `-probe`) logs every main-thread block over 50 ms; `-autoLogin` and `-cycleTabs` replay the welcome, sign-in and tab path, to measure on device with `devicectl device process launch --console`.
 - Photos shown small pass their size (`Photo(name:side:)`, `Avatar` does it): a downsampled copy is drawn, never a 1400 px JPEG for a 56 pt avatar. Blurred photos (locked likes) pass `blur:` and get the blur baked into a small copy, never a live `.blur` on each card. `ImageStore` prepares, in the background at launch, the welcome photos, the top of the deck, every avatar size and the locked-like copies, so a tab's first visit draws without decoding and the tab bar answers at once.
 
 ### Layout

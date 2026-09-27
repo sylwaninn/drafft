@@ -17,8 +17,8 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
       photos (in order) and the blurred position, then `complete_onboarding` (its refusals shown under the button);
       Edit profile saves the same way (birthday fixed after sign-up); You is read back from the server at sign-in.
       Photos and voice intros on the server are URLs (`app-config` gives the media base; `RemotePhoto`, audio cached).
-- [ ] Phone verification: still the demo SMS step (no SMS provider on Supabase yet).
-- [ ] Sign in with Apple and Google (id token → `signInWithIdToken`): still the demo sheet, no backend session.
+- [ ] Production: enable the Send SMS hook (auth-sms, Twilio) before release: the phone step always sends real codes.
+- [ ] Sign in with Apple and Google (id token → `signInWithIdToken`): off the welcome screen until then.
 - [ ] Map RPC error `hint` codes (`daily_like_limit`, `no_super_likes`, `underage`, `photo_required`…) to
       UI copy; disabled validate buttons carry the reason.
 - [ ] Realtime: subscribe to `user:<id>` (like, match, match_ended, session, media).
@@ -84,5 +84,5 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
       after sign-in (purchases before login are ignored by the server), entitlement `drafft_tempo`,
       offering `default` ($rc_monthly, $rc_six_month, $rc_annual). Packs: buy the store products
       directly. Balances come from `wallets` (credited by the webhook), not from the device.
-- [ ] Phone verification with the real provider (the demo verifier stays for previews).
+- [ ] Phone verification with the real provider in production (see the Send SMS hook above).
 - [ ] Sentry: crashes, hangs, slow frames, failed uploads.
