@@ -13,7 +13,7 @@ struct DrafftApp: App {
         Self.styleNavigationBars()
         Self.prewarmPhotos()
         let args = ProcessInfo.processInfo.arguments
-        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya, -empty, -deck 2
+        // Demo launch shortcuts for screenshots: -skipAuth, -tab chats, -chat maya, -empty, -deck 2, -hold review
         if args.contains("-skipAuth") { _app = State(initialValue: Self.demoModel(args)) }
     }
 
@@ -85,6 +85,10 @@ struct DrafftApp: App {
             m.chatRequest = args[i + 1]
         }
         applyDemoData(args, to: m)
+        // Demo: -hold review / -hold banned shows the moderation screen.
+        if let i = args.firstIndex(of: "-hold"), i + 1 < args.count {
+            AccountModeration.shared.hold = AccountHold(rawValue: args[i + 1])
+        }
         if let i = args.firstIndex(of: "-match"), i + 1 < args.count {
             m.matchScreen = MockData.profile(args[i + 1])
         }
@@ -114,6 +118,8 @@ struct DrafftApp: App {
 
 struct RootView: View {
     @Environment(AppModel.self) private var app
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var moderation = AccountModeration.shared
     /// The tabs exist from shortly after launch, invisible under the welcome screen or sign-up.
     @State private var tabsMounted = false
     /// The saved session has been checked (signed in straight away, or the welcome screen).
@@ -132,9 +138,36 @@ struct RootView: View {
             // The server turned an action down because the profile is paused: grey the tabs.
             .onReceive(NotificationCenter.default.publisher(for: .profilePausedByServer)) { _ in
                 app.applyServerPause(true)
+                // A hold pauses the profile too (and bans it from chats): check which it is.
+                Task { await moderation.load() }
+            }
+            // A moderation hold: the hold screen covers everything, at once, and lifts the same way.
+            .onReceive(NotificationCenter.default.publisher(for: .accountHeldByServer)) { _ in
+                Task { await moderation.load() }
+            }
+            .onChange(of: moderation.hold) { _, hold in
+                HoldWindow.shared.update(visible: hold != nil)
+                // The hold paused the profile; lifting it gave the person's own pause back.
+                if hold == nil, app.phase != .welcome { Task { await app.loadPause() } }
+            }
+            .onChange(of: app.phase) { _, phase in if phase == .welcome { moderation.clear() } }
+            .task(id: "\(app.phase == .welcome)\(app.sessionID)") {
+                guard app.phase != .welcome else { return }
+                // Signed in or launched: the iPhone's DeviceCheck token, for ban evasion (server side).
+                Task { await DeviceIntegrity.report() }
+                await moderation.watch()
+            }
+            .onChange(of: scenePhase) { _, p in
+                if p == .active && app.phase != .welcome { Task { await moderation.load() } }
             }
             // Banners that must sit above everything (sheets included) live in their own window.
-            .onAppear { TopOverlayWindow.shared.install() }
+            .onAppear {
+                TopOverlayWindow.shared.install()
+                HoldWindow.shared.install(app)
+            }
+            #if LOCAL_BACKEND
+            .task { await LocalLaunch.signIn(app) }
+            #endif
             .task {
                 // Probe: sign in by itself after a few seconds, like a person on the welcome screen.
                 guard Probe.on, ProcessInfo.processInfo.arguments.contains("-autoLogin") else { return }
@@ -151,7 +184,9 @@ struct RootView: View {
             // tab bar for 50 to 125 ms per tab on device; signing in now reveals screens that
             // already exist.
             if tabsMounted || inMain {
-                MainTabs(isActive: inMain)
+                // Under a moderation hold the tabs stay inactive: no permission prompt, cover or
+                // banner over the hold screen. They wake up where they were once it's lifted.
+                MainTabs(isActive: inMain && moderation.hold == nil)
                     .id(app.sessionID)
                     // Hidden, they don't follow the keyboard of the forms on top.
                     .ignoresSafeArea(inMain ? SafeAreaRegions() : .keyboard)

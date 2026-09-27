@@ -143,6 +143,12 @@ actor Backend {
         try await request("POST", "functions/v1/\(name)", json: body)
     }
 
+    /// POST /functions/v1/<name>, signed in or not: with the person's token when there is one (the
+    /// function reads it), with only the app's key otherwise (support, from a stuck sign-up).
+    func publicFunction(_ name: String, _ body: [String: Any]) async throws -> Data {
+        try await request("POST", "functions/v1/\(name)", json: body, requiresSession: false)
+    }
+
     /// GET on a table with PostgREST filters, e.g. `profile_media?id=eq.…&select=status`.
     func select(_ pathAndQuery: String) async throws -> Data {
         try await request("GET", "rest/v1/\(pathAndQuery)", json: nil)
@@ -170,19 +176,24 @@ actor Backend {
         return hint == "paused" || (status == 403 && code == "paused") || text.contains("user is banned")
     }
 
-    private func request(_ method: String, _ path: String, json: [String: Any]?) async throws -> Data {
+    private func request(_ method: String, _ path: String, json: [String: Any]?,
+                         requiresSession: Bool = true) async throws -> Data {
         var request = URLRequest(url: URL(string: path, relativeTo: BackendConfig.url)!)
         request.httpMethod = method
         request.setValue(BackendConfig.publishableKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(try await accessToken())", forHTTPHeaderField: "Authorization")
+        if requiresSession || hasSession {
+            request.setValue("Bearer \(try await accessToken())", forHTTPHeaderField: "Authorization")
+        }
         if let json { request.httpBody = try JSONSerialization.data(withJSONObject: json) }
         let (data, response) = try await URLSession.shared.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200..<300).contains(status) else {
             let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             let message = body.flatMap { $0["hint"] ?? $0["msg"] ?? $0["message"] ?? $0["code"] } as? String
-            if Self.saysPaused(status: status, body: body) {
+            if body?["hint"] as? String == "moderated" {
+                await MainActor.run { NotificationCenter.default.post(name: .accountHeldByServer, object: nil) }
+            } else if Self.saysPaused(status: status, body: body) {
                 await MainActor.run { NotificationCenter.default.post(name: .profilePausedByServer, object: nil) }
             }
             throw BackendError.http(status, message ?? String(decoding: data.prefix(200), as: UTF8.self))
@@ -194,4 +205,6 @@ actor Backend {
 extension Notification.Name {
     /// Posted when the server turns an action down because the profile is paused.
     static let profilePausedByServer = Notification.Name("profilePausedByServer")
+    /// Posted when the server turns an action down because the account is on hold (moderation).
+    static let accountHeldByServer = Notification.Name("accountHeldByServer")
 }
