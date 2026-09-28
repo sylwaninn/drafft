@@ -15,14 +15,11 @@ struct IcebreakerCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
-            HStack(spacing: DS.Space.sm) {
-                Image(systemName: icon)
-                    .font(.headline)
-                    .foregroundStyle(DS.Palette.lime)
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(DS.Palette.lime)
-            }
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(DS.Palette.lime)
+                // Clear of the backdrop glyph's densest part.
+                .padding(.trailing, DS.Space.xxl)
 
             switch profile.icebreaker {
             case let .twoTruths(statements, lie): twoTruths(statements, lie)
@@ -48,6 +45,7 @@ struct IcebreakerCard: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .background(alignment: .topTrailing) { backdrop }
         .draftBlock(DS.Palette.night)
         .animation(Motion.bouncy, value: guess)
         .animation(Motion.bouncy, value: revealed)
@@ -67,6 +65,19 @@ struct IcebreakerCard: View {
 
     private var icon: String {
         profile.icebreaker.kind.symbol
+    }
+
+    /// The kind's sign, oversized behind the top corner and cut by the block's edge: a faint
+    /// accent tint on night, texture rather than a second title.
+    private var backdrop: some View {
+        Image(systemName: icon)
+            .font(.system(size: 168, weight: .bold))
+            .foregroundStyle(DS.Palette.lime.opacity(0.13))
+            .rotationEffect(.degrees(-14))
+            .offset(x: 44, y: -40)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .clipShape(.rect(cornerRadius: DS.Radius.xl))
+            .accessibilityHidden(true)
     }
 
     private var opener: MessageContent? {
