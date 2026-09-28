@@ -109,12 +109,11 @@ struct RootView: View {
             }
             .onChange(of: scenePhase) { _, p in
                 guard p == .active && app.phase != .welcome else { return }
+                // The account row (hold, pause, settings, language, card), changed while away.
                 Task { await moderation.load() }
                 // Credited while away (a purchase on another device, the weekly boost).
                 Task { await app.loadWallet() }
                 Task { await PurchaseCredit.shared.resume(app) }
-                // Changed on another device while away (pause, settings, language, card).
-                Task { await app.refreshOwnProfile() }
                 // A session changed or was cancelled while away: its calendar event follows.
                 Task { await SessionCalendar.shared.refresh() }
             }

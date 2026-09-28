@@ -5,15 +5,14 @@ import Supabase
 /// something of theirs changes. One channel per account, whatever listens:
 ///
 /// - `moderation`: the hold (`AccountModeration`);
-/// - `profile`: the profile row changed (another device, the team): read again with its hold,
-///   pause and settings (`AppModel.refreshAccount`);
 /// - `wallet`: drafft tempo, boosts and super likes (`AppModel.loadWallet`);
 /// - `media`: a photo was approved or refused, by the automatic check or by the team
 ///   (`PhotoModeration`);
 /// - `session_revoked`: Auth sessions ended on the server; this device signs out at once if its own is
 ///   one of them (`AppModel.sessionsRevoked`);
-/// - `profile`: the person's own profile changed, on this device or another one, with the columns that
-///   changed (`AppModel.profileChanged`: pause, settings, language, card);
+/// - `profile`: the person's own profile changed, on this device, another one or by the team, with the
+///   columns that changed: the row is read again with its hold, pause, settings, language and card
+///   (`AppModel.profileChanged`, `AppModel.refreshAccount`);
 /// - `session`: a session of theirs changed; the calendar event added for it follows (`SessionCalendar`).
 ///
 /// A payload only says a change happened (a photo decision carries its media and status): the row
@@ -41,7 +40,6 @@ enum UserChannel {
         let client = Backend.shared.client
         let channel = client.channel(topic) { $0.isPrivate = true }
         let moderation = channel.broadcastStream(event: "moderation")
-        let profile = channel.broadcastStream(event: "profile")
         let wallet = channel.broadcastStream(event: "wallet")
         let media = channel.broadcastStream(event: "media")
         let revoked = channel.broadcastStream(event: "session_revoked")
@@ -50,7 +48,6 @@ enum UserChannel {
         let status = channel.statusChange
         let joined = await withTaskGroup(of: Bool.self) { group in
             group.addTask { for await _ in moderation { await app.refreshAccount(force: true) }; return false }
-            group.addTask { for await _ in profile { await app.refreshAccount(force: true) }; return false }
             group.addTask { for await _ in wallet { await app.loadWallet() }; return false }
             group.addTask {
                 for await message in media {
@@ -90,7 +87,6 @@ enum UserChannel {
                     await app.refreshAccount(force: true)
                     await app.loadWallet()
                     await PurchaseCredit.shared.resume(app)
-                    await app.refreshOwnProfile()
                     await SessionCalendar.shared.refresh()
                 }
                 return joined
