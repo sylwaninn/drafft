@@ -219,16 +219,6 @@ components:
     typography: "{typography.body-sm-strong}"
     rounded: "{rounded.pill}"
     padding: "{spacing.xs} {spacing.md}"
-  contour-texture:
-    description: "Drafft block texture: topographic contour lines (hairline loops like a trail map) behind coloured blocks. See 'Contour texture' in Drafft app rules."
-    strokeColorOnDark: "{colors.primary}"
-    strokeColorOnLime: "{colors.on-primary}"
-    lineOpacity: 0.15
-    indexLineOpacity: 0.30
-    lineWidth: 0.8px
-    indexLineWidth: 1.2px
-    indexEvery: 5
-    lines: 12–14 iso-lines on a gentle generated terrain (broad summit + 3–4 low hills)
   bottom-bar:
     description: "Anything pinned to a screen edge sits over ProgressiveBlur (variable blur, radius 0 to 14, no tint). Modifiers: bottomBar, topBar, blurredNavigationEdge. Never a background colour."
     controls: "Liquid Glass for neutral controls, lime-tinted glass for send, solid button-primary for validate"
@@ -598,11 +588,11 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
 - Never the system action sheet or alert. Use `.drafftConfirm`: a short sheet sized to its content, raised (`sheetRaised`), with an icon disc (red for destructive, lime otherwise), a display title, the consequence in one sentence, full-width buttons and a plain Cancel. Used for log out, leave sign-up, discard changes, report/block.
 
 ### Forms & flows
-- Log in, sign up and every sign-up step sit on `PageContourBackdrop`: the sage page with the contour texture at half strength. The log-in background is FROZEN (`BackdropSeed.login` = "login-2", drawn by `TerrainField`): never regenerate it. Each sign-up step has its own terrain; changing step morphs the terrain into the next one (0.9 s): the lines slide and reshape, no fade.
+- Log in, sign up and every sign-up step sit on the plain sage page (`DS.Palette.canvasSoft`), no texture.
 - Gender is picked from a fixed list (Woman, Man, Non-binary); there is never a free-text way to describe a gender.
 - No height anywhere: Drafft never asks for or shows how tall someone is.
 - Labels and tags never wrap: one line, always (`lineLimit(1)` + `fixedSize`), shorten the text instead.
-- Logo: the word "drafft" in Inter Display Black, solid, with two copies trailing to the left (tints at 45% and 20% of the word colour, offsets about 0.1 and 0.2 of the type size), over a very faint relief (contour lines at ~13%). App icon: white word on orange #FF7300 (Resources/Assets.xcassets/AppIcon, rendered from the logo study). `Wordmark` in the app draws the same trail.
+- Logo: the word "drafft" in Inter Display Black, solid, with two copies trailing to the left (tints at 45% and 20% of the word colour, offsets about 0.1 and 0.2 of the type size). App icon: white word on orange #FF7300 (Resources/Assets.xcassets/AppIcon, rendered from the logo study). `Wordmark` in the app draws the same trail.
 - Brand accent in the app: vivid orange `#FF7300` (token names keep "lime" for the role), with **white** text and icons on it (a deliberate choice; keep labels semibold or bolder). Pale `#FFEBDC`, pressed `#FFB27A`. Switch in `Tokens.swift` (`DS.Palette.accent`: `.lime`, `.plum`, `.tangerine`).
 - `accentInk` is the accent as text or a glyph on neutral surfaces: `#C45000` in light mode (4.7:1 on white, still orange, never the old brown `#7A3300`), `#FF8A2B` in dark mode. It is the app tint, so it drives the selected tab, links, date pickers and "Typing".
 
@@ -703,7 +693,7 @@ One job per colour, everywhere:
 ### Motion & speed
 - Everything answers fast. Standard springs: `snappy` (response 0.22 s), `bouncy` (0.3 s), fades 0.18 s. Swipe fly-out 0.26 s.
 - Selection (chip, tile, disc, plan) uses `Motion.select`: a 0.1 s ease-out on the colour, never a spring, and never a whole-sheet `.animation` on the edited value.
-- Screens open on their first frame: anything expensive is computed once and cached (contour lines per block and size, sign-up terrains at rest, picked photos decoded once, `FlowLayout` measures each chip once per pass). Long chip lists in sheets start collapsed (`SportPicker(collapsedCount: 16)` plus "All N sports"); search always covers the full catalog.
+- Screens open on their first frame: anything expensive is computed once and cached (picked photos decoded once, `FlowLayout` measures each chip once per pass). Long chip lists in sheets start collapsed (`SportPicker(collapsedCount: 16)` plus "All N sports"); search always covers the full catalog.
 - Haptics come from generators kept warm (`Haptics` re-prepares after each use), so the tick lands with the visual change.
 - No artificial waits on the user's own actions: confirmation beats last 120–250 ms at most, simulated network calls 200–400 ms (export 600 ms). Only the other person's simulated typing is allowed to take seconds.
 - Motion always follows the finger or the action; nothing loops or decorates.
@@ -713,7 +703,7 @@ One job per colour, everywhere:
 - Text actions ("Clear filters", "Forgot?", "Resend code") use `.buttonStyle(.textLink)`: the 44 pt row is the target. Never a `.frame(minHeight: 44)` applied outside a button, it adds no touch area.
 - Never `.interactive()` glass on anything holding a control (buttons, the chat field): it runs its own touch handling.
 - Overlays (like and super like composers, the message focus) stop taking touches the moment they start closing, then fade themselves; the presenter removes them without a second fade, so no invisible veil lingers over the page.
-- Decoration never takes touches: drafting trails, contour lines, photo steps, bursts are `allowsHitTesting(false)`.
+- Decoration never takes touches: drafting trails, photo steps, bursts are `allowsHitTesting(false)`.
 - Nothing writes state on every frame: a value that changes while scrolling or during a push (a bubble's position for the long-press lift) lives in a plain reference, not `@State`, or the whole list re-renders each frame and the screen stops answering.
 - Audio session activation and player or recorder setup run off the main thread; the button flips first.
 - A press that tracks the finger (holding the mic) also ends when the system cancels the touch (`@GestureState` resets), never only in `onEnded`, so it can't stay stuck.
@@ -754,41 +744,3 @@ One job per colour, everywhere:
 ### The drafting motif
 - The drafting trail (fading offset copies, as in the app icon) goes **under buttons** (primary CTAs, play, like hearts), not on cards, icons or body text.
 - Exception by explicit request: the "No one here." headline of the Discover empty state, whose ghosts use the same ink as the text.
-
-### Contour texture (block backgrounds)
-
-Coloured feature blocks carry a **topographic contour-line texture**: the relief lines of a trail map, traced on a small generated terrain. It gives the dark and lime blocks depth and a sport/outdoor feel without competing with content. It replaces the earlier blob-and-ghost backdrops, which are retired.
-
-**Anatomy**
-- A generated, fairly **gentle** terrain: one broad **main summit** near an edge or corner of the block, 3–4 low **secondary hills and ridges** (wide, elongated, rotated), and a faint low-frequency undulation. Keep it on the flat side: rolling hills, not mountains.
-- **12–14 iso-lines** are traced on it (marching squares). Spacing is uneven by nature: tight on steep slopes, loose on plateaus; lines bend around saddles, split around hills and run off the edges. Never concentric rings.
-- Hairlines at **0.8 pt, 15 % opacity**. Every fifth line is an **index contour** at **1.2 pt, 30 %**, as on real maps.
-- Colour follows the surface: **lime lines on night** blocks (`{colors.primary}`), **ink lines on lime** blocks (`{colors.on-primary}`), **white lines** only on the session card in chat.
-- Clipped to the block's rounded shape; drawn behind content; static (never animated); decorative only (hidden from VoiceOver).
-
-**Placement**
-- The main summit sits near an edge or corner of the block, never in the middle, so the densest lines stay away from the text.
-- The terrain is laid out on a fixed reference frame from the block's top-leading corner, so the texture stays put when a block grows (transcript opened, icebreaker played).
-- **One fixed composition per block type**, identical on every profile and every render:
-
-| Block | Surface | Main summit | Extra hills | Lines | Terrain (frozen) |
-|---|---|---|---|---|---|
-| Voice intro | night | top-right corner | 3 | 13 | `relief-5` |
-| Icebreaker | night | bottom-right | 4 | 13 | `relief-5` |
-| Training for (goal) | lime | upper right | 3 | 12 | `relief-4` |
-| How … moves (sports) | night | right edge | 4 | 14 | `relief-4` |
-| Session card (chat) | night, white lines | top-right | 3 | 12 | `relief-5` |
-| Profile card (You tab) | night | top right | 3 | 13 | `relief-5` |
-| Next session (Sessions tab) | night | top right | 3 | 13 | `relief-5` |
-
-**Use it on**
-- Night (`{colors.ink}`) and lime (`{colors.primary}`) feature blocks that carry one idea: voice, icebreaker, goal, sports, session invites, your profile card, the next session.
-
-**Never use it on**
-- White or sage blocks (prompts, forms, settings rows, lists), the sage canvas itself, photos, buttons, chips, sheets and editors, or empty states.
-- More than one layer per block, or combined with another decorative background.
-
-**Adding a new textured block**
-- **All terrains are validated and frozen.** Each block's relief is pinned by its entry in `ContourLines.terrainVersions` (goal and sports: `relief-4`; voice, icebreaker, session card, profile card: `relief-5`). Never change these values or the compositions below.
-- Give it its own entry in `BackdropSeed`, a fixed composition in `ContourLines.styles` and its own `terrainVersions` entry (summit near an edge, 3–4 low hills, 12–14 lines). Don't reuse another block's composition, and don't tweak a validated one without an explicit decision.
-- In code: `.draftBlock(fill, seed: BackdropSeed.<type>, tint: <line colour>)`.
