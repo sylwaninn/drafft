@@ -242,6 +242,9 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
             }
             return []
         }
+        // Moderation news (a hold lifted, a selfie asked for): the open app's screen already changed
+        // live (Realtime `moderation`), so the system banner would say it twice.
+        if info["kind"] as? String == "moderation" { return [] }
         // A session changed while the app is open: the push says it, the cards follow (the Realtime event
         // usually got there first; this read catches a missed one).
         if let kind = info["kind"] as? String, kind == "session_cancelled" || kind == "session_reminder" {
@@ -256,6 +259,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
             await MainActor.run { PhotoModeration.shared.openRefusal(mediaID: media) }
             return
         }
+        // Opening the app is enough: it shows the screen of the account's current state.
+        if info["kind"] as? String == "moderation" { return }
         if info["kind"] as? String == "weekly_boost" {
             await MainActor.run { self.openBoost = true }
             return
