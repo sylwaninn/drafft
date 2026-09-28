@@ -12,6 +12,8 @@ extension AppModel {
     func profileChanged(_ fields: Set<String>?) async {
         guard phase == .main else { return }
         if let fields, fields.isEmpty { return }
+        // Preferences that decide who's in the deck: a new deck (decision 3.8).
+        preferencesChanged(fields)
         await refreshAccount(force: true)
     }
 }

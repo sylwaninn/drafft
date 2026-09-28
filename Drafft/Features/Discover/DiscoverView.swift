@@ -50,8 +50,16 @@ struct DiscoverView: View {
                 ZStack(alignment: .top) {
                     if app.deck.isEmpty {
                         // Right away, even while the last card is still flying over it.
-                        emptyState
-                            .padding(.bottom, DS.Space.xl)
+                        switch app.deckState {
+                        case .loading:
+                            loadingState
+                        case .failed(let message):
+                            failedState(message)
+                                .padding(.bottom, DS.Space.xl)
+                        case .idle, .loaded:
+                            emptyState
+                                .padding(.bottom, DS.Space.xl)
+                        }
                     } else {
                         VStack(spacing: 0) {
                             deck
@@ -226,7 +234,7 @@ struct DiscoverView: View {
         t.disablesAnimations = true
         withTransaction(t) { drag = .zero }
         flying.append(flyOut)
-        if liked { app.like(p, opener: opener, superLike: superLike) } else { app.pass(p) }
+        app.swipe(p, liked: liked, superLike: superLike, opener: opener)
         if app.deck.isEmpty { emptiedBySwipe = true }
         Task {
             try? await Task.sleep(for: .milliseconds(320))
@@ -392,6 +400,27 @@ struct DiscoverView: View {
         }
         .animation(.interactiveSpring(response: 0.3, dampingFraction: 0.8), value: progress)
         .frame(maxWidth: .infinity)
+    }
+
+    /// The first batch on its way (nothing kept from last time).
+    private var loadingState: some View {
+        ProgressView()
+            .controlSize(.large)
+            .tint(DS.Palette.ink)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .accessibilityLabel("Loading profiles")
+    }
+
+    /// The deck couldn't be read (offline, or the server refused): why, and a retry.
+    private func failedState(_ message: String) -> some View {
+        EmptyStateView(art: .discover, title: "No profiles right now.", message: LocalizedStringKey(message)) {
+            Button("Try again") {
+                Haptics.tap()
+                app.loadDeck(.refresh)
+            }
+            .buttonStyle(.drafftPrimaryFit)
+        }
+        .frame(maxHeight: .infinity)
     }
 
     /// The stack ran out (filtered or not): the same screen either way.

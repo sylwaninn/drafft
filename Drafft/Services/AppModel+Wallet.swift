@@ -68,7 +68,7 @@ extension AppModel {
     }
 
     /// Postgres timestamps (`2026-10-24T10:00:00.123456+00:00`), to the second.
-    private static func serverDate(_ text: String?) -> Date? {
+    static func serverDate(_ text: String?) -> Date? {
         guard let text else { return nil }
         let whole = text.replacingOccurrences(of: #"\.\d+"#, with: "", options: .regularExpression)
         return ISO8601DateFormatter().date(from: whole)

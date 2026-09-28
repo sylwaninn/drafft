@@ -245,7 +245,8 @@ struct Photo: View {
         Color.clear
             .overlay {
                 if name.hasPrefix("http") || name.hasPrefix("/") {
-                    LoadedPhoto(name: name)
+                    // Blurred at decode time, never a live blur (locked likes).
+                    LoadedPhoto(name: name, blur: blur / max(side ?? 200, 1))
                 } else if let img = blur > 0
                             ? ImageStore.blurred(name, fraction: blur / max(side ?? 200, 1))
                             : side == nil ? ImageStore.preparedFull(name) : ImageStore.image(name, side: side) {
@@ -265,13 +266,15 @@ struct Photo: View {
 /// until it's there.
 private struct LoadedPhoto: View {
     let name: String
+    /// Blur radius as a share of the photo's shorter side (0: sharp).
+    var blur: CGFloat = 0
     @Environment(\.displayScale) private var scale
     /// Decoded once per view (a few microseconds, then cached by key).
     private var preview: UIImage? { MediaPreviews.image(for: name) }
 
     var body: some View {
         GeometryReader { geo in
-            LazyImage(request: Images.request(name, points: geo.size, scale: scale),
+            LazyImage(request: Images.request(name, points: geo.size, scale: scale, blur: blur),
                       transaction: Transaction(animation: .easeOut(duration: 0.2))) { state in
                 ZStack {
                     Rectangle().fill(DS.Palette.canvasSoft)

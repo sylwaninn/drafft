@@ -26,7 +26,11 @@ extension AppModel {
         Task { await loadAccount() }
         // A finished profile on the server is the one shown in You (another device, a reinstall),
         // with its pause, hold and settings: one read.
-        if target == .main { Task { await refreshAccount() } }
+        if target == .main {
+            Task { await refreshAccount() }
+            // The last known deck, likes and matches at once, then the server's.
+            showCachedDiscovery()
+        }
         if immediately {
             if target == .main { tab = .discover }
             phase = target
@@ -50,6 +54,8 @@ extension AppModel {
         Task { await refreshAccount(force: true) }
         tab = .discover
         withAnimation(Motion.gentle) { phase = .main }
+        // The first deck, now that the profile is open.
+        refreshDiscovery()
     }
 
     /// Reads the person's profile from the server (You's retry). Until it's in, You shows a loading
@@ -189,9 +195,7 @@ extension AppModel {
     private func resetAccountState() {
         AudioPlayback.shared.stop()
         conversations = MockData.conversations()
-        queue = MockData.deck
-        history = []
-        pendingOpeners = [:]
+        clearDiscovery()
         openChatID = nil
         chatRequest = nil
         matchScreen = nil
@@ -204,7 +208,6 @@ extension AppModel {
         dataExportRequestedAt = nil
         filters = DiscoverFilters()
         clearWallet()
-        likesLeft = Self.dailyLikes
         me = Self.nobody
         profileLoad = .loading
         ProfileSync.loadedAccount = nil
