@@ -16138,42 +16138,42 @@
         }
       }
     },
-    "Hidden from everyone. Likes, chats and sessions are on hold." : {
+    "Hidden from everyone. Your chats and sessions carry on." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invisible pour tous. Likes, discussions et séances sont en pause."
+            "value" : "Invisible pour tous. Tes discussions et tes séances continuent."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oculto para todos. Likes, chats y sesiones, en pausa."
+            "value" : "Oculto para todos. Tus chats y sesiones siguen."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für alle unsichtbar. Likes, Chats und Sessions pausieren."
+            "value" : "Für alle unsichtbar. Deine Chats und Sessions laufen weiter."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invisibile a tutti. Like, chat e sessioni sono in pausa."
+            "value" : "Invisibile a tutti. Le tue chat e sessioni continuano."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invisível para todos. Likes, conversas e sessões ficam em pausa."
+            "value" : "Invisível para todos. As tuas conversas e sessões continuam."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voor iedereen verborgen. Likes, chats en sessies staan op pauze."
+            "value" : "Voor iedereen verborgen. Je chats en sessies gaan door."
           }
         }
       }
@@ -24986,42 +24986,42 @@
         }
       }
     },
-    "Nobody sees you, and you can't like, message or plan sessions until you resume." : {
+    "Nobody sees you and discovery waits until you resume. Your chats and sessions carry on." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personne ne te voit, et tu ne peux ni liker, ni écrire, ni proposer de séance tant que tu n'as pas repris."
+            "value" : "Personne ne te voit et la découverte attend ton retour. Tes discussions et tes séances continuent."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nadie te ve, y no puedes dar like, escribir ni proponer sesiones hasta que vuelvas."
+            "value" : "Nadie te ve y el descubrimiento espera a que vuelvas. Tus chats y sesiones siguen."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Niemand sieht dich, und du kannst weder liken noch schreiben noch Sessions planen, bis du weitermachst."
+            "value" : "Niemand sieht dich, und Entdecken wartet, bis du weitermachst. Deine Chats und Sessions laufen weiter."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nessuno ti vede, e non puoi mettere like, scrivere o proporre sessioni finché non riprendi."
+            "value" : "Nessuno ti vede e la scoperta aspetta che riprendi. Le tue chat e sessioni continuano."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ninguém te vê, e não podes dar like, escrever nem propor sessões até retomares."
+            "value" : "Ninguém te vê e a descoberta espera até retomares. As tuas conversas e sessões continuam."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Niemand ziet je, en je kunt niet liken, berichten sturen of sessies plannen tot je hervat."
+            "value" : "Niemand ziet je en ontdekken wacht tot je hervat. Je chats en sessies gaan door."
           }
         }
       }
@@ -38315,42 +38315,42 @@
         }
       }
     },
-    "Take a break: you disappear and everything waits for you." : {
+    "Take a break from discovery: you disappear, your chats stay open." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fais une pause : tu disparais et tout t'attend."
+            "value" : "Fais une pause dans la découverte : tu disparais, tes discussions restent ouvertes."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tómate un respiro: desapareces y todo te espera."
+            "value" : "Tómate un respiro del descubrimiento: desapareces y tus chats siguen abiertos."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach eine Pause: Du verschwindest, und alles wartet auf dich."
+            "value" : "Mach eine Pause vom Entdecken: Du verschwindest, deine Chats bleiben offen."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prenditi una pausa: sparisci e tutto ti aspetta."
+            "value" : "Prenditi una pausa dalla scoperta: sparisci, le tue chat restano aperte."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faz uma pausa: desapareces e tudo fica à tua espera."
+            "value" : "Faz uma pausa na descoberta: desapareces e as tuas conversas ficam abertas."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neem een pauze: je verdwijnt en alles wacht op je."
+            "value" : "Neem een pauze van ontdekken: je verdwijnt, je chats blijven open."
           }
         }
       }

@@ -82,7 +82,7 @@ struct RootView: View {
                     SplashView(isReady: tabsMounted && sessionChecked) { splashShown = false }
                 }
             }
-            // The server turned an action down because the profile is paused: grey the tabs.
+            // The server turned an action down because the profile is paused: lock discovery.
             .onReceive(NotificationCenter.default.publisher(for: .profilePausedByServer)) { _ in
                 app.applyServerPause(true)
                 // A hold pauses the profile too (and bans it from chats): check which it is.
@@ -201,18 +201,18 @@ struct MainTabs: View {
                 tabLabel(L("Discover"), "flame", .discover)
             }
             Tab(value: AppModel.Tab.likes) {
-                LikesTabView().tint(DS.Palette.accentInk).pausedLock()
+                LikesTabView().tint(DS.Palette.accentInk).pausedLock(PauseScope.locksLikes)
             } label: {
                 tabLabel(L("Likes"), "heart", .likes)
             }
             .badge(app.likedMe.count)
             Tab(value: AppModel.Tab.sessions) {
-                SessionsView().tint(DS.Palette.accentInk).pausedLock()
+                SessionsView().tint(DS.Palette.accentInk)
             } label: {
                 tabLabel(L("Sessions"), "flag.2.crossed", .sessions)
             }
             Tab(value: AppModel.Tab.chats) {
-                ConversationsView().tint(DS.Palette.accentInk).pausedLock()
+                ConversationsView().tint(DS.Palette.accentInk)
             } label: {
                 tabLabel(L("Chats"), "bubble.left.and.bubble.right", .chats)
             }

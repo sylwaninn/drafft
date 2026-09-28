@@ -2,15 +2,23 @@ import SwiftUI
 
 extension View {
     /// While the profile is paused, the tab's content is greyed and untouchable, with one white
-    /// block over it saying why and a way to resume. The tab bar stays live (You is where it's managed).
-    func pausedLock() -> some View { modifier(PausedLock()) }
+    /// block over it saying why and a way to resume. Only discovery is locked (see `PauseScope`):
+    /// chats, sessions, reports and the profile keep working.
+    func pausedLock(_ locked: Bool = true) -> some View { modifier(PausedLock(locked: locked)) }
+}
+
+/// What a pause puts on hold. Discover always is; everything else works as usual.
+enum PauseScope {
+    /// Likes is paused with Discover: answering a like creates a match. Flip to keep it open.
+    static let locksLikes = true
 }
 
 private struct PausedLock: ViewModifier {
     @Environment(AppModel.self) private var app
+    let locked: Bool
 
     func body(content: Content) -> some View {
-        let paused = app.profilePaused
+        let paused = locked && app.profilePaused
         content
             .saturation(paused ? 0 : 1)
             .opacity(paused ? 0.4 : 1)
@@ -39,7 +47,7 @@ private struct PausedLock: ViewModifier {
                 .foregroundStyle(DS.Palette.ink)
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
-            Text("Nobody sees you, and you can't like, message or plan sessions until you resume.")
+            Text("Nobody sees you and discovery waits until you resume. Your chats and sessions carry on.")
                 .font(.body)
                 .foregroundStyle(DS.Palette.body)
                 .multilineTextAlignment(.center)
