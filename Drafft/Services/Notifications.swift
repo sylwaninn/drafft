@@ -89,11 +89,31 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
 
     /// Registers this device with the backend so it can push (photo refused, match, session…).
     /// Only once a backend session exists: it never creates an account by itself.
+    /// Sent only when the token, the account or the environment changed (or a day went by): every
+    /// return to the app hands the same token back.
     func syncPushToken() async {
-        guard let token = deviceToken, await Backend.shared.hasSession else { return }
-        _ = try? await Backend.shared.rpc("register_push_token",
-                                          ["p_token": token, "p_environment": PushEnvironment.current])
+        guard let token = deviceToken, let account = await Backend.shared.userID else { return }
+        let environment = PushEnvironment.current
+        guard registration.needsSending(token: token, account: account, environment: environment) else { return }
+        do {
+            _ = try await Backend.shared.rpc("register_push_token", ["p_token": token, "p_environment": environment])
+            registration.markSent(token: token, account: account, environment: environment)
+        } catch {
+            // Not remembered: the next return to the app sends it again.
+        }
     }
+
+    /// Signed out: this device stops getting the account's pushes. The next account (or the same
+    /// one, signed in again) registers the token afresh.
+    func unregisterPushToken() async {
+        forgetPushTokenRegistration()
+        guard let token = deviceToken else { return }
+        _ = try? await Backend.shared.rpc("unregister_push_token", ["p_token": token])
+    }
+
+    func forgetPushTokenRegistration() { registration.forget() }
+
+    private let registration = PushTokenRegistration()
 
     // MARK: Settings
 

@@ -74,6 +74,8 @@ struct RootView: View {
     /// The saved session has been checked (signed in straight away, or the welcome screen).
     @State private var sessionChecked = false
     @State private var splashShown = true
+    /// Set when the app went to the background; the next `.active` reads what changed while away.
+    @State private var returningFromBackground = false
     private var inMain: Bool { app.phase == .main }
 
     var body: some View {
@@ -111,7 +113,12 @@ struct RootView: View {
                 await UserChannel.watch(app)
             }
             .onChange(of: scenePhase) { _, p in
-                guard p == .active && app.phase != .welcome else { return }
+                // A real return to the app only: Control Center, a system alert or the app
+                // switcher only make it inactive for a moment, and read nothing.
+                if p == .background { returningFromBackground = true }
+                guard p == .active, returningFromBackground else { return }
+                returningFromBackground = false
+                guard app.phase != .welcome else { return }
                 // The account row (hold, pause, settings, language, card), changed while away.
                 Task { await moderation.load() }
                 Task { await AppOpens.report() }
