@@ -13,7 +13,11 @@ final class AppModel {
     /// (no chat left open, no sheet, back at the top of every tab).
     var sessionID = 0
     var tab: Tab = .discover
-    var me = MockData.me
+    /// The signed-in person's own profile, as read from the server (never sample data). Empty until
+    /// `profileLoad` is `.loaded`: You shows a loading or retry state instead of it until then.
+    var me = AppModel.nobody
+    enum ProfileLoad: Equatable { case loading, failed, loaded }
+    var profileLoad: ProfileLoad = .loading
     /// drafft tempo's details as the App Store reports them for this account (plan, price, renewal),
     /// shown in You. Billed and managed by the App Store: the app only reads it and links to
     /// Apple's management sheet. Whether it's on comes from the server: `isPremium`.
@@ -50,8 +54,8 @@ final class AppModel {
 
     enum Consumable { case boost, superLike }
 
-    // Account & settings (demo: kept in memory)
-    var email = "alex.martin@example.com"
+    // Account & settings: read from the account at sign-in, emptied at sign-out.
+    var email = ""
     var language: AppLanguage {
         get { Localization.shared.language }
         set {
@@ -59,8 +63,9 @@ final class AppModel {
             NotificationService.shared.language = newValue
         }
     }
-    /// Verified at sign-up, can be replaced (after verifying the new one), never removed.
-    var phoneNumber: String? = "+33 6 12 34 56 78"
+    /// Verified at sign-up, can be replaced (after verifying the new one), never removed. Read from
+    /// the account (Supabase Auth keeps the verified number), nil until then.
+    var phoneNumber: String?
     /// Paused: hidden from everyone, and nothing goes out (no like, pass, message, reaction, boost or
     /// session) until it's resumed. The tabs show a greyed lock over their content (`pausedLock`).
     var profilePaused = false { didSet { pauseChanged(from: oldValue) } }

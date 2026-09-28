@@ -146,7 +146,55 @@ struct MeView: View {
 
     // MARK: Profile card
 
+    @ViewBuilder
     private var profileCard: some View {
+        if app.profileLoad == .loaded { loadedProfileCard } else { profileLoadCard }
+    }
+
+    /// Until the server's profile is in: loading, or why it isn't and a way to try again. Never a
+    /// profile that isn't theirs, and nothing to edit or preview yet.
+    private var profileLoadCard: some View {
+        let failed = app.profileLoad == .failed
+        return VStack(alignment: .leading, spacing: DS.Space.lg) {
+            HStack(spacing: DS.Space.lg) {
+                Circle()
+                    .fill(.white.opacity(0.14))
+                    .frame(width: 84, height: 84)
+                    .overlay {
+                        if failed {
+                            Image(systemName: "person.fill").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
+                        } else {
+                            ProgressView().tint(.white)
+                        }
+                    }
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(failed ? L("Your profile couldn't load") : L("Loading your profile"))
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if failed {
+                        Text("Check your connection and try again.")
+                            .font(.footnote)
+                            .foregroundStyle(.white.opacity(0.8))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            if failed {
+                Button { Task { await app.loadProfile() } } label: {
+                    Label("Try again", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.drafftPrimary)
+            }
+        }
+        .padding(DS.Space.xl)
+        .draftBlock(DS.Palette.night, seed: BackdropSeed.me, tint: DS.Palette.lime)
+        .animation(Motion.snappy, value: app.profileLoad)
+    }
+
+    private var loadedProfileCard: some View {
         let completion = app.profileCompletion
         return VStack(alignment: .leading, spacing: DS.Space.lg) {
             HStack(spacing: DS.Space.lg) {
