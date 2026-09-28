@@ -66,8 +66,9 @@ final class AppModel {
     /// Verified at sign-up, can be replaced (after verifying the new one), never removed. Read from
     /// the account (Supabase Auth keeps the verified number), nil until then.
     var phoneNumber: String?
-    /// Paused: hidden from everyone, and nothing goes out (no like, pass, message, reaction, boost or
-    /// session) until it's resumed. The tabs show a greyed lock over their content (`pausedLock`).
+    /// Paused: hidden from everyone, and discovery waits (no like, pass, undo or boost) until it's
+    /// resumed; Discover shows a lock over the deck (`pausedLock`). Chats, sessions, reports and the
+    /// profile keep working with current matches.
     var profilePaused = false { didSet { pauseChanged(from: oldValue) } }
     /// Set while applying the server's own state, so it isn't sent back.
     @ObservationIgnored var pauseFromServer = false
@@ -268,7 +269,7 @@ final class AppModel {
 
     /// Optimistic send: the bubble appears immediately, delivery ticks catch up.
     func send(_ content: MessageContent, in id: String, replyTo: UUID? = nil) {
-        guard !profilePaused, let i = conversations.firstIndex(where: { $0.id == id }) else { return }
+        guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
         let msg = Message(content, fromMe: true, state: .sending, replyTo: replyTo)
         conversations[i].messages.append(msg)
         let convo = conversations.remove(at: i)
@@ -295,7 +296,7 @@ final class AppModel {
 
     /// Your reaction on one of their messages (never on your own: WhatsApp-style, minus self-reactions).
     func react(_ emoji: String?, to messageID: UUID, in id: String) {
-        guard !profilePaused, let c = conversations.firstIndex(where: { $0.id == id }),
+        guard let c = conversations.firstIndex(where: { $0.id == id }),
               let m = conversations[c].messages.firstIndex(where: { $0.id == messageID }),
               !conversations[c].messages[m].fromMe else { return }
         conversations[c].messages[m].reaction = conversations[c].messages[m].reaction == emoji ? nil : emoji
@@ -308,7 +309,7 @@ final class AppModel {
     }
 
     private func updateSession(_ sessionID: UUID, in id: String, _ change: (inout SessionProposal) -> Void) {
-        guard !profilePaused, let c = conversations.firstIndex(where: { $0.id == id }),
+        guard let c = conversations.firstIndex(where: { $0.id == id }),
               let m = conversations[c].messages.firstIndex(where: {
                   if case .session(let s) = $0.content { return s.id == sessionID }
                   return false
