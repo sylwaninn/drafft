@@ -141,9 +141,11 @@ extension View {
     /// Reports how far a scroll view has moved past its top, for TabHeader.
     func trackingScrollOffset(_ offset: Binding<CGFloat>) -> some View {
         // Only the fold range matters (see `collapse`): clamped and rounded, so scrolling
-        // further doesn't re-render the page every frame.
+        // further doesn't re-render the page every frame. Content that fits on screen doesn't
+        // scroll, so its rubber-band bounce never folds the title.
         onScrollGeometryChange(for: CGFloat.self) {
-            min(56, max(0, ($0.contentOffset.y + $0.contentInsets.top).rounded()))
+            let scrolls = $0.contentSize.height + $0.contentInsets.top + $0.contentInsets.bottom > $0.containerSize.height
+            return scrolls ? min(56, max(0, ($0.contentOffset.y + $0.contentInsets.top).rounded())) : 0
         } action: { _, y in
             offset.wrappedValue = y
         }
