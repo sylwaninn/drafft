@@ -6,28 +6,6 @@ enum MockData {
         Bundle.main.url(forResource: name, withExtension: "m4a")
     }
 
-    static let me = Profile(
-        id: "me",
-        name: "Alex",
-        age: 31,
-        pronouns: "he/him",
-        neighborhood: "Oberkampf",
-        distanceKm: 0,
-        portrait: "portrait_me",
-        photos: ["sport_groupnight", "sport_bike", "sport_hike"],
-        sports: [
-            .init(sport: .running, perWeek: 3),
-            .init(sport: .cycling, perWeek: 1),
-            .init(sport: .hiking, perWeek: 1)
-        ],
-            voiceIntro: nil,
-        voiceDuration: 0,
-        icebreaker: .joke(setup: "Why did the runner bring a map to the date?", punchline: "Didn't want to lose the pace of the conversation."),
-        favoriteSpot: "Canal Saint-Martin loop",
-        bio: "Weekday dawn runner, weekend long rides. I plan routes that end at good coffee.",
-        goal: "Paris Half under 1:35"
-    )
-
     static let profiles: [Profile] = [
         Profile(
             id: "maya", name: "Maya", age: 29, pronouns: "she/her", neighborhood: "Belleville", distanceKm: 2.4, portrait: "portrait_maya", photos: ["sport_trail", "sport_boulder", "sport_hike"],
@@ -52,17 +30,6 @@ enum MockData {
             favoriteSpot: "Longchamp loop at 7am",
             bio: "Saturday club rides, weeknight padel, and far too many opinions on bike wheels.",
             goal: "Ride the Ventoux, all three sides"
-        ),
-        Profile(
-            id: "ines", name: "Anne-Charlotte", age: 27, pronouns: "she/her", neighborhood: "Canal de l'Ourcq", distanceKm: 3.8, portrait: "portrait_ines", photos: ["sport_swim", "sport_yogasunset", "sport_yoga"],
-            sports: [.init(sport: .swimming, perWeek: 3), .init(sport: .yoga, perWeek: 1), .init(sport: .running, perWeek: 1)],
-            voiceIntro: "intro_ines",
-            voiceDuration: 10.7,
-            icebreaker: .hotTake("Pools are better than the sea. Chlorine is a personality."),
-            favoriteSpot: "Piscine Joséphine Baker",
-            bio: "Architect by day, lane 4 by dawn. Early dates only, I'm asleep by ten.",
-            goal: "Swim across Lake Annecy",
-            interest: .alreadyLikes
         ),
         Profile(
             id: "sam", name: "Sam", age: 34, pronouns: "they/them", neighborhood: "République", distanceKm: 0.8, portrait: "portrait_sam", photos: ["sport_barbell", "sport_ropes", "sport_pullup"],
@@ -97,94 +64,8 @@ enum MockData {
             favoriteSpot: "Arkose Montreuil",
             bio: "Draws for a living, climbs to stay sane. Mountains most weekends.",
             goal: "Send my first 7a outdoors"
-        ),
-        Profile(
-            id: "aya", name: "Aya", age: 28, pronouns: "she/her", neighborhood: "Batignolles", distanceKm: 4.1, portrait: "portrait_aya", photos: ["sport_tennis", "sport_clay", "sport_abs"],
-            sports: [.init(sport: .padel, perWeek: 2), .init(sport: .tennis, perWeek: 1), .init(sport: .yoga, perWeek: 1)],
-            voiceIntro: "intro_aya",
-            voiceDuration: 9.0,
-            icebreaker: .joke(setup: "Why are padel players great partners?", punchline: "They always use the walls to bounce back."),
-            favoriteSpot: "Padel courts at Porte d'Auteuil",
-            bio: "Friendly off court. Not on it. Looking for a doubles partner with good hands.",
-            goal: "Win the club tournament",
-            interest: .likesBackLater
-        ),
-        Profile(
-            id: "jonas", name: "Jean-François", age: 35, pronouns: "he/him", neighborhood: "Nation", distanceKm: 2.9, portrait: "portrait_jonas", photos: ["sport_track", "sport_lacing", "sport_stepup"],
-            sports: [.init(sport: .running, perWeek: 4), .init(sport: .cycling, perWeek: 1)],
-            voiceIntro: "intro_jonas",
-            voiceDuration: 9.6,
-            icebreaker: .guess(question: "How many fountains in the Bois de Vincennes do I know by heart?",
-                               options: ["6", "14", "All of them, obviously"], answer: 1),
-            favoriteSpot: "Bois de Vincennes loop",
-            bio: "Teacher. Wednesday track, easy miles the rest. Knows every fountain in Vincennes.",
-            goal: "Sub-17 5k",
-            interest: .alreadyLikes
-        ),
-        Profile(
-            id: "zoe", name: "Marie-Guillemette", age: 26, pronouns: "she/her", neighborhood: "Pigalle", distanceKm: 3.3, portrait: "portrait_zoe", photos: ["sport_rack", "sport_abs", "sport_stepup"],
-            sports: [.init(sport: .strength, perWeek: 2), .init(sport: .yoga, perWeek: 1), .init(sport: .running, perWeek: 1)],
-            voiceIntro: "intro_zoe",
-            voiceDuration: 9.4,
-            icebreaker: .thisOrThat(question: "Be honest:", options: ["Leg day", "Arm day"], pick: 0),
-            favoriteSpot: "Studio on rue des Martyrs",
-            bio: "Pilates teacher, secret powerlifter. I'll judge your posture, lovingly.",
-            goal: "100 kg squat",
-            interest: .likesBackLater
-        ),
-        Profile(
-            id: "nina", name: "Nina", age: 30, pronouns: "she/her", neighborhood: "Parc Montsouris", distanceKm: 4.6, portrait: "portrait_nina", photos: ["sport_yogasunset", "sport_trail", "sport_yoga"],
-            sports: [.init(sport: .running, perWeek: 3), .init(sport: .yoga, perWeek: 1)],
-            voiceIntro: "intro_nina",
-            voiceDuration: 9.1,
-            icebreaker: .twoTruths(statements: [
-                "I've done 100 sun salutations in a row.",
-                "I once ran a half marathon by accident.",
-                "I've never seen a sunrise I didn't like."
-            ], lieIndex: 0),
-            favoriteSpot: "Parc Montsouris at 6am",
-            bio: "Sunrise runs, evening yoga. Morning people, this is your sign.",
-            goal: "First half marathon, on purpose this time",
-            interest: .alreadyLikes
-        ),
-        Profile(
-            id: "tom", name: "Tom", age: 33, pronouns: "he/him", neighborhood: "Vincennes", distanceKm: 6.0, portrait: "portrait_tom", photos: ["sport_bike", "sport_hike", "sport_peloton"],
-            sports: [.init(sport: .cycling, perWeek: 2), .init(sport: .hiking, perWeek: 1)],
-            voiceIntro: "intro_tom",
-            voiceDuration: 4.9,
-            icebreaker: .joke(setup: "My bike can't stand up on its own.", punchline: "It's two-tired. I'll see myself out."),
-            favoriteSpot: "Gravel roads past Vincennes",
-            bio: "Bike commuter, gravel on weekends, hikes that end with a sandwich and a view.",
-            goal: "Paris–Roubaix sportive"
-        ),
-        Profile(
-            id: "lucas", name: "Maximilien-Alexandre", age: 29, pronouns: "he/him", neighborhood: "Pantin", distanceKm: 5.5, portrait: "portrait_lucas", photos: ["sport_boulder", "sport_cliff", "sport_pullup"],
-            sports: [.init(sport: .climbing, perWeek: 3), .init(sport: .strength, perWeek: 1)],
-            voiceIntro: "intro_lucas",
-            voiceDuration: 7.6,
-            icebreaker: .twoTruths(statements: [
-                "I cook a four-course dinner after every send.",
-                "I climbed in Fontainebleau every weekend last year.",
-                "I've never used chalk."
-            ], lieIndex: 2),
-            favoriteSpot: "Block'Out Pantin",
-            bio: "Chef who climbs to work off the tasting menu. Great belayer, better cheerleader.",
-            goal: "Fontainebleau 7b",
-            interest: .alreadyLikes
         )
     ]
-
-    /// Profiles in the swipe deck (people you haven't matched with yet).
-    static var deck: [Profile] {
-        var aya = profile("aya")
-        aya.superLikedMe = true
-        aya.superLikeNote = "Your Sunday long runs look like my pace. Montsouris loop this weekend?"
-        // A long name with a super like and no note, to check the identity line holds up.
-        var ines = profile("ines")
-        ines.superLikedMe = true
-        // Super likes jump the queue.
-        return [aya, ines] + ["nina", "tom", "lucas", "zoe", "jonas"].map(profile)
-    }
 
     static func profile(_ id: String) -> Profile { profiles.first { $0.id == id }! }
 

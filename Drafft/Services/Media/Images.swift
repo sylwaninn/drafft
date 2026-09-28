@@ -45,7 +45,9 @@ enum Images {
 
     /// The request for a photo drawn in a frame of `points` (nil for a photo that isn't ours to
     /// load: a bundled asset name). `/…` is a file on this phone, `http…` a photo on the server.
-    static func request(_ name: String, points: CGSize, scale: CGFloat = 3, priority: ImageRequest.Priority = .normal) -> ImageRequest? {
+    /// `blur`: a radius as a share of the photo's shorter side, applied once when it's decoded.
+    static func request(_ name: String, points: CGSize, scale: CGFloat = 3, priority: ImageRequest.Priority = .normal,
+                        blur: CGFloat = 0) -> ImageRequest? {
         let pixels = bucket(max(points.width, points.height) * scale)
         let url: URL?
         var options: ImageRequest.Options = []
@@ -62,6 +64,7 @@ enum Images {
         if !url.isFileURL { request.imageID = MediaURL.canonical(url).absoluteString }
         // Square box, aspect fill: the copy covers the frame whatever its proportions.
         request.thumbnail = .init(size: CGSize(width: pixels, height: pixels), unit: .pixels, contentMode: .aspectFill)
+        if blur > 0 { request.processors = [.gaussianBlur(radius: max(1, Int(blur * CGFloat(pixels))))] }
         return request
     }
 

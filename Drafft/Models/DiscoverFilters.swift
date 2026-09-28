@@ -56,17 +56,7 @@ struct DiscoverFilters: Equatable {
                 !sports.isEmpty, sharedSportsOnly].filter { $0 }.count
     }
 
-    func matches(_ p: Profile, me: Profile) -> Bool {
-        guard anyDistance || p.distanceKm <= maxDistanceKm, ages.contains(p.age) else { return false }
-        if audience != .everyone && Self.audience(of: p) != audience { return false }
-        if !sports.isEmpty && !p.sports.contains(where: { sports.contains($0.sport) }) { return false }
-        if sharedSportsOnly && !p.sports.contains(where: { s in me.sports.contains { $0.sport == s.sport } }) {
-            return false
-        }
-        return true
-    }
-
-    /// The person's own gender; demo profiles without one fall back on their pronouns.
+    /// The person's own gender; without one (an unfinished sign-up), their pronouns.
     static func audience(of p: Profile) -> Audience {
         if let gender = p.gender { return gender }
         return switch p.pronouns {

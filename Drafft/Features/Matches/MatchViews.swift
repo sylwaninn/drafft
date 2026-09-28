@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Full-screen match moment: two portraits slide into drafting formation, one tucked behind the other.
 struct MatchView: View {
@@ -226,7 +227,50 @@ struct BoostBannerView: View {
     }
 }
 
-/// Surface for in-app banners (match, boost): solid night, a thin light rim and a layered
+/// A swipe, undo, unmatch or boost the server turned down (or that couldn't reach it): the reason, in
+/// the person's language. Swipe it up, or it goes by itself.
+struct NoticeBannerView: View {
+    let notice: AppModel.Notice
+    let onDismiss: () -> Void
+    @State private var dragY: CGFloat = 0
+
+    var body: some View {
+        HStack(spacing: DS.Space.md) {
+            Image(systemName: "exclamationmark")
+                .font(.title3.weight(.heavy))
+                .foregroundStyle(DS.Palette.onLime)
+                .frame(width: 48, height: 48)
+                .background(DS.Palette.lime, in: .circle)
+                .accessibilityHidden(true)
+            Text(notice.text)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .padding(DS.Space.md)
+        .padding(.trailing, DS.Space.sm)
+        .modifier(BannerSurface())
+        .offset(y: min(0, dragY))
+        .gesture(
+            DragGesture()
+                .onChanged { dragY = $0.translation.height }
+                .onEnded { v in
+                    if v.translation.height < -30 { onDismiss() } else { withAnimation(Motion.snappy) { dragY = 0 } }
+                }
+        )
+        .padding(.horizontal, DS.Space.md)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isStaticText)
+        .onAppear { UIAccessibility.post(notification: .announcement, argument: notice.text) }
+        .task(id: notice.id) {
+            try? await Task.sleep(for: .seconds(4))
+            onDismiss()
+        }
+    }
+}
+
+/// Surface for in-app banners (match, boost, notices): solid night, a thin light rim and a layered
 /// shadow, so it lifts off any page, light or dark. No gradient in the fill.
 struct BannerSurface: ViewModifier {
     func body(content: Content) -> some View {

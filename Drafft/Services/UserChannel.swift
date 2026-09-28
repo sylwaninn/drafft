@@ -15,7 +15,9 @@ import Supabase
 ///   (`AppModel.profileChanged`, `AppModel.refreshAccount`);
 /// - `session`: a session of theirs was proposed, answered, countered or cancelled: its row (and the one
 ///   it replaced) is read again for the Sessions tab and the chat cards, and the calendar event added for
-///   it follows (`SessionStore`, `SessionCalendar`).
+///   it follows (`SessionStore`, `SessionCalendar`);
+/// - `like`: someone liked them (Likes, and the deck for a super like);
+/// - `match`, `match_ended`: a match was made or ended, either side (`AppModel.loadMatches`).
 ///
 /// A payload only says a change happened (a photo decision carries its media and status): the row
 /// is the truth, read again on each event and on each (re)connection, so a change made while the
@@ -47,6 +49,7 @@ enum UserChannel {
         let revoked = channel.broadcastStream(event: "session_revoked")
         let profile = channel.broadcastStream(event: "profile")
         let session = channel.broadcastStream(event: "session")
+        let discovery = DiscoveryStreams(channel)
         let status = channel.statusChange
         let joined = await withTaskGroup(of: Bool.self) { group in
             group.addTask { for await _ in moderation { await app.refreshAccount(force: true) }; return false }
@@ -83,6 +86,7 @@ enum UserChannel {
                 }
                 return false
             }
+            group.addTask { await discovery.follow(app); return false }
             group.addTask {
                 var joined = false
                 for await s in status where s == .subscribed {
@@ -91,6 +95,8 @@ enum UserChannel {
                     await app.loadWallet()
                     await PurchaseCredit.shared.resume(app)
                     await SessionStore.shared.refresh()
+                    // Discovery missed nothing while the socket was down.
+                    await app.refreshDiscovery()
                 }
                 return joined
             }
@@ -105,6 +111,37 @@ enum UserChannel {
         }
         await client.removeChannel(channel)
         return joined
+    }
+
+    /// `like`, `match` and `match_ended`, subscribed with the others (before the join).
+    private struct DiscoveryStreams {
+        let like: AsyncStream<JSONObject>
+        let match: AsyncStream<JSONObject>
+        let ended: AsyncStream<JSONObject>
+
+        init(_ channel: RealtimeChannelV2) {
+            like = channel.broadcastStream(event: "like")
+            match = channel.broadcastStream(event: "match")
+            ended = channel.broadcastStream(event: "match_ended")
+        }
+
+        /// Until cancelled: Likes on a like, the matches on a match or an ended one.
+        func follow(_ app: AppModel) async {
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    for await message in like {
+                        await app.likeReceived(superLike: message["payload"]?.objectValue?["superLike"]?.boolValue ?? false)
+                    }
+                }
+                group.addTask { for await _ in match { await app.loadMatches() } }
+                group.addTask {
+                    for await message in ended {
+                        guard let id = message["payload"]?.objectValue?["matchId"]?.stringValue else { continue }
+                        await app.matchEnded(id)
+                    }
+                }
+            }
+        }
     }
 
     /// Joins, then checks the channel is still up: after a reconnect the SDK joins it again by

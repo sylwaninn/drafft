@@ -5,6 +5,8 @@ import Foundation
 extension AppModel {
     /// The person flipped the switch: send it (the server's own state isn't sent back).
     func pauseChanged(from old: Bool) {
+        // Resumed: discovery reads the deck again (nothing was read while paused).
+        if old, !profilePaused { refreshDiscovery() }
         guard profilePaused != old, !pauseFromServer else { return }
         let paused = profilePaused
         Task { await syncPause(paused) }

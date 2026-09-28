@@ -118,7 +118,7 @@ struct Profile: Identifiable, Hashable {
     var pronouns: String?
     /// Your own profile only: the birthday set at sign-up (midnight UTC, see `BirthdateField`).
     var birthday: Date?
-    /// Their own answer at sign-up (the server's `gender`). Nil on demo profiles: see `audience(of:)`.
+    /// Their own answer at sign-up (the server's `gender`). Nil when unknown: see `audience(of:)`.
     var gender: DiscoverFilters.Audience?
     var neighborhood: String
     var distanceKm: Double
@@ -131,19 +131,23 @@ struct Profile: Identifiable, Hashable {
     var favoriteSpot: String
     var bio: String
     var goal: String
-    /// Demo matching logic: whether this person already liked you, or will like you back shortly.
-    var interest: Interest = .none
     /// They super liked you: their card comes first in your deck, marked in red, with their note.
     var superLikedMe = false
     var superLikeNote: String?
-    /// Set when the user edits their own profile (demo data otherwise comes from MockData.extras).
+    /// From the server's card, or set when the user edits their own profile (sample people in Chats
+    /// take theirs from MockData.extras).
     var vitalsOverride: Vitals?
     var promptsOverride: [ProfilePrompt]?
 
-    enum Interest: Hashable { case none, alreadyLikes, likesBackLater }
-
     var firstName: String { name }
     var allPhotos: [String] { [portrait] + photos }
+}
+
+/// A current match (`my_matches`): the match's id on the server, who, and since when.
+struct Match: Identifiable, Hashable {
+    let id: String
+    var profile: Profile
+    let matchedAt: Date
 }
 
 // MARK: - Sessions

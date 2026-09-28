@@ -26,16 +26,15 @@ struct DrafftApp: App {
         }
     }
 
-    /// Decodes, in the background, the photos the first screens draw: the welcome photos, the
-    /// top of the deck, and every avatar and locked-like copy the tabs show. The first visit
-    /// of a tab then draws without decoding, and the tab bar answers straight away.
+    /// Decodes, in the background, the bundled photos the first screens draw: the welcome photos
+    /// and the avatars the tabs show. The first visit of a tab then draws without decoding, and the
+    /// tab bar answers straight away. Photos from the server go through Nuke (`Images`).
     private static func prewarmPhotos() {
-        let people = MockData.profiles.map(\.portrait) + [MockData.me.portrait]
-        let deck = MockData.deck.prefix(3).flatMap { [$0.portrait] + $0.photos.prefix(1) }
+        let people = MockData.profiles.map(\.portrait)
         ImageStore.prewarm(
-            full: WelcomeView.photos + deck,
+            full: WelcomeView.photos,
             small: people.flatMap { [(name: $0, side: 32), (name: $0, side: 56), (name: $0, side: 88)] },
-            blurred: MockData.deck.map(\.portrait).flatMap { [(name: $0, fraction: 0.1), (name: $0, fraction: 4.0 / 24)] })
+            blurred: [])
     }
 
     /// Large titles in the display face, inline titles in its extra-bold cut, both in ink. No halo:
@@ -130,6 +129,8 @@ struct RootView: View {
                 Task { await PurchaseCredit.shared.resume(app) }
                 // A session changed or was cancelled while away: read again, its calendar event follows.
                 Task { await SessionStore.shared.refresh() }
+                // The deck, likes and matches as the server has them now (no card outlives it).
+                app.refreshDiscovery()
             }
             // A session that ends on its own (revoked, expired, account deleted elsewhere): back to
             // the welcome screen, which says why.
@@ -289,6 +290,8 @@ struct MainTabs: View {
         // pushes (`session.reminder`), so a cancelled session never leaves one behind.
         .task(id: isActive) {
             guard isActive else { return }
+            // In (sign-in, end of sign-up, a hold lifted): discovery as the server has it.
+            app.refreshDiscovery()
             await NotificationService.shared.refresh()
         }
         .onChange(of: NotificationService.shared.openChatID) { _, id in
@@ -310,9 +313,15 @@ struct MainTabs: View {
                 EmptyView()
             } else if let banner = app.banner {
                 MatchBannerView(banner: banner) {
-                    app.openChat(banner.profile.id)
+                    app.openChat(person: banner.profile.id)
                 } onDismiss: {
                     withAnimation(Motion.snappy) { app.banner = nil }
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .padding(.top, DS.Space.xs)
+            } else if let notice = app.notice {
+                NoticeBannerView(notice: notice) {
+                    withAnimation(Motion.snappy) { app.notice = nil }
                 }
                 .transition(.move(edge: .top).combined(with: .opacity))
                 .padding(.top, DS.Space.xs)
@@ -326,9 +335,10 @@ struct MainTabs: View {
         }
         .animation(Motion.bouncy, value: app.banner)
         .animation(Motion.bouncy, value: app.boostBanner)
+        .animation(Motion.bouncy, value: app.notice)
         .fullScreenCover(item: $app.matchScreen) { p in
             MatchView(profile: p, me: app.me) {
-                app.openChat(p.id)
+                app.openChat(person: p.id)
             } onClose: {
                 app.matchScreen = nil
             }

@@ -34,29 +34,28 @@ final class AppModel {
     var isPremium: Bool { (premiumUntil ?? .distantPast) > .now }
 
     // Likes, super likes & boosts
-    /// Free accounts get this many likes a day; Plus is unlimited.
+    /// Free accounts get this many likes in any 24 hours (the server's limit); drafft tempo is unlimited.
     static let dailyLikes = 20
     static let boostDuration: TimeInterval = 30 * 60
-    var likesLeft = 14
+    /// Likes left in the last 24 hours, as the server counts them (`likes_left`). Nil until read, and
+    /// with drafft tempo.
+    var likesLeft: Int?
     /// Bought in packs (one-time purchases); they never expire. From the wallet (`loadWallet`).
     var superLikes = 0
     var boosts = 0
     var boostEndsAt: Date?
     /// Confirmation banner after starting a boost (its id restarts the auto-dismiss).
     var boostBanner: UUID?
+    /// A refusal or failure to show above the tabs (a swipe, an undo or a boost that didn't go through).
+    var notice: Notice?
+    struct Notice: Identifiable, Equatable {
+        let id = UUID()
+        let text: String
+    }
     /// Sessions the person saved to their calendar, in this launch (the lasting link is `SessionCalendar`).
     var sessionsInCalendar: Set<UUID> = []
 
     func isBoosting(at date: Date = .now) -> Bool { (boostEndsAt ?? .distantPast) > date }
-
-    /// 30 minutes at the top of decks nearby.
-    func startBoost() {
-        guard !profilePaused, boosts > 0, !isBoosting() else { return }
-        boosts -= 1
-        boostEndsAt = .now.addingTimeInterval(Self.boostDuration)
-        Haptics.success()
-        boostBanner = UUID()
-    }
 
     enum Consumable { case boost, superLike }
 
@@ -101,14 +100,33 @@ final class AppModel {
         return (Double(done) / Double(checks.count), checks.first { !$0.0 }?.1)
     }
 
-    // Discover
-    /// Everyone not yet swiped, in order. `deck` is this queue seen through the filters.
-    var queue: [Profile] = MockData.deck { didSet { refreshBadges() } }
-    var filters = DiscoverFilters()
-    var deck: [Profile] { queue.filter { filters.matches($0, me: me) } }
-    var history: [(profile: Profile, liked: Bool)] = []
-    /// Icebreaker answers attached to a like; they open the chat if it becomes a match.
-    var pendingOpeners: [String: MessageContent] = [:]
+    // Discover (AppModel+Discover): batches from `discover`, kept on this iPhone between launches.
+    /// The cards not swiped yet, best first. Only the server's: never sample people.
+    var queue: [Profile] = []
+    var deck: [Profile] { queue }
+    /// Where the deck stands (first load, a refusal like `location_required`).
+    var deckState: DeckState = .idle
+    enum DeckState: Equatable { case idle, loading, loaded, failed(String) }
+    var filters = DiscoverFilters() { didSet { if filters != oldValue { filtersChanged() } } }
+    /// This session's swipes, last one last: what undo can bring back (the server undoes the last one,
+    /// within 10 minutes, if it didn't make a match).
+    var history: [Swiped] = []
+    struct Swiped {
+        let profile: Profile
+        let liked: Bool
+        let superLike: Bool
+        let at: Date
+        /// Answered from Likes (it goes back there on undo).
+        var fromLikes = false
+        var matched = false
+    }
+    @ObservationIgnored var discovery = DiscoveryState()
+
+    // Likes and matches (AppModel+Matches)
+    /// Everyone who liked you and is waiting for an answer (`liked_me`), super likes first.
+    var likedMe: [Profile] = [] { didSet { refreshBadges() } }
+    /// Current matches (`my_matches`), newest first.
+    var matches: [Match] = []
 
     // Chats
     var conversations: [Conversation] = MockData.conversations() { didSet { refreshBadges() } }
@@ -144,7 +162,7 @@ final class AppModel {
     private func refreshBadges() {
         let unread = conversations.reduce(0) { $0 + ($1.muted ? 0 : $1.unread) }
         if unread != unreadTotal { unreadTotal = unread }
-        let liked = queue.count(where: { $0.interest == .alreadyLikes || $0.superLikedMe })
+        let liked = likedMe.count
         if liked != likedMeCount { likedMeCount = liked }
     }
 
@@ -163,89 +181,9 @@ final class AppModel {
 
     var topCard: Profile? { deck.first }
 
-    /// People who already liked you and are still waiting in your deck (Plus shows who).
-    var likedMe: [Profile] { queue.filter { $0.interest == .alreadyLikes || $0.superLikedMe } }
-
-    func pass(_ profile: Profile) {
-        guard !profilePaused, let i = queue.firstIndex(of: profile) else { return }
-        queue.remove(at: i)
-        history.append((profile, false))
-    }
-
-    /// A super like doesn't use a daily like; it puts you first in their deck with a star, which
-    /// in the demo turns someone undecided into a like-back.
-    func like(_ profile: Profile, opener: MessageContent? = nil, superLike: Bool = false) {
-        guard !profilePaused, let i = queue.firstIndex(of: profile) else { return }
-        queue.remove(at: i)
-        history.append((profile, true))
-        if let opener { pendingOpeners[profile.id] = opener }
-        if superLike {
-            superLikes = max(0, superLikes - 1)
-        } else if !isPremium {
-            likesLeft = max(0, likesLeft - 1)
-        }
-
-        let interest = superLike && profile.interest == .none ? .likesBackLater : profile.interest
-        switch interest {
-        case .alreadyLikes:
-            Task { @MainActor in
-                try? await Task.sleep(for: .milliseconds(150))
-                self.createMatch(with: profile)
-                Haptics.success()
-                self.matchScreen = profile
-            }
-        case .likesBackLater:
-            let background = UIApplication.shared.beginBackgroundTask(withName: "match-\(profile.id)")
-            Task { @MainActor in
-                defer { UIApplication.shared.endBackgroundTask(background) }
-                try? await Task.sleep(for: .seconds(5))
-                // Undo before the like-back lands cancels it.
-                guard self.history.contains(where: { $0.profile.id == profile.id && $0.liked }) else { return }
-                self.createMatch(with: profile)
-                Haptics.success()
-                withAnimation(Motion.bouncy) { self.banner = MatchBanner(profile: profile) }
-                // Out of the app: the match comes as a notification instead of the banner.
-                if UIApplication.shared.applicationState != .active {
-                    await NotificationService.shared.notify(.match, from: profile.firstName, photo: profile.portrait,
-                                                            chatID: profile.id, muted: false)
-                }
-            }
-        case .none:
-            break
-        }
-    }
-
-    func undo() {
-        guard !profilePaused, let last = history.popLast() else { return }
-        pendingOpeners[last.profile.id] = nil
-        // A match that already happened stays; the card still comes back for another look.
-        queue.insert(last.profile, at: 0)
-        Haptics.tap()
-    }
-
-    func resetDeck() {
-        let hidden = Set(conversations.map(\.id)).union(blocked.map(\.id))
-        queue = MockData.deck.filter { !hidden.contains($0.id) }
-        history = []
-    }
-
-    // MARK: Safety
-
-    /// Mutual like: a conversation appears in Chats, with the icebreaker answer as its first message.
-    private func createMatch(with profile: Profile) {
-        guard conversation(profile.id) == nil else { return }
-        var convo = Conversation(id: profile.id, profile: profile, messages: [], unread: 1, matchedAt: .now)
-        // Their super like note opens the chat.
-        if let note = profile.superLikeNote {
-            convo.messages.append(Message(.text(note), fromMe: false, state: .delivered))
-        }
-        if let opener = pendingOpeners.removeValue(forKey: profile.id) {
-            convo.messages.append(Message(opener, fromMe: true, state: .delivered))
-        }
-        withAnimation(Motion.snappy) { conversations.insert(convo, at: 0) }
-        if !convo.messages.isEmpty {
-            simulateReply(in: profile.id)
-        }
+    /// The chat with this person (match screen, banner), by their profile id: a chat's id is its match's.
+    func openChat(person id: String) {
+        openChat(conversations.first { $0.profile.id == id }?.id ?? id)
     }
 
     func openChat(_ id: String) {
@@ -293,6 +231,8 @@ final class AppModel {
             try? await Task.sleep(for: .milliseconds(250))
             self.setState(.delivered, for: msg.id, in: id)
         }
+        // Only sample people answer on their own; a real match's chat is the chat service's.
+        guard MockData.isSample(id) else { return }
         // Sessions are real (`SessionStore`): nobody simulated answers them.
         if case .session = content { return }
         simulateReply(in: id)
@@ -430,6 +370,12 @@ struct TempoSubscription: Equatable {
 }
 
 extension AppModel {
-    var canLike: Bool { isPremium || likesLeft > 0 }
-    var canUndo: Bool { !history.isEmpty }
+    /// Unknown counts as yes: the server has the last word (`daily_like_limit`).
+    var canLike: Bool { isPremium || (likesLeft ?? 1) > 0 }
+    /// The last swipe, within 10 minutes, if it didn't make a match: the server's rule.
+    var canUndo: Bool {
+        guard let last = history.last else { return false }
+        return !last.matched && last.at.timeIntervalSinceNow > -Self.undoWindow
+    }
+    static let undoWindow: TimeInterval = 10 * 60
 }

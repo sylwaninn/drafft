@@ -44,6 +44,12 @@ enum ServerMessage {
         case "onboarding_required": L("Finish your profile first.")
         // Discover and safety
         case "not_eligible": L("This profile isn't available.")
+        case "location_required": L("Share your location to see people nearby.")
+        case "daily_like_limit": L("You're out of likes for today.")
+        case "no_super_likes": L("You're out of super likes.")
+        case "cannot_undo": L("This swipe can't be undone any more.")
+        case "no_boost": L("No boost left, or one is already running.")
+        case "not_visible": L("Nobody can see your profile yet, so a boost wouldn't reach anyone.")
         case "report_limit": L("You've sent several reports already. Try again later.")
         // Sessions (propose_session, counter_session, respond_session, cancel_session)
         case "invalid_options": L("Pick 1 to 3 times that haven't passed.")

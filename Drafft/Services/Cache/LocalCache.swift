@@ -15,12 +15,14 @@ final class LocalCache: Sendable {
     enum Kind: String, Sendable, CaseIterable {
         /// The account's own profile row, with its sports, prompts and media.
         case profile
-        /// Matches (conversation list).
+        /// Matches (`my_matches`: the conversation list).
         case matches
         /// Upcoming and past sessions.
         case sessions
         /// The last batch of Discover cards.
         case deck
+        /// Who liked the account (`liked_me`).
+        case likes
     }
 
     /// A payload and when it was saved.

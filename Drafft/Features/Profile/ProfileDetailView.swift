@@ -103,6 +103,12 @@ struct ProfileDetailView: View {
                             ReportSheet(profile: profile) { blockAndLeave() }
                                 .sheetSurface()
                         }
+                        if onBlocked != nil, app.matches.contains(where: { $0.profile.id == profile.id }) {
+                            UnmatchButton(profile: profile) {
+                                dismiss()
+                                onBlocked?()
+                            }
+                        }
                     }
 
                 }

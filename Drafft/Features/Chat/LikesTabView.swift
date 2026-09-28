@@ -45,10 +45,10 @@ struct LikesTabView: View {
                     NavigationStack {
                         ProfileDetailView(profile: p, mode: .discover) { liked, opener in
                             open = nil
-                            if liked { app.like(p, opener: opener) } else { app.pass(p) }
+                            app.swipe(p, liked: liked, opener: opener)
                         } onSuperLike: { opener in
                             open = nil
-                            app.like(p, opener: opener, superLike: true)
+                            app.swipe(p, liked: true, superLike: true, opener: opener)
                         }
                     }
                 }

@@ -44,6 +44,7 @@ struct EmptyStateArt {
     /// Seeds the relief: each tab has its own map.
     let seed: String
 
+    static let discover = EmptyStateArt(symbol: "flame", cutout: "flame.fill", seed: "discover")
     static let likes = EmptyStateArt(symbol: "heart", cutout: "heart.fill", seed: "likes")
     static let sessions = EmptyStateArt(symbol: "flag.2.crossed", cutout: "flag.2.crossed.fill", seed: "sessions")
     static let chats = EmptyStateArt(symbol: "bubble.left.and.bubble.right", cutout: "bubble.left.and.bubble.right.fill", seed: "chats")

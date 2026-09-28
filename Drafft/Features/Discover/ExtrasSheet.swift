@@ -265,7 +265,7 @@ struct ExtrasSheet: View {
         switch tab {
         case .boost: app.boosts == 1 ? L("1 boost left") : L("\(app.boosts) boosts left")
         case .superLike: app.superLikes == 1 ? L("1 super like left") : L("\(app.superLikes) super likes left")
-        case .likes: app.isPremium ? L("Unlimited likes") : L("\(app.likesLeft) of \(AppModel.dailyLikes) likes left")
+        case .likes: likesText
         }
     }
 
@@ -631,5 +631,14 @@ private struct PackFan<Badge: View>: View {
         .frame(height: 170)
         .accessibilityHidden(true)
         .onAppear { if others.isEmpty { others = PackPhotos.pick(for: DiscoverFilters.audience(of: app.me)) } }
+    }
+}
+
+extension ExtrasSheet {
+    /// Likes left today as the server counts them; the daily allowance until it's read.
+    fileprivate var likesText: String {
+        if app.isPremium { return L("Unlimited likes") }
+        guard let left = app.likesLeft else { return L("\(AppModel.dailyLikes) likes a day") }
+        return L("\(left) of \(AppModel.dailyLikes) likes left")
     }
 }
