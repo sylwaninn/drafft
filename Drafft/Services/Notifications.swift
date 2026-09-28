@@ -2,8 +2,10 @@ import UIKit
 import UserNotifications
 import Observation
 
-/// Notifications: permission, the per-type preferences, real local reminders for sessions, and
-/// the push plumbing (device token) ready for the server. Tapping a notification opens its chat.
+/// Notifications: permission, the per-type preferences, and the push plumbing (device token). Session
+/// reminders are the server's pushes (`session.reminder`, following `notify_session_*`): checked against
+/// the session when they're sent, so a cancelled or changed one never reminds anyone. Tapping a
+/// notification opens its chat.
 @MainActor
 @Observable
 final class NotificationService: NSObject, UNUserNotificationCenterDelegate, SystemPermission {
@@ -16,10 +18,12 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     var openChatID: String?
     /// Set when the weekly-boost notification is tapped: Discover opens, where the boost is used.
     var openBoost = false
+    /// Set when a session's cancellation without a chat is tapped: the Sessions tab opens.
+    var openSessions = false
 
     /// Language of the notification texts: the app's language (set by AppModel).
     var language: AppLanguage = Localization.shared.language {
-        didSet { rescheduleIfNeeded(); changed() }
+        didSet { changed() }
     }
 
     // Preferences. Saved on the profile (the server's pushes follow them, and they come back on a new
@@ -29,8 +33,10 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     var messagePreviews = false { didSet { changed() } }
     var reactions = true { didSet { changed() } }
     var likes = true { didSet { changed() } }
-    var sessionEvening = true { didSet { rescheduleIfNeeded(); changed() } }
-    var sessionHourBefore = true { didSet { rescheduleIfNeeded(); changed() } }
+    /// Session reminders, sent by the server: the evening before (20:00 in the person's time zone) and
+    /// an hour before.
+    var sessionEvening = true { didSet { changed() } }
+    var sessionHourBefore = true { didSet { changed() } }
     /// drafft tempo's weekly boost: pushed by the server when it credits it (`notify_weekly_boost`).
     var weeklyBoost = true { didSet { changed() } }
 
@@ -42,13 +48,18 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     var settingsURL: URL? { URL(string: UIApplication.openNotificationSettingsURLString) }
 
     private let center = UNUserNotificationCenter.current()
-    private var lastSessions: [(id: UUID, title: String, date: Date, chatID: String)] = []
 
     override init() {
         super.init()
         center.delegate = self
         // The weekly boost is the server's now (credit and push): drop the local one older builds scheduled.
         center.removePendingNotificationRequests(withIdentifiers: ["weekly-boost"])
+        // Session reminders are the server's now: drop the local ones older builds scheduled
+        // ("<session>-eve", "<session>-1h"), which wouldn't follow a cancellation.
+        center.getPendingNotificationRequests { requests in
+            let old = requests.map(\.identifier).filter { $0.hasSuffix("-eve") || $0.hasSuffix("-1h") }
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: old)
+        }
         // Always current: every return to the app (from Settings too) re-reads the permission, so no
         // screen has to refresh it.
         NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil,
@@ -216,49 +227,6 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
         return try? UNNotificationAttachment(identifier: "photo", url: url)
     }
 
-    // MARK: Session reminders (local, real)
-
-    /// Evening before (20:00) and one hour before each confirmed session.
-    func scheduleSessionReminders(_ sessions: [(id: UUID, title: String, date: Date, chatID: String)]) {
-        lastSessions = sessions
-        center.removePendingNotificationRequests(withIdentifiers: sessions.flatMap { ["\($0.id)-eve", "\($0.id)-1h"] } + pendingIDs)
-        pendingIDs = []
-        guard isAllowed else { return }
-        let cal = Calendar.current
-        // Sample sessions are never real reminders (earlier ones were just removed above).
-        for s in sessions where s.date > .now && !MockData.isSample(s.chatID) {
-            if sessionEvening, let dayBefore = cal.date(byAdding: .day, value: -1, to: s.date),
-               let evening = cal.date(bySettingHour: 20, minute: 0, second: 0, of: dayBefore), evening > .now {
-                add(id: "\(s.id)-eve", title: NotificationText.title,
-                    body: NotificationText.reminderEvening(
-                        s.title, time: s.date.formatted(Date.FormatStyle(date: .omitted, time: .shortened).locale(language.locale)), in: language),
-                    at: evening, chatID: s.chatID)
-            }
-            let hourBefore = s.date.addingTimeInterval(-3600)
-            if sessionHourBefore, hourBefore > .now {
-                add(id: "\(s.id)-1h", title: NotificationText.title,
-                    body: NotificationText.reminderHour(s.title, in: language), at: hourBefore, chatID: s.chatID)
-            }
-        }
-    }
-
-    private var pendingIDs: [String] = []
-
-    private func add(id: String, title: String, body: String, at date: Date, chatID: String) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-        content.userInfo = ["chatID": chatID]
-        let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-        let request = UNNotificationRequest(identifier: id, content: content,
-                                            trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false))
-        center.add(request)
-        pendingIDs.append(id)
-    }
-
-    private func rescheduleIfNeeded() { scheduleSessionReminders(lastSessions) }
-
     // MARK: Delegate
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async
@@ -271,6 +239,11 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
                 await MainActor.run { PhotoModeration.shared.apply(mediaID: media, status: "rejected") }
             }
             return []
+        }
+        // A session changed while the app is open: the push says it, the cards follow (the Realtime event
+        // usually got there first; this read catches a missed one).
+        if let kind = info["kind"] as? String, kind == "session_cancelled" || kind == "session_reminder" {
+            await SessionStore.shared.refresh()
         }
         return [.banner, .sound]
     }
@@ -285,7 +258,16 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
             await MainActor.run { self.openBoost = true }
             return
         }
-        let chatID = info["chatID"] as? String
+        // Server pushes name the match (its chat); the app's own name the chat.
+        let chatID = (info["chatID"] ?? info["match"]) as? String
+        if let kind = info["kind"] as? String, kind == "session_cancelled" {
+            // Cancelled with its match (no chat any more): the Sessions tab, read again.
+            await SessionStore.shared.refresh()
+            if chatID == nil {
+                await MainActor.run { self.openSessions = true }
+                return
+            }
+        }
         await MainActor.run { self.openChatID = chatID }
     }
 }

@@ -11,8 +11,8 @@ import Foundation
 ///   value still equal to the one drafft wrote is updated;
 /// - an event the person deleted, or that no longer carries the URL, is let go, never recreated.
 ///
-/// Changes come from the session's own updates in the app, from the Realtime `session` event
-/// (`UserChannel`), and from a re-read on foreground and on each reconnection. Following needs full
+/// Changes come from the person's own changes once the server took them (`SessionStore`), from the
+/// Realtime `session` event (`UserChannel`), and from a re-read on foreground and on each reconnection. Following needs full
 /// calendar access, asked when adding the event; with add-only access the event is added and not followed;
 /// refused or restricted, a banner says so and opens Settings (`CalendarAccessNotice`).
 @MainActor
@@ -87,20 +87,9 @@ final class SessionCalendar {
     /// The event's title for a session: "Sunrise run with Maya", like when it was added.
     static func title(_ session: String, partner: String) -> String { L("\(session) with \(partner)") }
 
-    /// The session changed in the app (accepted, declined, replaced by other times).
-    func sessionChanged(_ session: SessionProposal) {
-        guard let link = links[session.id] else { return }
-        switch session.status {
-        case .accepted:
-            apply(.scheduled(start: session.date, title: Self.title(session.displayTitle, partner: link.partner)),
-                  to: session.id)
-        case .declined, .countered: apply(.gone, to: session.id)
-        case .pending: break
-        }
-    }
-
-    /// The Realtime `session` event. A final status removes the event; any other change is read from
-    /// the server, which holds the time and title.
+    /// A session changed: the Realtime `session` event, or the person's own change once the server took
+    /// it (`SessionStore`). A final status removes the event; any other change is read from the server,
+    /// which holds the time and title.
     func sessionChanged(_ id: UUID, status: String?) async {
         guard links[id] != nil else { return }
         switch status {

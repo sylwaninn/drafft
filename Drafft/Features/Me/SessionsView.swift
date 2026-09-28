@@ -1,19 +1,34 @@
 import SwiftUI
 
 /// Sessions tab: the next confirmed session as a feature card, invites that still need a time,
-/// then everything else coming up.
+/// then everything else coming up. From the server (`upcoming_sessions`, `SessionStore`), live.
 struct SessionsView: View {
     @Environment(AppModel.self) private var app
     @State private var scrollOffset: CGFloat = 0
     /// Chats open inside this tab, so Back returns to Sessions.
     @State private var path: [ChatRoute] = []
 
-    private var confirmed: [(Conversation, SessionProposal)] {
-        app.upcomingSessions.filter { $0.1.status == .accepted }.sorted { $0.1.date < $1.1.date }
+    /// One upcoming session, with who it's with and whose turn it is.
+    private struct Item {
+        let session: SessionProposal
+        let chatID: String
+        let name: String
+        let photo: String
+        let mine: Bool
     }
-    private var pending: [(Conversation, SessionProposal)] {
-        app.upcomingSessions.filter { $0.1.status == .pending }.sorted { $0.1.date < $1.1.date }
+
+    private var items: [Item] {
+        let store = SessionStore.shared
+        return store.upcoming.compactMap { row in
+            guard let session = SessionProposal(row) else { return nil }
+            let chatID = row.matchID.uuidString.lowercased()
+            let profile = app.conversation(chatID)?.profile
+            return Item(session: session, chatID: chatID, name: row.partner?.name ?? profile?.name ?? "",
+                        photo: row.partner?.photo ?? profile?.portrait ?? "", mine: store.isMine(row))
+        }
     }
+    private var confirmed: [Item] { items.filter { $0.session.status == .accepted } }
+    private var pending: [Item] { items.filter { $0.session.status == .pending } }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -22,11 +37,11 @@ struct SessionsView: View {
                     if confirmed.isEmpty && pending.isEmpty {
                         emptyState
                     } else {
-                        if let next = confirmed.first { nextUp(next.0, next.1) }
+                        if let next = confirmed.first { nextUp(next) }
                         if !pending.isEmpty {
                             group(L("Finding a time")) {
-                                ForEach(Array(pending.enumerated()), id: \.element.1.id) { i, item in
-                                    pendingRow(item.0, item.1)
+                                ForEach(Array(pending.enumerated()), id: \.element.session.id) { i, item in
+                                    pendingRow(item)
                                     if i < pending.count - 1 { separator }
                                 }
                             }
@@ -34,8 +49,8 @@ struct SessionsView: View {
                         let later = Array(confirmed.dropFirst())
                         if !later.isEmpty {
                             group(L("Coming up")) {
-                                ForEach(Array(later.enumerated()), id: \.element.1.id) { i, item in
-                                    confirmedRow(item.0, item.1)
+                                ForEach(Array(later.enumerated()), id: \.element.session.id) { i, item in
+                                    confirmedRow(item)
                                     if i < later.count - 1 { separator }
                                 }
                             }
@@ -47,6 +62,8 @@ struct SessionsView: View {
             }
             .contentMargins(.top, DS.Space.xs, for: .scrollContent)
             .trackingScrollOffset($scrollOffset)
+            // Read again whenever the tab shows (Realtime and foreground keep it current meanwhile).
+            .task { await SessionStore.shared.refresh() }
             .background(DS.Palette.canvasSoft)
             .toolbarVisibility(.hidden, for: .navigationBar)
             .navigationDestination(for: ChatRoute.self) { r in
@@ -61,8 +78,9 @@ struct SessionsView: View {
 
     // MARK: Next up
 
-    private func nextUp(_ convo: Conversation, _ s: SessionProposal) -> some View {
-        VStack(alignment: .leading, spacing: DS.Space.xl) {
+    private func nextUp(_ item: Item) -> some View {
+        let s = item.session
+        return VStack(alignment: .leading, spacing: DS.Space.xl) {
             HStack(alignment: .center) {
                 Text(countdown(to: s.date))
                     .font(.caption.weight(.heavy))
@@ -93,21 +111,21 @@ struct SessionsView: View {
             }
 
             HStack(spacing: DS.Space.sm) {
-                Avatar(name: convo.profile.portrait, size: 36)
-                Text("With \(convo.profile.name)")
+                Avatar(name: item.photo, size: 36)
+                Text("With \(item.name)")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white)
                 Spacer(minLength: 0)
             }
 
             HStack(spacing: DS.Space.sm) {
-                Button { path.append(ChatRoute(chatID: convo.id, sessionID: s.id)) } label: {
+                Button { path.append(ChatRoute(chatID: item.chatID, sessionID: s.id)) } label: {
                     Label("Open chat", systemImage: "bubble.left.fill")
                 }
                 .buttonStyle(.drafftPrimary)
                 .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
                 .padding(.leading, 12)
-                CalendarButton(session: s, partner: convo.profile.name, chatID: convo.id, compact: true)
+                CalendarButton(session: s, partner: item.name, chatID: item.chatID, compact: true)
             }
         }
         .padding(DS.Space.xl)
@@ -139,17 +157,14 @@ struct SessionsView: View {
         .frame(width: 44)
     }
 
-    private func pendingRow(_ convo: Conversation, _ s: SessionProposal) -> some View {
+    private func pendingRow(_ item: Item) -> some View {
         // Their invite waiting on you, or yours waiting on them.
-        let mine = convo.messages.contains { m in
-            if case .session(let x) = m.content { return x.id == s.id && m.fromMe }
-            return false
-        }
-        return Button { path.append(ChatRoute(chatID: convo.id, sessionID: s.id)) } label: {
+        let s = item.session, mine = item.mine
+        return Button { path.append(ChatRoute(chatID: item.chatID, sessionID: s.id)) } label: {
             HStack(spacing: DS.Space.md) {
-                Avatar(name: convo.profile.portrait, size: 44)
+                Avatar(name: item.photo, size: 44)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("\(s.sport.name) with \(convo.profile.name)")
+                    Text("\(s.sport.name) with \(item.name)")
                         .font(.headline)
                         .foregroundStyle(DS.Palette.ink)
                     Text(s.options.count > 1 ? "\(s.options.count) times offered" : "\(s.date.formatted(.dateTime.weekday(.abbreviated).day().locale(.app))), \(s.timeText)")
@@ -172,8 +187,9 @@ struct SessionsView: View {
         .buttonStyle(.plain)
     }
 
-    private func confirmedRow(_ convo: Conversation, _ s: SessionProposal) -> some View {
-        Button { path.append(ChatRoute(chatID: convo.id, sessionID: s.id)) } label: {
+    private func confirmedRow(_ item: Item) -> some View {
+        let s = item.session
+        return Button { path.append(ChatRoute(chatID: item.chatID, sessionID: s.id)) } label: {
             HStack(spacing: DS.Space.md) {
                 dateColumn(s.date)
                 VStack(alignment: .leading, spacing: 2) {
@@ -181,7 +197,7 @@ struct SessionsView: View {
                         .font(.headline)
                         .foregroundStyle(DS.Palette.ink)
                         .lineLimit(2)
-                    Text("\(s.timeText) with \(convo.profile.name)")
+                    Text("\(s.timeText) with \(item.name)")
                         .font(.footnote)
                         .foregroundStyle(DS.Palette.body)
                 }

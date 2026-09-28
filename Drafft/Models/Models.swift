@@ -149,7 +149,8 @@ struct Profile: Identifiable, Hashable {
 // MARK: - Sessions
 
 struct SessionProposal: Hashable, Identifiable {
-    let id = UUID()
+    /// The server's `sessions.id` (a new proposal's own until the server saves it, see `SessionStore`).
+    var id = UUID()
     var sport: Sport
     /// Proposed day-and-time options (1 to 3). The other person picks one or suggests others.
     var options: [Date]
@@ -164,8 +165,9 @@ struct SessionProposal: Hashable, Identifiable {
     var discovery: Discovery?
     var status: Status = .pending
 
-    /// pending: waiting for a pick; countered: replaced by a newer proposal with other times.
-    enum Status: Hashable { case pending, accepted, declined, countered }
+    /// pending: waiting for a pick; countered: replaced by a newer proposal with other times;
+    /// cancelled: called off by either person, or with the match or an account.
+    enum Status: Hashable { case pending, accepted, declined, countered, cancelled }
 
     /// The agreed time, or the first option while it's still being decided.
     var date: Date { chosen ?? options.first ?? .now }

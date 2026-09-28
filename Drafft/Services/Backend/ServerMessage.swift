@@ -45,6 +45,11 @@ enum ServerMessage {
         // Discover and safety
         case "not_eligible": L("This profile isn't available.")
         case "report_limit": L("You've sent several reports already. Try again later.")
+        // Sessions (propose_session, counter_session, respond_session, cancel_session)
+        case "invalid_options": L("Pick 1 to 3 times that haven't passed.")
+        case "invalid_pick": L("Pick one of the times offered.")
+        case "cannot_respond", "cannot_counter": L("This invite has already been answered.")
+        case "cannot_cancel": L("This session is already closed.")
         default: nil
         }
     }

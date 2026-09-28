@@ -186,14 +186,6 @@ enum MockData {
         return [aya, ines] + ["nina", "tom", "lucas", "zoe", "jonas"].map(profile)
     }
 
-    /// Next occurrence of a weekday (0 = Monday) at a given hour, for demo sessions.
-    static func next(weekday: Int, hour: Int, minute: Int = 0) -> Date {
-        let cal = Calendar.current
-        let target = (weekday + 1) % 7 + 1 // Calendar: 1 = Sunday
-        let base = cal.nextDate(after: .now, matching: DateComponents(weekday: target), matchingPolicy: .nextTime) ?? .now
-        return cal.date(bySettingHour: hour, minute: minute, second: 0, of: base) ?? base
-    }
-
     static func profile(_ id: String) -> Profile { profiles.first { $0.id == id }! }
 
     /// Whether a person (or their chat, same id) is one of these samples. Samples stay in the app, but
@@ -214,21 +206,14 @@ enum MockData {
             Message(.text("This one. Ridge loop, about 18k, mostly mud."), fromMe: false, date: ago(60 * 3)),
             Message(.voice(url: audio("msg_maya_voice")!, duration: 9.1, levels: Waveform.seeded("maya-msg", count: 40)), fromMe: false, date: ago(6))
         ]
-        // Maya offers three times: your turn to pick.
-        maya.messages.append(Message(.text("Also… trail session this weekend? Pick one 👇"), fromMe: false, date: ago(4)))
-        maya.messages.append(Message(.session(SessionProposal(
-            sport: .trail,
-            options: [Self.next(weekday: 5, hour: 9), Self.next(weekday: 6, hour: 8, minute: 30), Self.next(weekday: 6, hour: 10)],
-            title: "Muddy loop in Fontainebleau?", note: "")), fromMe: false, date: ago(4)))
-        maya.unread = 4
+        maya.unread = 2
 
         var chloe = Conversation(id: "chloe", profile: profile("chloe"), messages: [], matchedAt: ago(60 * 50))
         chloe.messages = [
             Message(.text("Your Tuesday dawn slot overlaps with mine. Suspicious."), fromMe: false, date: ago(60 * 49)),
             Message(.text("Canal club? I think I've seen you do strides by the bridge."), fromMe: true, date: ago(60 * 48)),
-            Message(.session(SessionProposal(sport: .running, options: [Self.next(weekday: 1, hour: 7)], chosen: Self.next(weekday: 1, hour: 7), title: "Easy 8k along the canal, then coffee?", note: "Meet at the green footbridge.", status: .accepted)), fromMe: true, date: ago(60 * 47)),
             Message(.voice(url: audio("msg_chloe_voice")!, duration: 5.6, levels: Waveform.seeded("chloe-msg", count: 40)), fromMe: false, date: ago(60 * 46)),
-            Message(.text("See you at 7 by the green footbridge 👟"), fromMe: true, date: ago(60 * 45), state: .read, reaction: "🔥")
+            Message(.text("Green footbridge, then 👟"), fromMe: true, date: ago(60 * 45), state: .read, reaction: "🔥")
         ]
 
         var leo = Conversation(id: "leo", profile: profile("leo"), messages: [], matchedAt: ago(60 * 4))
@@ -236,11 +221,6 @@ enum MockData {
             Message(.text("OK I have to ask. Do you actually know how drafting works?"), fromMe: false, date: ago(60 * 3.5)),
             Message(.text("I've been waiting my whole life for someone to ask"), fromMe: false, date: ago(60 * 3.5))
         ]
-        // Your invite to Alexandre-Maxime, waiting for him to pick.
-        leo.messages.append(Message(.session(SessionProposal(
-            sport: .cycling,
-            options: [Self.next(weekday: 5, hour: 7), Self.next(weekday: 6, hour: 7, minute: 30)],
-            title: "Longchamp laps at sunrise?", note: "")), fromMe: true, date: ago(60 * 3), state: .delivered))
         leo.unread = 2
 
         var sam = Conversation(id: "sam", profile: profile("sam"), messages: [], matchedAt: ago(60 * 80))
@@ -249,11 +229,7 @@ enum MockData {
             Message(.text("I have 40 more. Rest between sets."), fromMe: false, date: ago(60 * 78)),
             Message(.file(name: "Sam — 4 week strength block.pdf", size: 482_000, url: nil), fromMe: false, date: ago(60 * 70)),
             Message(.text("That's the plan I mentioned, if you want to try the first week together"), fromMe: false, date: ago(60 * 70)),
-            Message(.session(SessionProposal(
-                sport: .strength,
-                options: [Self.next(weekday: 3, hour: 19)], chosen: Self.next(weekday: 3, hour: 19),
-                title: "Leg day, I'll spot you?", note: "", status: .accepted)), fromMe: false, date: ago(60 * 69)),
-            Message(.text("Thursday it is. Bring chalk 💪"), fromMe: true, date: ago(60 * 68))
+            Message(.text("Bring chalk 💪"), fromMe: true, date: ago(60 * 68))
         ]
 
         let fresh = Conversation(id: "noah", profile: profile("noah"), messages: [], matchedAt: ago(40))
