@@ -85,6 +85,7 @@
 		A80F96969CFA53EEEAA5088C /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BC2911FFA7DE3135F8B4A4 /* Components.swift */; };
 		A8BA1914B4141EFEA113DE5C /* PackPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CA2E4C7B14850BB4435E22 /* PackPhotos.swift */; };
 		AB0F5897095930A03A4BB610 /* TabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDD95AF690348854AF18981 /* TabHeader.swift */; };
+		AB793B4ECDD96F42FAFDC6EA /* AppModel+Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23380D998845B8EDCDF6DDF /* AppModel+Account.swift */; };
 		AD095C7A68E24E8B4CD28C12 /* SportPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45691EAF086604D51BDF558C /* SportPicker.swift */; };
 		AE44FBF649FF1A2179301868 /* AccountSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D9A77E15F0B5594795A792 /* AccountSheets.swift */; };
 		AE8E125FB4B284672FD034E9 /* intro_jonas.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 6FF81E768C1F31136C9107C4 /* intro_jonas.m4a */; };
@@ -237,6 +238,7 @@
 		BD694F36ABFC1D12EB51D56B /* AppModel+Pause.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppModel+Pause.swift"; sourceTree = "<group>"; };
 		C034150C332EBE04554AB77E /* intro_noah.m4a */ = {isa = PBXFileReference; path = intro_noah.m4a; sourceTree = "<group>"; };
 		C0FC074582CCD1BBDFC15863 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C23380D998845B8EDCDF6DDF /* AppModel+Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppModel+Account.swift"; sourceTree = "<group>"; };
 		C35EBB2EBA07E965FB072B2C /* OnboardingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStore.swift; sourceTree = "<group>"; };
 		C5E7D968B0F2038B779A7B32 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		CB18797B22FEB187EC059001 /* CalendarSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSheet.swift; sourceTree = "<group>"; };
@@ -395,6 +397,7 @@
 			children = (
 				A08B0952DDC085640F3E9719 /* AccountModeration.swift */,
 				8A069B545F5EF61CC1D5CC9F /* AppModel.swift */,
+				C23380D998845B8EDCDF6DDF /* AppModel+Account.swift */,
 				BD694F36ABFC1D12EB51D56B /* AppModel+Pause.swift */,
 				0CB8F1CAC2BE2569F9FCB215 /* AppModel+Safety.swift */,
 				D62E1B3159D432F3E541690F /* AreaService.swift */,
@@ -684,6 +687,7 @@
 				3746EDB34E604111AFED17CF /* AccountModeration.swift in Sources */,
 				AE44FBF649FF1A2179301868 /* AccountSheets.swift in Sources */,
 				39ADD790C5A53415E8E7C1B1 /* AppLanguage.swift in Sources */,
+				AB793B4ECDD96F42FAFDC6EA /* AppModel+Account.swift in Sources */,
 				50E45788CB457E687BC49A8D /* AppModel+Pause.swift in Sources */,
 				B6BA9D9C90984D582A807D3D /* AppModel+Safety.swift in Sources */,
 				336FB6C61DBFA6A2F9DE971F /* AppModel.swift in Sources */,
