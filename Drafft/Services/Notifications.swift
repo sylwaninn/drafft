@@ -153,7 +153,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     /// under the same settings. `preview` is the message text, used when message previews are on.
     func notify(_ kind: NotificationText.Kind, from name: String, photo: String?, chatID: String,
                 muted: Bool, preview: String? = nil) async {
-        guard isAllowed, !muted else { return }
+        // Sample people's simulated matches, messages and reactions stay inside the app.
+        guard isAllowed, !muted, !MockData.isSample(chatID) else { return }
         switch kind {
         case .message, .sessionProposed, .sessionAccepted, .sessionDeclined, .sessionCancelled:
             guard messages else { return }
@@ -208,7 +209,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
         pendingIDs = []
         guard isAllowed else { return }
         let cal = Calendar.current
-        for s in sessions where s.date > .now {
+        // Sample sessions are never real reminders (earlier ones were just removed above).
+        for s in sessions where s.date > .now && !MockData.isSample(s.chatID) {
             if sessionEvening, let dayBefore = cal.date(byAdding: .day, value: -1, to: s.date),
                let evening = cal.date(bySettingHour: 20, minute: 0, second: 0, of: dayBefore), evening > .now {
                 add(id: "\(s.id)-eve", title: NotificationText.title,

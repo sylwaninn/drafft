@@ -277,8 +277,9 @@ final class AppModel {
         Haptics.tap()
 
         // Photos go through the moderation check, silently: nothing changes for anyone. A flagged
-        // one is recorded on the server (media_flags) for actions and metrics.
-        if case .photo(_, let data?) = content {
+        // one is recorded on the server (media_flags) for actions and metrics. A sample person never
+        // receives it: nothing is uploaded or checked.
+        if case .photo(_, let data?) = content, !MockData.isSample(id) {
             Task { await ChatMediaCheck.photo(data) }
         }
         Task { @MainActor in

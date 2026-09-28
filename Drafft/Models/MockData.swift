@@ -196,6 +196,11 @@ enum MockData {
 
     static func profile(_ id: String) -> Profile { profiles.first { $0.id == id }! }
 
+    /// Whether a person (or their chat, same id) is one of these samples. Samples stay in the app, but
+    /// nothing real happens for them: no upload or server check, no notification, no session reminder.
+    static func isSample(_ id: String) -> Bool { sampleIDs.contains(id) }
+    private static let sampleIDs = Set(profiles.map(\.id))
+
     static func conversations() -> [Conversation] {
         let now = Date.now
         func ago(_ minutes: Double) -> Date { now.addingTimeInterval(-minutes * 60) }
