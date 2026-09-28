@@ -2,6 +2,8 @@
 // APNs and Rekognition come from the local Edge Functions' staging secrets (drafft-backend/scripts/local-env.sh).
 // SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY depend on the machine: scripts/local-backend.sh writes them to
 // Local.private.xcconfig at the repository root (gitignored). Without it the app stops at launch and says what's missing.
+// Cloudflare Turnstile public site key (support form sent signed out); allowed for getdrafft.com.
+TURNSTILE_SITE_KEY = 0x4AAAAAAFF4RVStAyff4tQU
 REVENUECAT_API_KEY = appl_nPDeedcmfhgYnAvrGnLpAoYIQkm
 // SMS codes land in the local Mailpit (http://127.0.0.1:55424), or on the phone with SMS_REAL=true in
 // drafft-backend's supabase/functions/.env.local.

@@ -84,6 +84,7 @@ targets:
         SupabasePublishableKey: $(SUPABASE_PUBLISHABLE_KEY)
         RevenueCatAPIKey: $(REVENUECAT_API_KEY)
         SmsCodeLifetime: $(SMS_CODE_LIFETIME)
+        TurnstileSiteKey: $(TURNSTILE_SITE_KEY)
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, fr, es, de, it, pt, nl]
         # Links in auth emails (confirm sign-up, reset password) come back through drafft://auth-callback.

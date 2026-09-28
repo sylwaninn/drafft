@@ -51,6 +51,8 @@
 	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
 	<key>SupabaseURL</key>
 	<string>$(SUPABASE_URL)</string>
+	<key>TurnstileSiteKey</key>
+	<string>$(TURNSTILE_SITE_KEY)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>InterDisplay-Black.ttf</string>
