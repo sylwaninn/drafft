@@ -127,7 +127,6 @@ struct SignUpView: View {
                     DrafftField(title: L("Password"), text: $password, prompt: L("Create a password"), isSecure: true,
                                 error: passwordError, contentType: .newPassword, submitLabel: .done, onSubmit: submit)
                         .focused($focus, equals: .password)
-                    StrengthBar(passed: passedRules, total: PasswordRule.all.count)
                     VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
                         ForEach(PasswordRule.all) { rule in
                             let ok = rule.test(password)
@@ -225,31 +224,6 @@ struct ConfirmEmailView: View {
     }
 
     private func verify() { Task { await flow.verify() } }
-}
-
-struct StrengthBar: View {
-    let passed: Int
-    let total: Int
-    var body: some View {
-        HStack(spacing: DS.Space.xs) {
-            ForEach(0..<total, id: \.self) { i in
-                Capsule()
-                    .fill(i < passed ? color : DS.Palette.ink.opacity(0.1))
-                    .frame(height: 6)
-            }
-        }
-        .animation(Motion.snappy, value: passed)
-        .accessibilityElement()
-        .accessibilityLabel("Password strength \(passed) of \(total)")
-    }
-
-    private var color: Color {
-        switch passed {
-        case total: DS.Palette.lime
-        case 2: DS.Palette.warning
-        default: DS.Palette.negative
-        }
-    }
 }
 
 struct LogInView: View {

@@ -314,7 +314,6 @@ struct ChangePasswordSheet: View {
         SheetBlock {
             DrafftField(title: L("New password"), text: $new, prompt: L("New password"),
                         isSecure: true, contentType: .newPassword)
-            StrengthBar(passed: passed, total: PasswordRule.all.count)
             VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
                 ForEach(PasswordRule.all) { rule in
                     let ok = rule.test(new)
