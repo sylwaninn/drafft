@@ -174,7 +174,9 @@ final class SelfieCaptureModel {
     private(set) var shooting = false
     /// Set once the selfie is sent: the view closes, the hold screen turns to review.
     private(set) var sent = false
-    @ObservationIgnored let camera = SelfieCamera()
+    /// Made when first used: the view's `@State` default is rebuilt each time its parent re-renders,
+    /// and a capture session isn't free.
+    @ObservationIgnored lazy var camera = SelfieCamera()
 
     var isCaptured: Bool { if case .captured = stage { true } else { false } }
     var isSending: Bool { if case .sending = stage { true } else { false } }
