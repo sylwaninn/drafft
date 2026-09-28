@@ -245,8 +245,15 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async
         -> UNNotificationPresentationOptions {
-        // A refused photo while the app is open: its own banner says it, not the system's.
-        if notification.request.content.userInfo["kind"] as? String == "photo_refused" { return [] }
+        // A refused photo while the app is open: its own banner says it, not the system's (shown once,
+        // whether the push or the live `media` event comes first).
+        let info = notification.request.content.userInfo
+        if info["kind"] as? String == "photo_refused" {
+            if let media = info["media"] as? String {
+                await MainActor.run { PhotoModeration.shared.apply(mediaID: media, status: "rejected") }
+            }
+            return []
+        }
         return [.banner, .sound]
     }
 
