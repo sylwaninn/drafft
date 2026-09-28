@@ -97,19 +97,20 @@ struct PhoneVerificationView: View {
 
     private var locked: some View { CodeLockedCard(message: model.error) }
 
-    @ViewBuilder
+    /// The error or the hint, then Get help: always there on this step, even before anything
+    /// fails (a number the list can't take, a text that never comes).
     private func errorOrHint(default text: String) -> some View {
-        if let error = model.error {
-            VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
+            if let error = model.error {
                 Label(error, systemImage: "exclamationmark.circle.fill")
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(DS.Palette.negative)
                     .transition(.opacity.combined(with: .move(edge: .top)))
-                if model.needsHelp { GetHelpButton(topic: L("Phone verification")) }
+            } else {
+                // Body grey: mute is under 4.5:1 on the sage page.
+                Text(text).font(.footnote).foregroundStyle(DS.Palette.body)
             }
-        } else {
-            // Body grey: mute is under 4.5:1 on the sage page.
-            Text(text).font(.footnote).foregroundStyle(DS.Palette.body)
+            GetHelpButton(topic: L("Phone verification"))
         }
     }
 }
