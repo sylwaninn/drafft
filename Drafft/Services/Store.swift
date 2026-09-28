@@ -99,14 +99,16 @@ final class Store {
         state = linked && !empty ? .loaded : .failed
     }
 
-    enum Outcome { case purchased(CustomerInfo), cancelled }
+    /// Confirmed by the App Store, with its transaction (the reference support asks for).
+    enum Outcome { case purchased(CustomerInfo, transactionID: String?), cancelled }
 
     /// Only for the linked account. What was bought shows once the server has credited it (the
     /// wallet), never from here.
     func purchase(_ package: Package) async throws -> Outcome {
         guard await link() else { throw StoreError.notLinked }
         let result = try await Purchases.shared.purchase(package: package)
-        return result.userCancelled ? .cancelled : .purchased(result.customerInfo)
+        if result.userCancelled { return .cancelled }
+        return .purchased(result.customerInfo, transactionID: result.transaction?.transactionIdentifier)
     }
 
     func restore() async throws -> CustomerInfo {

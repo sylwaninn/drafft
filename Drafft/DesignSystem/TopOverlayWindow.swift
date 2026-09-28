@@ -43,9 +43,15 @@ final class PassThroughWindow: UIWindow {
     }
 }
 
-/// What the overlay shows: the photo-refused banner, at the top.
+/// What the overlay shows at the top: the photo-refused banner, or a purchase on its way to the
+/// account.
 private struct TopOverlayContent: View {
     @State private var moderation = PhotoModeration.shared
+    @State private var credit = PurchaseCredit.shared
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private var slide: AnyTransition {
+        reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity)
+    }
 
     var body: some View {
         VStack {
@@ -60,12 +66,25 @@ private struct TopOverlayContent: View {
                     TopOverlayWindow.shared.interactiveFrame = $0
                 }
                 .onDisappear { TopOverlayWindow.shared.interactiveFrame = .zero }
-                .transition(.move(edge: .top).combined(with: .opacity))
+                .transition(slide)
+                .padding(.top, DS.Space.xs)
+            } else if let state = credit.banner {
+                PurchaseCreditBanner(state: state, pending: credit.oldest) {
+                    credit.contactSupport()
+                } onDismiss: {
+                    withAnimation(Motion.snappy) { credit.dismissBanner() }
+                }
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: {
+                    TopOverlayWindow.shared.interactiveFrame = $0
+                }
+                .onDisappear { TopOverlayWindow.shared.interactiveFrame = .zero }
+                .transition(slide)
                 .padding(.top, DS.Space.xs)
             }
             Spacer()
         }
-        .animation(Motion.bouncy, value: moderation.refusalBanner)
+        .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: moderation.refusalBanner)
+        .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: credit.banner)
         // Its own window, outside the app's root: the app's language is set again here.
         .environment(\.locale, .app)
     }

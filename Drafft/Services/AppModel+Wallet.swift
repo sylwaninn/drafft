@@ -26,11 +26,30 @@ extension AppModel {
 
     /// Reads the account's own wallet row (RLS: only its own). At sign-in, on each Realtime
     /// (re)connection and `wallet` event, back at the front, and while a purchase waits for its
-    /// credit. A failed read changes nothing (offline: the last known balances stay).
+    /// credit (`PurchaseCredit`). A failed read changes nothing (offline: the last known balances
+    /// stay).
     func loadWallet() async {
         guard await Backend.shared.hasSession,
               let data = try? await Backend.shared.select("wallets?select=boosts,super_likes,premium_until,boost_ends_at"),
               let row = try? JSONDecoder().decode([WalletRow].self, from: data).first else { return }
+        apply(row)
+        PurchaseCredit.shared.walletChanged()
+    }
+
+    /// A wallet the server sent back (`purchase-sync`): the row itself, or under `wallet`. Whether
+    /// it could be read.
+    @discardableResult
+    func applyWallet(_ data: Data) -> Bool {
+        struct Wrapped: Decodable { let wallet: WalletRow }
+        let decoder = JSONDecoder()
+        guard let row = (try? decoder.decode(WalletRow.self, from: data))
+            ?? (try? decoder.decode(Wrapped.self, from: data))?.wallet
+            ?? (try? decoder.decode([WalletRow].self, from: data))?.first else { return false }
+        apply(row)
+        return true
+    }
+
+    private func apply(_ row: WalletRow) {
         boosts = row.boosts
         superLikes = row.superLikes
         premiumUntil = Self.serverDate(row.premiumUntil)
@@ -38,39 +57,9 @@ extension AppModel {
         if let end = Self.serverDate(row.boostEndsAt), end > (boostEndsAt ?? .distantPast) { boostEndsAt = end }
     }
 
-    /// After a payment: reads the wallet until the server has credited it (App Store, RevenueCat,
-    /// then the webhook), for up to `timeout`. Whether it arrived in time.
-    func waitForWallet(timeout: Duration = .seconds(45), until credited: (AppModel) -> Bool) async -> Bool {
-        let clock = ContinuousClock()
-        let deadline = clock.now + timeout
-        var pause = Duration.seconds(1)
-        while clock.now < deadline {
-            await loadWallet()
-            if credited(self) { return true }
-            try? await Task.sleep(for: pause)
-            pause = min(pause * 2, .seconds(5))
-        }
-        await loadWallet()
-        return credited(self)
-    }
-
-    /// The credit is late (the store or the webhook): keep reading, more slowly, for a few minutes
-    /// more, so it shows without a trip out of the app. Realtime and the next return to the front
-    /// catch it after that.
-    func keepWaitingForWallet(until credited: @escaping @MainActor (AppModel) -> Bool) {
-        let session = sessionID
-        Task {
-            for _ in 0..<20 {
-                try? await Task.sleep(for: .seconds(15))
-                guard session == sessionID else { return }
-                await loadWallet()
-                if credited(self) { return }
-            }
-        }
-    }
-
     /// Signed out or deleted: nothing of the account's wallet stays on screen.
     func clearWallet() {
+        PurchaseCredit.shared.forget()
         subscription = nil
         premiumUntil = nil
         superLikes = 0

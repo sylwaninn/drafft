@@ -102,6 +102,8 @@ struct RootView: View {
                 guard app.phase != .welcome else { return }
                 // Signed in or launched: the iPhone's DeviceCheck token, for ban evasion (server side).
                 Task { await DeviceIntegrity.report() }
+                // A purchase confirmed earlier but not credited yet: asked for again.
+                Task { await PurchaseCredit.shared.resume(app) }
                 await UserChannel.watch(app)
             }
             .onChange(of: scenePhase) { _, p in
@@ -109,6 +111,7 @@ struct RootView: View {
                 Task { await moderation.load() }
                 // Credited while away (a purchase on another device, the weekly boost).
                 Task { await app.loadWallet() }
+                Task { await PurchaseCredit.shared.resume(app) }
             }
             // A session that ends on its own (revoked, expired, account deleted elsewhere): back to
             // the welcome screen, which says why.

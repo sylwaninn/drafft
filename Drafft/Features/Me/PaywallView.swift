@@ -341,10 +341,9 @@ struct PaywallView: View {
                 let info = try await store.restore()
                 if let sub = store.subscription(from: info) {
                     app.subscription = sub
-                    guard await app.waitForWallet(timeout: .seconds(20), until: { $0.isPremium }) else {
-                        say(L("Purchase restored. drafft tempo turns on in a moment."))
-                        return
-                    }
+                    let product = info.entitlements[Store.tempoEntitlement]?.productIdentifier ?? Store.tempoEntitlement
+                    let restored = PurchaseCredit.Pending(transactionID: nil, productID: product, date: .now, target: .tempo)
+                    guard await PurchaseCredit.shared.confirmed(restored, app: app) else { return }
                     Haptics.success()
                     receipt = PurchaseReceipt(item: .tempo(sub))
                 } else {
@@ -369,18 +368,17 @@ struct PaywallView: View {
                 switch try await store.purchase(package) {
                 case .cancelled:
                     break
-                case .purchased(let info):
-                    // Paid: the button keeps its spinner until the server has drafft tempo on the
-                    // account (webhook), which also credits the first weekly boost. Nothing is
-                    // unlocked on the device's word alone.
+                case .purchased(let info, let transactionID):
+                    // Confirmed by the App Store: the server is asked to turn drafft tempo on at once
+                    // (it also credits the first weekly boost); slow, a banner at the top takes over.
+                    // Nothing is unlocked on the device's word alone.
                     let price = package.storeProduct.localizedPriceString
                     let sub = store.subscription(from: info) ?? TempoSubscription(plan: plan, billing: plan.billing(price))
                     app.subscription = sub
-                    guard await app.waitForWallet(until: { $0.isPremium }) else {
-                        say(L("Payment went through. drafft tempo turns on in a moment."))
-                        app.keepWaitingForWallet(until: { $0.isPremium })
-                        return
-                    }
+                    let purchase = PurchaseCredit.Pending(transactionID: transactionID,
+                                                          productID: package.storeProduct.productIdentifier,
+                                                          date: .now, target: .tempo)
+                    guard await PurchaseCredit.shared.confirmed(purchase, app: app) else { return }
                     receipt = PurchaseReceipt(item: .tempo(sub))
                 }
             } catch {

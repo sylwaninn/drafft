@@ -21,8 +21,6 @@ struct ExtrasSheet: View {
     @State private var boostAfterReceipt = false
     /// A purchase that didn't go through, said plainly under the button.
     @State private var failure: String?
-    /// Paid, but the server hasn't credited the pack yet: said calmly under the button.
-    @State private var notice: String?
     private var store: Store { .shared }
 
     enum Tab: String, CaseIterable, Identifiable {
@@ -488,7 +486,7 @@ struct ExtrasSheet: View {
     private var footer: some View {
         VStack(spacing: DS.Space.xs) {
             primaryButton
-            Text(failure ?? notice ?? footnote)
+            Text(failure ?? footnote)
                 .font(.caption)
                 .foregroundStyle(failure == nil ? DS.Palette.body : DS.Palette.negative)
                 .multilineTextAlignment(.center)
@@ -535,31 +533,30 @@ extension ExtrasSheet {
         guard let pack else { return }
         let item: AppModel.Consumable = tab == .boost ? .boost : .superLike
         let before = app.balance(of: item)
-        let credited: (AppModel) -> Bool = { $0.balance(of: item) >= before + pack.count }
+        let target: PurchaseCredit.Pending.Target = item == .boost
+            ? .boosts(atLeast: before + pack.count)
+            : .superLikes(atLeast: before + pack.count)
         Haptics.tap()
         purchasing = true
         failure = nil
-        notice = nil
         Task {
             defer { purchasing = false }
+            let transactionID: String?
             do {
-                guard case .purchased = try await store.purchase(pack.package) else { return }
+                guard case .purchased(_, let id) = try await store.purchase(pack.package) else { return }
+                transactionID = id
             } catch {
                 Haptics.warning()
                 failure = L("The purchase didn't go through. You haven't been charged.")
                 return
             }
-            // Paid: the button keeps its spinner until the server has credited the pack (webhook).
-            // The count shown is always the wallet's, never one made up on the device.
-            guard await app.waitForWallet(until: credited) else {
-                withAnimation(Motion.snappy) {
-                    notice = tab == .boost
-                        ? L("Payment went through. Your boosts will show up in a moment.")
-                        : L("Payment went through. Your super likes will show up in a moment.")
-                }
-                app.keepWaitingForWallet { $0.balance(of: item) >= before + pack.count }
-                return
-            }
+            // Confirmed by the App Store: the server is asked to credit the pack at once. Slow, the
+            // button frees and a banner at the top takes over. The count shown is always the
+            // wallet's, never one made up on the device.
+            let purchase = PurchaseCredit.Pending(transactionID: transactionID,
+                                                  productID: pack.package.storeProduct.productIdentifier,
+                                                  date: .now, target: target)
+            guard await PurchaseCredit.shared.confirmed(purchase, app: app) else { return }
             withAnimation(Motion.bouncy) { self.pack = nil }
             // Boosts: back to the launch page, now showing the new count.
             if showStore { showStore = false }
