@@ -57,12 +57,15 @@ final class AudioPlayback: NSObject, AVAudioPlayerDelegate {
         let token = UUID()
         loadToken = token
         Task {
+            // A clip on the server is played from its copy in Caches (nil when it couldn't be fetched).
+            let file = url.isFileURL ? url : await AudioPlayback.localCopy(of: url)
             let made = await Task.detached(priority: .userInitiated) { () -> Handoff<AVAudioPlayer>? in
                 do {
+                    guard let file else { return nil }
                     let session = AVAudioSession.sharedInstance()
                     try session.setCategory(.playback, mode: .spokenAudio)
                     try session.setActive(true)
-                    let p = try AVAudioPlayer(contentsOf: url.isFileURL ? url : AudioPlayback.localCopy(of: url))
+                    let p = try AVAudioPlayer(contentsOf: file)
                     p.enableRate = true
                     p.prepareToPlay()
                     return Handoff(p)
@@ -262,15 +265,23 @@ extension AudioPlayback {
         return MockData.audio(voice)
     }
 
+    /// Where a clip on the server is kept: named after its key (the link's path), never its signature.
+    nonisolated private static func cacheFile(for remote: URL) -> URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("audio")
+            .appendingPathComponent(remote.pathComponents.suffix(2).joined(separator: "-"))
+    }
+
     /// AVAudioPlayer plays files only: a clip on the server is downloaded once into Caches (keys
-    /// are immutable, so the copy never goes stale). Called off the main thread.
-    nonisolated static func localCopy(of remote: URL) throws -> URL {
-        let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("audio")
-        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        let file = dir.appendingPathComponent(remote.pathComponents.suffix(2).joined(separator: "-"))
-        if !FileManager.default.fileExists(atPath: file.path) {
-            try Data(contentsOf: remote).write(to: file, options: .atomic)
-        }
+    /// are immutable, so the copy never goes stale). A signed link that expired is renewed first;
+    /// nil when the clip can't be fetched (offline, or no longer visible).
+    static func localCopy(of remote: URL) async -> URL? {
+        let file = cacheFile(for: remote)
+        if FileManager.default.fileExists(atPath: file.path) { return file }
+        let link = await MediaURL.fresh(remote)
+        guard let (data, response) = try? await URLSession.shared.data(from: link),
+              (response as? HTTPURLResponse)?.statusCode == 200,
+              (try? FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)) != nil,
+              (try? data.write(to: file, options: .atomic)) != nil else { return nil }
         return file
     }
 }
