@@ -22,14 +22,16 @@ final class AccountModeration {
     /// Shown as is by the hold window.
     private(set) var hold: AccountHold?
 
-    /// Reads the hold. A failed read changes nothing (offline: the last known state stays).
+    /// Reads the account again (the hold is on its profile row, read in one go by
+    /// `AppModel.refreshAccount`, which applies it here). A failed read changes nothing (offline:
+    /// the last known state stays).
     func load() async {
-        struct Row: Decodable { let moderation: AccountHold? }
-        guard await Backend.shared.hasSession,
-              let data = try? await Backend.shared.myProfile(select: "moderation"),
-              let row = try? JSONDecoder().decode([Row].self, from: data).first else { return }
-        apply(row.moderation)
+        guard await Backend.shared.hasSession else { return }
+        await refresh?()
     }
+
+    /// Set by the app: reads the account's row and applies it (`AppModel.refreshAccount`).
+    @ObservationIgnored var refresh: (@MainActor () async -> Void)?
 
     func apply(_ new: AccountHold?) {
         guard new != hold else { return }

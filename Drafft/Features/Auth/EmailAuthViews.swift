@@ -318,7 +318,8 @@ struct LogInView: View {
                 Haptics.success()
                 app.email = email
                 // Someone who stopped mid sign-up goes back to it.
-                let onboarded = (try? await Backend.shared.isOnboarded()) ?? true
+                // (The account read here is the one sign-in then uses: read once.)
+                let onboarded = await app.refreshAccount()?.onboarded ?? true
                 app.signIn(onboard: !onboarded)
             } catch {
                 Haptics.warning()

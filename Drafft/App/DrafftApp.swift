@@ -96,7 +96,7 @@ struct RootView: View {
             .onChange(of: moderation.hold) { _, hold in
                 HoldWindow.shared.update(visible: hold != nil)
                 // The hold paused the profile; lifting it gave the person's own pause back.
-                if hold == nil, app.phase != .welcome { Task { await app.loadPause() } }
+                if hold == nil, app.phase != .welcome { Task { await app.refreshAccount(force: true) } }
             }
             .onChange(of: app.phase) { _, phase in if phase == .welcome { moderation.clear() } }
             .task(id: "\(app.phase == .welcome)\(app.sessionID)") {
@@ -128,6 +128,8 @@ struct RootView: View {
                            cancelTitle: L("Got it"), actions: [])
             // Banners that must sit above everything (sheets included) live in their own window.
             .onAppear {
+                // The hold is read with the rest of the account's row: one read, one source.
+                moderation.refresh = { [app] in await app.refreshAccount(force: true) }
                 TopOverlayWindow.shared.install()
                 HoldWindow.shared.install(app)
             }
@@ -250,7 +252,6 @@ struct MainTabs: View {
         // Notifications: keep the status fresh, schedule session reminders, open tapped chats.
         .task(id: isActive) {
             guard isActive else { return }
-            await NotificationService.shared.loadSettings()
             await NotificationService.shared.refresh()
         }
         .task(id: "\(isActive)" + app.upcomingSessions.map { "\($0.1.id)\($0.1.status)" }.joined()) {

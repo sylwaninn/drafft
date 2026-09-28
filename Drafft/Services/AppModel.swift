@@ -18,6 +18,12 @@ final class AppModel {
     var me = AppModel.nobody
     enum ProfileLoad: Equatable { case loading, failed, loaded }
     var profileLoad: ProfileLoad = .loading
+    /// The signed-in account's last known state on this iPhone (see `LocalCache`, `refreshAccount`).
+    @ObservationIgnored var localCache: LocalCache?
+    /// The account read in flight, shared by everyone who asks meanwhile.
+    @ObservationIgnored var accountRefresh: Task<ProfileSync.Account?, Never>?
+    /// The last account read, and when: a read asked for right after it reuses it.
+    @ObservationIgnored var lastAccountRead: (at: Date, account: ProfileSync.Account)?
     /// drafft tempo's details as the App Store reports them for this account (plan, price, renewal),
     /// shown in You. Billed and managed by the App Store: the app only reads it and links to
     /// Apple's management sheet. Whether it's on comes from the server: `isPremium`.

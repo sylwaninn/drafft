@@ -104,53 +104,94 @@ enum ProfileSync {
 
     // MARK: Read back
 
-    /// The person's profile as saved, for a new device or a reinstall. Photos are the approved and
-    /// pending ones (their own), as public URLs.
-    static func load() async throws -> Profile? {
-        guard let id = await Backend.shared.userID else { return nil }
-        struct Row: Decodable {
-            let name: String
-            let birthdate: String?
-            let pronouns: String?
-            let gender: String?
-            let neighborhood: String
-            let bio: String
-            let goal: String
-            let favorite_spot: String
-            let drinks: String
-            let smokes: String
-            let diet: String
-            let chronotype: String
-            let icebreaker: JSONValue?
-            let voice_intro_key: String?
-            let voice_duration: Double?
+    /// Everything the app shows of the account's own profile row, read in one request: the
+    /// profile (with its sports, prompts and photos), the pause, a moderation hold, whether sign-up
+    /// is finished, and the notification settings. One read, shared by every screen that needs it
+    /// (instead of one read per piece); it's also what the local cache keeps.
+    struct Account: Sendable {
+        let profile: Profile
+        let paused: Bool
+        let hold: AccountHold?
+        let onboarded: Bool
+        let notifications: NotificationSettings?
+    }
+
+    /// The row as the server sends it; the local cache stores these bytes as they are.
+    private struct AccountRow: Decodable {
+        let name: String
+        let birthdate: String?
+        let pronouns: String?
+        let gender: String?
+        let neighborhood: String
+        let bio: String
+        let goal: String
+        let favoriteSpot: String
+        let drinks: String
+        let smokes: String
+        let diet: String
+        let chronotype: String
+        let icebreaker: JSONValue?
+        let voiceIntroKey: String?
+        let voiceDuration: Double?
+        let paused: Bool
+        let moderation: AccountHold?
+        let onboardedAt: String?
+        let sports: [SportRow]?
+        let prompts: [PromptRow]?
+        let media: [MediaRow]?
+
+        enum CodingKeys: String, CodingKey {
+            case name, birthdate, pronouns, gender, neighborhood, bio, goal, drinks, smokes, diet, chronotype
+            case icebreaker, paused, moderation
+            case favoriteSpot = "favorite_spot"
+            case voiceIntroKey = "voice_intro_key"
+            case voiceDuration = "voice_duration"
+            case onboardedAt = "onboarded_at"
+            case sports = "profile_sports"
+            case prompts = "profile_prompts"
+            case media = "profile_media"
         }
-        struct SportRow: Decodable { let sport_id: String; let per_week: Int }
+
+        struct SportRow: Decodable {
+            let sportID: String
+            let perWeek: Int
+            enum CodingKeys: String, CodingKey { case sportID = "sport_id", perWeek = "per_week" }
+        }
         struct PromptRow: Decodable { let question: String; let answer: String }
         struct MediaRow: Decodable { let id: String; let key: String; let kind: String; let status: String }
+    }
 
-        let decoder = JSONDecoder()
-        guard let row = try decoder.decode([Row].self, from: await Backend.shared.select(
-            "profiles?id=eq.\(id)&select=name,birthdate,pronouns,gender,neighborhood,bio,goal,favorite_spot,"
-                + "drinks,smokes,diet,chronotype,icebreaker,voice_intro_key,voice_duration"
-        )).first else { return nil }
-        let sports = try decoder.decode([SportRow].self, from: await Backend.shared.select(
-            "profile_sports?user_id=eq.\(id)&select=sport_id,per_week&order=position"))
-        let prompts = try decoder.decode([PromptRow].self, from: await Backend.shared.select(
-            "profile_prompts?user_id=eq.\(id)&select=question,answer&order=position"))
-        let media = try decoder.decode([MediaRow].self, from: await Backend.shared.select(
-            "profile_media?user_id=eq.\(id)&select=id,key,kind,status&order=position"))
+    private static let accountColumns = [
+        "name", "birthdate", "pronouns", "gender", "neighborhood", "bio", "goal", "favorite_spot",
+        "drinks", "smokes", "diet", "chronotype", "icebreaker", "voice_intro_key", "voice_duration",
+        "paused", "moderation", "onboarded_at", NotificationSettings.columns,
+        "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status)"
+    ].joined(separator: ",")
 
-        let base = await MediaURL.base()
-        let photos = media.filter { $0.kind == "photo" && $0.status != "rejected" }
+    /// The account as saved on the server (a new device, a reinstall, another device's changes), in
+    /// one request with its sports, prompts and media embedded. Photos are the approved and pending
+    /// ones (their own), as URLs. Also returns the raw bytes, for the local cache.
+    static func loadAccount() async throws -> (account: Account, data: Data)? {
+        guard let id = await Backend.shared.userID else { return nil }
+        let data = try await Backend.shared.select(
+            "profiles?id=eq.\(id)&select=\(accountColumns)"
+                + "&profile_sports.order=position&profile_prompts.order=position&profile_media.order=position")
+        guard let account = decodeAccount(data, mediaBase: await MediaURL.base()) else { return nil }
+        await MainActor.run { loadedAccount = id }
+        return (account, data)
+    }
+
+    /// The account from the server's bytes (a fresh read, or the copy in the local cache).
+    static func decodeAccount(_ data: Data, mediaBase base: URL?) -> Account? {
+        guard let row = (try? JSONDecoder().decode([AccountRow].self, from: data))?.first else { return nil }
+        let photos = (row.media ?? []).filter { $0.kind == "photo" && $0.status != "rejected" }
             .compactMap { m -> String? in base.map { $0.appendingPathComponent(m.key).absoluteString } }
         let age = row.birthdate.flatMap(Self.day.date(from:)).map {
             Calendar.current.dateComponents([.year], from: $0, to: .now).year ?? 18
         } ?? 18
         var vitals = Vitals(drinks: row.drinks, smokes: row.smokes, diet: row.diet, chronotype: row.chronotype)
         if !vitals.hasLifestyle { vitals = .blank }
-        await MainActor.run { loadedAccount = id }
-        return Profile(
+        let profile = Profile(
             id: "me",
             name: row.name,
             age: age,
@@ -161,15 +202,21 @@ enum ProfileSync {
             distanceKm: 0,
             portrait: photos.first ?? "",
             photos: Array(photos.dropFirst()),
-            sports: sports.compactMap { s in Sport(rawValue: s.sport_id).map { SportEntry(sport: $0, perWeek: s.per_week) } },
-            voiceIntro: row.voice_intro_key.flatMap { key in base.map { $0.appendingPathComponent(key).absoluteString } },
-            voiceDuration: row.voice_duration ?? 0,
+            sports: (row.sports ?? []).compactMap { s in
+                Sport(rawValue: s.sportID).map { SportEntry(sport: $0, perWeek: s.perWeek) }
+            },
+            voiceIntro: row.voiceIntroKey.flatMap { key in base.map { $0.appendingPathComponent(key).absoluteString } },
+            voiceDuration: row.voiceDuration ?? 0,
             icebreaker: row.icebreaker.flatMap(Icebreaker.init(json:)) ?? Icebreaker.Kind.twoTruths.blank,
-            favoriteSpot: row.favorite_spot,
+            favoriteSpot: row.favoriteSpot,
             bio: row.bio,
             goal: row.goal,
             vitalsOverride: vitals,
-            promptsOverride: prompts.map { ProfilePrompt(question: $0.question, answer: $0.answer) }
+            promptsOverride: (row.prompts ?? []).map { ProfilePrompt(question: $0.question, answer: $0.answer) }
+        )
+        return Account(
+            profile: profile, paused: row.paused, hold: row.moderation, onboarded: row.onboardedAt != nil,
+            notifications: try? JSONDecoder().decode([NotificationSettings].self, from: data).first
         )
     }
 

@@ -14,8 +14,9 @@ extension AppModel {
 
     // MARK: Sign in
 
-    /// An unfinished sign-up always resumes, whatever the entry point.
-    func signIn(onboard: Bool) {
+    /// An unfinished sign-up always resumes, whatever the entry point. `immediately`: at launch,
+    /// under the splash (no keyboard to put away, nothing to wait for).
+    func signIn(onboard: Bool, immediately: Bool = false) {
         let target: Phase = onboard || OnboardingStore.hasUnfinished ? .onboarding : .main
         // Purchases follow the account (the webhook credits this id), and its balances are the server's.
         Task {
@@ -23,10 +24,13 @@ extension AppModel {
             await loadWallet()
         }
         Task { await loadAccount() }
-        // A finished profile on the server is the one shown in You (another device, a reinstall).
-        if target == .main {
-            Task { await loadProfile() }
-            Task { await loadPause() }
+        // A finished profile on the server is the one shown in You (another device, a reinstall),
+        // with its pause, hold and settings: one read.
+        if target == .main { Task { await refreshAccount() } }
+        if immediately {
+            if target == .main { tab = .discover }
+            phase = target
+            return
         }
         // Put the keyboard away first, so the next screen lays out at full height.
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -42,33 +46,35 @@ extension AppModel {
         OnboardingStore.clear()
         me = profile
         profileLoad = .loaded
+        // The server's copy (photo URLs) replaces the one sign-up built, and goes to the local cache.
+        Task { await refreshAccount(force: true) }
         tab = .discover
         withAnimation(Motion.gentle) { phase = .main }
     }
 
-    /// Reads the person's profile from the server. Until it's in, You shows a loading state, or a
-    /// retry if it failed: never another profile, and Edit profile can't save over the real one.
+    /// Reads the person's profile from the server (You's retry). Until it's in, You shows a loading
+    /// state, or a retry if it failed: never another profile, and Edit profile can't save over the
+    /// real one (`ProfileSync.loadedAccount`), even while a copy from the local cache shows.
     func loadProfile() async {
-        let session = sessionID
-        profileLoad = .loading
-        do {
-            guard let saved = try await ProfileSync.load() else { throw Backend.BackendError.signedOut }
-            // Signed out while it loaded: it belongs to the previous account.
-            guard session == sessionID else { return }
-            me = saved
-            profileLoad = .loaded
-        } catch {
-            guard session == sessionID else { return }
-            profileLoad = .failed
-        }
+        if profileLoad != .loaded { profileLoad = .loading }
+        await refreshAccount(force: true)
     }
 
     /// The account's own email and verified phone: from the saved session straight away, then from
     /// the server (a number verified on another device, an email changed elsewhere).
+    /// It's also where a session restored at launch is checked: one the server no longer accepts
+    /// (revoked, account deleted elsewhere) ends, with the message.
     func loadAccount() async {
         let session = sessionID
         apply(Backend.shared.client.auth.currentUser)
-        if let user = try? await Backend.shared.client.auth.user(), session == sessionID { apply(user) }
+        do {
+            let user = try await Backend.shared.client.auth.user()
+            if session == sessionID { apply(user) }
+        } catch is AuthError {
+            if session == sessionID { await endSession() }
+        } catch {
+            // Offline: the saved session is the best we know.
+        }
     }
 
     private func apply(_ user: User?) {
@@ -80,22 +86,49 @@ extension AppModel {
 
     // MARK: Account (Supabase Auth)
 
-    /// At launch: a saved session goes straight in, to sign-up if it isn't finished. A session the
-    /// server no longer accepts (revoked, account deleted elsewhere) stays on the welcome screen.
+    /// At launch: a saved session goes straight in, to sign-up if it isn't finished, without waiting
+    /// for the network. The account as this iPhone last saw it shows at once (local cache), then the
+    /// server's replaces it; the session itself is checked on the way (`loadAccount`: one the server
+    /// no longer accepts goes back to the welcome screen, with the message).
+    ///
+    /// The first launch of an account on this iPhone has no copy: the server says whether sign-up is
+    /// finished, but the splash waits for it `firstReadLimit` at most. Past that it goes in, and
+    /// moves to sign-up if the answer, when it comes, says it isn't finished.
     func restoreSession() async {
         guard phase == .welcome, await Backend.shared.hasSession else { return }
-        do {
-            _ = try await Backend.shared.client.auth.user()
-        } catch is AuthError {
-            await endSession()
+        email = Backend.shared.client.auth.currentUser?.email ?? email
+        if let cached = showCachedAccount() {
+            signIn(onboard: !cached.onboarded, immediately: true)
             return
-        } catch {
-            // Offline: the saved session is the best we know; the tabs retry once the network is back.
         }
-        guard phase == .welcome, await Backend.shared.hasSession else { return }
-        email = await Backend.shared.client.auth.currentUser?.email ?? email
-        let onboarded = (try? await Backend.shared.isOnboarded()) ?? true
-        signIn(onboard: !onboarded)
+        let session = sessionID
+        let read = Task { await refreshAccount() }
+        let answer = await Self.first(of: { await read.value }, within: Self.firstReadLimit)
+        guard session == sessionID, phase == .welcome, await Backend.shared.hasSession else { return }
+        switch answer {
+        case .some(.some(let account)):
+            signIn(onboard: !account.onboarded, immediately: true)
+        default:
+            // No answer yet (slow or no network): in, as far as this iPhone knows.
+            signIn(onboard: false, immediately: true)
+            if let account = await read.value, session == sessionID, !account.onboarded, phase == .main {
+                withAnimation(Motion.gentle) { phase = .onboarding }
+            }
+        }
+    }
+
+    /// How long the splash waits for the server on an account's first launch on this iPhone.
+    static let firstReadLimit: Duration = .seconds(3)
+
+    /// The value, or nil if it takes longer than `limit` (the work itself goes on).
+    private static func first<T: Sendable>(of work: @escaping @Sendable () async -> T, within limit: Duration) async -> T? {
+        await withTaskGroup(of: T?.self) { group in
+            group.addTask { await work() }
+            group.addTask { try? await Task.sleep(for: limit); return nil }
+            let result = await group.next().flatMap { $0 }
+            group.cancelAll()
+            return result
+        }
     }
 
     /// Follows the account's session for as long as the app runs: when it ends without the person
@@ -174,6 +207,7 @@ extension AppModel {
         me = Self.nobody
         profileLoad = .loading
         ProfileSync.loadedAccount = nil
+        eraseLocalCache()
         email = ""
         phoneNumber = nil
         applyServerPause(false)

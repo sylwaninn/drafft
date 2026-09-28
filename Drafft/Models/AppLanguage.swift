@@ -39,7 +39,7 @@ enum AppLanguage: String, CaseIterable, Identifiable, Codable {
 final class Localization: @unchecked Sendable { // written on the main actor only
     static let shared = Localization()
     /// The last one picked, kept on the phone so the first screen is already in it (the profile
-    /// has it too: NotificationService.loadSettings).
+    /// has it too: NotificationService.applyServer).
     var language: AppLanguage = UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:))
         ?? .deviceDefault {
         didSet { UserDefaults.standard.set(language.rawValue, forKey: "appLanguage") }
