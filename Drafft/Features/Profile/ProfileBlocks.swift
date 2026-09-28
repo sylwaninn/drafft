@@ -169,7 +169,7 @@ struct SportsWeekBlock: View {
                     HStack(spacing: DS.Space.md) {
                         Image(systemName: entry.sport.symbol)
                             .font(.system(size: 15, weight: .bold))
-                            .foregroundStyle(i == 0 ? DS.Palette.onLime : DS.Palette.night)
+                            .foregroundStyle(DS.Palette.night)
                             .frame(width: 38, height: 38)
                             // Same tone as its segment in the bar above: the bar reads as a legend.
                             .background(tone(i), in: .circle)
@@ -180,7 +180,7 @@ struct SportsWeekBlock: View {
                             if both {
                                 Text("You do it too")
                                     .font(.caption.weight(.bold))
-                                    .foregroundStyle(DS.Palette.lime)
+                                    .foregroundStyle(.white.opacity(0.6))
                             }
                         }
                         Spacer(minLength: DS.Space.sm)
@@ -188,7 +188,7 @@ struct SportsWeekBlock: View {
                             Text("\(entry.perWeek)×")
                                 .font(.display(28, relativeTo: .title2))
                                 .monospacedDigit()
-                                .foregroundStyle(both ? DS.Palette.lime : .white)
+                                .foregroundStyle(.white)
                                 // Fixed-width, right-aligned column so every row's number lines up.
                                 .frame(width: 52, alignment: .trailing)
                         }
