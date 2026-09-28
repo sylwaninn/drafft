@@ -107,7 +107,17 @@ final class AppModel {
     /// Where the deck stands (first load, a refusal like `location_required`).
     var deckState: DeckState = .idle
     enum DeckState: Equatable { case idle, loading, loaded, failed(String) }
-    var filters = DiscoverFilters() { didSet { if filters != oldValue { filtersChanged() } } }
+    var filters = DiscoverFilters.saved {
+        didSet {
+            guard filters != oldValue else { return }
+            filters.save()
+            if filters.audience != oldValue.audience { emptyPile = PackPhotos.pick(for: filters.audience) }
+            filtersChanged()
+        }
+    }
+    /// The photos on Discover's empty stack: the people you're looking for. Dealt again only when
+    /// "Show me" changes, never for distance, age or filters.
+    var emptyPile: [String] = []
     /// This session's swipes, last one last: what undo can bring back (the server undoes the last one,
     /// within 10 minutes, if it didn't make a match).
     var history: [Swiped] = []
