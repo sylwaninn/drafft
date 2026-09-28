@@ -91,7 +91,6 @@ struct ResetPasswordView: View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             DrafftField(title: L("New password"), text: $password, prompt: L("Create a password"), isSecure: true,
                         error: problem?.message, contentType: .newPassword, submitLabel: .done, onSubmit: primary)
-            StrengthBar(passed: passedRules, total: PasswordRule.all.count)
             VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
                 ForEach(PasswordRule.all) { rule in
                     let ok = rule.test(password)
