@@ -140,6 +140,7 @@ struct SuperLikeComposer: View {
         .padding(.top, DS.Space.lg)
         .padding(.bottom, DS.Space.xl)
         .frame(maxWidth: .infinity)
+        .nightSurface()
         .background { backdrop }
         .clipShape(.rect(cornerRadius: DS.Radius.xl))
         .shadow(color: .black.opacity(0.3), radius: 24, y: 12)

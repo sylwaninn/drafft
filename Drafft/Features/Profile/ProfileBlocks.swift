@@ -65,9 +65,9 @@ struct VoiceBlock: View {
                     Image(systemName: playing ? "pause.fill" : "play.fill")
                         .font(.system(size: 24, weight: .black))
                         .contentTransition(.symbolEffect(.replace))
-                        .foregroundStyle(DS.Palette.onLime)
+                        .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 64, height: 64)
-                        .background(DS.Palette.lime, in: .circle)
+                        .background(DS.Palette.accentOnNight, in: .circle)
                         .draftTrail(Circle(), step: CGSize(width: -10, height: 0))
                         .padding(.leading, 20)
                 }
@@ -88,7 +88,7 @@ struct VoiceBlock: View {
 
             TimelineView(.animation(paused: !playing)) { _ in
                 WaveformBars(levels: Waveform.seeded(profile.id, count: 48), progress: isCurrent ? audio.liveProgress : 0,
-                             played: DS.Palette.lime, unplayed: .white.opacity(0.22), barWidth: 3.5) { f in
+                             played: DS.Palette.accentOnNight, unplayed: .white.opacity(0.22), barWidth: 3.5) { f in
                     if isCurrent { audio.seek(to: f) }
                 }
             }
@@ -117,7 +117,7 @@ struct VoiceBlock: View {
             }
         }
         .padding(DS.Space.xl)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
         .animation(Motion.snappy, value: isCurrent)
     }
 }
@@ -204,7 +204,7 @@ struct SportsWeekBlock: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
     }
 }
 
@@ -216,7 +216,7 @@ struct GoalBlock: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
-            DraftGlyph(symbol: "flag.checkered", size: 40, fill: AnyShapeStyle(DS.Palette.night), glyph: DS.Palette.lime)
+            DraftGlyph(symbol: "flag.checkered", size: 40, fill: AnyShapeStyle(DS.Palette.onLimeWash), glyph: DS.Palette.onLime)
             VStack(alignment: .leading, spacing: DS.Space.xs) {
                 Text("Training for")
                     .font(.subheadline.weight(.bold))

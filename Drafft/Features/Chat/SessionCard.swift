@@ -47,10 +47,10 @@ struct SessionCard: View {
                 Label(youTeach ? "Discovery: you show \(profileName) the ropes" : "Discovery: \(profileName) shows you the ropes",
                       systemImage: "sparkles")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(DS.Palette.onLime)
+                    .foregroundStyle(DS.Palette.onAccentOnNight)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(DS.Palette.lime, in: .capsule)
+                    .background(DS.Palette.accentOnNight, in: .capsule)
             }
 
             if !session.tags.isEmpty {
@@ -80,7 +80,7 @@ struct SessionCard: View {
         }
         .padding(DS.Space.xl)
         .frame(width: 300, alignment: .leading)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
         .opacity(session.status == .countered || session.status == .cancelled ? 0.6 : 1)
         .accessibilityElement(children: .contain)
         .onAppear { if session.options.count == 1 { selected = session.options.first } }
@@ -127,9 +127,9 @@ struct SessionCard: View {
         return HStack(spacing: DS.Space.sm) {
             Image(systemName: state == .agreed ? "checkmark" : "calendar")
                 .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(on ? DS.Palette.onLime : .white)
+                .foregroundStyle(on ? DS.Palette.onAccentOnNight : .white)
                 .frame(width: 28, height: 28)
-                .background(on ? DS.Palette.lime : .white.opacity(0.14), in: .circle)
+                .background(on ? DS.Palette.accentOnNight : .white.opacity(0.14), in: .circle)
             VStack(alignment: .leading, spacing: 0) {
                 Text(d.formatted(.dateTime.weekday(.wide).day().month(.abbreviated).locale(.app)))
                     .font(.subheadline.weight(.semibold))

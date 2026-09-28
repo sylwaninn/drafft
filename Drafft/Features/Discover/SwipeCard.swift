@@ -47,6 +47,7 @@ struct SwipeCard: View {
 
             stamps
         }
+        .nightSurface()
         .clipShape(.rect(cornerRadius: DS.Radius.xl))
         .accessibilityElement(children: .contain)
         .accessibilityLabel("\(profile.name), \(profile.age). \(profile.sports.map(\.sport.name).joined(separator: ", "))")
@@ -71,12 +72,12 @@ struct SwipeCard: View {
                         .contentTransition(.numericText())
                 }
                 .font(.footnote.weight(.bold))
-                .foregroundStyle(playing ? DS.Palette.onLime : .white)
+                .foregroundStyle(playing ? DS.Palette.onAccentOnNight : .white)
                 .padding(.horizontal, DS.Space.md)
                 .frame(minHeight: 36)
                 // Glass over the photo; a dark tint keeps the white legible on bright shots.
-                // Lime while playing, so the active state reads at a glance.
-                .glassEffect(playing ? .regular.tint(DS.Palette.lime)
+                // Accent while playing, so the active state reads at a glance.
+                .glassEffect(playing ? .regular.tint(DS.Palette.accentOnNight)
                                      : .regular.tint(.black.opacity(0.3)), in: .capsule)
                 .frame(minHeight: 44)
             }

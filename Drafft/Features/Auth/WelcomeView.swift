@@ -90,7 +90,7 @@ struct WelcomeView: View {
                     .foregroundStyle(.white.opacity(0.6))
                 Button("Log in") { route.append(.logIn) }
                     .fontWeight(.semibold)
-                    .foregroundStyle(DS.Palette.lime)
+                    .foregroundStyle(DS.Palette.accentOnNight)
                     .buttonStyle(.textLink)
             }
             .font(.subheadline)
@@ -98,6 +98,7 @@ struct WelcomeView: View {
         }
         .padding(.horizontal, DS.Space.xl)
         .padding(.bottom, DS.Space.sm)
+        .nightSurface()
     }
 }
 

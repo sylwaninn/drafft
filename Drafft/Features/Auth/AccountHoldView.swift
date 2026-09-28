@@ -56,13 +56,13 @@ struct AccountHoldView: View {
         }
     }
 
-    private var tint: Color { hold == .banned ? DS.Palette.negative : DS.Palette.lime }
+    private var tint: Color { hold == .banned ? DS.Palette.negative : DS.Palette.accentOnNight }
 
     var body: some View {
         GeometryReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.xl) {
-                    Wordmark(size: 26, color: .white, trail: DS.Palette.lime)
+                    Wordmark(size: 26, color: .white, trail: DS.Palette.accentOnNight)
                         .accessibilityHidden(true)
                         .rise(appeared, step: 0, reduceMotion: reduceMotion)
                     Spacer(minLength: DS.Space.lg)
@@ -75,7 +75,7 @@ struct AccountHoldView: View {
                         Text(title)
                             .font(.display(40))
                             .displayLeading(40)
-                            .foregroundStyle(hold == .banned ? .white : DS.Palette.lime)
+                            .foregroundStyle(hold == .banned ? .white : DS.Palette.accentOnNight)
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityAddTraits(.isHeader)
                         Text(branded: message, font: .body)
@@ -94,6 +94,7 @@ struct AccountHoldView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
         }
+        .nightSurface()
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
         .background(DS.Palette.night.ignoresSafeArea())
         .onAppear { appeared = true }
@@ -162,6 +163,7 @@ struct AccountHoldView: View {
         .padding(.top, DS.Space.sm)
         .padding(.bottom, DS.Space.xs)
         .background(DS.Palette.night)
+        .nightSurface()
         .rise(appeared, step: 4, reduceMotion: reduceMotion)
     }
 

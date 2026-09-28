@@ -61,9 +61,9 @@ struct NotificationsSettingsView: View {
             HStack(spacing: DS.Space.md) {
                 Image(systemName: notifications.isAllowed ? "bell.badge.fill" : "bell.slash.fill")
                     .font(.title3.weight(.bold))
-                    .foregroundStyle(notifications.isAllowed ? DS.Palette.onLime : .white)
+                    .foregroundStyle(notifications.isAllowed ? DS.Palette.onAccentOnNight : .white)
                     .frame(width: 48, height: 48)
-                    .background(notifications.isAllowed ? DS.Palette.lime : .white.opacity(0.14), in: .circle)
+                    .background(notifications.isAllowed ? DS.Palette.accentOnNight : .white.opacity(0.14), in: .circle)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(notifications.isAllowed ? "Notifications are on" : "Notifications are off")
                         .font(.headline)
@@ -83,7 +83,7 @@ struct NotificationsSettingsView: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
     }
 
     /// The section title lives inside its white block (no loose text on the sage page).

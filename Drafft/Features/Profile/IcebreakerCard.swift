@@ -17,7 +17,7 @@ struct IcebreakerCard: View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             Text(title)
                 .font(.headline)
-                .foregroundStyle(DS.Palette.lime)
+                .foregroundStyle(DS.Palette.accentOnNight)
                 // Clear of the backdrop glyph's densest part.
                 .padding(.trailing, DS.Space.xxl)
 
@@ -46,7 +46,7 @@ struct IcebreakerCard: View {
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(alignment: .topTrailing) { backdrop }
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
         .animation(Motion.bouncy, value: guess)
         .animation(Motion.bouncy, value: revealed)
         .animation(Motion.bouncy, value: take)
@@ -72,7 +72,7 @@ struct IcebreakerCard: View {
     private var backdrop: some View {
         Image(systemName: icon)
             .font(.system(size: 168, weight: .bold))
-            .foregroundStyle(DS.Palette.lime.opacity(0.13))
+            .foregroundStyle(DS.Palette.accentOnNight.opacity(0.13))
             .rotationEffect(.degrees(-14))
             .offset(x: 44, y: -40)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -125,8 +125,8 @@ struct IcebreakerCard: View {
                             Text(isLie ? "Lie" : "True")
                                 .font(.caption.weight(.heavy))
                                 .padding(.horizontal, 8).padding(.vertical, 3)
-                                .background(isLie ? DS.Palette.lime : .white.opacity(0.14), in: .capsule)
-                                .foregroundStyle(isLie ? DS.Palette.onLime : .white)
+                                .background(isLie ? DS.Palette.accentOnNight : .white.opacity(0.14), in: .capsule)
+                                .foregroundStyle(isLie ? DS.Palette.onAccentOnNight : .white)
                                 .transition(.scale.combined(with: .opacity))
                         }
                     }
@@ -142,7 +142,7 @@ struct IcebreakerCard: View {
             if let guess {
                 Text(guess == lie ? "Nailed it. You read people well." : "Nope, that one's true. The lie was a different one.")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(guess == lie ? DS.Palette.lime : .white.opacity(0.7))
+                    .foregroundStyle(guess == lie ? DS.Palette.accentOnNight : .white.opacity(0.7))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .transition(.opacity)
             }
@@ -170,7 +170,7 @@ struct IcebreakerCard: View {
                 ZStack(alignment: .leading) {
                     Text(punchline)
                         .font(.title3.weight(.semibold))
-                        .foregroundStyle(DS.Palette.lime)
+                        .foregroundStyle(DS.Palette.accentOnNight)
                         .blur(radius: revealed ? 0 : 9)
                         .opacity(revealed ? 1 : 0.6)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -216,9 +216,9 @@ struct IcebreakerCard: View {
                         }
                         .frame(maxWidth: .infinity, minHeight: 64)
                         .padding(.horizontal, DS.Space.sm)
-                        .foregroundStyle(on ? DS.Palette.onLime : .white)
+                        .foregroundStyle(on ? DS.Palette.onAccentOnNight : .white)
                         // Yours: solid accent. Theirs (when different): an accent wash. No frames.
-                        .background(on ? DS.Palette.lime : theirs ? DS.Palette.selectedOnNight : .white.opacity(0.1),
+                        .background(on ? DS.Palette.accentOnNight : theirs ? DS.Palette.selectedOnNight : .white.opacity(0.1),
                                     in: .rect(cornerRadius: DS.Radius.lg))
                     }
                     .buttonStyle(PressScaleStyle(scale: 0.96))
@@ -229,7 +229,7 @@ struct IcebreakerCard: View {
             if let choice {
                 Text(choice == pick ? "Same pick as \(profile.name)!" : "\(profile.name) went the other way.")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(choice == pick ? DS.Palette.lime : .white.opacity(0.7))
+                    .foregroundStyle(choice == pick ? DS.Palette.accentOnNight : .white.opacity(0.7))
                     .transition(.opacity)
             }
         }
@@ -253,7 +253,7 @@ struct IcebreakerCard: View {
                         Text(options[i]).font(.body.weight(.medium)).frame(maxWidth: .infinity, alignment: .leading)
                         if choice != nil && (right || picked) {
                             Image(systemName: right ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                .foregroundStyle(right ? DS.Palette.lime : .white.opacity(0.7))
+                                .foregroundStyle(right ? DS.Palette.accentOnNight : .white.opacity(0.7))
                                 .transition(.scale.combined(with: .opacity))
                         }
                     }
@@ -268,7 +268,7 @@ struct IcebreakerCard: View {
             if let choice {
                 Text(choice == answer ? "Right! You know \(profile.name) already." : "Not quite. Now you know.")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(choice == answer ? DS.Palette.lime : .white.opacity(0.7))
+                    .foregroundStyle(choice == answer ? DS.Palette.accentOnNight : .white.opacity(0.7))
                     .transition(.opacity)
             }
         }
@@ -289,7 +289,7 @@ struct IcebreakerCard: View {
                 let agree = profile.id.unicodeScalars.reduce(0) { $0 + Int($1.value) } % 40 + 30
                 GeometryReader { geo in
                     HStack(spacing: 3) {
-                        Capsule().fill(DS.Palette.lime).frame(width: geo.size.width * CGFloat(agree) / 100)
+                        Capsule().fill(DS.Palette.accentOnNight).frame(width: geo.size.width * CGFloat(agree) / 100)
                         Capsule().fill(.white.opacity(0.25))
                     }
                 }
@@ -310,8 +310,8 @@ struct IcebreakerCard: View {
             Label(label, systemImage: icon)
                 .font(.subheadline.weight(.bold))
                 .frame(maxWidth: .infinity, minHeight: 48)
-                .foregroundStyle(on ? DS.Palette.onLime : .white)
-                .background(on ? DS.Palette.lime : .white.opacity(0.1), in: .rect(cornerRadius: DS.Radius.lg))
+                .foregroundStyle(on ? DS.Palette.onAccentOnNight : .white)
+                .background(on ? DS.Palette.accentOnNight : .white.opacity(0.1), in: .rect(cornerRadius: DS.Radius.lg))
         }
         .buttonStyle(PressScaleStyle(scale: 0.96))
         .accessibilityAddTraits(on ? .isSelected : [])

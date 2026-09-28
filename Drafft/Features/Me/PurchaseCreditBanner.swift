@@ -47,7 +47,7 @@ struct PurchaseCreditBanner: View {
                     } label: {
                         Text("Contact us")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(DS.Palette.lime)
+                            .foregroundStyle(DS.Palette.accentOnNight)
                             .frame(minHeight: 44, alignment: .leading)
                             .contentShape(.rect)
                     }
@@ -75,13 +75,13 @@ struct PurchaseCreditBanner: View {
             if state == .credited {
                 Image(systemName: "checkmark")
                     .font(.title3.weight(.heavy))
-                    .foregroundStyle(DS.Palette.onLime)
+                    .foregroundStyle(DS.Palette.onAccentOnNight)
             } else {
-                ProgressView().tint(DS.Palette.onLime)
+                ProgressView().tint(DS.Palette.onAccentOnNight)
             }
         }
         .frame(width: 48, height: 48)
-        .background(DS.Palette.lime, in: .circle)
+        .background(DS.Palette.accentOnNight, in: .circle)
         .accessibilityHidden(true)
     }
 }

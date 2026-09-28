@@ -253,10 +253,10 @@ struct ProposeSessionSheet: View {
                 Text(original.discovery == nil ? original.sport.name : L("\(original.sport.name) discovery"))
                     .font(.footnote.weight(.bold))
             }
-            .foregroundStyle(DS.Palette.onLime)
+            .foregroundStyle(DS.Palette.onAccentOnNight)
             .padding(.horizontal, DS.Space.md)
             .frame(minHeight: 30)
-            .background(DS.Palette.lime, in: .capsule)
+            .background(DS.Palette.accentOnNight, in: .capsule)
 
             Text(original.displayTitle)
                 .font(.displayBold(26, relativeTo: .title2))
@@ -277,7 +277,7 @@ struct ProposeSessionSheet: View {
             }
         }
         .padding(DS.Space.xl)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading).nightSurface()
         // A sheet: plain night.
         .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
         .overlay {

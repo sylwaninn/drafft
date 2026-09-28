@@ -39,9 +39,9 @@ struct CalendarAccessBanner: View {
         HStack(spacing: DS.Space.md) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.title3.weight(.bold))
-                .foregroundStyle(DS.Palette.onLime)
+                .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 48, height: 48)
-                .background(DS.Palette.lime, in: .circle)
+                .background(DS.Palette.accentOnNight, in: .circle)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: DS.Space.xs) {
                 Text("Calendar access is off for drafft.")
@@ -54,7 +54,7 @@ struct CalendarAccessBanner: View {
                 } label: {
                     Text("Open Settings")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(DS.Palette.lime)
+                        .foregroundStyle(DS.Palette.accentOnNight)
                         .frame(minHeight: 44, alignment: .leading)
                         .contentShape(.rect)
                 }

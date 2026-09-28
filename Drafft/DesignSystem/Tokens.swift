@@ -31,34 +31,54 @@ enum DS {
     enum Palette {
         /// The brand accent can switch between the original lime, plum, tangerine and violet (trials).
         /// The token names stay "lime" (the role: the one accent); only the values change.
-        enum Accent { case lime, plum, tangerine, violet }
-        static let accent: Accent = .tangerine
+        enum Accent { case lime, plum, tangerine, violet, graphite }
+        static let accent: Accent = .graphite
 
-        private static func pick(_ lime: Color, plum: Color, tangerine: Color, violet: Color) -> Color {
-            switch accent { case .lime: lime; case .plum: plum; case .tangerine: tangerine; case .violet: violet }
+        private static func pick(_ lime: Color, plum: Color, tangerine: Color, violet: Color, graphite: Color) -> Color {
+            switch accent {
+            case .lime: lime
+            case .plum: plum
+            case .tangerine: tangerine
+            case .violet: violet
+            case .graphite: graphite
+            }
         }
 
         static let lime = pick(Color(hex: 0x9FE870), plum: Color(hex: 0xC47EF2),
-                               tangerine: Color(hex: 0xFF6B1A), violet: Color(hex: 0x7D70FD))
+                               tangerine: Color(hex: 0xFF6B1A), violet: Color(hex: 0x7D70FD),
+                               graphite: Color(light: 0x111214, dark: 0xF2F3F5))
         static let limeActive = pick(Color(hex: 0xCDFFAD), plum: Color(hex: 0xE3C4FA),
-                               tangerine: Color(hex: 0xFFAC7D), violet: Color(hex: 0xB5ADFE))
+                               tangerine: Color(hex: 0xFFAC7D), violet: Color(hex: 0xB5ADFE),
+                               graphite: Color(light: 0x3A3E42, dark: 0xD9DBDE))
         static let limeNeutral = pick(Color(hex: 0xC5EDAB), plum: Color(hex: 0xDDB8F7),
-                               tangerine: Color(hex: 0xFF9A5F), violet: Color(hex: 0xA49BFE))
+                               tangerine: Color(hex: 0xFF9A5F), violet: Color(hex: 0xA49BFE),
+                               graphite: Color(light: 0x55595E, dark: 0xC4C7CB))
         static let limePale = pick(Color(light: 0xE2F6D5, dark: 0x1E2A14), plum: Color(light: 0xF3E8FB, dark: 0x2A1A36),
                                    tangerine: Color(light: 0xFFEBDC, dark: 0x33200F),
-                                   violet: Color(light: 0xEEECFF, dark: 0x1E1B3A))
+                                   violet: Color(light: 0xEEECFF, dark: 0x1E1B3A),
+                               graphite: Color(light: 0xE4E6E9, dark: 0x26292C))
         /// Text and glyphs on the accent. Tangerine and violet: white, by choice (bold labels and icons only).
-        static let onLime = pick(Color(hex: 0x0E0F0C), plum: Color(hex: 0x1E0A2B), tangerine: Color(hex: 0xFFFFFF), violet: Color(hex: 0xFFFFFF))
+        static let onLime = pick(Color(hex: 0x0E0F0C), plum: Color(hex: 0x1E0A2B), tangerine: Color(hex: 0xFFFFFF),
+                                 violet: Color(hex: 0xFFFFFF), graphite: Color(light: 0xFFFFFF, dark: 0x111214))
         /// The accent as text or a glyph on neutral surfaces: links, the selected tab, "Typing",
         /// the app tint. Light mode is the accent darkened just enough for 4.5:1 on white (#B84600,
         /// still read as orange, not brown); dark mode lifts it (#FF8A45, 8:1 on the page).
         /// Violet: #6356F5 in light (5:1 on white), #A59CFF in dark (8:1 on the page).
         static let accentInk = pick(Color(light: 0x163300, dark: 0xC5EDAB), plum: Color(light: 0x3E174F, dark: 0xDDB8F7),
                                     tangerine: Color(light: 0xB84600, dark: 0xFF8A45),
-                                    violet: Color(light: 0x6356F5, dark: 0xA59CFF))
+                                    violet: Color(light: 0x6356F5, dark: 0xA59CFF),
+                               graphite: Color(light: 0x111214, dark: 0xF2F3F5))
         /// Selected fill on a night surface (plan rows, time options, icebreaker picks): an accent
         /// wash, never a frame.
-        static let selectedOnNight = lime.opacity(0.26)
+        static let selectedOnNight = accent == .graphite ? Color.white.opacity(0.16) : lime.opacity(0.26)
+        /// The accent on a night surface. Graphite is near-black, so there it turns white and what
+        /// sits on it turns ink; the other accents keep their own colour. Components pick it up
+        /// from `isNightSurface`; night screens use it directly.
+        static let accentOnNight = accent == .graphite ? Color(light: 0xFFFFFF, dark: 0xF2F3F5) : lime
+        static let accentOnNightActive = accent == .graphite ? Color(hex: 0xD9DBDE) : limeActive
+        static let onAccentOnNight = accent == .graphite ? Color(hex: 0x111214) : onLime
+        /// "tempo" set on an accent fill: night on the colour accents, a light grey on graphite.
+        static let tierOnAccent = accent == .graphite ? Color(light: 0xB8BCC2, dark: 0x55595E) : night
         /// Glyph discs sitting on an accent fill (the Plus card, a picked sport tile).
         static let onLimeWash = onLime.opacity(0.22)
 
@@ -89,15 +109,19 @@ enum DS {
         /// white blocks still stand out; body 7.8:1, mute 5.1:1 and accent ink 4.6:1 on it.
         static let sage = pick(Color(light: 0xE8EBE6, dark: 0x0E0F0C), plum: Color(light: 0xF1E9F4, dark: 0x120D14),
                                tangerine: Color(light: 0xF6EDE6, dark: 0x14100C),
-                               violet: Color(light: 0xEDECF2, dark: 0x0E0E11))
+                               violet: Color(light: 0xEDECF2, dark: 0x0E0E11),
+                               graphite: Color(light: 0xEEEFF1, dark: 0x0E0F10))
         static let hairline = pick(Color(light: 0xD6DAD3, dark: 0x2C2F29), plum: Color(light: 0xE0D5E5, dark: 0x2E2830),
                                    tangerine: Color(light: 0xE6DBD2, dark: 0x302A25),
-                                   violet: Color(light: 0xD9D8E0, dark: 0x2A2A30))
+                                   violet: Color(light: 0xD9D8E0, dark: 0x2A2A30),
+                               graphite: Color(light: 0xDADCE0, dark: 0x2A2C2F))
 
         /// Always-dark surface used for the polarity-flipped moments. In dark mode it's lifted a
         /// step above the page (which is near-black there too), so night blocks stay distinct.
-        static let night = Color(light: 0x0E0F0C, dark: 0x23261F)
-        static let nightRaised = Color(light: 0x1D1F1A, dark: 0x2E3229)
+        static let night = accent == .graphite ? Color(light: 0x2A2D31, dark: 0x232528)
+            : Color(light: 0x0E0F0C, dark: 0x23261F)
+        static let nightRaised = accent == .graphite ? Color(light: 0x383B40, dark: 0x2E3033)
+            : Color(light: 0x1D1F1A, dark: 0x2E3229)
         /// Hairline around coloured blocks: invisible in light mode, a faint edge in dark mode.
         static let blockEdge = Color(uiColor: UIColor { $0.userInterfaceStyle == .dark
             ? UIColor.white.withAlphaComponent(0.09) : .clear })
@@ -105,7 +129,8 @@ enum DS {
         /// lifted grey in dark mode so they don't sink into the black page.
         static let deckVeil = pick(Color(light: 0xE8EBE6, dark: 0x1A1C18), plum: Color(light: 0xF1E9F4, dark: 0x1D1820),
                                    tangerine: Color(light: 0xF6EDE6, dark: 0x1F1A16),
-                                   violet: Color(light: 0xEDECF2, dark: 0x1B1B20))
+                                   violet: Color(light: 0xEDECF2, dark: 0x1B1B20),
+                               graphite: Color(light: 0xEEEFF1, dark: 0x1B1C1E))
         /// Short modal sheets (confirmations, purchase confirmation, photo refused) sit a step
         /// above anything under them, other sheets included. Light mode: white; dark mode: a grey
         /// lifted above the page, night blocks and regular sheets (`Surface`).
@@ -265,9 +290,16 @@ struct Surface: ShapeStyle {
 
 extension EnvironmentValues {
     @Entry var isSheetSurface = false
+    /// Content sits on a night surface: components swap the accent for `accentOnNight`.
+    @Entry var isNightSurface = false
 }
 
 extension View {
+    /// Marks content drawn on a night surface (see `isNightSurface`).
+    func nightSurface() -> some View {
+        environment(\.isNightSurface, true)
+    }
+
     /// Marks a sheet's content: page and block tones flip (see `Surface`), and the sheet's own
     /// background (under the grabber, behind the keyboard) is the lifted tone.
     func sheetSurface() -> some View {

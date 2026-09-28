@@ -62,7 +62,7 @@ struct CalendarButton: View {
                 Button { open() } label: {
                     Image(systemName: added ? "calendar.badge.checkmark" : "calendar.badge.plus")
                         .font(.body.weight(.bold))
-                        .foregroundStyle(added ? DS.Palette.lime : .white)
+                        .foregroundStyle(added ? DS.Palette.accentOnNight : .white)
                         .contentTransition(.symbolEffect(.replace))
                         .frame(width: 52, height: 52)
                         .background(.white.opacity(0.14), in: .circle)
@@ -72,7 +72,7 @@ struct CalendarButton: View {
                 Button { open() } label: {
                     Label("In your calendar", systemImage: "calendar.badge.checkmark")
                         .font(.body.weight(.semibold))
-                        .foregroundStyle(DS.Palette.lime)
+                        .foregroundStyle(DS.Palette.accentOnNight)
                         .frame(maxWidth: .infinity, minHeight: 52)
                         .background(.white.opacity(0.1), in: .rect(cornerRadius: DS.Radius.xl))
                 }
