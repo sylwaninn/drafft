@@ -53,6 +53,7 @@ No real users, testimonials, photos, or metrics. All people, photos, and convers
 5. Native iPhone conventions first; brand lives in color, type, and motion.
 6. Never leave people guessing what to do next: the validate action is always on screen, disabled until it can run (the screen itself says what's missing, not a line under the button).
 7. Always live: whatever the server changes (balance, holds, photo decisions, likes, matches, sessions) reaches the screen at once, over the account's Realtime channel, and is read again on return to the foreground or after a reconnection. Nothing waits for a relaunch or a pull to refresh.
+8. One language per person: everything sent to someone (push, email, SMS, support reply, cancellation) is in their app's language (the 7 languages of the app), with the same phrases as the app.
 
 ## Accessibility & Inclusion
 
