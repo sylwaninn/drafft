@@ -13,7 +13,7 @@ actor Backend {
         var errorDescription: String? {
             switch self {
             case let .http(status, message): "Backend \(status): \(message)"
-            case .signedOut: "Not signed in"
+            case .signedOut: L("You've been logged out. Log in again to continue.")
             }
         }
     }

@@ -377,16 +377,14 @@ struct OnboardingView: View {
         finishing = true
         Task {
             defer { finishing = false }
-            // Signed in: the profile goes to the server first (demo builds without an account skip it).
-            if await Backend.shared.hasSession {
-                do {
-                    try await ProfileSync.finish(signUp)
-                } catch {
-                    Haptics.warning()
-                    finishError = (error as? LocalizedError)?.errorDescription
-                        ?? L("Couldn't connect. Check your connection and try again.")
-                    return
-                }
+            // The profile goes to the server first; without a session it fails and says so.
+            do {
+                try await ProfileSync.finish(signUp)
+            } catch {
+                Haptics.warning()
+                finishError = (error as? LocalizedError)?.errorDescription
+                    ?? L("Couldn't connect. Check your connection and try again.")
+                return
             }
             Haptics.success()
             app.finishOnboarding(p)

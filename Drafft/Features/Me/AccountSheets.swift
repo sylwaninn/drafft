@@ -438,25 +438,29 @@ struct DeleteAccountSheet: View {
     @State private var reason: String?
     @State private var understood = false
     @State private var loading = false
-    @State private var failed = false
+    @State private var failure: String?
 
     private var reasons: [String] { [L("I met someone"), L("I need a break"), L("Not enough people nearby"), L("Something else")] }
 
     var body: some View {
         AccountSheet(title: L("Delete account"), actionTitle: L("Delete my account"), actionIcon: "trash.fill",
                      destructive: true, enabled: understood, loading: loading,
-                     error: failed ? L("We couldn't delete your account. Check your connection and try again.") : nil) {
+                     error: failure) {
             loading = true
-            failed = false
+            failure = nil
             Task {
                 do {
                     try await app.deleteAccount()
                     Haptics.success()
                     dismiss()
+                } catch Backend.BackendError.signedOut {
+                    Haptics.warning()
+                    loading = false
+                    failure = L("You're logged out, so nothing was deleted. Log in again, then delete your account.")
                 } catch {
                     Haptics.warning()
                     loading = false
-                    failed = true
+                    failure = L("We couldn't delete your account. Check your connection and try again.")
                 }
             }
         } content: {

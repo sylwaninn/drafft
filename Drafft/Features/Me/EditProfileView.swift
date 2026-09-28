@@ -537,16 +537,14 @@ struct EditProfileView: View {
         saving = true
         Task {
             defer { saving = false }
-            // Signed in: saved on the server first; nothing changes in the app if it fails.
-            if await Backend.shared.hasSession {
-                do {
-                    try await ProfileSync.save(result, previous: previous, voice: recorded)
-                } catch {
-                    Haptics.warning()
-                    saveError = (error as? LocalizedError)?.errorDescription
-                        ?? L("Couldn't connect. Check your connection and try again.")
-                    return
-                }
+            // Saved on the server first; nothing changes in the app if it fails (signed out included).
+            do {
+                try await ProfileSync.save(result, previous: previous, voice: recorded)
+            } catch {
+                Haptics.warning()
+                saveError = (error as? LocalizedError)?.errorDescription
+                    ?? L("Couldn't connect. Check your connection and try again.")
+                return
             }
             Haptics.success()
             app.me = result
