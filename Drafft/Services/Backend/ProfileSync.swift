@@ -11,10 +11,13 @@ enum ProfileSync {
         case photoUpload
         /// The server refused: its hint code (`underage`, `photo_required`…).
         case refused(String)
+        /// The profile on the server wasn't read in this session: saving could overwrite it.
+        case notLoaded
 
         var errorDescription: String? {
             switch self {
             case .photoUpload: L("A photo couldn't be sent. Tap it to see why, then try again.")
+            case .notLoaded: L("Your profile hasn't loaded, so nothing was saved. Close and try again.")
             case .refused(let code): Self.message(for: code)
             }
         }
@@ -31,6 +34,10 @@ enum ProfileSync {
             }
         }
     }
+
+    /// The account whose server profile was read (or sent by sign-up) in this session. Edit profile
+    /// only saves over that one: never over a profile it didn't see.
+    @MainActor static var loadedAccount: UUID?
 
     // MARK: Sign-up
 
@@ -73,12 +80,15 @@ enum ProfileSync {
             _ = try? await Backend.shared.rpc("set_location", ["p_lat": c.latitude, "p_lng": c.longitude])
         }
         do { _ = try await Backend.shared.rpc("complete_onboarding", [:]) } catch { throw refused(error) }
+        let id = await Backend.shared.userID
+        await MainActor.run { loadedAccount = id }
     }
 
     // MARK: Edit profile
 
     /// Saves Edit profile's changes (the birthday stays as set at sign-up).
     static func save(_ p: Profile, previous: Profile, voice: (url: URL, duration: TimeInterval, levels: [Float])?) async throws {
+        try await requireLoaded()
         var fields: [String: Any] = [
             "name": p.name,
             "bio": p.bio,
@@ -91,7 +101,13 @@ enum ProfileSync {
         do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
         if p.sports != previous.sports { try await setSports(p.sports) }
         if p.prompts != previous.prompts { try await setPrompts(p.prompts) }
-        if p.allPhotos != previous.allPhotos { try await syncPhotos(p.allPhotos) }
+        if p.allPhotos != previous.allPhotos { try await syncPhotos(p.allPhotos, loadedFirst: true) }
+    }
+
+    /// Throws unless this session read the signed-in account's profile from the server.
+    private static func requireLoaded() async throws {
+        let id = await Backend.shared.userID
+        guard let id, await loadedAccount == id else { throw SyncError.notLoaded }
     }
 
     // MARK: Read back
@@ -141,6 +157,7 @@ enum ProfileSync {
         } ?? 18
         var vitals = Vitals(drinks: row.drinks, smokes: row.smokes, diet: row.diet, chronotype: row.chronotype)
         if !vitals.hasLifestyle { vitals = .blank }
+        await MainActor.run { loadedAccount = id }
         return Profile(
             id: "me",
             name: row.name,
@@ -179,7 +196,12 @@ enum ProfileSync {
 
     /// Waits for the picked photos to reach the server, drops the ones taken off the profile, and
     /// puts the rest in the profile's order. Photos already on the server (URLs) keep their id.
-    private static func syncPhotos(_ photos: [String]) async throws {
+    /// From Edit profile (`loadedFirst`), only once the server's profile was read in this session:
+    /// otherwise the list could be another profile's, and every photo missing from it would go.
+    private static func syncPhotos(_ photos: [String], loadedFirst: Bool = false) async throws {
+        if loadedFirst { try await requireLoaded() }
+        // Only picked files and server URLs: anything else isn't a photo of this account.
+        guard photos.allSatisfy({ $0.isEmpty || $0.hasPrefix("/") || $0.hasPrefix("http") }) else { throw SyncError.notLoaded }
         for path in photos where path.hasPrefix("/") {
             guard await PhotoModeration.shared.waitForID(path) != nil else { throw SyncError.photoUpload }
         }
