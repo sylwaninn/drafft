@@ -50,6 +50,10 @@ struct EdgeFunctionTicketProvider: UploadTicketProviding {
         guard status == 200 else {
             struct Failure: Decodable { let code: String }
             if let failure = try? JSONDecoder().decode(Failure.self, from: data) {
+                // An account on hold can't upload to chats: the hold screen takes over and says why.
+                if status == 403, failure.code == "moderated" {
+                    await MainActor.run { NotificationCenter.default.post(name: .accountHeldByServer, object: nil) }
+                }
                 throw MediaUploadError.rejected(code: failure.code)
             }
             throw MediaUploadError.http(status)

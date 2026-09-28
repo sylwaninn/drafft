@@ -194,7 +194,8 @@ actor Backend {
             let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             // PostgREST sends `"hint": null` when there's no code (NSNull here): skip it, not stop at it.
             let message = ["hint", "msg", "message", "code"].lazy.compactMap { body?[$0] as? String }.first
-            if body?["hint"] as? String == "moderated" {
+            // On hold (moderation): a database function's hint or an edge function's 403 `moderated`.
+            if body?["hint"] as? String == "moderated" || (status == 403 && body?["code"] as? String == "moderated") {
                 await MainActor.run { NotificationCenter.default.post(name: .accountHeldByServer, object: nil) }
             } else if Self.saysPaused(status: status, body: body) {
                 await MainActor.run { NotificationCenter.default.post(name: .profilePausedByServer, object: nil) }
