@@ -64,13 +64,15 @@ enum ProfileSync {
         fields.merge(vitalsFields(s.lifestyle)) { $1 }
         if let ice = s.icebreaker { fields["icebreaker"] = ice.json }
         if let voice = s.voice { fields.merge(try await uploadVoice(voice)) { $1 } }
-        do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
-        try await setSports(s.sports)
-        try await setPrompts(s.prompts)
-        try await syncPhotos(s.photos)
-        if let c = s.location {
-            _ = try? await Backend.shared.rpc("set_location", ["p_lat": c.latitude, "p_lng": c.longitude])
-        }
+        // Independent writes go out together (one round trip of waiting, not five), then
+        // `complete_onboarding` checks the result.
+        let location = s.location
+        async let profile: Void = updateProfile(fields)
+        async let sports: Void = setSports(s.sports)
+        async let prompts: Void = setPrompts(s.prompts)
+        async let photos: Void = syncPhotos(s.photos)
+        async let area: Void = setLocation(location)
+        _ = try await (profile, sports, prompts, photos, area)
         do { _ = try await Backend.shared.rpc("complete_onboarding", [:]) } catch { throw refused(error) }
         let id = await Backend.shared.userID
         await MainActor.run { loadedAccount = id }
@@ -90,10 +92,14 @@ enum ProfileSync {
         ]
         fields.merge(vitalsFields(p.vitals ?? .blank)) { $1 }
         if let voice { fields.merge(try await uploadVoice(voice)) { $1 } }
-        do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
-        if p.sports != previous.sports { try await setSports(p.sports) }
-        if p.prompts != previous.prompts { try await setPrompts(p.prompts) }
-        if p.allPhotos != previous.allPhotos { try await syncPhotos(p.allPhotos, loadedFirst: true) }
+        // Only what changed, all at once.
+        let sportsChanged = p.sports != previous.sports, promptsChanged = p.prompts != previous.prompts
+        let photosChanged = p.allPhotos != previous.allPhotos
+        async let profile: Void = updateProfile(fields)
+        async let sports: Void = sportsChanged ? setSports(p.sports) : ()
+        async let prompts: Void = promptsChanged ? setPrompts(p.prompts) : ()
+        async let photos: Void = photosChanged ? syncPhotos(p.allPhotos, loadedFirst: true) : ()
+        _ = try await (profile, sports, prompts, photos)
     }
 
     /// Throws unless this session read the signed-in account's profile from the server.
@@ -222,6 +228,16 @@ enum ProfileSync {
 
     // MARK: Pieces
 
+    private static func updateProfile(_ fields: sending [String: Any]) async throws {
+        do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
+    }
+
+    /// Best effort: the area can be set again later from the app.
+    private static func setLocation(_ c: CLLocationCoordinate2D?) async {
+        guard let c else { return }
+        _ = try? await Backend.shared.rpc("set_location", ["p_lat": c.latitude, "p_lng": c.longitude])
+    }
+
     private static func setSports(_ sports: [SportEntry]) async throws {
         let list = sports.map { ["sport": $0.sport.rawValue, "perWeek": $0.perWeek] as [String: Any] }
         do { _ = try await Backend.shared.rpc("set_sports", ["p_sports": list]) } catch { throw refused(error) }
@@ -253,8 +269,11 @@ enum ProfileSync {
             if path.hasPrefix("http") { return onServer.first { path.hasSuffix("/" + $0.key) }?.id }
             return await PhotoModeration.shared.id(for: path)
         }
-        for m in onServer where !order.contains(m.id) {
-            _ = try? await Backend.shared.rpc("delete_media", ["p_id": m.id])
+        // Photos taken off the profile: removed together rather than one after the other.
+        await withTaskGroup(of: Void.self) { group in
+            for m in onServer where !order.contains(m.id) {
+                group.addTask { _ = try? await Backend.shared.rpc("delete_media", ["p_id": m.id]) }
+            }
         }
         if order.count > 1 {
             do { _ = try await Backend.shared.rpc("reorder_media", ["p_ids": order]) } catch { throw refused(error) }
