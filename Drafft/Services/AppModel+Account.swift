@@ -117,16 +117,16 @@ extension AppModel {
         sessionEndedNotice = true
     }
 
-    /// A link from an auth email: a confirmed sign-up goes on to sign-up, a reset asks for the new password.
-    func handleAuthLink(_ url: URL) async {
-        guard let link = try? await Backend.shared.handleAuthLink(url) else { return }
-        switch link {
-        case .confirmed:
-            email = await Backend.shared.client.auth.currentUser?.email ?? email
-            if phase == .welcome { signIn(onboard: true) }
-        case .resetPassword:
-            choosingNewPassword = true
-        }
+    /// `session_revoked` on the person's topic (UserChannel): sessions ended on the server (sophros "Sign
+    /// out everywhere", a sign-out everywhere from another device). If this device's is one of them, it
+    /// signs out now, while its token still works: the push token is dropped and purchases stop following
+    /// the account. watchSession then shows "You've been logged out".
+    func sessionsRevoked(_ ids: [String]) async {
+        guard let mine = await Backend.shared.sessionID, ids.contains(mine) else { return }
+        let token = NotificationService.shared.deviceToken
+        await Store.shared.unlink()
+        if let token { _ = try? await Backend.shared.rpc("unregister_push_token", ["p_token": token]) }
+        await Backend.shared.signOut()
     }
 
     func signOut() {

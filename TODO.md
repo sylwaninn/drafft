@@ -10,8 +10,8 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
 - [ ] Service protocols (profiles, discover, likes, matches, sessions, safety, media) with two
       implementations: the current mock and Supabase. Views keep talking to `AppModel`.
 - [x] Auth: email + password on Supabase Auth (`Backend`, session in the Keychain, refreshed by the SDK), sign-up
-      with email confirmation (`ConfirmEmailView`), log in, reset password, links back into the app
-      (`drafft://auth-callback`, `/reset` → `NewPasswordView`), session restored at launch, change email/password,
+      with email confirmation (`ConfirmEmailView`), log in, reset password by a 6-digit code (`ResetPasswordView`, no
+      link: every auth email carries a code), session restored at launch, change email/password,
       delete account (`delete-account`), sign out (unregisters the push token).
 - [x] Sign-up and profile on the server (`ProfileSync`): sign-up sends the answers, sports, prompts, voice intro,
       photos (in order) and the blurred position, then `complete_onboarding` (its refusals shown under the button);

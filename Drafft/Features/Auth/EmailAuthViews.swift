@@ -261,6 +261,8 @@ struct LogInView: View {
     @State private var passwordError: String?
     @State private var loading = false
     @State private var showReset = false
+    /// An account whose email was never confirmed: its code comes first (sign-up goes email, code, phone).
+    @State private var confirmingEmail = false
     @FocusState private var focus: SignUpView.Field?
 
     var body: some View {
@@ -295,6 +297,7 @@ struct LogInView: View {
         .onChange(of: password) { passwordError = nil }
         // Its own page, pushed like the rest of the auth flow (not an alert).
         .navigationDestination(isPresented: $showReset) { ResetPasswordView(email: email) }
+        .navigationDestination(isPresented: $confirmingEmail) { ConfirmEmailView(email: email) }
     }
 
     private func submit() {
@@ -320,7 +323,16 @@ struct LogInView: View {
             } catch {
                 Haptics.warning()
                 let problem = AuthProblem(error)
-                if problem == .emailNotConfirmed { emailError = problem.message } else { passwordError = problem.message }
+                if problem == .emailNotConfirmed {
+                    // A new code, then the code step: confirming it signs in and goes on to sign-up.
+                    if (try? await Backend.shared.resendConfirmation(to: email)) != nil {
+                        confirmingEmail = true
+                    } else {
+                        emailError = problem.message
+                    }
+                } else {
+                    passwordError = problem.message
+                }
             }
         }
     }

@@ -172,12 +172,6 @@ struct RootView: View {
             await app.restoreSession()
             sessionChecked = true
         }
-        // Links in auth emails (confirm sign-up, reset password).
-        .onOpenURL { url in Task { await app.handleAuthLink(url) } }
-        .sheet(isPresented: Binding(get: { app.choosingNewPassword }, set: { app.choosingNewPassword = $0 })) {
-            NavigationStack { NewPasswordView() }
-                .sheetSurface()
-        }
     }
 }
 
