@@ -60,6 +60,23 @@ struct PhoneCountry: Hashable, Identifiable {
         .init(flag: "🇺🇸", region: "US", dial: "+1", digits: 10...10, example: "201 555 0123"),
         .init(flag: "🇨🇦", region: "CA", dial: "+1", digits: 10...10, example: "506 234 5678")
     ]
+
+    /// "+33 6 12 34 56 78": the dial code, then the national digits by pairs after the first.
+    static func format(dial: String, national: String) -> String {
+        guard let first = national.first else { return dial }
+        var pairs: [String] = [String(first)]
+        var rest = Substring(national.dropFirst())
+        while !rest.isEmpty { pairs.append(String(rest.prefix(2))); rest = rest.dropFirst(2) }
+        return "\(dial) \(pairs.joined(separator: " "))"
+    }
+
+    /// The account's number as Supabase Auth keeps it ("33612345678"), written like the app writes it.
+    static func display(_ stored: String) -> String {
+        let digits = stored.filter(\.isNumber)
+        guard let country = all.filter({ digits.hasPrefix($0.dial.dropFirst()) }).max(by: { $0.dial.count < $1.dial.count })
+        else { return "+" + digits }
+        return format(dial: country.dial, national: String(digits.dropFirst(country.dial.count - 1)))
+    }
 }
 
 /// Front-end state machine for phone verification: number, code, verified, or locked.
@@ -115,12 +132,7 @@ final class PhoneVerificationModel {
     /// "+33 6 12 34 56 78"
     var displayNumber: String {
         if let restoredDisplay, number.isEmpty { return restoredDisplay }
-        let d = nationalDigits
-        guard let first = d.first else { return country.dial }
-        var pairs: [String] = [String(first)]
-        var rest = Substring(d.dropFirst())
-        while !rest.isEmpty { pairs.append(String(rest.prefix(2))); rest = rest.dropFirst(2) }
-        return "\(country.dial) \(pairs.joined(separator: " "))"
+        return PhoneCountry.format(dial: country.dial, national: nationalDigits)
     }
 
     var primaryTitle: String {

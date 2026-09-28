@@ -13,7 +13,11 @@ final class AppModel {
     /// (no chat left open, no sheet, back at the top of every tab).
     var sessionID = 0
     var tab: Tab = .discover
-    var me = MockData.me
+    /// The signed-in person's own profile, as read from the server (never sample data). Empty until
+    /// `profileLoad` is `.loaded`: You shows a loading or retry state instead of it until then.
+    var me = AppModel.nobody
+    enum ProfileLoad: Equatable { case loading, failed, loaded }
+    var profileLoad: ProfileLoad = .loading
     /// drafft tempo's details as the App Store reports them for this account (plan, price, renewal),
     /// shown in You. Billed and managed by the App Store: the app only reads it and links to
     /// Apple's management sheet. Whether it's on comes from the server: `isPremium`.
@@ -50,8 +54,8 @@ final class AppModel {
 
     enum Consumable { case boost, superLike }
 
-    // Account & settings (demo: kept in memory)
-    var email = "alex.martin@example.com"
+    // Account & settings: read from the account at sign-in, emptied at sign-out.
+    var email = ""
     var language: AppLanguage {
         get { Localization.shared.language }
         set {
@@ -59,8 +63,9 @@ final class AppModel {
             NotificationService.shared.language = newValue
         }
     }
-    /// Verified at sign-up, can be replaced (after verifying the new one), never removed.
-    var phoneNumber: String? = "+33 6 12 34 56 78"
+    /// Verified at sign-up, can be replaced (after verifying the new one), never removed. Read from
+    /// the account (Supabase Auth keeps the verified number), nil until then.
+    var phoneNumber: String?
     /// Paused: hidden from everyone, and nothing goes out (no like, pass, message, reaction, boost or
     /// session) until it's resumed. The tabs show a greyed lock over their content (`pausedLock`).
     var profilePaused = false { didSet { pauseChanged(from: oldValue) } }
@@ -87,34 +92,6 @@ final class AppModel {
         ]
         let done = checks.filter(\.0).count
         return (Double(done) / Double(checks.count), checks.first { !$0.0 }?.1)
-    }
-
-    /// Deletes the account on the server (profile, photos, matches, chats), then resets the app.
-    func deleteAccount() async throws {
-        if await Backend.shared.hasSession {
-            _ = try await Backend.shared.function("delete-account", [:])
-            await Store.shared.unlink()
-            await Backend.shared.signOut()
-        }
-        resetAfterAccountDeletion()
-    }
-
-    private func resetAfterAccountDeletion() {
-        AudioPlayback.shared.stop()
-        conversations = MockData.conversations()
-        queue = MockData.deck
-        history = []
-        blocked = []
-        dataExportRequestedAt = nil
-        filters = DiscoverFilters()
-        clearWallet()
-        likesLeft = Self.dailyLikes
-        me = MockData.me
-        sessionID += 1
-        withAnimation(Motion.gentle) {
-            phase = .welcome
-            tab = .discover
-        }
     }
 
     // Discover
@@ -166,79 +143,10 @@ final class AppModel {
         }
     }
 
-    // MARK: Auth (demo: no backend, every path succeeds after a short beat)
-
-    /// An unfinished sign-up always resumes, whatever the entry point.
-    func signIn(onboard: Bool) {
-        let target: Phase = onboard || OnboardingStore.hasUnfinished ? .onboarding : .main
-        // Purchases follow the account (the webhook credits this id), and its balances are the server's.
-        Task {
-            await Store.shared.link()
-            await loadWallet()
-        }
-        // A finished profile on the server is the one shown in You (another device, a reinstall).
-        if target == .main {
-            Task { if let saved = try? await ProfileSync.load() { me = saved } }
-            Task { await loadPause() }
-        }
-        // Put the keyboard away first, so the next screen lays out at full height.
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(250))
-            // The tabs were walked through in the background (see RootView): land on Discover.
-            if target == .main { tab = .discover }
-            withAnimation(Motion.gentle) { phase = target }
-        }
-    }
-
-    func finishOnboarding(_ profile: Profile) {
-        OnboardingStore.clear()
-        me = profile
-        tab = .discover
-        withAnimation(Motion.gentle) { phase = .main }
-    }
-
     // MARK: Account (Supabase Auth)
 
     /// Set when a reset-password link opened the app: the new-password screen shows.
     var choosingNewPassword = false
-
-    /// At launch: a saved session goes straight in, to sign-up if it isn't finished.
-    func restoreSession() async {
-        guard phase == .welcome, await Backend.shared.hasSession else { return }
-        email = await Backend.shared.client.auth.currentUser?.email ?? email
-        let onboarded = (try? await Backend.shared.isOnboarded()) ?? true
-        signIn(onboard: !onboarded)
-    }
-
-    /// A link from an auth email: a confirmed sign-up goes on to sign-up, a reset asks for the new password.
-    func handleAuthLink(_ url: URL) async {
-        guard let link = try? await Backend.shared.handleAuthLink(url) else { return }
-        switch link {
-        case .confirmed:
-            email = await Backend.shared.client.auth.currentUser?.email ?? email
-            if phase == .welcome { signIn(onboard: true) }
-        case .resetPassword:
-            choosingNewPassword = true
-        }
-    }
-
-    func signOut() {
-        let token = NotificationService.shared.deviceToken
-        Task {
-            // This device stops getting the account's pushes, and its purchases stop following it.
-            await Store.shared.unlink()
-            if let token { _ = try? await Backend.shared.rpc("unregister_push_token", ["p_token": token]) }
-            await Backend.shared.signOut()
-        }
-        clearWallet()
-        AudioPlayback.shared.stop()
-        sessionID += 1
-        withAnimation(Motion.gentle) {
-            phase = .welcome
-            tab = .discover
-        }
-    }
 
     // MARK: Discover
 

@@ -1,0 +1,156 @@
+import SwiftUI
+import Supabase
+import UIKit
+
+/// Signing in and out, and deleting the account: moved out of the class body, which only keeps
+/// the state they change.
+extension AppModel {
+    /// No one yet: what `me` holds before the server's profile is read, and after signing out.
+    static let nobody = Profile(
+        id: "me", name: "", age: 18, neighborhood: "", distanceKm: 0, portrait: "", photos: [], sports: [],
+        voiceIntro: nil, voiceDuration: 0, icebreaker: Icebreaker.Kind.twoTruths.blank, favoriteSpot: "",
+        bio: "", goal: "", vitalsOverride: .blank, promptsOverride: []
+    )
+
+    // MARK: Auth (demo: no backend, every path succeeds after a short beat)
+
+    /// An unfinished sign-up always resumes, whatever the entry point.
+    func signIn(onboard: Bool) {
+        let target: Phase = onboard || OnboardingStore.hasUnfinished ? .onboarding : .main
+        // Purchases follow the account (the webhook credits this id), and its balances are the server's.
+        Task {
+            await Store.shared.link()
+            await loadWallet()
+        }
+        Task { await loadAccount() }
+        // A finished profile on the server is the one shown in You (another device, a reinstall).
+        if target == .main {
+            Task { await loadProfile() }
+            Task { await loadPause() }
+        }
+        // Put the keyboard away first, so the next screen lays out at full height.
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(250))
+            // The tabs were walked through in the background (see RootView): land on Discover.
+            if target == .main { tab = .discover }
+            withAnimation(Motion.gentle) { phase = target }
+        }
+    }
+
+    func finishOnboarding(_ profile: Profile) {
+        OnboardingStore.clear()
+        me = profile
+        profileLoad = .loaded
+        tab = .discover
+        withAnimation(Motion.gentle) { phase = .main }
+    }
+
+    /// Reads the person's profile from the server. Until it's in, You shows a loading state, or a
+    /// retry if it failed: never another profile, and Edit profile can't save over the real one.
+    func loadProfile() async {
+        let session = sessionID
+        profileLoad = .loading
+        do {
+            guard let saved = try await ProfileSync.load() else { throw Backend.BackendError.signedOut }
+            // Signed out while it loaded: it belongs to the previous account.
+            guard session == sessionID else { return }
+            me = saved
+            profileLoad = .loaded
+        } catch {
+            guard session == sessionID else { return }
+            profileLoad = .failed
+        }
+    }
+
+    /// The account's own email and verified phone: from the saved session straight away, then from
+    /// the server (a number verified on another device, an email changed elsewhere).
+    func loadAccount() async {
+        let session = sessionID
+        apply(Backend.shared.client.auth.currentUser)
+        if let user = try? await Backend.shared.client.auth.user(), session == sessionID { apply(user) }
+    }
+
+    private func apply(_ user: User?) {
+        guard let user else { return }
+        if let address = user.email, !address.isEmpty { email = address }
+        let phone = user.phone ?? ""
+        phoneNumber = user.phoneConfirmedAt != nil && !phone.isEmpty ? PhoneCountry.display(phone) : nil
+    }
+
+    // MARK: Account (Supabase Auth)
+
+    /// At launch: a saved session goes straight in, to sign-up if it isn't finished.
+    func restoreSession() async {
+        guard phase == .welcome, await Backend.shared.hasSession else { return }
+        email = await Backend.shared.client.auth.currentUser?.email ?? email
+        let onboarded = (try? await Backend.shared.isOnboarded()) ?? true
+        signIn(onboard: !onboarded)
+    }
+
+    /// A link from an auth email: a confirmed sign-up goes on to sign-up, a reset asks for the new password.
+    func handleAuthLink(_ url: URL) async {
+        guard let link = try? await Backend.shared.handleAuthLink(url) else { return }
+        switch link {
+        case .confirmed:
+            email = await Backend.shared.client.auth.currentUser?.email ?? email
+            if phase == .welcome { signIn(onboard: true) }
+        case .resetPassword:
+            choosingNewPassword = true
+        }
+    }
+
+    func signOut() {
+        let token = NotificationService.shared.deviceToken
+        Task {
+            // This device stops getting the account's pushes, and its purchases stop following it.
+            await Store.shared.unlink()
+            if let token { _ = try? await Backend.shared.rpc("unregister_push_token", ["p_token": token]) }
+            await Backend.shared.signOut()
+        }
+        resetAccountState()
+    }
+
+    /// Deletes the account on the server (profile, photos, matches, chats), then resets the app.
+    func deleteAccount() async throws {
+        if await Backend.shared.hasSession {
+            _ = try await Backend.shared.function("delete-account", [:])
+            await Store.shared.unlink()
+            OnboardingStore.clear()
+            await Backend.shared.signOut()
+        }
+        resetAccountState()
+    }
+
+    /// Nothing of the account stays in the app once it signs out or is deleted: the next person who
+    /// signs in on this iPhone starts empty, and only sees their own profile once it's read.
+    private func resetAccountState() {
+        AudioPlayback.shared.stop()
+        conversations = MockData.conversations()
+        queue = MockData.deck
+        history = []
+        pendingOpeners = [:]
+        openChatID = nil
+        chatRequest = nil
+        matchScreen = nil
+        banner = nil
+        boostBanner = nil
+        sessionsInCalendar = []
+        blocked = []
+        dataExportRequestedAt = nil
+        filters = DiscoverFilters()
+        clearWallet()
+        likesLeft = Self.dailyLikes
+        me = Self.nobody
+        profileLoad = .loading
+        ProfileSync.loadedAccount = nil
+        email = ""
+        phoneNumber = nil
+        applyServerPause(false)
+        sessionID += 1
+        withAnimation(Motion.gentle) {
+            phase = .welcome
+            tab = .discover
+        }
+    }
+}
