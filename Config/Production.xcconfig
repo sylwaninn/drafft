@@ -2,6 +2,8 @@
 // `$()` keeps `//` from starting an xcconfig comment.
 SUPABASE_URL = https:/$()/wrcpgnqwjmnirjfxpcux.supabase.co
 SUPABASE_PUBLISHABLE_KEY = sb_publishable_VBj4h4XxRDB-Ky5mK0d_ag_dj86XO22
+// Cloudflare Turnstile public site key (support form sent signed out); allowed for getdrafft.com.
+TURNSTILE_SITE_KEY = 0x4AAAAAAFF4RVStAyff4tQU
 REVENUECAT_API_KEY = appl_tGPiuiBrncvrUfYkkFAGQzOmQEF
 // How long an SMS code works, in seconds: Auth > Providers > Phone > SMS OTP Expiry.
 SMS_CODE_LIFETIME = 600

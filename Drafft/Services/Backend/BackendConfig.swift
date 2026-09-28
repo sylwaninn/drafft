@@ -13,6 +13,8 @@ enum BackendConfig {
     static let emailCodeLifetime: TimeInterval = 3600
     /// How long an SMS code works: Auth's SMS OTP expiry, per environment (`SMS_CODE_LIFETIME`, seconds).
     static let smsCodeLifetime = TimeInterval(info("SmsCodeLifetime")) ?? 600
+    /// Cloudflare Turnstile public site key, for the support form sent signed out (`TURNSTILE_SITE_KEY`).
+    static let turnstileSiteKey = info("TurnstileSiteKey")
     static var functionsURL: URL { url.appendingPathComponent("functions/v1") }
 
     private static func info(_ key: String) -> String {
