@@ -102,8 +102,10 @@ struct RootView: View {
             .onChange(of: app.phase) { _, phase in if phase == .welcome { moderation.clear() } }
             .task(id: "\(app.phase == .welcome)\(app.sessionID)") {
                 guard app.phase != .welcome else { return }
-                // Signed in or launched: the iPhone's DeviceCheck token, for ban evasion (server side).
+                // Signed in or launched: the iPhone's DeviceCheck token, for ban evasion (server side),
+                // and this opening, for the team's safety checks.
                 Task { await DeviceIntegrity.report() }
+                Task { await AppOpens.report() }
                 // A purchase confirmed earlier but not credited yet: asked for again.
                 Task { await PurchaseCredit.shared.resume(app) }
                 await UserChannel.watch(app)
@@ -112,6 +114,7 @@ struct RootView: View {
                 guard p == .active && app.phase != .welcome else { return }
                 // The account row (hold, pause, settings, language, card), changed while away.
                 Task { await moderation.load() }
+                Task { await AppOpens.report() }
                 // Credited while away (a purchase on another device, the weekly boost).
                 Task { await app.loadWallet() }
                 Task { await PurchaseCredit.shared.resume(app) }
