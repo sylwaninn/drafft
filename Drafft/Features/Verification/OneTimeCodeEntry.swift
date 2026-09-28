@@ -21,7 +21,8 @@ struct OneTimeCodeEntry<Accessory: View>: View {
     /// Between the status line and Resend (the demo panel).
     @ViewBuilder var accessory: Accessory
 
-    @State private var focused = false
+    @FocusState private var focused: Bool
+    @State private var fieldWidth: CGFloat = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
@@ -38,20 +39,15 @@ struct OneTimeCodeEntry<Accessory: View>: View {
                     .disabled(busy)
             }
 
-            // Six boxes over one invisible field, so autofill (oneTimeCode) fills them all.
-            ZStack {
-                OneTimeCodeField(code: code, onCode: onCode, focused: $focused)
-                    .revealsOnFocus(focused)
-                    .frame(maxWidth: .infinity, minHeight: 60)
+            // Six boxes drawn behind one plain, visible TextField whose digits are spaced into them.
+            // iOS only autofills the code tapped above the keyboard into a field it can see: never
+            // a hidden, transparent or covered one.
+            ZStack(alignment: .leading) {
                 HStack(spacing: DS.Space.sm) {
                     ForEach(0..<6, id: \.self) { i in
-                        let chars = Array(code)
-                        let current = i == chars.count && focused
-                        Text(i < chars.count ? String(chars[i]) : "")
-                            .font(.displayBold(26, relativeTo: .title2).monospacedDigit())
-                            .foregroundStyle(DS.Palette.ink)
-                            .frame(maxWidth: .infinity, minHeight: 60)
-                            .background(boxFill, in: .rect(cornerRadius: DS.Radius.md))
+                        let current = i == code.count && focused
+                        RoundedRectangle(cornerRadius: DS.Radius.md)
+                            .fill(boxFill)
                             .overlay {
                                 RoundedRectangle(cornerRadius: DS.Radius.md)
                                     .strokeBorder(error != nil ? DS.Palette.negative
@@ -62,9 +58,26 @@ struct OneTimeCodeEntry<Accessory: View>: View {
                 }
                 .allowsHitTesting(false)
                 .accessibilityHidden(true)
+                TextField("", text: Binding(get: { code }, set: onCode))
+                    .keyboardType(.numberPad)
+                    .textContentType(.oneTimeCode)
+                    .focused($focused)
+                    .font(.custom(DisplayFont.extraBold, fixedSize: CodeDigits.size).monospacedDigit())
+                    .tracking(digitLayout.tracking)
+                    .foregroundStyle(DS.Palette.ink)
+                    // The caret sits right after the last digit, in the previous box: drawn in the
+                    // box's own colour, so it doesn't show (the current box's outline says where the
+                    // next digit goes). Opaque on purpose: iOS won't autofill a field with a clear tint.
+                    .tint(boxFill)
+                    .padding(.leading, digitLayout.inset)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                    .accessibilityLabel("Verification code")
+                    .revealsOnFocus(focused)
             }
+            .frame(maxWidth: .infinity, minHeight: 60)
             .contentShape(.rect)
             .onTapGesture { focused = true }
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { fieldWidth = $0 }
 
             // While checking, the status line says so (the boxes keep the typed code).
             if busy {
@@ -102,9 +115,37 @@ struct OneTimeCodeEntry<Accessory: View>: View {
             .disabled(resendIn > 0 || busy)
         }
         .animation(Motion.snappy, value: error)
-        // The step appears once a code was asked for: the keyboard comes up with it.
-        .task { focused = true }
+        // The step appears once a code was asked for: the keyboard comes up with it, once the step has
+        // faded in. Focused mid-fade (still nearly transparent), iOS never fills in the code tapped
+        // above the keyboard.
+        .task {
+            try? await Task.sleep(for: .milliseconds(400))
+            guard !Task.isCancelled else { return }
+            focused = true
+        }
     }
+
+    /// Each digit's advance becomes a box plus the gap, and the first one is centred in the first box.
+    private var digitLayout: (tracking: CGFloat, inset: CGFloat) {
+        let box = max(0, (fieldWidth - DS.Space.sm * 5) / 6)
+        return (box + DS.Space.sm - CodeDigits.advance, max(0, (box - CodeDigits.advance) / 2))
+    }
+}
+
+/// The code's digits: the display font at a fixed size, so six always fit their boxes.
+private enum CodeDigits {
+    /// Points.
+    static let size: CGFloat = 26
+
+    /// The width of one tabular digit in the display font.
+    static let advance: CGFloat = {
+        let base = UIFont(name: DisplayFont.extraBold, size: size) ?? .systemFont(ofSize: size, weight: .heavy)
+        let tabular = base.fontDescriptor.addingAttributes([.featureSettings: [[
+            UIFontDescriptor.FeatureKey.type: kNumberSpacingType,
+            UIFontDescriptor.FeatureKey.selector: kMonospacedNumbersSelector
+        ]]])
+        return ("0" as NSString).size(withAttributes: [.font: UIFont(descriptor: tabular, size: size)]).width
+    }()
 }
 
 extension OneTimeCodeEntry where Accessory == EmptyView {
@@ -115,70 +156,6 @@ extension OneTimeCodeEntry where Accessory == EmptyView {
         self.init(destination: destination, code: code, onCode: onCode, busy: busy, error: error,
                   needsHelp: needsHelp, helpTopic: helpTopic, hint: hint, resendIn: resendIn,
                   editTitle: editTitle, boxFill: boxFill, onEdit: onEdit, onResend: onResend) { EmptyView() }
-    }
-}
-
-/// The field under the six boxes. A UITextField rather than a SwiftUI TextField: on iOS 26, tapping
-/// the code from Messages above the keyboard inserts it without `editingChanged`, so a TextField's
-/// binding never hears of it. Every insertion (typing, paste, autofill) goes through the delegate.
-private struct OneTimeCodeField: UIViewRepresentable {
-    let code: String
-    let onCode: (String) -> Void
-    @Binding var focused: Bool
-
-    func makeUIView(context: Context) -> UITextField {
-        let f = UITextField()
-        f.keyboardType = .numberPad
-        f.textContentType = .oneTimeCode
-        f.textColor = .clear
-        f.tintColor = .clear
-        f.accessibilityLabel = L("Verification code")
-        f.delegate = context.coordinator
-        f.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .editingChanged)
-        f.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        f.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        return f
-    }
-
-    func updateUIView(_ f: UITextField, context: Context) {
-        context.coordinator.parent = self
-        // The model clears the code after a wrong one or a resend.
-        if f.text != code { f.text = code }
-        if focused, !f.isFirstResponder {
-            DispatchQueue.main.async { f.becomeFirstResponder() }
-        } else if !focused, f.isFirstResponder {
-            DispatchQueue.main.async { f.resignFirstResponder() }
-        }
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
-
-    @MainActor
-    final class Coordinator: NSObject, UITextFieldDelegate {
-        var parent: OneTimeCodeField
-        init(parent: OneTimeCodeField) { self.parent = parent }
-
-        func textField(_ f: UITextField, shouldChangeCharactersIn range: NSRange,
-                       replacementString string: String) -> Bool {
-            let current = f.text ?? ""
-            guard let r = Range(range, in: current) else { return false }
-            // A whole code (autofill, paste) replaces what was there rather than joining it.
-            let next = string.filter(\.isNumber).count >= 6 ? string : current.replacingCharacters(in: r, with: string)
-            let clean = String(next.filter(\.isNumber).prefix(6))
-            f.text = clean
-            parent.onCode(clean)
-            return false
-        }
-
-        /// Anything that skipped the delegate (dictation, a system insertion).
-        @objc func changed(_ f: UITextField) {
-            let clean = String((f.text ?? "").filter(\.isNumber).prefix(6))
-            if f.text != clean { f.text = clean }
-            if clean != parent.code { parent.onCode(clean) }
-        }
-
-        func textFieldDidBeginEditing(_ f: UITextField) { if !parent.focused { parent.focused = true } }
-        func textFieldDidEndEditing(_ f: UITextField) { if parent.focused { parent.focused = false } }
     }
 }
 
