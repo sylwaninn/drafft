@@ -121,6 +121,7 @@ targets:
       - path: Drafft/Services/Cache/LocalCache.swift
       - path: Drafft/Services/PushTokenRegistration.swift
       - path: Drafft/DesignSystem/ContourTrace.swift
+      - path: Drafft/Services/Media/ThumbHash.swift
     dependencies:
       - package: GRDB
         product: GRDB

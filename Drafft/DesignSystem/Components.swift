@@ -261,10 +261,13 @@ struct Photo: View {
 
 /// A photo on the server (`http…`) or picked on this phone (`/…`), through `Images`: decoded in the
 /// background at the frame's size, shared downloads, capped caches. A copy already in memory shows
-/// on the first frame; otherwise a sage tile stands in until it's there.
+/// on the first frame; otherwise its ThumbHash preview (`MediaPreviews`), or a sage tile, stands in
+/// until it's there.
 private struct LoadedPhoto: View {
     let name: String
     @Environment(\.displayScale) private var scale
+    /// Decoded once per view (a few microseconds, then cached by key).
+    private var preview: UIImage? { MediaPreviews.image(for: name) }
 
     var body: some View {
         GeometryReader { geo in
@@ -272,6 +275,9 @@ private struct LoadedPhoto: View {
                       transaction: Transaction(animation: .easeOut(duration: 0.2))) { state in
                 ZStack {
                     Rectangle().fill(DS.Palette.canvasSoft)
+                    if state.image == nil, let preview {
+                        Image(uiImage: preview).resizable().interpolation(.medium).scaledToFill()
+                    }
                     if let image = state.image {
                         image.resizable().scaledToFill().transition(.opacity)
                     }
