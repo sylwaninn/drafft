@@ -120,6 +120,7 @@ targets:
       - path: DrafftTests
       - path: Drafft/Services/Cache/LocalCache.swift
       - path: Drafft/Services/PushTokenRegistration.swift
+      - path: Drafft/DesignSystem/ContourTrace.swift
     dependencies:
       - package: GRDB
         product: GRDB

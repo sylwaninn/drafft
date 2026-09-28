@@ -134,11 +134,11 @@ private struct EdgeBlurModifier<Bar: View>: ViewModifier {
                     g.contentOffset.y + g.contentInsets.top > 1
                 } action: { _, v in withAnimation(.easeOut(duration: 0.2)) { covered = v } }
                 // Every scroll step pokes the probe (throttled there): no state, no re-render.
-                .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y } action: { _, _ in probe.poke() }
+                .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y } action: { _, y in probe.poke(offset: y) }
                 .background { EdgeToneAnchor(probe: probe).allowsHitTesting(false) }
-                .onAppear {
-                    probe.onChange = { t in withAnimation(.easeOut(duration: 0.2)) { tone = t } }
+                .task {
                     probe.poke()
+                    for await t in probe.tones() { withAnimation(.easeOut(duration: 0.2)) { tone = t } }
                 }
                 .safeAreaInset(edge: .top, spacing: 0) {
                     bar.environment(\.edgeTone, covered ? tone : nil).background {

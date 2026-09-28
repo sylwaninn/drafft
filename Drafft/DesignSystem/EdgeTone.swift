@@ -21,33 +21,54 @@ extension EnvironmentValues {
 
 /// Reads what is on screen under the header, the way the status bar does: a tiny snapshot
 /// (32 × 8) of the window's band just below the status bar, averaged. The scroll view pokes it
-/// (`poke()`, from `onScrollGeometryChange`), at most a dozen times a second; hysteresis keeps a
-/// mid-grey from flickering.
+/// (`poke(offset:)`, from `onScrollGeometryChange`), at most a dozen times a second and only once the
+/// content moved a few points, and never while the app is in the background; hysteresis keeps a
+/// mid-grey from flickering. Changes come out of `tones()`, read by the page's task: the probe holds
+/// no closure of the page, so nothing keeps the page alive.
 @MainActor
 final class EdgeToneProbe {
     fileprivate weak var anchor: UIView?
-    var onChange: ((EdgeTone) -> Void)?
     private var tone = EdgeTone.light
     private var scheduled = false
+    private var continuation: AsyncStream<EdgeTone>.Continuation?
+    /// The scroll offset of the last snapshot; nil until the first one.
+    private var sampledOffset: CGFloat?
+    private var pendingOffset: CGFloat?
 
     /// The header's text band: from the status bar down this far.
     private let bandHeight: CGFloat = 56
+    /// Content that moved less than this since the last snapshot can't have changed the band's tone.
+    private let minimumTravel: CGFloat = 4
 
-    func poke() {
+    /// Each change of tone. One reader at a time: a new call ends the previous stream.
+    func tones() -> AsyncStream<EdgeTone> {
+        continuation?.finish()
+        let (stream, continuation) = AsyncStream.makeStream(of: EdgeTone.self, bufferingPolicy: .bufferingNewest(1))
+        self.continuation = continuation
+        return stream
+    }
+
+    /// `offset` nil: sample whatever the scroll position (first appearance).
+    func poke(offset: CGFloat? = nil) {
+        if let offset, let sampledOffset, abs(offset - sampledOffset) < minimumTravel { return }
+        pendingOffset = offset
         guard !scheduled else { return }
         scheduled = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
-            self?.scheduled = false
-            self?.sample()
+            guard let self else { return }
+            scheduled = false
+            sample()
         }
     }
 
     private func sample() {
-        guard let window = anchor?.window, let luminance = luminance(in: window) else { return }
+        guard UIApplication.shared.applicationState != .background,
+              let window = anchor?.window, let luminance = luminance(in: window) else { return }
+        if let pendingOffset { sampledOffset = pendingOffset }
         let next: EdgeTone = luminance < 0.42 ? .dark : luminance > 0.55 ? .light : tone
         guard next != tone else { return }
         tone = next
-        onChange?(next)
+        continuation?.yield(next)
     }
 
     private func luminance(in window: UIWindow) -> Double? {
