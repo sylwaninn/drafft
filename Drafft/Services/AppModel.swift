@@ -147,6 +147,9 @@ final class AppModel {
 
     /// Set when a reset-password link opened the app: the new-password screen shows.
     var choosingNewPassword = false
+    /// The session ended without the person logging out (revoked, expired, account deleted
+    /// elsewhere): back on the welcome screen, a message says so.
+    var sessionEndedNotice = false
 
     // MARK: Discover
 

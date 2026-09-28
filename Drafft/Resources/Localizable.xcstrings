@@ -48716,6 +48716,46 @@
         }
       }
     },
+    "You're logged out, so nothing was deleted. Log in again, then delete your account." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist abgemeldet, deshalb wurde nichts gelöscht. Melde dich wieder an und lösche dann dein Konto."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has cerrado sesión, así que no se ha eliminado nada. Vuelve a iniciar sesión y elimina tu cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta session est fermée, rien n'a donc été supprimé. Reconnecte-toi, puis supprime ton compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sessione è terminata, quindi non è stato eliminato nulla. Accedi di nuovo, poi elimina il tuo account."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bent uitgelogd, dus er is niets verwijderd. Log opnieuw in en verwijder dan je account."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não tens sessão iniciada, por isso nada foi eliminado. Inicia sessão e depois elimina a tua conta."
+          }
+        }
+      }
+    },
     "You're on drafft tempo." : {
       "localizations" : {
         "de" : {
@@ -48752,6 +48792,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Já tens drafft tempo."
+          }
+        }
+      }
+    },
+    "You've been logged out" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du wurdest abgemeldet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha cerrado tu sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session terminée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessione terminata"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bent uitgelogd"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua sessão foi terminada"
+          }
+        }
+      }
+    },
+    "You've been logged out. Log in again to continue." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du wurdest abgemeldet. Melde dich wieder an, um weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha cerrado tu sesión. Vuelve a iniciarla para continuar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta session a été fermée. Reconnecte-toi pour continuer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sessione è terminata. Accedi di nuovo per continuare."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bent uitgelogd. Log opnieuw in om verder te gaan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua sessão foi terminada. Inicia sessão novamente para continuar."
           }
         }
       }
@@ -50788,6 +50908,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível enviar a tua selfie. Tenta de novo."
+          }
+        }
+      }
+    },
+    "Your session ended on this iPhone. Log in again to pick up where you left off." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Sitzung auf diesem iPhone ist beendet. Melde dich wieder an, um weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu sesión ha terminado en este iPhone. Vuelve a iniciar sesión para seguir donde lo dejaste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta session a pris fin sur cet iPhone. Reconnecte-toi pour reprendre là où tu en étais."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua sessione su questo iPhone è terminata. Accedi di nuovo per riprendere da dove avevi lasciato."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je sessie op deze iPhone is beëindigd. Log opnieuw in om verder te gaan waar je was."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua sessão terminou neste iPhone. Inicia sessão novamente para continuar onde ficaste."
           }
         }
       }
