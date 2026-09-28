@@ -7,7 +7,9 @@ import Supabase
 /// - `moderation`: the hold (`AccountModeration`);
 /// - `wallet`: drafft tempo, boosts and super likes (`AppModel.loadWallet`);
 /// - `media`: a photo was approved or refused, by the automatic check or by the team
-///   (`PhotoModeration`).
+///   (`PhotoModeration`);
+/// - `session_revoked`: Auth sessions ended on the server; this device signs out at once if its own is
+///   one of them (`AppModel.sessionsRevoked`).
 ///
 /// A payload only says a change happened (a photo decision carries its media and status): the row
 /// is the truth, read again on each event and on each (re)connection, so a change made while the
@@ -36,6 +38,7 @@ enum UserChannel {
         let moderation = channel.broadcastStream(event: "moderation")
         let wallet = channel.broadcastStream(event: "wallet")
         let media = channel.broadcastStream(event: "media")
+        let revoked = channel.broadcastStream(event: "session_revoked")
         let status = channel.statusChange
         let joined = await withTaskGroup(of: Bool.self) { group in
             group.addTask { for await _ in moderation { await AccountModeration.shared.load() }; return false }
@@ -46,6 +49,13 @@ enum UserChannel {
                           let mediaID = payload["mediaId"]?.stringValue,
                           let state = payload["status"]?.stringValue else { continue }
                     await PhotoModeration.shared.apply(mediaID: mediaID, status: state)
+                }
+                return false
+            }
+            group.addTask {
+                for await message in revoked {
+                    let ids = message["payload"]?.objectValue?["sessions"]?.arrayValue?.compactMap(\.stringValue) ?? []
+                    await app.sessionsRevoked(ids.map { $0.lowercased() })
                 }
                 return false
             }
