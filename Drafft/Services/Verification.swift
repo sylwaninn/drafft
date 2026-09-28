@@ -1,11 +1,29 @@
 import Foundation
 import Observation
+import PhoneNumberKit
 import Supabase
 
 // MARK: - Contracts
 
 enum VerificationError: Error, Equatable {
     case invalidNumber, sendFailed, wrongCode, expired, tooManyAttempts, network, numberTaken
+    /// phone-code's refusals: the account's email isn't confirmed, too many codes, not a mobile line,
+    /// the line couldn't be checked (Twilio Lookup down: nothing is sent).
+    case emailUnconfirmed, tooManyCodes, unsupportedLine, checkUnavailable
+
+    /// The words under the number field.
+    var message: String {
+        switch self {
+        case .numberTaken: L("This number is already used by another drafft account.")
+        case .emailUnconfirmed: L("Confirm your email first, then add your number.")
+        case .tooManyCodes: L("Too many codes sent. Try again later.")
+        case .invalidNumber: L("That doesn't look like a mobile number.")
+        case .unsupportedLine: L("This number can't get codes. Use a mobile number.")
+        case .checkUnavailable: L("We couldn't check this number right now. Try again in a moment.")
+        case .network: L("Couldn't connect. Check your connection and try again.")
+        default: L("We couldn't text this number. Check it, or get help if it keeps failing.")
+        }
+    }
 }
 
 protocol PhoneVerifying: Sendable {
@@ -16,8 +34,8 @@ protocol PhoneVerifying: Sendable {
     func verifiedNumber() async -> String?
 }
 
-/// The real one: Supabase Auth phone change. Sets the number on the account once the code checks
-/// out, at sign-up as in You. Needs an SMS provider on the project (not set up yet).
+/// The real one: the phone-code function, then Supabase Auth's phone change. Sets the number on the
+/// account once the code checks out, at sign-up as in You.
 struct BackendPhoneVerifier: PhoneVerifying {
     func sendCode(to e164: String) async throws {
         do { try await Backend.shared.updatePhone(e164) } catch { throw VerificationError(error) }
@@ -39,9 +57,23 @@ struct BackendPhoneVerifier: PhoneVerifying {
 }
 
 extension VerificationError {
+    /// phone-code's stable codes (backend _shared/phone_code.ts).
+    private static let serverCodes: [String: VerificationError] = [
+        "email_unconfirmed": .emailUnconfirmed,
+        "sms_limit": .tooManyCodes,
+        "phone_invalid": .invalidNumber,
+        "phone_unsupported": .unsupportedLine,
+        "phone_taken": .numberTaken,
+        "phone_check_unavailable": .checkUnavailable
+    ]
+
     init(_ error: Error) {
         if error is URLError { self = .network; return }
         if (error as? AuthError)?.errorCode == .phoneExists { self = .numberTaken; return }
+        if case let Backend.BackendError.http(_, code) = error {
+            self = Self.serverCodes[code] ?? .sendFailed
+            return
+        }
         switch AuthProblem(error) {
         case .wrongCode: self = .wrongCode
         case .offline: self = .network
@@ -52,42 +84,54 @@ extension VerificationError {
 
 // MARK: - Phone
 
+/// A country at the phone step: every region Google's libphonenumber knows (PhoneNumberKit), searchable
+/// by name or dial code. Which lines get a code is the server's call (Twilio Lookup, mobile lines only).
 struct PhoneCountry: Hashable, Identifiable {
-    let flag: String, region: String, dial: String
-    let digits: ClosedRange<Int>
+    /// ISO 3166 region code ("FR").
+    let region: String
+    /// "+33"
+    let dial: String
+    /// A mobile number of the country, written the national way: the field's placeholder.
     let example: String
     var id: String { region }
+    /// The region's flag, from its two letters.
+    var flag: String {
+        String(String.UnicodeScalarView(region.unicodeScalars.compactMap { UnicodeScalar(127_397 + $0.value) }))
+    }
     /// Country name in the app's language.
     var name: String { Locale.app.localizedString(forRegionCode: region) ?? region }
 
-    static let all: [PhoneCountry] = [
-        .init(flag: "🇫🇷", region: "FR", dial: "+33", digits: 9...9, example: "6 12 34 56 78"),
-        .init(flag: "🇧🇪", region: "BE", dial: "+32", digits: 8...9, example: "470 12 34 56"),
-        .init(flag: "🇨🇭", region: "CH", dial: "+41", digits: 9...9, example: "78 123 45 67"),
-        .init(flag: "🇱🇺", region: "LU", dial: "+352", digits: 8...9, example: "621 123 456"),
-        .init(flag: "🇬🇧", region: "GB", dial: "+44", digits: 10...10, example: "7400 123456"),
-        .init(flag: "🇪🇸", region: "ES", dial: "+34", digits: 9...9, example: "612 34 56 78"),
-        .init(flag: "🇮🇹", region: "IT", dial: "+39", digits: 9...10, example: "312 345 6789"),
-        .init(flag: "🇩🇪", region: "DE", dial: "+49", digits: 10...11, example: "1512 3456789"),
-        .init(flag: "🇺🇸", region: "US", dial: "+1", digits: 10...10, example: "201 555 0123"),
-        .init(flag: "🇨🇦", region: "CA", dial: "+1", digits: 10...10, example: "506 234 5678")
-    ]
+    /// Loads the metadata once (a few ms), on first use.
+    @MainActor static let phoneNumbers = PhoneNumberUtility()
 
-    /// "+33 6 12 34 56 78": the dial code, then the national digits by pairs after the first.
-    static func format(dial: String, national: String) -> String {
-        guard let first = national.first else { return dial }
-        var pairs: [String] = [String(first)]
-        var rest = Substring(national.dropFirst())
-        while !rest.isEmpty { pairs.append(String(rest.prefix(2))); rest = rest.dropFirst(2) }
-        return "\(dial) \(pairs.joined(separator: " "))"
+    @MainActor static let all: [PhoneCountry] = phoneNumbers.allCountries().compactMap { country($0) }
+
+    @MainActor static func country(_ region: String) -> PhoneCountry? {
+        guard region.count == 2, let code = phoneNumbers.countryCode(for: region) else { return nil }
+        let example = phoneNumbers.getFormattedExampleNumber(forCountry: region, ofType: .mobile, withFormat: .national)
+        return PhoneCountry(region: region, dial: "+\(code)", example: example ?? "")
     }
 
-    /// The account's number as Supabase Auth keeps it ("33612345678"), written like the app writes it.
-    static func display(_ stored: String) -> String {
-        let digits = stored.filter(\.isNumber)
-        guard let country = all.filter({ digits.hasPrefix($0.dial.dropFirst()) }).max(by: { $0.dial.count < $1.dial.count })
-        else { return "+" + digits }
-        return format(dial: country.dial, national: String(digits.dropFirst(country.dial.count - 1)))
+    /// The iPhone's region, else France.
+    @MainActor static var initial: PhoneCountry {
+        Locale.current.region.flatMap { country($0.identifier) } ?? country("FR") ?? all[0]
+    }
+
+    /// A number the phone step takes: valid for the country, and a mobile line (or one that may be, as
+    /// in the US). Digits only, typed the national way ("06 12…" or "6 12…").
+    @MainActor static func mobileNumber(_ national: String, in country: PhoneCountry) -> PhoneNumber? {
+        let digits = national.filter(\.isNumber)
+        guard !digits.isEmpty, let number = try? phoneNumbers.parse(digits, withRegion: country.region),
+              country.dial == "+\(number.countryCode)",
+              number.type == .mobile || number.type == .fixedOrMobile else { return nil }
+        return number
+    }
+
+    /// The account's number as Supabase Auth keeps it ("33612345678"), written the international way.
+    @MainActor static func display(_ stored: String) -> String {
+        let e164 = "+" + stored.filter(\.isNumber)
+        guard let number = try? phoneNumbers.parse(e164, ignoreType: true) else { return e164 }
+        return phoneNumbers.format(number, toType: .international)
     }
 }
 
@@ -98,8 +142,10 @@ final class PhoneVerificationModel {
     enum Stage: Equatable { case enterNumber, enterCode, verified, locked }
 
     private(set) var stage: Stage = .enterNumber
-    var country = PhoneCountry.all[0]
-    var number = "" { didSet { error = nil } }
+    var country = PhoneCountry.initial { didSet { parse() } }
+    var number = "" { didSet { error = nil; parse() } }
+    /// The typed number, once it's a mobile number of the country.
+    private var parsed: PhoneNumber?
     /// Set through `enterCode(_:)` (digits only, max 6). No didSet rewriting itself here: with
     /// @Observable that recursed forever and crashed the app when a code was sent.
     private(set) var code = ""
@@ -132,19 +178,18 @@ final class PhoneVerificationModel {
         if code.count == 6 && wasShort && stage == .enterCode { Task { await verify() } }
     }
 
-    private var nationalDigits: String {
-        var d = number.filter(\.isNumber)
-        if d.hasPrefix("0") { d.removeFirst() } // "06 12…" typed the French way
-        return d
+    private func parse() { parsed = PhoneCountry.mobileNumber(number, in: country) }
+
+    var e164: String {
+        parsed.map { PhoneCountry.phoneNumbers.format($0, toType: .e164) } ?? country.dial + number.filter(\.isNumber)
     }
-    var e164: String { country.dial + nationalDigits }
-    var numberValid: Bool { country.digits.contains(nationalDigits.count) }
+    var numberValid: Bool { parsed != nil }
     var isSameAsCurrent: Bool { currentNumber == e164 }
 
     /// "+33 6 12 34 56 78"
     var displayNumber: String {
         if let restoredDisplay, number.isEmpty { return restoredDisplay }
-        return PhoneCountry.format(dial: country.dial, national: nationalDigits)
+        return parsed.map { PhoneCountry.phoneNumbers.format($0, toType: .international) } ?? e164
     }
 
     var primaryTitle: String {
@@ -165,7 +210,7 @@ final class PhoneVerificationModel {
     }
 
     func sendCode() async {
-        guard numberValid else { error = L("Check the number, it looks incomplete."); return }
+        guard numberValid else { error = VerificationError.invalidNumber.message; return }
         busy = true
         error = nil
         needsHelp = false
@@ -184,13 +229,11 @@ final class PhoneVerificationModel {
             stage = .enterCode
             startResendTimer()
             Haptics.success()
-        } catch VerificationError.numberTaken {
-            self.error = L("This number is already used by another drafft account.")
-            needsHelp = true
-            Haptics.warning()
         } catch {
-            self.error = L("We couldn't text this number. Check it, or get help if it keeps failing.")
-            needsHelp = true
+            let failure = error as? VerificationError ?? .sendFailed
+            self.error = failure.message
+            // Nothing to fix on the number there: waiting, or confirming the email, is the way.
+            needsHelp = ![.tooManyCodes, .emailUnconfirmed, .network, .checkUnavailable].contains(failure)
             Haptics.warning()
         }
         busy = false

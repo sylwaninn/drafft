@@ -8275,46 +8275,6 @@
         }
       }
     },
-    "Check the number, it looks incomplete." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prüf die Nummer, sie scheint unvollständig zu sein."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revisa el número, parece incompleto."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérifie le numéro, il semble incomplet."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Controlla il numero, sembra incompleto."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Controleer het nummer, het lijkt onvolledig."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verifica o número, parece incompleto."
-          }
-        }
-      }
-    },
     "Check your connection and try again." : {
       "localizations" : {
         "de" : {
@@ -9521,42 +9481,122 @@
         }
       }
     },
-    "Confirm your email first: open the link we sent you." : {
+    "Confirm your email first, then add your number." : {
       "localizations" : {
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confirme d'abord ton e-mail : ouvre le lien qu'on t'a envoyé."
+            "value" : "Bestätige zuerst deine E-Mail, dann füge deine Nummer hinzu."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primero confirma tu email: abre el enlace que te hemos enviado."
+            "value" : "Primero confirma tu correo y después añade tu número."
           }
         },
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bestätige zuerst deine E-Mail: Öffne den Link, den wir dir geschickt haben."
+            "value" : "Confirme d'abord ton e-mail, puis ajoute ton numéro."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prima conferma la tua email: apri il link che ti abbiamo inviato."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confirma primeiro o teu email: abre o link que te enviámos."
+            "value" : "Prima conferma la tua email, poi aggiungi il tuo numero."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bevestig eerst je e-mail: open de link die we je hebben gestuurd."
+            "value" : "Bevestig eerst je e-mailadres en voeg dan je nummer toe."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro confirma o teu email e depois adiciona o teu número."
+          }
+        }
+      }
+    },
+    "Confirm your email first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestätige zuerst deine E-Mail."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero confirma tu correo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirme d'abord ton e-mail."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prima conferma la tua email."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bevestig eerst je e-mailadres."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro confirma o teu email."
+          }
+        }
+      }
+    },
+    "Confirm your email first: enter the code we sent you." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestätige zuerst deine E-Mail: Gib den Code ein, den wir dir geschickt haben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero confirma tu correo: introduce el código que te enviamos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirme d'abord ton e-mail : saisis le code qu'on t'a envoyé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prima conferma la tua email: inserisci il codice che ti abbiamo inviato."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bevestig eerst je e-mailadres: vul de code in die we je hebben gestuurd."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro confirma o teu email: introduz o código que te enviámos."
           }
         }
       }
@@ -11687,6 +11727,46 @@
         }
       }
     },
+    "Enter the email you signed up with. We'll send you a 6-digit code." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gib die E-Mail-Adresse deiner Anmeldung ein. Wir schicken dir einen 6-stelligen Code."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce el correo con el que te registraste. Te enviaremos un código de 6 cifras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisis l'e-mail de ton inscription. On t'envoie un code à 6 chiffres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci l'email con cui ti sei registrato. Ti inviamo un codice di 6 cifre."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vul het e-mailadres in waarmee je je hebt aangemeld. We sturen je een code van 6 cijfers."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduz o email com que te registaste. Vamos enviar-te um código de 6 dígitos."
+          }
+        }
+      }
+    },
     "My purchase hasn't reached my account." : {
       "localizations" : {
         "de" : {
@@ -11807,6 +11887,46 @@
         }
       }
     },
+    "That doesn't look like a mobile number." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das sieht nicht nach einer Handynummer aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No parece un número de móvil."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça ne ressemble pas à un numéro de mobile."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non sembra un numero di cellulare."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit lijkt geen mobiel nummer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isto não parece um número de telemóvel."
+          }
+        }
+      }
+    },
     "This is taking longer than usual." : {
       "localizations" : {
         "de" : {
@@ -11843,6 +11963,166 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Está a demorar mais do que o habitual."
+          }
+        }
+      }
+    },
+    "This number can't get codes. Use a mobile number." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Nummer kann keine Codes empfangen. Nutze eine Handynummer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este número no puede recibir códigos. Usa un número de móvil."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce numéro ne peut pas recevoir de code. Utilise un numéro de mobile."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo numero non può ricevere codici. Usa un numero di cellulare."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit nummer kan geen codes ontvangen. Gebruik een mobiel nummer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este número não pode receber códigos. Usa um número de telemóvel."
+          }
+        }
+      }
+    },
+    "Too many codes sent. Try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu viele Codes gesendet. Versuch es später noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demasiados códigos enviados. Inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trop de codes envoyés. Réessaie plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Troppi codici inviati. Riprova più tardi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te veel codes verstuurd. Probeer het later opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demasiados códigos enviados. Tenta mais tarde."
+          }
+        }
+      }
+    },
+    "Verify your phone number first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestätige zuerst deine Telefonnummer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero verifica tu número de teléfono."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifie d'abord ton numéro de téléphone."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prima verifica il tuo numero di telefono."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifieer eerst je telefoonnummer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro verifica o teu número de telefone."
+          }
+        }
+      }
+    },
+    "We couldn't check this number right now. Try again in a moment." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können diese Nummer gerade nicht prüfen. Versuch es gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no podemos comprobar este número. Inténtalo de nuevo en un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de vérifier ce numéro pour l'instant. Réessaie dans un moment."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al momento non riusciamo a verificare questo numero. Riprova tra poco."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We kunnen dit nummer nu niet controleren. Probeer het zo opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De momento não conseguimos verificar este número. Tenta daqui a pouco."
           }
         }
       }
@@ -13049,86 +13329,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Introduz o código de 6 dígitos."
-          }
-        }
-      }
-    },
-    "Enter the email you signed up with. We'll send you a link to choose a new password." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gib die E-Mail ein, mit der du dich registriert hast. Wir schicken dir einen Link, um ein neues Passwort zu wählen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Introduce el email con el que te registraste. Te enviaremos un enlace para elegir una nueva contraseña."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saisis l'e-mail utilisé à l'inscription. On t'enverra un lien pour choisir un nouveau mot de passe."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inserisci l'email che hai usato per registrarti. Ti invieremo un link per scegliere una nuova password."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vul het e-mailadres in waarmee je je hebt aangemeld. We sturen je een link om een nieuw wachtwoord te kiezen."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Introduz o email com que te registaste. Enviamos-te um link para escolheres uma nova palavra-passe."
-          }
-        }
-      }
-    },
-    "Enter your email." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gib deine E-Mail ein."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Introduce tu email."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saisis ton e-mail."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inserisci la tua email."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vul je e-mailadres in."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Introduz o teu email."
           }
         }
       }
@@ -18072,46 +18272,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Patinagem no gelo"
-          }
-        }
-      }
-    },
-    "If %@ has a drafft account, a reset link is on its way. It works for 30 minutes. Nothing after a few minutes? Check your spam folder." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wenn %@ ein drafft-Konto hat, ist ein Link zum Zurücksetzen unterwegs. Er gilt 30 Minuten. Nach ein paar Minuten nichts da? Schau in deinen Spam-Ordner."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si %@ tiene una cuenta de drafft, te estamos enviando un enlace para restablecer la contraseña. Vale durante 30 minutos. ¿No te llega en unos minutos? Revisa la carpeta de spam."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si %@ a un compte drafft, un lien de réinitialisation arrive. Il est valable 30 minutes. Rien au bout de quelques minutes ? Regarde dans tes spams."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se %@ ha un account drafft, un link di reimpostazione è in arrivo. È valido per 30 minuti. Non arriva nulla dopo qualche minuto? Controlla lo spam."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Als %@ een drafft-account heeft, is er een resetlink onderweg. Die is 30 minuten geldig. Na een paar minuten nog niks? Check je spammap."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se %@ tiver uma conta drafft, um link de redefinição está a caminho. É válido durante 30 minutos. Nada ao fim de uns minutos? Verifica a pasta de spam."
           }
         }
       }
@@ -32841,46 +33001,6 @@
         }
       }
     },
-    "Resend the link" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Link erneut senden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reenviar el enlace"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Renvoyer le lien"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reinvia il link"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Link opnieuw sturen"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reenviar o link"
-          }
-        }
-      }
-    },
     "Reset your password" : {
       "localizations" : {
         "de" : {
@@ -34942,46 +35062,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar novos horários"
-          }
-        }
-      }
-    },
-    "Send reset link" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Link senden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar enlace"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Envoyer le lien"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invia il link"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resetlink sturen"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enviar link"
           }
         }
       }
@@ -45435,46 +45515,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não conseguimos encontrar a tua zona. Tenta novamente."
-          }
-        }
-      }
-    },
-    "We couldn't send the link. Check your connection and try again." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir konnten den Link nicht senden. Prüf deine Verbindung und versuch es noch mal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hemos podido enviar el enlace. Revisa tu conexión e inténtalo de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Impossible d'envoyer le lien. Vérifie ta connexion et réessaie."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non siamo riusciti a inviare il link. Controlla la connessione e riprova."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We konden de link niet versturen. Controleer je verbinding en probeer het opnieuw."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não conseguimos enviar o link. Verifica a tua ligação e tenta novamente."
           }
         }
       }

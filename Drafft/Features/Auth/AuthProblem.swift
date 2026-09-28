@@ -34,7 +34,7 @@ enum AuthProblem: Equatable {
     var message: String {
         switch self {
         case .wrongCredentials: L("Email or password is incorrect. Try again or reset your password.")
-        case .emailNotConfirmed: L("Confirm your email first: open the link we sent you.")
+        case .emailNotConfirmed: L("Confirm your email first: enter the code we sent you.")
         case .emailTaken: L("There's already an account with this email. Log in instead.")
         case .weakPassword: L("Pick a stronger password.")
         case .tooManyEmails: L("Too many emails sent. Wait a few minutes and try again.")

@@ -31,6 +31,8 @@ enum ServerMessage {
         case "sport_required": L("Add at least one sport.")
         case "photo_required": L("Add at least one photo.")
         case "birthdate_locked": L("Your birthday can't be changed.")
+        case "email_unconfirmed": L("Confirm your email first.")
+        case "phone_required": L("Verify your phone number first.")
         // Photos and videos (add_profile_media, request_media_review, media-upload-url)
         case "media_limit": L("You've reached the photo limit. Remove one, then try again.")
         case "not_reviewable": L("This photo has already been reviewed.")

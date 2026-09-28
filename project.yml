@@ -17,6 +17,11 @@ fileGroups:
   # Local App Store for testing purchases in the Simulator (not shipped in the app).
   - StoreKit
 packages:
+  # Phone numbers of every country: parsing, validation (mobile lines) and formatting, from Google's
+  # libphonenumber metadata. Pinned: a metadata update changes what the phone step accepts.
+  PhoneNumberKit:
+    url: https://github.com/marmelroy/PhoneNumberKit
+    exactVersion: 4.3.0
   RevenueCat:
     url: https://github.com/RevenueCat/purchases-ios
     from: 5.91.0
@@ -39,6 +44,8 @@ targets:
       # data in step with the code (App Store privacy manifest).
       - path: Drafft
     dependencies:
+      - package: PhoneNumberKit
+        product: PhoneNumberKit
       - package: RevenueCat
         product: RevenueCat
       - package: Supabase
@@ -87,10 +94,6 @@ targets:
         TurnstileSiteKey: $(TURNSTILE_SITE_KEY)
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, fr, es, de, it, pt, nl]
-        # Links in auth emails (confirm sign-up, reset password) come back through drafft://auth-callback.
-        CFBundleURLTypes:
-          - CFBundleURLName: so.drafft.app.auth
-            CFBundleURLSchemes: [drafft]
         NSLocationDefaultAccuracyReduced: true
 schemes:
   Drafft:

@@ -115,14 +115,17 @@ struct PhoneVerificationView: View {
     }
 }
 
-/// Country codes as a searchable list in a sheet.
+/// Every country code as a searchable list in a sheet, by name in the app's language.
 struct CountryPickerSheet: View {
     @Binding var selection: PhoneCountry
     @Environment(\.dismiss) private var dismiss
     @State private var query = ""
+    /// Sorted once per sheet: the names follow the app's language.
+    @State private var countries = PhoneCountry.all.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
 
     private var results: [PhoneCountry] {
-        PhoneCountry.all.filter { query.isEmpty || $0.name.localizedCaseInsensitiveContains(query) || $0.dial.contains(query) }
+        let q = query.trimmingCharacters(in: .whitespaces)
+        return countries.filter { q.isEmpty || $0.name.localizedStandardContains(q) || $0.dial.contains(q) }
     }
 
     var body: some View {

@@ -20,11 +20,6 @@ actor Backend {
         }
     }
 
-    /// Where the links in auth emails bring people back: the app. One address per email, since the
-    /// link itself doesn't say which it was. Both must be in the project's Auth redirect URLs.
-    static let authCallback = URL(string: "drafft://auth-callback")!
-    static let resetCallback = URL(string: "drafft://auth-callback/reset")!
-
     /// Nonisolated so the auth calls below don't queue behind a slow request.
     nonisolated let client = SupabaseClient(
         supabaseURL: BackendConfig.url,
@@ -53,8 +48,7 @@ actor Backend {
     /// profile in it, so the confirmation email (backend auth-email) is already in that language.
     func signUp(email: String, password: String, language: AppLanguage) async throws -> SignUpResult {
         let response = try await client.auth.signUp(
-            email: email, password: password, data: ["language": .string(language.rawValue)],
-            redirectTo: Self.authCallback
+            email: email, password: password, data: ["language": .string(language.rawValue)]
         )
         // An address that already has an account: Supabase doesn't say so (that would tell who's signed up),
         // it answers like a new sign-up with no identity and sends nothing. The app says it plainly.
@@ -72,19 +66,18 @@ actor Backend {
     }
 
     func resendConfirmation(to email: String) async throws {
-        try await client.auth.resend(email: email, type: .signup, emailRedirectTo: Self.authCallback)
+        try await client.auth.resend(email: email, type: .signup)
     }
 
+    /// Emails a 6-digit code to reset the password (backend auth-email, recovery). Auth answers the same
+    /// whether or not the address has an account.
     func sendPasswordReset(to email: String) async throws {
-        try await client.auth.resetPasswordForEmail(email, redirectTo: Self.resetCallback)
+        try await client.auth.resetPasswordForEmail(email)
     }
 
-    enum AuthLink { case confirmed, resetPassword }
-
-    /// A link from an auth email opened the app: its code becomes the session.
-    func handleAuthLink(_ url: URL) async throws -> AuthLink {
-        try await client.auth.session(from: url)
-        return url.path == Self.resetCallback.path ? .resetPassword : .confirmed
+    /// The code from `sendPasswordReset`: signs in, so the new password can be set (`updatePassword(_:)`).
+    func verifyPasswordReset(_ email: String, code: String) async throws {
+        try await client.auth.verifyOTP(email: email, token: code, type: .recovery)
     }
 
     /// Whether the signed-in person finished sign-up (`profiles.onboarded_at`).
@@ -109,7 +102,7 @@ actor Backend {
         try await client.auth.reauthenticate()
     }
 
-    /// After a reset link (the link itself proved it's them).
+    /// After a password reset code (the code proved it's them).
     func updatePassword(_ password: String) async throws {
         try await client.auth.update(user: UserAttributes(password: password))
     }
@@ -119,13 +112,27 @@ actor Backend {
         try await client.auth.update(user: UserAttributes(password: password, nonce: code))
     }
 
-    /// Texts a 6-digit code to the number (Supabase Auth phone change; needs an SMS provider).
+    /// Texts a 6-digit code to the number: the phone-code function checks the account (email confirmed),
+    /// the limits and the line, then starts the Supabase Auth phone change. Refusals keep the server's code.
     func updatePhone(_ e164: String) async throws {
-        try await client.auth.update(user: UserAttributes(phone: e164))
+        _ = try await function("phone-code", ["phone": e164])
     }
 
     func confirmPhoneChange(_ e164: String, code: String) async throws {
         try await client.auth.verifyOTP(phone: e164, token: code, type: .phoneChange)
+    }
+
+    /// This device's Auth session (the `session_id` claim of its access token): a `session_revoked`
+    /// event names the sessions that ended.
+    var sessionID: String? {
+        guard let token = client.auth.currentSession?.accessToken else { return nil }
+        let parts = token.split(separator: ".")
+        guard parts.count == 3 else { return nil }
+        var payload = String(parts[1]).replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        payload += String(repeating: "=", count: (4 - payload.count % 4) % 4)
+        guard let data = Data(base64Encoded: payload),
+              let claims = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        return (claims["session_id"] as? String)?.lowercased()
     }
 
     /// Signs out on this device only (other devices stay signed in).
