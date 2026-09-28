@@ -168,12 +168,14 @@ struct Wordmark: View {
     var color: Color = DS.Palette.lime
     /// Ghost copy behind the lead word; defaults to a faded copy of the ink.
     var trail: Color?
+    /// Scales both ghosts: 1 is the logo; lower keeps the motif quiet in the app's chrome.
+    var trailStrength: Double = 1
     var body: some View {
         // Same as the logo: the word solid, two copies trailing behind it (20% and 45%).
         let ghost = trail ?? color
         ZStack(alignment: .leading) {
-            Text(verbatim: "drafft").foregroundStyle(ghost.opacity(0.2)).offset(x: -size * 0.21)
-            Text(verbatim: "drafft").foregroundStyle(ghost.opacity(0.45)).offset(x: -size * 0.104)
+            Text(verbatim: "drafft").foregroundStyle(ghost.opacity(0.2 * trailStrength)).offset(x: -size * 0.21)
+            Text(verbatim: "drafft").foregroundStyle(ghost.opacity(0.45 * trailStrength)).offset(x: -size * 0.104)
             Text(verbatim: "drafft").foregroundStyle(color)
         }
         .font(.display(size))
