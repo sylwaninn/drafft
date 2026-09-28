@@ -10,6 +10,8 @@ import UIKit
 /// - one download per photo, however many views ask for it at once;
 /// - a capped memory cache, emptied on a memory warning, and a capped disk cache of the
 ///   downloaded bytes (keys never change, so a photo is downloaded once);
+/// - both caches keyed by the object (`MediaURL.canonical`), never by its signed link: a photo stays
+///   cached when its link is renewed, and a link about to expire is renewed before it's downloaded;
 /// - with `MediaImageResizing` on (the media domain runs Cloudflare Image Resizing), the server
 ///   sends a copy at the display width instead of the original.
 enum Images {
@@ -29,7 +31,7 @@ enum Images {
             let session = URLSessionConfiguration.default
             session.urlCache = nil // the disk cache below keeps the bytes
             session.timeoutIntervalForRequest = 30
-            config.dataLoader = DataLoader(configuration: session)
+            config.dataLoader = SignedLinkLoader(DataLoader(configuration: session))
             let disk = try? DataCache(name: "so.drafft.images")
             disk?.sizeLimit = diskLimit
             config.dataCache = disk
@@ -57,6 +59,7 @@ enum Images {
         }
         guard let url else { return nil }
         var request = ImageRequest(url: url, priority: priority, options: options)
+        if !url.isFileURL { request.imageID = MediaURL.canonical(url).absoluteString }
         // Square box, aspect fill: the copy covers the frame whatever its proportions.
         request.thumbnail = .init(size: CGSize(width: pixels, height: pixels), unit: .pixels, contentMode: .aspectFill)
         return request
@@ -99,6 +102,59 @@ enum Images {
         parts.host = url.host
         parts.port = url.port
         parts.path = "/cdn-cgi/image/width=\(width),quality=80,fit=scale-down" + basePath + "/" + key
+        parts.percentEncodedQuery = URLComponents(url: url, resolvingAgainstBaseURL: false)?.percentEncodedQuery
         return parts.url ?? url
+    }
+}
+
+/// Downloads through Nuke with the media link renewed first when it's about to expire
+/// (`MediaURL.fresh`); the cache key stays the object's, whatever the link used.
+private final class SignedLinkLoader: DataLoading, @unchecked Sendable {
+    private let inner: DataLoader
+
+    init(_ inner: DataLoader) { self.inner = inner }
+
+    func loadData(
+        with request: URLRequest,
+        didReceiveData: @escaping @Sendable (Data, URLResponse) -> Void,
+        completion: @escaping @Sendable (Error?) -> Void
+    ) -> any Cancellable {
+        guard let url = request.url, !url.isFileURL, MediaURL.expiry(of: url) != nil else {
+            return inner.loadData(with: request, didReceiveData: didReceiveData, completion: completion)
+        }
+        let task = RenewedLoad()
+        let inner = inner
+        task.start = Task {
+            var renewed = request
+            renewed.url = await MediaURL.fresh(url)
+            guard !Task.isCancelled else { return completion(CancellationError()) }
+            task.set(inner.loadData(with: renewed, didReceiveData: didReceiveData, completion: completion))
+        }
+        return task
+    }
+}
+
+/// A load that starts once its link is renewed: cancelling it cancels whichever step is running.
+private final class RenewedLoad: Cancellable, @unchecked Sendable {
+    private let lock = NSLock()
+    private var load: (any Cancellable)?
+    private var cancelled = false
+    var start: Task<Void, Never>?
+
+    func set(_ load: any Cancellable) {
+        lock.lock()
+        let cancel = cancelled
+        if !cancel { self.load = load }
+        lock.unlock()
+        if cancel { load.cancel() }
+    }
+
+    func cancel() {
+        lock.lock()
+        cancelled = true
+        let load = self.load
+        lock.unlock()
+        start?.cancel()
+        load?.cancel()
     }
 }
