@@ -164,6 +164,11 @@ struct RootView: View {
             NavigationStack { NewPasswordView() }
                 .sheetSurface()
         }
+        // A link that couldn't be used (expired, used, opened on another device): why, and what next.
+        .sheet(item: Binding(get: { app.authLinkProblem }, set: { app.authLinkProblem = $0 })) { problem in
+            NavigationStack { AuthLinkProblemView(problem: problem) }
+                .sheetSurface()
+        }
     }
 }
 

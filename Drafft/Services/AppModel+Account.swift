@@ -41,9 +41,33 @@ extension AppModel {
         signIn(onboard: !onboarded)
     }
 
-    /// A link from an auth email: a confirmed sign-up goes on to sign-up, a reset asks for the new password.
+    /// Why a link from an auth email didn't work.
+    enum AuthLinkProblem: String, Identifiable {
+        /// A reset link that expired, was used, was replaced by a newer one, or was opened on
+        /// another device than the one that asked for it.
+        case resetExpired
+        /// The same for a sign-up confirmation link.
+        case confirmExpired
+        /// No connection: the link may still be good.
+        case offline
+        var id: String { rawValue }
+    }
+
+    /// A link from an auth email: a confirmed sign-up goes on to sign-up, a reset asks for the new
+    /// password. A link that can't be used says so, with a way to get a new one or help.
     func handleAuthLink(_ url: URL) async {
-        guard let link = try? await Backend.shared.handleAuthLink(url) else { return }
+        let link: Backend.AuthLink
+        do {
+            link = try await Backend.shared.handleAuthLink(url)
+        } catch {
+            Haptics.warning()
+            if error is URLError {
+                authLinkProblem = .offline
+            } else {
+                authLinkProblem = url.path == Backend.resetCallback.path ? .resetExpired : .confirmExpired
+            }
+            return
+        }
         switch link {
         case .confirmed:
             email = await Backend.shared.client.auth.currentUser?.email ?? email

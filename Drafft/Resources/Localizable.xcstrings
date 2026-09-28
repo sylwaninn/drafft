@@ -3832,6 +3832,46 @@
         }
       }
     },
+    "A reset link works once, only on the iPhone that asked for it, and only the newest one. Ask for a new link." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Link zum Zurücksetzen funktioniert nur einmal, nur auf dem iPhone, das ihn angefordert hat, und nur der neueste. Fordere einen neuen Link an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un enlace de restablecimiento funciona una sola vez, solo en el iPhone que lo pidió, y solo el más reciente. Pide un enlace nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un lien de réinitialisation ne fonctionne qu'une fois, seulement sur l'iPhone qui l'a demandé, et seul le plus récent est valable. Demande un nouveau lien."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un link di reimpostazione funziona una sola volta, solo sull'iPhone che l'ha richiesto, e vale solo il più recente. Richiedi un nuovo link."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een resetlink werkt één keer, alleen op de iPhone die hem heeft aangevraagd, en alleen de nieuwste. Vraag een nieuwe link aan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um link de redefinição funciona uma vez, só no iPhone que o pediu, e só o mais recente. Pede um novo link."
+          }
+        }
+      }
+    },
     "A sport photo and a voice intro help. New likes land here." : {
       "localizations" : {
         "de" : {
@@ -8275,6 +8315,46 @@
         }
       }
     },
+    "Check your connection, then tap the link in the email again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüf deine Verbindung und tipp dann noch mal auf den Link in der E-Mail."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisa tu conexión y vuelve a tocar el enlace del correo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifie ta connexion, puis touche à nouveau le lien dans l'e-mail."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controlla la connessione, poi tocca di nuovo il link nell'email."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controleer je verbinding en tik dan opnieuw op de link in de e-mail."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifica a tua ligação e toca novamente no link do email."
+          }
+        }
+      }
+    },
     "Check your email address." : {
       "localizations" : {
         "de" : {
@@ -9797,6 +9877,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geen verbinding. Controleer je verbinding en probeer het opnieuw."
+          }
+        }
+      }
+    },
+    "Couldn't open the link" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link konnte nicht geöffnet werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido abrir el enlace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'ouvrir le lien"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile aprire il link"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link kon niet worden geopend"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir o link"
           }
         }
       }
@@ -18524,6 +18644,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aparece no teu perfil como “A treinar para…”. Grande ou pequeno, é ótimo para começar uma conversa."
+          }
+        }
+      }
+    },
+    "It was already used or is too old. Log in with your email and password, or get help if you're stuck." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Er wurde schon benutzt oder ist zu alt. Melde dich mit deiner E-Mail und deinem Passwort an oder hol dir Hilfe, wenn du nicht weiterkommst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya se ha usado o es demasiado antiguo. Inicia sesión con tu correo y tu contraseña, o pide ayuda si no puedes avanzar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il a déjà servi ou il est trop ancien. Connecte-toi avec ton e-mail et ton mot de passe, ou demande de l'aide si ça bloque."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È già stato usato o è troppo vecchio. Accedi con email e password, oppure chiedi aiuto se non riesci ad andare avanti."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hij is al gebruikt of te oud. Log in met je e-mailadres en wachtwoord, of vraag hulp als je vastloopt."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já foi usado ou é demasiado antigo. Inicia sessão com o teu email e palavra-passe, ou pede ajuda se não conseguires avançar."
           }
         }
       }
@@ -34186,6 +34346,46 @@
         }
       }
     },
+    "Send a new link" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuen Link senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar un enlace nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer un nouveau lien"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invia un nuovo link"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieuwe link sturen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar um novo link"
+          }
+        }
+      }
+    },
     "Send a photo or video" : {
       "localizations" : {
         "de" : {
@@ -40541,6 +40741,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Este código expirou. Pede um novo."
+          }
+        }
+      }
+    },
+    "This link has expired" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Link ist abgelaufen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este enlace ha caducado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce lien a expiré"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo link è scaduto"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deze link is verlopen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este link expirou"
           }
         }
       }

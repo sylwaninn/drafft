@@ -171,6 +171,8 @@ final class AppModel {
 
     /// Set when a reset-password link opened the app: the new-password screen shows.
     var choosingNewPassword = false
+    /// Set when a link from an auth email couldn't be used: a sheet says why and what to do.
+    var authLinkProblem: AuthLinkProblem?
 
     // MARK: Discover
 
