@@ -76,6 +76,9 @@ struct RootView: View {
     @State private var splashShown = true
     /// Set when the app went to the background; the next `.active` reads what changed while away.
     @State private var returningFromBackground = false
+    /// Each tab has been opened once (MainTabs). A signed-in launch lands on the tabs: the splash
+    /// stays until they're built, so the first tap on a tab never builds it.
+    @State private var tabsBuilt = false
     private var inMain: Bool { app.phase == .main }
 
     var body: some View {
@@ -83,7 +86,7 @@ struct RootView: View {
             // The launch: it covers the first screen until it's ready, then fades onto it.
             .overlay {
                 if splashShown {
-                    SplashView(isReady: tabsMounted && sessionChecked) { splashShown = false }
+                    SplashView(isReady: sessionChecked && (inMain ? tabsBuilt : tabsMounted)) { splashShown = false }
                 }
             }
             // The server turned an action down because the profile is paused: lock discovery.
@@ -154,7 +157,11 @@ struct RootView: View {
             if tabsMounted || inMain {
                 // Under a moderation hold the tabs stay inactive: no permission prompt, cover or
                 // banner over the hold screen. They wake up where they were once it's lifted.
-                MainTabs(isActive: inMain && moderation.hold == nil)
+                MainTabs(isActive: inMain && moderation.hold == nil,
+                         // Hidden under the splash, the welcome screen or sign-up: tabs may be switched.
+                         mayPrebuild: Binding(get: { splashShown || !inMain }, set: { _ in })) {
+                    tabsBuilt = true
+                }
                     .id(app.sessionID)
                     // Hidden, they don't follow the keyboard of the forms on top.
                     .ignoresSafeArea(inMain ? SafeAreaRegions() : .keyboard)
@@ -196,6 +203,10 @@ struct MainTabs: View {
     /// False while the tabs wait, invisible, under the welcome screen or sign-up: nothing here
     /// may ask for a permission, present a screen or show a banner then.
     let isActive: Bool
+    /// Read live at each step of the walk: whether nobody can see the tabs switch.
+    @Binding var mayPrebuild: Bool
+    /// Called once the walk is over (done, or stopped because the tabs showed).
+    var onBuilt: () -> Void = {}
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
     @State private var location = LocationGate()
@@ -204,6 +215,30 @@ struct MainTabs: View {
     private func tabLabel(_ title: String, _ symbol: String, _ tab: AppModel.Tab) -> some View {
         Label(title, systemImage: symbol)
             .environment(\.symbolVariants, app.tab == tab ? .fill : .none)
+    }
+
+    /// Opens each tab once while nobody sees it (under the splash on a signed-in launch, under the
+    /// welcome screen otherwise), so each one's screen exists before the first tap, then comes back
+    /// to the tab it started on. Stops as soon as the tabs show, or if something else picked another
+    /// tab (a tapped notification): that choice stays. Signing in puts Discover back mid-walk
+    /// (the restored session lands during the splash): the walk goes on.
+    private func prebuildTabs() async {
+        let start = app.tab
+        var shown = start
+        defer {
+            // Back where it started, unless something else picked a tab meanwhile.
+            if app.tab == shown || app.tab == start { app.tab = start }
+            onBuilt()
+        }
+        let tabs: [AppModel.Tab] = [.discover, .likes, .sessions, .chats, .me]
+        for t in tabs where t != start {
+            try? await Task.sleep(for: .milliseconds(250))
+            guard mayPrebuild, app.tab == shown || app.tab == start else { return }
+            app.tab = t
+            shown = t
+        }
+        // The last one gets its turn to build too.
+        try? await Task.sleep(for: .milliseconds(250))
     }
 
     var body: some View {
@@ -241,16 +276,7 @@ struct MainTabs: View {
         // the like green and the red. Each tab's content gets the accent tint back.
         .tint(DS.Palette.ink)
         .tabBarMinimizeBehavior(.onScrollDown)
-        .task {
-            // Built in the background: open each tab once, so each one's screen exists before
-            // the first tap. Stops as soon as the person is in (and they land on Discover).
-            guard !isActive else { return }
-            for t in [AppModel.Tab.likes, .sessions, .chats, .me, .discover] {
-                try? await Task.sleep(for: .milliseconds(300))
-                guard app.phase != .main else { return }
-                app.tab = t
-            }
-        }
+        .task { await prebuildTabs() }
         // drafft tempo's details (plan, renewal) follow the App Store through RevenueCat's stream, for
         // the signed-in account only. Whether it's on, and every balance, comes from the wallet.
         .task {
