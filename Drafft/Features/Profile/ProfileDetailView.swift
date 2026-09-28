@@ -239,10 +239,9 @@ struct ProfileDetailView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        // No loose text on the sage canvas: name, area and bio read as the first profile block.
-        .padding(DS.Space.xl)
+        // Straight on the page, not in a block (user-requested exception to "no loose text"):
+        // the person's intro reads as the page's own title, lined up with the blocks' edges.
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
     }
 
     /// Their super like, in full (the deck card only shows the first lines of the note).
