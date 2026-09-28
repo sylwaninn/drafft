@@ -55,6 +55,7 @@ enum UserChannel {
                     joined = true
                     await AccountModeration.shared.load()
                     await app.loadWallet()
+                    await PurchaseCredit.shared.resume(app)
                 }
                 return joined
             }
