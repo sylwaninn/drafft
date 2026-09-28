@@ -33,6 +33,11 @@ packages:
   RevenueCat:
     url: https://github.com/RevenueCat/purchases-ios
     from: 5.91.0
+  # Chat: Stream's low-level client only (connection, offline store, channels, messages, reactions,
+  # typing, reads); every screen is drafft's own. Pinned: the client and the Stream app evolve together.
+  StreamChat:
+    url: https://github.com/GetStream/stream-chat-swift
+    exactVersion: 5.12.0
   Supabase:
     url: https://github.com/supabase/supabase-swift
     from: 2.55.0
@@ -62,6 +67,8 @@ targets:
         product: PhoneNumberKit
       - package: RevenueCat
         product: RevenueCat
+      - package: StreamChat
+        product: StreamChat
       - package: Supabase
         product: Supabase
     configFiles:
@@ -124,6 +131,7 @@ targets:
       - path: Drafft/Services/Media/ThumbHash.swift
       - path: Drafft/Services/Sessions/SessionLedger.swift
       - path: Drafft/Services/Backend/ProfileCard.swift
+      - path: Drafft/Services/Chat/ChatPayload.swift
     dependencies:
       - package: GRDB
         product: GRDB

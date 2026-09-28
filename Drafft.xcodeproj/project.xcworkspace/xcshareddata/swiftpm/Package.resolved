@@ -1,5 +1,5 @@
 {
-  "originHash" : "92c00b3532f6c3429b49fde8ff32cef5f45e074fcbd58b9640710e4676d52671",
+  "originHash" : "39690f068d417887d09d94cdd66307ad4f8c9560e72a9fa2ade5bc0ffeaa5cf4",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -35,6 +35,24 @@
       "state" : {
         "revision" : "d654b8b85143c29e5bb73d0ff92f5f5766fbbedc",
         "version" : "5.91.0"
+      }
+    },
+    {
+      "identity" : "stream-chat-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GetStream/stream-chat-swift",
+      "state" : {
+        "revision" : "7ef32c8661dc683e9857164fcf66741bd6ff6caf",
+        "version" : "5.12.0"
+      }
+    },
+    {
+      "identity" : "stream-core-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GetStream/stream-core-swift.git",
+      "state" : {
+        "revision" : "fc4cc112690e1389e5ca3172bc3b55fea1dbc0da",
+        "version" : "0.10.1"
       }
     },
     {
