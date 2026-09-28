@@ -216,7 +216,7 @@ struct PaywallView: View {
             HStack(spacing: DS.Space.md) {
                 CheckDisc(isOn: on, ring: .white.opacity(0.4))
                 VStack(alignment: .leading, spacing: 2) {
-                    // The tag sits after the title while it fits, under it otherwise.
+                    // The tag sits after the title, on the same line; it only drops under it at the largest text sizes.
                     let tagView = tag(p).map { tag in
                         Text(tag)
                             .font(.caption2.weight(.bold))
@@ -237,12 +237,23 @@ struct PaywallView: View {
                         }
                     }
                     Text(p.total(product.localizedPriceString)).font(.footnote).foregroundStyle(.white.opacity(0.6))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                Spacer()
-                VStack(alignment: .trailing, spacing: 0) {
-                    Text(product.localizedPricePerMonth ?? product.localizedPriceString)
-                        .font(.displayBold(22, relativeTo: .title3)).foregroundStyle(.white)
-                    Text("/ month").font(.caption).foregroundStyle(.white.opacity(0.6))
+                .layoutPriority(1)
+                Spacer(minLength: DS.Space.sm)
+                // "7,33 €/month" on one line; stacked only when it can't fit.
+                let perMonth = product.localizedPricePerMonth ?? product.localizedPriceString
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                        Text(perMonth).font(.displayBold(20, relativeTo: .title3)).foregroundStyle(.white)
+                        Text("/ month").font(.caption).foregroundStyle(.white.opacity(0.6))
+                    }
+                    .fixedSize()
+                    VStack(alignment: .trailing, spacing: 0) {
+                        Text(perMonth).font(.displayBold(20, relativeTo: .title3)).foregroundStyle(.white)
+                        Text("/ month").font(.caption).foregroundStyle(.white.opacity(0.6))
+                    }
+                    .fixedSize()
                 }
             }
             .padding(DS.Space.lg)
