@@ -129,7 +129,8 @@ final class AppModel {
     var matches: [Match] = []
 
     // Chats
-    var conversations: [Conversation] = MockData.conversations() { didSet { refreshBadges() } }
+    /// One per active match (`matches`), with its Stream channel (`ChatService`): never sample data.
+    var conversations: [Conversation] = [] { didSet { refreshBadges() } }
     /// The chat currently on screen (its messages count as read).
     var openChatID: String?
     /// A request to show a chat from the Chats tab (match screen, banner); consumed by ConversationsView.
@@ -169,6 +170,7 @@ final class AppModel {
     func toggleMute(_ id: String) {
         guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
         conversations[i].muted.toggle()
+        ChatService.shared.toggleMute(id)
     }
 
     // MARK: Account (Supabase Auth)
@@ -202,145 +204,39 @@ final class AppModel {
         guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
         conversations[i].unread = 0
         conversations[i].markedUnread = false
+        Task { await ChatService.shared.markRead(id) }
     }
 
     /// "Mark as unread": a dot on the chat until it's opened again.
     func markUnread(_ id: String) {
         guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
         conversations[i].markedUnread = true
+        ChatService.shared.markUnread(id)
     }
 
-    /// Optimistic send: the bubble appears immediately, delivery ticks catch up.
-    func send(_ content: MessageContent, in id: String, replyTo: UUID? = nil) {
-        guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
-        let msg = Message(content, fromMe: true, state: .sending, replyTo: replyTo)
-        conversations[i].messages.append(msg)
-        let convo = conversations.remove(at: i)
-        conversations.insert(convo, at: 0)
+    /// Sent at once: the bubble shows before the server has it, the ticks catch up.
+    func send(_ content: MessageContent, in id: String, replyTo: String? = nil) {
+        guard conversation(id) != nil else { return }
         Haptics.tap()
-
-        // Photos go through the moderation check, silently: nothing changes for anyone. A flagged
-        // one is recorded on the server (media_flags) for actions and metrics. A sample person never
-        // receives it: nothing is uploaded or checked.
-        if case .photo(_, let data?) = content, !MockData.isSample(id) {
-            Task { await ChatMediaCheck.photo(data) }
-        }
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(80))
-            self.setState(.sent, for: msg.id, in: id)
-            try? await Task.sleep(for: .milliseconds(250))
-            self.setState(.delivered, for: msg.id, in: id)
-        }
-        // Only sample people answer on their own; a real match's chat is the chat service's.
-        guard MockData.isSample(id) else { return }
-        // Sessions are real (`SessionStore`): nobody simulated answers them.
-        if case .session = content { return }
-        simulateReply(in: id)
+        ChatService.shared.send(content, in: id, replyTo: replyTo)
     }
 
     /// Your reaction on one of their messages (never on your own: WhatsApp-style, minus self-reactions).
-    func react(_ emoji: String?, to messageID: UUID, in id: String) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }),
-              let m = conversations[c].messages.firstIndex(where: { $0.id == messageID }),
-              !conversations[c].messages[m].fromMe else { return }
-        conversations[c].messages[m].reaction = conversations[c].messages[m].reaction == emoji ? nil : emoji
+    func react(_ emoji: String?, to messageID: String, in id: String) {
+        guard let message = conversation(id)?.messages.first(where: { $0.id == messageID }), !message.fromMe else { return }
         Haptics.select()
+        ChatService.shared.react(emoji, to: messageID, current: message.reaction, in: id)
     }
 
-    func delete(_ messageID: UUID, in id: String) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }) else { return }
-        conversations[c].messages.removeAll { $0.id == messageID }
+    func delete(_ messageID: String, in id: String) {
+        guard conversation(id)?.messages.first(where: { $0.id == messageID })?.fromMe == true else { return }
+        ChatService.shared.delete(messageID, in: id)
     }
 
-    private func setState(_ state: DeliveryState, for messageID: UUID, in id: String) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }),
-              let m = conversations[c].messages.firstIndex(where: { $0.id == messageID }) else { return }
-        if conversations[c].messages[m].state < state {
-            withAnimation(Motion.snappy) { conversations[c].messages[m].state = state }
-        }
-    }
-
-    private var replyTasks: [String: Task<Void, Never>] = [:]
-
-    /// Simulated partner: reads, types, replies. Debounced so a burst of sends gets one answer.
-    private func simulateReply(in id: String) {
-        replyTasks[id]?.cancel()
-        // A few seconds of background time: leaving the app right after sending still gets the reply
-        // (and its notification).
-        let background = UIApplication.shared.beginBackgroundTask(withName: "reply-\(id)")
-        replyTasks[id] = Task { @MainActor in
-            defer { UIApplication.shared.endBackgroundTask(background) }
-            try? await Task.sleep(for: .milliseconds(1400))
-            guard !Task.isCancelled, let c = self.conversations.firstIndex(where: { $0.id == id }) else { return }
-            withAnimation(Motion.snappy) {
-                for m in self.conversations[c].messages.indices where self.conversations[c].messages[m].fromMe {
-                    self.conversations[c].messages[m].state = .read
-                }
-                self.conversations[c].isTyping = true
-            }
-            // Demo: now and then they react to your last message before answering.
-            if Int.random(in: 0..<2) == 0 { self.partnerReacts(in: id) }
-            try? await Task.sleep(for: .milliseconds(1800))
-            guard !Task.isCancelled, let c2 = self.conversations.firstIndex(where: { $0.id == id }) else { return }
-            let reply = Message(.text(Self.cannedReply(for: self.conversations[c2])), fromMe: false)
-            withAnimation(Motion.snappy) {
-                self.conversations[c2].isTyping = false
-                self.conversations[c2].messages.append(reply)
-            }
-            self.received([reply], in: id)
-        }
-    }
-
-    /// The other person reacts to your last text message (demo), with a notification when the chat
-    /// isn't on screen: "Maya reacted ❤️ to: “…”".
-    private func partnerReacts(in id: String) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }),
-              let m = conversations[c].messages.lastIndex(where: {
-                  if case .text = $0.content { return $0.fromMe && $0.reaction == nil }
-                  return false
-              }),
-              case .text(let text) = conversations[c].messages[m].content else { return }
-        let emoji = ["❤️", "😂", "🔥", "👏"].randomElement()!
-        withAnimation(Motion.bouncy) { conversations[c].messages[m].reaction = emoji }
-        guard !(openChatID == id && UIApplication.shared.applicationState == .active) else { return }
-        let profile = conversations[c].profile
-        let muted = conversations[c].muted
-        Task {
-            await NotificationService.shared.notify(.reaction(emoji, text), from: profile.firstName,
-                                                    photo: profile.portrait, chatID: id, muted: muted)
-        }
-    }
-
-    /// Messages that just arrived in a chat. Unless that chat is on screen right now: unread count,
-    /// and a notification (NotificationService applies the Messages settings and the chat's mute).
-    private func received(_ messages: [Message], in id: String, as kind: NotificationText.Kind? = nil) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }), let last = messages.last else { return }
-        let onScreen = openChatID == id && UIApplication.shared.applicationState == .active
-        if onScreen {
-            Haptics.tap()
-            return
-        }
-        conversations[c].unread += messages.count
-        let resolved: NotificationText.Kind = if let kind { kind }
-            else if case .session(let s) = last.content { .sessionProposed(s.displayTitle) }
-            else { .message }
-        let profile = conversations[c].profile
-        let muted = conversations[c].muted
-        Task {
-            await NotificationService.shared.notify(resolved, from: profile.firstName, photo: profile.portrait,
-                                                    chatID: id, muted: muted, preview: last.previewText)
-        }
-    }
-
-    private static func cannedReply(for convo: Conversation) -> String {
-        let pool = [
-            "Ha, love that.",
-            "Okay, you have my attention.",
-            "Wait, send more of that 😂",
-            "Same page. When are you free this week?",
-            "That's exactly my kind of plan."
-        ]
-        return pool[convo.messages.count % pool.count]
+    /// A message that couldn't be sent, tapped: sent again.
+    func retry(_ messageID: String, in id: String) {
+        Haptics.tap()
+        ChatService.shared.retry(messageID, in: id)
     }
 }
 

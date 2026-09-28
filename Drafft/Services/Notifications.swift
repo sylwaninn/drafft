@@ -91,6 +91,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
         let hex = token.map { String(format: "%02x", $0) }.joined()
         deviceToken = hex
         Task { await syncPushToken() }
+        // Messages are pushed by Stream: the chat registers the same token there.
+        ChatService.shared.registerDevice(token)
         // Until the server registers tokens (register_push_token), keep the last one in the app's
         // Documents, readable over the cable with `xcrun devicectl device copy from`, to test pushes.
         if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -175,13 +177,13 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     // MARK: From a person
 
     /// A notification about someone, shown right away: "drafft" as the title, the whole sentence
-    /// ("Maya t'a envoyé un message") as the body, their photo as the thumbnail. With the server these
-    /// come as pushes (Stream for messages, db-events for the rest); the demo posts them locally,
-    /// under the same settings. `preview` is the message text, used when message previews are on.
+    /// ("Maya t'a envoyé un message") as the body, their photo as the thumbnail. Away from the app these
+    /// come as pushes (Stream for messages, db-events for the rest); while the chat is connected (the app
+    /// open, or just left), Stream doesn't push, so a message from another chat is posted here, under the
+    /// same settings. `preview` is the message text, used when message previews are on.
     func notify(_ kind: NotificationText.Kind, from name: String, photo: String?, chatID: String,
                 muted: Bool, preview: String? = nil) async {
-        // Sample people's simulated matches, messages and reactions stay inside the app.
-        guard isAllowed, !muted, !MockData.isSample(chatID) else { return }
+        guard isAllowed, !muted else { return }
         switch kind {
         case .message, .sessionProposed, .sessionAccepted, .sessionDeclined, .sessionCancelled:
             guard messages else { return }
@@ -259,7 +261,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
             return
         }
         // Server pushes name the match (its chat); the app's own name the chat.
-        let chatID = (info["chatID"] ?? info["match"]) as? String
+        let chatID = (info["chatID"] as? String) ?? (info["match"] as? String)?.lowercased()
         if let kind = info["kind"] as? String, kind == "session_cancelled" {
             // Cancelled with its match (no chat any more): the Sessions tab, read again.
             await SessionStore.shared.refresh()

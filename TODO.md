@@ -32,10 +32,10 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
 - [ ] Notification previews off: the service extension must replace the message text (Stream pushes include
       it) with `NotificationText.body(.message…)`. (The settings themselves are saved on the profile and the
       phone, read back at launch: `NotificationService.loadSettings`.)
-- [ ] Reactions over Stream: `sendReaction(type: <the emoji>, enforce_unique: true)`, only on the other person's
+- [x] Reactions over Stream: `sendReaction(type: <the emoji>, enforce_unique: true)`, only on the other person's
       messages; `deleteReaction` to remove. The reaction push comes from the backend (`stream-webhook`), with the
       message id as collapse id and `match` to open the chat.
-- [ ] Stream push: `addDevice` with push provider `drafft-apn` (TestFlight, App Store) or
+- [x] Stream push: `addDevice` with push provider `drafft-apn` (TestFlight, App Store) or
       `drafft-apn-dev` (Xcode builds).
 - [ ] Location: reduced-accuracy CoreLocation → `set_location` at launch and on significant change.
 
@@ -43,8 +43,8 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
 
 - [ ] Profile video: `MediaUploads.video` (poster uploaded first) → `add_profile_media(kind: video,
       duration, poster_key)`.
-- [ ] Chat photos and videos: `purpose: .chatPhoto / .chatVideo`, `VideoCompressor.Settings.chat`, then a
-      Stream attachment pointing to `publicUrl`. `Composer.sendPicked` sends raw data today.
+- [x] Chat photos and videos: `purpose: .chatPhoto / .chatVideo`, `VideoCompressor.Settings.chat`, then a
+      Stream `drafft_media` attachment carrying the object's key (links signed on display, `media_urls`).
 - [ ] Background relaunch: forward `application(_:handleEventsForBackgroundURLSession:completionHandler:)`
       to `MediaUploader.shared.handleEventsForBackgroundSession`.
 - [ ] Persist the upload queue (GRDB): if the app is killed mid-upload, the file still arrives but the
@@ -69,11 +69,11 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
 
 ## Chat (Stream)
 
-- [ ] `stream-token` at launch and on expiry; connect the low-level client.
-- [ ] Map custom messages: `session` (load the row, live status from Realtime), `icebreakerReply`,
+- [x] `stream-token` at launch and on expiry; connect the low-level client.
+- [x] Map custom messages: `session` (load the row, live status from Realtime), `icebreakerReply`,
       `photoReply`, `superLikeNote`, `text` openers.
-- [ ] Optimistic sends, read receipts, typing, reactions, replies, mute (Stream channel mute).
-- [ ] Voice messages as Stream attachments (AAC 48 kb/s mono, already the recorder's setting).
+- [x] Optimistic sends, read receipts, typing, reactions, replies, mute (Stream channel mute).
+- [x] Voice messages as Stream attachments (AAC 48 kb/s mono, already the recorder's setting).
 
 ## Money and trust
 

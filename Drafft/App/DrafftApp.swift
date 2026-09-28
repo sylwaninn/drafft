@@ -26,15 +26,10 @@ struct DrafftApp: App {
         }
     }
 
-    /// Decodes, in the background, the bundled photos the first screens draw: the welcome photos
-    /// and the avatars the tabs show. The first visit of a tab then draws without decoding, and the
-    /// tab bar answers straight away. Photos from the server go through Nuke (`Images`).
+    /// Decodes, in the background, the bundled photos the first screens draw: the welcome photos.
+    /// Photos from the server go through Nuke (`Images`).
     private static func prewarmPhotos() {
-        let people = MockData.profiles.map(\.portrait)
-        ImageStore.prewarm(
-            full: WelcomeView.photos,
-            small: people.flatMap { [(name: $0, side: 32), (name: $0, side: 56), (name: $0, side: 88)] },
-            blurred: [])
+        ImageStore.prewarm(full: WelcomeView.photos, small: [], blurred: [])
     }
 
     /// Large titles in the display face, inline titles in its extra-bold cut, both in ink. No halo:
@@ -112,6 +107,8 @@ struct RootView: View {
                 Task { await AppOpens.report() }
                 // A purchase confirmed earlier but not credited yet: asked for again.
                 Task { await PurchaseCredit.shared.resume(app) }
+                // Chat: one connection for the account (a second call only reads matches again).
+                Task { await ChatService.shared.start(app) }
                 await UserChannel.watch(app)
             }
             .onChange(of: scenePhase) { _, p in

@@ -14,6 +14,7 @@ extension AppModel {
             history.removeAll { $0.profile.id == profile.id }
             conversations.removeAll { $0.profile.id == profile.id }
         }
+        ChatService.shared.publish()
         if banner?.profile.id == profile.id { banner = nil }
         Task { await Safety.block(profile.id) }
     }

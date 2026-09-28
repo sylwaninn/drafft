@@ -304,9 +304,9 @@ enum MessageImage {
         return orientation >= 5 ? CGSize(width: h, height: w) : CGSize(width: w, height: h)
     }
 
-    static func request(_ id: UUID, data: Data, points: CGSize, scale: CGFloat) -> ImageRequest {
+    static func request(_ id: String, data: Data, points: CGSize, scale: CGFloat) -> ImageRequest {
         let side = max(points.width, points.height) * scale
-        var request = ImageRequest(id: "message-\(id.uuidString)-\(Int(side))", data: { data })
+        var request = ImageRequest(id: "message-\(id)-\(Int(side))", data: { data })
         request.thumbnail = .init(size: CGSize(width: side, height: side), unit: .pixels, contentMode: .aspectFill)
         return request
     }
@@ -314,7 +314,7 @@ enum MessageImage {
 
 /// A chat photo or poster from its bytes, decoded off the main thread (see `MessageImage`).
 struct MessagePhoto: View {
-    let id: UUID
+    let id: String
     let data: Data
     @Environment(\.displayScale) private var scale
 

@@ -92,7 +92,6 @@ extension AppModel {
     /// the server refuses.
     func unmatch(_ profile: Profile) {
         guard let match = matches.first(where: { $0.profile.id == profile.id }) else { return }
-        let conversation = conversation(match.id)
         endLocally(match)
         Task { [self] in
             do {
@@ -102,25 +101,19 @@ extension AppModel {
             } catch {
                 withAnimation(Motion.snappy) {
                     if !matches.contains(where: { $0.id == match.id }) { matches.insert(match, at: 0) }
-                    if let conversation, self.conversation(match.id) == nil { conversations.insert(conversation, at: 0) }
                 }
+                ensureConversations()
                 Haptics.warning()
                 say(error)
             }
         }
     }
 
-    /// Every current match has its chat in Chats (empty until the chat service fills it), with the
-    /// match's latest card. A chat's id is its match's id (the server's, as sessions and pushes use it).
+    /// Every current match has its chat in Chats (`ChatService`: the match's latest card, its Stream
+    /// channel once connected). A chat's id is its match's id (the server's, as sessions and pushes use it).
     func ensureConversations() {
-        var list = conversations
-        for match in matches where !list.contains(where: { $0.id == match.id }) {
-            list.append(Conversation(id: match.id, profile: match.profile, messages: [], matchedAt: match.matchedAt))
-        }
-        for i in list.indices {
-            if let match = matches.first(where: { $0.id == list[i].id }) { list[i].profile = match.profile }
-        }
-        if list != conversations { withAnimation(Motion.snappy) { conversations = list } }
+        ChatService.shared.app = self
+        ChatService.shared.publish()
     }
 
     // MARK: Cache
