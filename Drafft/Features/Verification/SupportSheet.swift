@@ -6,6 +6,10 @@ import SwiftUI
 /// and is emailed too. Signed out, the message carries a Cloudflare Turnstile token (TurnstileChallenge).
 struct SupportSheet: View {
     let topic: String
+    /// Already written for the person (a purchase's reference); they can change it.
+    var prefill = ""
+    /// Sent with the message for the team (a transaction id), never shown.
+    var details: [String: String] = [:]
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     @State private var message = ""
@@ -62,6 +66,7 @@ struct SupportSheet: View {
             }
         }
         .task {
+            if message.isEmpty { message = prefill }
             session = await Backend.shared.hasSession ? .signedIn : .signedOut
             if session == .signedOut { captcha.start() }
         }
@@ -134,6 +139,7 @@ struct SupportSheet: View {
             "screen": topic
         ]
         if let hold = AccountModeration.shared.hold { context["hold"] = hold.rawValue }
+        for (key, value) in details { context[key] = value }
         var body: [String: Any] = [
             "topic": topic,
             "message": message.trimmingCharacters(in: .whitespacesAndNewlines),
