@@ -166,6 +166,11 @@ struct DiscoverView: View {
             .animation(.smooth(duration: 0.26, extraBounce: 0.04), value: app.deck.first?.id)
             .onAppear { deckSize = geo.size }
             .onChange(of: geo.size) { _, size in deckSize = size }
+            // Every photo of the card in play and the next three, fetched ahead (to disk, at the
+            // card's size): swiping or opening a profile never waits on the network.
+            .task(id: app.deck.prefix(4).map(\.id)) {
+                Images.prefetch(app.deck.prefix(4).flatMap(\.allPhotos), points: geo.size)
+            }
         }
     }
 

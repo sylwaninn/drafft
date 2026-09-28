@@ -7,6 +7,7 @@ struct DrafftApp: App {
     @State private var app = AppModel()
 
     init() {
+        Images.configure()
         Store.configure()
         Self.styleNavigationBars()
         Self.prewarmPhotos()

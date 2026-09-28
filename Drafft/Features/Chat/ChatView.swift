@@ -634,7 +634,7 @@ struct MessageRow: View {
     /// Pixel size of a photo, to lay its bubble out in the same proportions.
     private func photoSize(asset: String?, data: Data?) -> CGSize? {
         if let asset { return UIImage(named: asset)?.size }
-        return data.flatMap { MessageImageCache.image(message.id, data: $0)?.size }
+        return data.flatMap(MessageImage.size(of:))
     }
 
     /// Bubble size for a photo or video: 240 pt wide, the media's own height, kept between a
@@ -742,7 +742,7 @@ struct MessageRow: View {
             Button { onOpen(MediaItem(id: message.id, kind: .photo(asset: asset, data: data))) } label: {
                 Group {
                     if let asset { Photo(name: asset, side: size.width) }
-                    else if let data, let img = MessageImageCache.image(message.id, data: data) { Image(uiImage: img).resizable().scaledToFill() }
+                    else if let data { MessagePhoto(id: message.id, data: data) }
                 }
                 // The photo's own proportions (within limits, like WhatsApp).
                 .frame(width: size.width, height: size.height)
@@ -754,12 +754,11 @@ struct MessageRow: View {
             .accessibilityHint("Opens it full screen")
 
         case let .video(url, thumb, duration):
-            let poster = thumb.flatMap { MessageImageCache.image(message.id, data: $0) }
-            let size = Self.bubbleSize(poster?.size)
+            let size = Self.bubbleSize(thumb.flatMap(MessageImage.size(of:)))
             Button { onOpen(MediaItem(id: message.id, kind: .video(url))) } label: {
                 ZStack {
-                    if let poster {
-                        Image(uiImage: poster).resizable().scaledToFill()
+                    if let thumb {
+                        MessagePhoto(id: message.id, data: thumb)
                     } else {
                         DS.Palette.night
                     }

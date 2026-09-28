@@ -11,4 +11,7 @@ REVENUECAT_API_KEY = appl_nPDeedcmfhgYnAvrGnLpAoYIQkm
 SMS_CODE_LIFETIME = 6000
 APP_DISPLAY_NAME = drafft local
 
+// Photos sized by the media domain (Cloudflare Image Resizing, /cdn-cgi/image/): YES once it's enabled there.
+MEDIA_IMAGE_RESIZING = NO
+
 #include? "../Local.private.xcconfig"

@@ -17,6 +17,10 @@ fileGroups:
   # Local App Store for testing purchases in the Simulator (not shipped in the app).
   - StoreKit
 packages:
+  # Remote and picked photos: background decoding at display size, capped caches, shared downloads.
+  Nuke:
+    url: https://github.com/kean/Nuke
+    exactVersion: 13.2.0
   # Phone numbers of every country: parsing, validation (mobile lines) and formatting, from Google's
   # libphonenumber metadata. Pinned: a metadata update changes what the phone step accepts.
   PhoneNumberKit:
@@ -44,6 +48,10 @@ targets:
       # data in step with the code (App Store privacy manifest).
       - path: Drafft
     dependencies:
+      - package: Nuke
+        product: Nuke
+      - package: Nuke
+        product: NukeUI
       - package: PhoneNumberKit
         product: PhoneNumberKit
       - package: RevenueCat
@@ -93,6 +101,8 @@ targets:
         RevenueCatAPIKey: $(REVENUECAT_API_KEY)
         SmsCodeLifetime: $(SMS_CODE_LIFETIME)
         TurnstileSiteKey: $(TURNSTILE_SITE_KEY)
+        # YES once the media domain resizes on the fly (Cloudflare /cdn-cgi/image/); read by Images.
+        MediaImageResizing: $(MEDIA_IMAGE_RESIZING)
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, fr, es, de, it, pt, nl]
         NSLocationDefaultAccuracyReduced: true

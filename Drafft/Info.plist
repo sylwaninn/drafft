@@ -30,6 +30,8 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>MediaImageResizing</key>
+	<string>$(MEDIA_IMAGE_RESIZING)</string>
 	<key>NSLocationDefaultAccuracyReduced</key>
 	<true/>
 	<key>RevenueCatAPIKey</key>
