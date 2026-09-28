@@ -3,7 +3,7 @@ import SwiftUI
 /// "Get help" from anywhere a check fails or an account is on hold: the topic is filled in, the person
 /// adds a few words, and it goes to the team (backend `support`), which replies by email. Signed out (a
 /// stuck sign-up or reset), the form also asks where to reply. The reference comes back from the server
-/// and is emailed too.
+/// and is emailed too. Signed out, the message carries a Cloudflare Turnstile token (TurnstileChallenge).
 struct SupportSheet: View {
     let topic: String
     @Environment(AppModel.self) private var app
@@ -17,19 +17,22 @@ struct SupportSheet: View {
     @State private var reference: String?
     @State private var error: String?
     @FocusState private var messageFocused: Bool
+    @State private var captcha = TurnstileChallenge()
 
     /// Newlines count as empty too: the field is multi-line.
     private var hasMessage: Bool { !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     private var hasEmail: Bool {
         session == .signedIn || replyEmail.trimmingCharacters(in: .whitespaces).wholeMatch(of: /[^\s@]+@[^\s@]+\.[^\s@]+/) != nil
     }
+    /// Signed out, sending waits for a Turnstile token.
+    private var captchaReady: Bool { session == .signedIn || captcha.token != nil }
     private var replyTo: String { session == .signedIn ? app.email : replyEmail.trimmingCharacters(in: .whitespaces) }
 
     var body: some View {
         AccountSheet(title: L("Get help"),
                      actionTitle: reference != nil ? L("Done") : L("Send to support"),
                      actionIcon: reference != nil ? "checkmark" : "paperplane.fill",
-                     enabled: reference != nil || (hasMessage && hasEmail && session != .unknown),
+                     enabled: reference != nil || (hasMessage && hasEmail && session != .unknown && captchaReady),
                      loading: sending,
                      error: error,
                      hasChanges: reference == nil && hasMessage) {
@@ -58,7 +61,28 @@ struct SupportSheet: View {
                 form
             }
         }
-        .task { session = await Backend.shared.hasSession ? .signedIn : .signedOut }
+        .task {
+            session = await Backend.shared.hasSession ? .signedIn : .signedOut
+            if session == .signedOut { captcha.start() }
+        }
+        .background {
+            // The widget works out of sight; it only shows (in its own sheet) when Cloudflare asks.
+            if session == .signedOut && !captcha.needsInteraction {
+                TurnstileView(challenge: captcha)
+                    .frame(width: 1, height: 1)
+                    .opacity(0.01)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+        }
+        .sheet(isPresented: $captcha.needsInteraction) {
+            Group { TurnstileSheet(challenge: captcha) }.sheetSurface()
+        }
+        .onChange(of: captcha.failed) { _, failed in
+            let message = L("The security check couldn't load. Check your connection and try again.")
+            if failed { error = message } else if error == message { error = nil }
+        }
+        .onDisappear { captcha.stop() }
     }
 
     private var form: some View {
@@ -116,12 +140,23 @@ struct SupportSheet: View {
             "language": app.language.rawValue,
             "context": context
         ]
-        if session != .signedIn { body["email"] = replyTo }
+        if session != .signedIn {
+            body["email"] = replyTo
+            if let token = captcha.token { body["turnstileToken"] = token }
+        }
+        // Single use: whatever the answer, the next send needs a fresh token.
+        defer { if session != .signedIn { captcha.renew() } }
         do {
             let data = try await Backend.shared.publicFunction("support", body)
             let answer = try JSONDecoder().decode([String: String].self, from: data)
             Haptics.success()
             withAnimation(Motion.bouncy) { reference = answer["reference"] ?? "" }
+        } catch let Backend.BackendError.http(_, detail) where detail.contains("captcha_not_configured") {
+            Haptics.warning()
+            error = L("Support can't take messages this way right now. Try again later.")
+        } catch let Backend.BackendError.http(_, detail) where detail.contains("captcha_") {
+            Haptics.warning()
+            error = L("The security check didn't go through. Try again.")
         } catch Backend.BackendError.http(429, _) {
             Haptics.warning()
             error = L("You've sent several messages already. Try again in an hour.")
