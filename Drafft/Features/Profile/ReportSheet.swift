@@ -94,7 +94,9 @@ struct ReportSheet: View {
             onDone()
         } catch {
             Haptics.warning()
-            self.error = L("Your report couldn't be sent. Check your connection and try again.")
+            // A refusal (daily limit, account on hold…) says why; otherwise it's the connection.
+            self.error = ServerMessage.text(for: error)
+                ?? L("Your report couldn't be sent. Check your connection and try again.")
         }
     }
 

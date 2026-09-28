@@ -13776,6 +13776,46 @@
         }
       }
     },
+    "Finish your profile first." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termine d'abord ton profil."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero completa tu perfil."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vervollständige zuerst dein Profil."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prima completa il tuo profilo."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro completa o teu perfil."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maak eerst je profiel af."
+          }
+        }
+      }
+    },
     "Finish your prompt, or skip it for now." : {
       "localizations" : {
         "de" : {
@@ -40785,6 +40825,86 @@
         }
       }
     },
+    "This file is too large." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce fichier est trop volumineux."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este archivo es demasiado grande."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Datei ist zu groß."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo file è troppo grande."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este ficheiro é demasiado grande."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit bestand is te groot."
+          }
+        }
+      }
+    },
+    "This file type isn't supported." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce type de fichier n'est pas pris en charge."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este tipo de archivo no es compatible."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Dateityp wird nicht unterstützt."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo tipo di file non è supportato."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este tipo de ficheiro não é suportado."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit bestandstype wordt niet ondersteund."
+          }
+        }
+      }
+    },
     "This number is already used by another drafft account." : {
       "localizations" : {
         "de" : {
@@ -40993,6 +41113,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta foto não pode estar no teu perfil"
+          }
+        }
+      }
+    },
+    "This photo has already been reviewed." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette photo a déjà été examinée."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta foto ya se ha revisado."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Foto wurde bereits geprüft."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa foto è già stata controllata."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta foto já foi analisada."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deze foto is al beoordeeld."
+          }
+        }
+      }
+    },
+    "This profile isn't available." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce profil n'est pas disponible."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este perfil no está disponible."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Profil ist nicht verfügbar."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo profilo non è disponibile."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este perfil não está disponível."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit profiel is niet beschikbaar."
           }
         }
       }
@@ -47996,46 +48196,6 @@
         }
       }
     },
-    "You can have up to 9 photos and videos." : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux avoir jusqu'à 9 photos et vidéos."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes tener hasta 9 fotos y vídeos."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst bis zu 9 Fotos und Videos haben."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi avere fino a 9 foto e video."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podes ter até 9 fotos e vídeos."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je kunt tot 9 foto's en video's hebben."
-          }
-        }
-      }
-    },
     "You can replace your number, not remove it: it keeps your account secure." : {
       "localizations" : {
         "de" : {
@@ -48796,6 +48956,46 @@
         }
       }
     },
+    "You've reached the photo limit. Remove one, then try again." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la limite de photos. Retires-en une, puis réessaie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has llegado al límite de fotos. Quita una y vuelve a intentarlo."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast das Fotolimit erreicht. Entferne eins und versuch es noch mal."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai raggiunto il limite di foto. Togline una e riprova."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chegaste ao limite de fotos. Remove uma e tenta de novo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt het maximum aantal foto's bereikt. Verwijder er een en probeer het opnieuw."
+          }
+        }
+      }
+    },
     "You've been logged out" : {
       "localizations" : {
         "de" : {
@@ -49128,6 +49328,46 @@
         }
       }
     },
+    "You've sent several reports already. Try again later." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as déjà envoyé plusieurs signalements. Réessaie plus tard."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya has enviado varias denuncias. Vuelve a intentarlo más tarde."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast schon mehrere Meldungen gesendet. Versuch es später noch mal."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai già inviato diverse segnalazioni. Riprova più tardi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já enviaste várias denúncias. Tenta de novo mais tarde."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt al meerdere meldingen gestuurd. Probeer het later opnieuw."
+          }
+        }
+      }
+    },
     "You: " : {
       "localizations" : {
         "de" : {
@@ -49244,6 +49484,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A tua conta foi encerrada."
+          }
+        }
+      }
+    },
+    "Your account is on hold." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compte est en attente."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu cuenta está en espera."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Konto ist angehalten."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo account è in sospeso."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua conta está em espera."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je account staat in de wacht."
           }
         }
       }
@@ -49444,6 +49724,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A tua bio"
+          }
+        }
+      }
+    },
+    "Your birthday can't be changed." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta date de naissance ne peut pas être modifiée."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu fecha de nacimiento no se puede cambiar."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Geburtsdatum kann nicht geändert werden."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua data di nascita non si può modificare."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua data de nascimento não pode ser alterada."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je geboortedatum kan niet worden gewijzigd."
           }
         }
       }
