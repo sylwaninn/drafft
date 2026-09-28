@@ -113,7 +113,7 @@ struct PhotoRefusalSheet: View {
             Haptics.success()
             sent = true
         } catch {
-            self.error = L("Couldn't send it. Check your connection and try again.")
+            self.error = ServerMessage.text(for: error) ?? L("Couldn't send it. Check your connection and try again.")
         }
         sending = false
     }

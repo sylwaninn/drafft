@@ -66,9 +66,15 @@ final class PhotoModeration {
     /// The failure reason for a photo, in plain words when we know the cause.
     func reason(_ path: String) -> String {
         guard case .failed(let message) = states[path] else { return "" }
-        if message == Backend.BackendError.signedOut.localizedDescription {
-            return L("Log in again to send your photos.")
-        }
+        return message
+    }
+
+    /// Why a photo couldn't be sent, as its tile explains it: a refusal by the server in its own
+    /// words (photo limit, file too large…), the connection only when that's the likely cause.
+    private static func failure(_ error: Error) -> String {
+        if case Backend.BackendError.signedOut = error { return L("Log in again to send your photos.") }
+        if let text = ServerMessage.text(for: error) { return text }
+        if ServerMessage.code(of: error) != nil { return ServerMessage.generic }
         return L("It couldn't be sent. Check your connection and try again.")
     }
 
@@ -97,7 +103,7 @@ final class PhotoModeration {
                 states[path] = verdict
                 if verdict == .refused { announceRefusal(path) }
             } catch {
-                states[path] = .failed(error.localizedDescription)
+                states[path] = .failed(Self.failure(error))
             }
         }
     }

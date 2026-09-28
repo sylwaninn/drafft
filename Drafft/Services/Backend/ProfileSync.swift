@@ -23,15 +23,7 @@ enum ProfileSync {
         }
 
         static func message(for code: String) -> String {
-            switch code {
-            case "name_required": L("Add your first name.")
-            case "underage": L("You need to be 18 or older to use drafft.")
-            case "gender_required": L("Pick the one that fits you best.")
-            case "sport_required": L("Add at least one sport.")
-            case "photo_required": L("Add at least one photo.")
-            case "media_limit": L("You can have up to 9 photos and videos.")
-            default: L("Something went wrong. Try again in a moment.")
-            }
+            ServerMessage.text(forCode: code) ?? ServerMessage.generic
         }
     }
 
@@ -250,7 +242,7 @@ enum ProfileSync {
 
     /// Server errors carry a stable code in `hint`: turned into the message people see.
     private static func refused(_ error: Error) -> Error {
-        if case Backend.BackendError.http(_, let hint) = error, !hint.contains(" ") { return SyncError.refused(hint) }
+        if let code = ServerMessage.code(of: error) { return SyncError.refused(code) }
         return error
     }
 

@@ -445,7 +445,7 @@ struct OnboardingView: View {
         page {
             stepTitle(L("What should we call you?"), L("First name only. It's what your matches see."))
             VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
-                DrafftField(title: L("First name"), text: $name, prompt: L("Alex"), contentType: .givenName, submitLabel: .done)
+                DrafftField(title: L("First name"), text: $name, prompt: L("Alex"), contentType: .givenName, submitLabel: .done, limit: 40)
             }
         }
     }
@@ -952,7 +952,7 @@ struct OnboardingView: View {
                         }
                         HStack(alignment: .bottom, spacing: DS.Space.sm) {
                             TextField("Your answer", text: answerBinding(prompt.id), axis: .vertical)
-                                .lineLimit(2...5)
+                                .lineLimit(2...5).maxLength(300, of: answerBinding(prompt.id))
                                 .font(.body.weight(.semibold))
                                 .focused($promptFocus, equals: i)
                                 .frame(minHeight: 44, alignment: .topLeading)

@@ -320,6 +320,7 @@ struct EditProfileView: View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             VStack(alignment: .leading, spacing: DS.Space.xs) {
                 field(L("First name"), text: $draft.name, focus: .name)
+                    .maxLength(40, of: $draft.name)
                 Text("Only your first name is shown.")
                     .font(.footnote).foregroundStyle(DS.Palette.mute)
             }
@@ -423,11 +424,9 @@ struct EditProfileView: View {
                         }
                         .accessibilityLabel("Remove prompt")
                     }
-                    TextField("Your answer", text: Binding(
-                        get: { prompts.first { $0.id == prompt.id }?.answer ?? "" },
-                        set: { v in if let j = prompts.firstIndex(where: { $0.id == prompt.id }) { prompts[j].answer = v } }),
-                              axis: .vertical)
+                    TextField("Your answer", text: answerBinding(prompt.id), axis: .vertical)
                         .lineLimit(2...5)
+                        .maxLength(300, of: answerBinding(prompt.id))
                         .font(.body.weight(.semibold))
                         .focused($focus, equals: .prompt(i))
                         .frame(minHeight: 44, alignment: .topLeading)
@@ -469,6 +468,7 @@ struct EditProfileView: View {
                 .fixedSize(horizontal: false, vertical: true)
             TextField("e.g. Sub-4h marathon in Berlin", text: $draft.goal, axis: .vertical)
                 .lineLimit(1...3)
+                .maxLength(200, of: $draft.goal)
                 .font(.body.weight(.semibold))
                 .focused($focus, equals: .goal)
                 .submitLabel(.done)
@@ -680,5 +680,13 @@ private struct LockedField: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .accessibilityElement(children: .combine)
+    }
+}
+
+extension EditProfileView {
+    /// A prompt's answer, by the prompt's id.
+    fileprivate func answerBinding(_ id: String) -> Binding<String> {
+        Binding(get: { prompts.first { $0.id == id }?.answer ?? "" },
+                set: { v in if let j = prompts.firstIndex(where: { $0.id == id }) { prompts[j].answer = v } })
     }
 }

@@ -8,11 +8,13 @@ actor Backend {
     static let shared = Backend()
 
     enum BackendError: Error, LocalizedError {
+        /// The status, and the server's code (`hint`, else its `code`) or, without one, its message.
         case http(Int, String)
         case signedOut
+        /// Shown on screen: the known code's words, or a generic line (never the server's reply).
         var errorDescription: String? {
             switch self {
-            case let .http(status, message): "Backend \(status): \(message)"
+            case let .http(_, message): ServerMessage.text(forCode: message) ?? ServerMessage.generic
             case .signedOut: L("You've been logged out. Log in again to continue.")
             }
         }
@@ -190,7 +192,8 @@ actor Backend {
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
         guard (200..<300).contains(status) else {
             let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
-            let message = body.flatMap { $0["hint"] ?? $0["msg"] ?? $0["message"] ?? $0["code"] } as? String
+            // PostgREST sends `"hint": null` when there's no code (NSNull here): skip it, not stop at it.
+            let message = ["hint", "msg", "message", "code"].lazy.compactMap { body?[$0] as? String }.first
             if body?["hint"] as? String == "moderated" {
                 await MainActor.run { NotificationCenter.default.post(name: .accountHeldByServer, object: nil) }
             } else if Self.saysPaused(status: status, body: body) {
