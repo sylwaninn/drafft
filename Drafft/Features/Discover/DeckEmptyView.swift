@@ -10,13 +10,14 @@ struct DeckEmptyView: View {
     let animate: Bool
     let onChats: () -> Void
     let onFilters: () -> Void
+    /// The pile, kept by Discover: widening the radius or changing filters reloads the deck (a
+    /// spinner in between), and the same three photos come back rather than a new deal.
+    @Binding var photos: [String]
 
     @Environment(AppModel.self) private var app
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var fanIn = false
     @State private var textIn = false
-    /// Picked once per showing.
-    @State private var photos: [String] = []
 
     var body: some View {
         VStack(spacing: DS.Space.xl) {
@@ -36,7 +37,7 @@ struct DeckEmptyView: View {
 
     /// Three athletes from the pack photos, the people you're looking for (per your filters), in
     /// the boost sheet's fan: same card sizes, angles and shadow. After the last swipe they are
-    /// dealt in quickly, one after the other. A new pile whenever the filters change.
+    /// dealt in quickly, one after the other. Picked once until the deck has cards again.
     private var fan: some View {
         let angles: [Double] = [-14, 14, 0]
         let xs: [CGFloat] = [-78, 78, 0]
@@ -61,12 +62,6 @@ struct DeckEmptyView: View {
         .frame(height: 170)
         .accessibilityHidden(true)
         .onAppear { if photos.isEmpty { photos = PackPhotos.pick(for: app.filters.audience) } }
-        .onChange(of: app.filters) {
-            // New people for new filters, swapped in place: the deal only plays after the last swipe.
-            var quiet = Transaction(animation: nil)
-            quiet.disablesAnimations = true
-            withTransaction(quiet) { photos = PackPhotos.pick(for: app.filters.audience) }
-        }
     }
 
     // MARK: Message
