@@ -17,6 +17,10 @@ fileGroups:
   # Local App Store for testing purchases in the Simulator (not shipped in the app).
   - StoreKit
 packages:
+  # On-device cache of the last known state (SQLite), per account.
+  GRDB:
+    url: https://github.com/groue/GRDB.swift
+    exactVersion: 7.11.1
   # Remote and picked photos: background decoding at display size, capped caches, shared downloads.
   Nuke:
     url: https://github.com/kean/Nuke
@@ -48,6 +52,8 @@ targets:
       # data in step with the code (App Store privacy manifest).
       - path: Drafft
     dependencies:
+      - package: GRDB
+        product: GRDB
       - package: Nuke
         product: Nuke
       - package: Nuke
@@ -106,6 +112,21 @@ targets:
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, fr, es, de, it, pt, nl]
         NSLocationDefaultAccuracyReduced: true
+  # Logic tests without the app (no host, no backend): the pieces that stand alone.
+  DrafftTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: DrafftTests
+      - path: Drafft/Services/Cache/LocalCache.swift
+    dependencies:
+      - package: GRDB
+        product: GRDB
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: so.drafft.tests
+        SWIFT_STRICT_CONCURRENCY: complete
+        GENERATE_INFOPLIST_FILE: YES
 schemes:
   Drafft:
     build:
@@ -147,10 +168,13 @@ schemes:
     build:
       targets:
         Drafft: all
+        DrafftTests: [test]
     run:
       config: Local
     test:
       config: Local
+      targets:
+        - DrafftTests
     profile:
       config: Local
     analyze:
