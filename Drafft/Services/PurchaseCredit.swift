@@ -3,7 +3,8 @@ import Foundation
 /// Purchases the App Store confirmed that the server hasn't credited yet.
 ///
 /// Right after Apple confirms, the app asks the backend to credit it at once (`purchase-sync`, which
-/// reads the purchase from RevenueCat and returns the wallet); the webhook does the same on its own.
+/// reads the purchase from RevenueCat and returns the wallet and whether that transaction is
+/// credited); the webhook does the same on its own.
 /// The usual case takes a second or two and the purchase screen shows its confirmation. Past
 /// `buttonWait`, the button is free again and a banner at the top (`TopOverlayWindow`) says the
 /// purchase is being added; it never says the payment went through.
@@ -178,13 +179,19 @@ final class PurchaseCredit {
     /// One `purchase-sync` call. The shortest wait before the next one, when the server asked for it.
     private func syncOnce() async -> Duration? {
         guard let app, let purchase = pending.first else { return nil }
-        var body: [String: Any] = ["product_id": purchase.productID]
+        var body: [String: Any] = [:]
         if let id = purchase.transactionID { body["transaction_id"] = id }
         do {
             let data = try await Backend.shared.function("purchase-sync", body)
             // The wallet it returns; a shape it doesn't know reads the row instead.
             if !app.applyWallet(data) { await app.loadWallet() }
-            walletChanged()
+            // The server says whether this transaction is credited: that answer wins. Without it (an
+            // older server, no transaction id), the balances tell.
+            if let id = purchase.transactionID, let status = Self.status(of: id, in: data) {
+                if status == .credited { markCredited(purchase) }
+            } else {
+                walletChanged()
+            }
             return nil
         } catch Backend.BackendError.http(let status, _) where status == 429 || status == 503 {
             // Too many asks, or the store is slow to answer: the webhook credits it meanwhile.
@@ -193,6 +200,34 @@ final class PurchaseCredit {
         } catch {
             await app.loadWallet()
             return nil
+        }
+    }
+
+    private enum ServerStatus { case credited, notYet }
+
+    /// `purchase-sync` answers `{ wallet, transaction: { id, credited } }`: whether `id` is credited,
+    /// or nil when the answer doesn't say (no `transaction`, another id).
+    private static func status(of id: String, in data: Data) -> ServerStatus? {
+        struct Answer: Decodable {
+            struct Transaction: Decodable {
+                let id: String
+                let credited: Bool
+            }
+            let transaction: Transaction?
+        }
+        guard let transaction = (try? JSONDecoder().decode(Answer.self, from: data))?.transaction,
+              transaction.id == id else { return nil }
+        return transaction.credited ? .credited : .notYet
+    }
+
+    /// The server credited `purchase`: it leaves the list, whatever the balances say.
+    private func markCredited(_ purchase: Pending) {
+        pending.removeAll { $0 == purchase }
+        walletChanged()
+        save()
+        if pending.isEmpty {
+            sync?.cancel()
+            if banner == .adding { show(.credited) }
         }
     }
 
