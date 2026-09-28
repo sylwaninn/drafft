@@ -6,7 +6,7 @@ struct FocusedMessage: Identifiable, Equatable {
     let message: Message
     /// The bubble's frame on screen when it was pressed.
     let frame: CGRect
-    var id: UUID { message.id }
+    var id: String { message.id }
 }
 
 struct MessageFocusOverlay: View {

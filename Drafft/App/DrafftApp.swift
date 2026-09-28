@@ -112,6 +112,8 @@ struct RootView: View {
                 Task { await AppOpens.report() }
                 // A purchase confirmed earlier but not credited yet: asked for again.
                 Task { await PurchaseCredit.shared.resume(app) }
+                // Chat: one connection for the account (a second call only reads matches again).
+                Task { await ChatService.shared.start(app) }
                 await UserChannel.watch(app)
             }
             .onChange(of: scenePhase) { _, p in

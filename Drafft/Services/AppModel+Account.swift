@@ -194,7 +194,9 @@ extension AppModel {
     /// signs in on this iPhone starts empty, and only sees their own profile once it's read.
     private func resetAccountState() {
         AudioPlayback.shared.stop()
-        conversations = MockData.conversations()
+        // The chat disconnects, drops this device's push registration and its offline copy.
+        Task { await ChatService.shared.stop() }
+        conversations = []
         clearDiscovery()
         openChatID = nil
         chatRequest = nil

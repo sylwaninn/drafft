@@ -13,7 +13,7 @@ struct ChatView: View {
     let conversationID: String
     /// Scroll to this session's card and flash it (from the Sessions tab).
     var focusSession: UUID?
-    @State private var highlighted: UUID?
+    @State private var highlighted: String?
     @Environment(AppModel.self) private var app
     @State private var draft = ""
     @State private var viewer: MediaItem?
@@ -53,12 +53,16 @@ struct ChatView: View {
         }
         .onAppear {
             app.openChatID = conversationID
+            ChatService.shared.open(conversationID)
             app.markRead(conversationID)
         }
         .onDisappear {
             if app.openChatID == conversationID { app.openChatID = nil }
+            ChatService.shared.close(conversationID)
             AudioPlayback.shared.stop()
         }
+        // Typing: shown to the other person while there's a draft (stops when it's sent or cleared).
+        .onChange(of: draft) { _, text in ChatService.shared.typing(in: conversationID, text: text) }
     }
 
     /// Back to the list, where the chat shows as unread again (set after leaving, or the chat
@@ -127,6 +131,7 @@ struct ChatView: View {
                             }
                         },
                         onReply: { m in withAnimation(Motion.snappy) { replyingTo = m } },
+                        onRetry: { m in app.retry(m.id, in: conversationID) },
                         onFocus: { m, frame in
                             var t = Transaction(animation: nil)
                             t.disablesAnimations = true
@@ -189,7 +194,7 @@ struct ChatView: View {
             if awayFromEnd != away { awayFromEnd = away }
             if scroll.atBottom && unseen > 0 { unseen = 0 }
         }
-        .onScrollTargetVisibilityChange(idType: UUID.self, threshold: 0.6) { ids in
+        .onScrollTargetVisibilityChange(idType: String.self, threshold: 0.6) { ids in
             // The lowest message on screen: the anchor that brings the person back to this exact
             // place after the background, whatever the keyboard did meanwhile.
             let index = Dictionary(uniqueKeysWithValues: convo.messages.enumerated().map { ($1.id, $0) })
@@ -272,11 +277,7 @@ struct ChatView: View {
                                 .minimumScaleFactor(0.8)
                                 // design-lint: allow truncation - a person's name (content, not copy) after scaling down
                                 .truncationMode(.tail)
-                            Text(convo.isTyping ? "Typing…" : "Active now")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(convo.isTyping ? DS.Palette.accentInk : DS.Palette.body)
-                                .lineLimit(1)
-                                .contentTransition(.opacity)
+                            PresenceLine(convo: convo)
                         }
                     }
                     .frame(maxWidth: 210, alignment: .leading)
@@ -431,9 +432,9 @@ private final class ScrollMemo {
     /// The initial layout has settled: later pins animate.
     var settled = false
     /// The lowest message on screen, kept while the app is away from the foreground.
-    var saved: UUID?
+    var saved: String?
     /// Lowest message currently on screen.
-    var lastVisible: UUID?
+    var lastVisible: String?
     /// Left the foreground (inactive or background) and not back yet.
     var away = false
     /// A finger is on the thread.
@@ -484,11 +485,33 @@ private struct JumpToLatestButton: View {
 
 // MARK: - Header
 
+/// Under the name in the bar: "Typing…", or "Active now" while they have the app open (nothing otherwise).
+private struct PresenceLine: View {
+    let convo: Conversation
+
+    var body: some View {
+        if convo.isTyping || convo.online {
+            Text(convo.isTyping ? "Typing…" : "Active now")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(convo.isTyping ? DS.Palette.accentInk : DS.Palette.body)
+                .lineLimit(1)
+                .contentTransition(.opacity)
+        }
+    }
+}
+
 struct ChatHeaderCard: View {
     let convo: Conversation
     let onTap: () -> Void
 
     var body: some View {
+        card
+            // At the top of what's loaded: the page before (the thread keeps its place, the size-change
+            // anchor holds the bottom).
+            .onAppear { ChatService.shared.loadOlder(convo.id) }
+    }
+
+    private var card: some View {
         Button(action: onTap) {
             VStack(spacing: DS.Space.md) {
                 Avatar(name: convo.profile.portrait, size: 88, ring: true)
@@ -542,6 +565,8 @@ struct MessageRow: View {
     /// A session time was confirmed (by you) or the safety tips were asked for from its card.
     var onSessionSafety: (SessionProposal, Date) -> Void = { _, _ in }
     var onReply: (Message) -> Void = { _ in }
+    /// A message that couldn't be sent, tapped.
+    var onRetry: (Message) -> Void = { _ in }
     /// Long press: lift this bubble into the reactions overlay.
     var onFocus: (Message, CGRect) -> Void = { _, _ in }
     /// Hidden in the list while its copy is lifted in the overlay.
@@ -610,6 +635,17 @@ struct MessageRow: View {
                     )
                     .accessibilityAction(named: "React") { onFocus(message, frameBox.rect) }
                 if !mine { Spacer(minLength: 56) }
+                if message.state == .failed {
+                    Button { onRetry(message) } label: {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(DS.Palette.negative)
+                            .frame(width: 44, height: 44)
+                            .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Not sent. Tap to try again.")
+                }
             }
             .padding(.bottom, message.reaction != nil ? 14 : 0)
         }
@@ -631,10 +667,12 @@ struct MessageRow: View {
         .animation(Motion.bouncy, value: message.reaction)
     }
 
-    /// Pixel size of a photo, to lay its bubble out in the same proportions.
+    /// Pixel size of a photo, to lay its bubble out in the same proportions: the size sent with it,
+    /// the picture's own header, or a bundled picture.
     private func photoSize(asset: String?, data: Data?) -> CGSize? {
-        if let asset { return UIImage(named: asset)?.size }
-        return data.flatMap(MessageImage.size(of:))
+        if let size = message.mediaSize { return size.cgSize }
+        if let data { return MessageImage.size(of: data) }
+        return asset.flatMap { UIImage(named: $0)?.size }
     }
 
     /// Bubble size for a photo or video: 240 pt wide, the media's own height, kept between a
@@ -660,9 +698,12 @@ struct MessageRow: View {
         withAnimation(Motion.snappy) { swipe = 0 }
     }
 
-    /// The message this one answers, if it's still in the conversation.
+    /// The message this one answers: from the thread, or what the chat service kept of it when it isn't
+    /// loaded.
     private var quoted: Message? {
-        message.replyTo.flatMap { id in convo.messages.first { $0.id == id } }
+        guard let id = message.replyTo else { return nil }
+        if let found = convo.messages.first(where: { $0.id == id }) { return found }
+        return message.replyQuote.map { Message(id: id, .text($0.text), fromMe: $0.fromMe) }
     }
 
     private var isText: Bool { if case .text = message.content { true } else { false } }
@@ -741,24 +782,30 @@ struct MessageRow: View {
             let size = Self.bubbleSize(photoSize(asset: asset, data: data))
             Button { onOpen(MediaItem(id: message.id, kind: .photo(asset: asset, data: data))) } label: {
                 Group {
-                    if let asset { Photo(name: asset, side: size.width) }
-                    else if let data { MessagePhoto(id: message.id, data: data) }
+                    if let data {
+                        MessagePhoto(id: message.id, data: data)
+                    } else if let asset {
+                        Photo(name: asset, side: size.width)
+                    } else {
+                        DS.Palette.white
+                    }
                 }
                 // The photo's own proportions (within limits, like WhatsApp).
                 .frame(width: size.width, height: size.height)
                 .clipShape(.rect(cornerRadius: 20))
-                .overlay(alignment: .bottomTrailing) { sendingOverlay }
             }
             .buttonStyle(PressScaleStyle(scale: 0.97))
             .accessibilityLabel("Photo")
             .accessibilityHint("Opens it full screen")
 
         case let .video(url, thumb, duration):
-            let size = Self.bubbleSize(thumb.flatMap(MessageImage.size(of:)))
+            let size = Self.bubbleSize(message.mediaSize?.cgSize ?? thumb.flatMap(MessageImage.size(of:)))
             Button { onOpen(MediaItem(id: message.id, kind: .video(url))) } label: {
                 ZStack {
                     if let thumb {
                         MessagePhoto(id: message.id, data: thumb)
+                    } else if let poster = message.poster {
+                        Photo(name: poster, side: size.width)
                     } else {
                         DS.Palette.night
                     }
@@ -875,13 +922,6 @@ struct MessageRow: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(mine ? DS.Palette.ink : DS.Palette.white, in: bubbleShape)
-        }
-    }
-
-    @ViewBuilder
-    private var sendingOverlay: some View {
-        if message.state == .sending {
-            ProgressView().tint(.white).padding(10)
         }
     }
 

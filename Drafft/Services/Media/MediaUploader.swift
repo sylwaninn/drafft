@@ -194,11 +194,14 @@ enum MediaUploads {
         return UploadedMedia(key: key, width: photo.width, height: photo.height, thumbHash: photo.thumbHash)
     }
 
-    /// Transcodes, uploads the poster, then the video. Progress covers the video bytes.
+    /// Transcodes, uploads the poster, then the video. Progress covers the video bytes. A chat video's
+    /// poster goes to the chat folder (`posterPurpose: .chatPhoto`): only chat objects are signed for the
+    /// other member of the match.
     static func video(
         _ source: URL,
         purpose: MediaPurpose = .profileVideo,
         settings: VideoCompressor.Settings = .profile,
+        posterPurpose: MediaPurpose = .videoPoster,
         tickets: UploadTicketProviding,
         uploader: MediaUploader = .shared,
         progress: (@Sendable (Double) -> Void)? = nil
@@ -209,17 +212,19 @@ enum MediaUploads {
         let posterFile = try temporaryFile(video.poster.data, extension: "jpg")
         defer { try? FileManager.default.removeItem(at: posterFile) }
         let posterKey = try await send(posterFile, byteSize: video.poster.data.count, contentType: video.poster.contentType,
-                                       purpose: .videoPoster, tickets: tickets, uploader: uploader, progress: nil)
+                                       purpose: posterPurpose, tickets: tickets, uploader: uploader, progress: nil)
         let key = try await send(video.fileURL, byteSize: video.byteSize, contentType: video.contentType, purpose: purpose,
                                  tickets: tickets, uploader: uploader, progress: progress)
         return UploadedMedia(key: key, width: video.width, height: video.height, thumbHash: video.poster.thumbHash,
                              duration: video.duration, posterKey: posterKey)
     }
 
-    /// A recorded voice intro (.m4a, AAC), as is: it's already small.
-    static func voice(_ file: URL, tickets: UploadTicketProviding, uploader: MediaUploader = .shared) async throws -> String {
+    /// A recording (.m4a, AAC 48 kb/s mono), as is: it's already small. A voice intro, or a voice message
+    /// (`purpose: .chatVoice`).
+    static func voice(_ file: URL, purpose: MediaPurpose = .voiceIntro, tickets: UploadTicketProviding,
+                      uploader: MediaUploader = .shared) async throws -> String {
         let size = (try? FileManager.default.attributesOfItem(atPath: file.path)[.size] as? Int) ?? 0
-        return try await send(file, byteSize: size, contentType: "audio/mp4", purpose: .voiceIntro,
+        return try await send(file, byteSize: size, contentType: "audio/mp4", purpose: purpose,
                               tickets: tickets, uploader: uploader, progress: nil)
     }
 

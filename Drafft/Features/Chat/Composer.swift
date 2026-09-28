@@ -8,7 +8,7 @@ struct Composer: View {
     @Binding var text: String
     let onSend: (MessageContent) -> Void
     /// The message being replied to, shown above the field ("Replying to Sam").
-    var reply: (id: UUID, author: String, text: String)?
+    var reply: (id: String, author: String, text: String)?
     var onCancelReply: () -> Void = {}
 
     @State private var recorder = VoiceRecorder()

@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 import AVKit
 import QuickLook
+import Nuke
 
 /// A photo, video or file from a chat, opened full screen.
 struct MediaItem: Identifiable, Equatable {
@@ -12,7 +13,7 @@ struct MediaItem: Identifiable, Equatable {
     }
 
     /// The message it belongs to.
-    let id: UUID
+    let id: String
     let kind: Kind
 
     /// The picture itself, for photos (asset or sent data).
@@ -39,7 +40,7 @@ struct MediaItem: Identifiable, Equatable {
 /// Files open alone in Quick Look.
 struct MediaViewer: View {
     let items: [MediaItem]
-    @State private var current: UUID
+    @State private var current: String
     @Environment(\.dismiss) private var dismiss
     @State private var zoomed = false
     @State private var drag: CGFloat = 0
@@ -89,11 +90,13 @@ struct MediaViewer: View {
                     chromeHidden.toggle()
                 }
                 .accessibilityLabel("Photo")
+            } else if case .photo(let link?, _) = item.kind, link.hasPrefix("http") {
+                RemotePhotoPage(link: link, zoomed: $zoomed) { chromeHidden.toggle() }
             } else {
                 Image(systemName: "photo").font(.largeTitle).foregroundStyle(.white.opacity(0.5))
             }
         case .video(let url):
-            SystemVideoPlayer(url: url, playing: current == item.id)
+            FreshVideo(url: url, playing: current == item.id)
         case .file(let url):
             QuickLookPreview(url: url)
         }
@@ -263,6 +266,46 @@ final class ZoomScrollView: UIScrollView, UIScrollViewDelegate {
 
 /// The system player (controls, scrubbing, AirPlay, picture in picture), paused when its page
 /// isn't the one on screen.
+/// A photo sent in a chat, from the media bucket (through the shared image pipeline and its caches).
+private struct RemotePhotoPage: View {
+    let link: String
+    @Binding var zoomed: Bool
+    let onTap: () -> Void
+    @State private var image: UIImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                ZoomableImage(image: image, zoomed: $zoomed, onSingleTap: onTap)
+                    .accessibilityLabel("Photo")
+            } else {
+                Color.clear
+            }
+        }
+        .task(id: link) {
+            guard let url = URL(string: link) else { return }
+            var request = ImageRequest(url: url)
+            request.imageID = MediaURL.canonical(url).absoluteString
+            image = try? await ImagePipeline.shared.image(for: request)
+        }
+    }
+}
+
+/// A chat video: its signed link renewed first if it's about to expire (the thread may have been open
+/// for a while).
+private struct FreshVideo: View {
+    let url: URL
+    let playing: Bool
+    @State private var fresh: URL?
+
+    var body: some View {
+        Group {
+            if let fresh { SystemVideoPlayer(url: fresh, playing: playing) } else { Color.clear }
+        }
+        .task(id: url) { fresh = url.isFileURL ? url : await MediaURL.fresh(url) }
+    }
+}
+
 private struct SystemVideoPlayer: UIViewControllerRepresentable {
     let url: URL
     let playing: Bool

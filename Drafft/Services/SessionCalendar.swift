@@ -101,7 +101,7 @@ final class SessionCalendar {
     /// Every followed session read again from the server: on foreground and on reconnect. Only a
     /// successful read changes anything; a session the server no longer returns is gone.
     func refresh(only ids: Set<UUID>? = nil) async {
-        let followed = links.filter { ids?.contains($0.key) ?? true }.filter { !MockData.isSample($0.value.chatID) }
+        let followed = links.filter { ids?.contains($0.key) ?? true }
         guard canFollow, !followed.isEmpty else { return }
         let list = followed.keys.map { $0.uuidString.lowercased() }.joined(separator: ",")
         guard let data = try? await Backend.shared.select(

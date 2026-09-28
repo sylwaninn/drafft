@@ -168,6 +168,8 @@ struct SessionProposal: Hashable, Identifiable {
     /// Set when one of you introduces the other to a sport they don't do yet.
     var discovery: Discovery?
     var status: Status = .pending
+    /// Proposed by the signed-in person (their invite, waiting on the other person).
+    var mine = false
 
     /// pending: waiting for a pick; countered: replaced by a newer proposal with other times;
     /// cancelled: called off by either person, or with the match or an account.
@@ -208,6 +210,8 @@ struct SessionProposal: Hashable, Identifiable {
 // MARK: - Chat
 
 enum DeliveryState: Int, Comparable, Hashable {
+    /// Couldn't be sent (offline too long, refused): kept in the thread, sent again on a tap.
+    case failed
     case sending, sent, delivered, read
     static func < (a: Self, b: Self) -> Bool { a.rawValue < b.rawValue }
 }
@@ -225,17 +229,36 @@ enum MessageContent: Hashable {
 }
 
 struct Message: Identifiable, Hashable {
-    let id: UUID
+    /// The chat service's message id (lowercased UUIDs for the app's own messages, deterministic ids for
+    /// the server's: openers, sessions).
+    let id: String
     var content: MessageContent
     var fromMe: Bool
     var date: Date
     var state: DeliveryState
     var reaction: String?
     /// The message this one answers (swipe to reply, or Reply in the long-press menu).
-    var replyTo: UUID?
+    var replyTo: String?
+    /// What the answered message said, for a quote whose message isn't loaded in the thread.
+    var replyQuote: (fromMe: Bool, text: String)? {
+        get { quote.map { ($0.fromMe, $0.text) } }
+        set { quote = newValue.map { Quote(fromMe: $0.fromMe, text: $0.text) } }
+    }
+    private var quote: Quote?
+    private struct Quote: Hashable { let fromMe: Bool; let text: String }
+    /// Pixel size of a photo or video, and a video's poster (a link): the bubble keeps the media's
+    /// proportions before it's loaded.
+    var mediaSize: PixelSize?
+    var poster: String?
 
-    init(id: UUID = UUID(), _ content: MessageContent, fromMe: Bool, date: Date = .now, state: DeliveryState = .read,
-         reaction: String? = nil, replyTo: UUID? = nil) {
+    struct PixelSize: Hashable {
+        let width: Double
+        let height: Double
+        var cgSize: CGSize { CGSize(width: width, height: height) }
+    }
+
+    init(id: String = UUID().uuidString.lowercased(), _ content: MessageContent, fromMe: Bool, date: Date = .now,
+         state: DeliveryState = .read, reaction: String? = nil, replyTo: String? = nil) {
         self.id = id
         self.replyTo = replyTo
         self.content = content
@@ -272,6 +295,8 @@ struct Conversation: Identifiable, Hashable {
     var matchedAt: Date
     /// Muted chats stay in the list but leave the tab badge and use a quiet unread badge.
     var muted = false
+    /// The other person has the app open right now.
+    var online = false
 
     var lastMessage: Message? { messages.last }
 }
