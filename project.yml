@@ -119,6 +119,7 @@ targets:
     sources:
       - path: DrafftTests
       - path: Drafft/Services/Cache/LocalCache.swift
+      - path: Drafft/Services/PushTokenRegistration.swift
     dependencies:
       - package: GRDB
         product: GRDB
