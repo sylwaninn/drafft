@@ -124,13 +124,19 @@ schemes:
   # Local Supabase (drafft-backend `supabase start`, then scripts/local-backend.sh) with the staging services
   # ("drafft local" on the home screen). Release-optimised like the others: Debug builds stall on device.
   # No local StoreKit file: purchases go through Apple's Sandbox and RevenueCat "drafft staging".
+  # Every action uses Local: XcodeGen's defaults (Debug for test, Release for archive) would point this
+  # scheme at the staging or production backend.
   Drafft Local:
     build:
       targets:
         Drafft: all
     run:
       config: Local
+    test:
+      config: Local
     profile:
       config: Local
     analyze:
-      config: Debug
+      config: Local
+    archive:
+      config: Local
