@@ -7,6 +7,7 @@ struct DrafftApp: App {
     @State private var app = AppModel()
 
     init() {
+        Diagnostics.shared.start()
         Images.configure()
         Store.configure()
         Self.styleNavigationBars()
