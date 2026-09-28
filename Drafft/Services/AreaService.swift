@@ -97,14 +97,19 @@ final class AreaLocator: NSObject, CLLocationManagerDelegate {
     private(set) var state: State = .idle
     /// The last position found, already blurred (~1 km): what may be sent to the server.
     private(set) var blurred: CLLocationCoordinate2D?
-    private let manager = CLLocationManager()
+    /// Made on the first request: SwiftUI builds a view's `@State` default each time the view is
+    /// re-created, so the locator itself must be cheap.
+    @ObservationIgnored private lazy var manager: CLLocationManager = {
+        let manager = CLLocationManager()
+        manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyReduced
+        return manager
+    }()
     private let server: AreaResolving
 
     init(server: AreaResolving = OnDeviceAreaResolver()) {
         self.server = server
         super.init()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyReduced
     }
 
     func locate() {
@@ -147,10 +152,14 @@ final class AreaLocator: NSObject, CLLocationManagerDelegate {
 @MainActor
 @Observable
 final class LocationGate: NSObject, CLLocationManagerDelegate {
+    /// One for the app: the permission is the phone's, and a view's `@State` default is rebuilt on
+    /// every re-render of its parent (a location manager each time).
+    static let shared = LocationGate()
+
     private(set) var status: CLAuthorizationStatus
     private let manager = CLLocationManager()
 
-    override init() {
+    override private init() {
         status = manager.authorizationStatus
         super.init()
         manager.delegate = self

@@ -209,7 +209,7 @@ struct MainTabs: View {
     var onBuilt: () -> Void = {}
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
-    @State private var location = LocationGate()
+    @State private var location = LocationGate.shared
 
     /// Outline when the tab is idle, filled when it's the current one (the system would fill them all).
     private func tabLabel(_ title: String, _ symbol: String, _ tab: AppModel.Tab) -> some View {
