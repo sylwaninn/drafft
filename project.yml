@@ -123,6 +123,7 @@ targets:
       - path: Drafft/DesignSystem/ContourTrace.swift
       - path: Drafft/Services/Media/ThumbHash.swift
       - path: Drafft/Services/Sessions/SessionLedger.swift
+      - path: Drafft/Services/Backend/ProfileCard.swift
     dependencies:
       - package: GRDB
         product: GRDB
