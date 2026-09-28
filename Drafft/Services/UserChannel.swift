@@ -13,7 +13,9 @@ import Supabase
 /// - `profile`: the person's own profile changed, on this device, another one or by the team, with the
 ///   columns that changed: the row is read again with its hold, pause, settings, language and card
 ///   (`AppModel.profileChanged`, `AppModel.refreshAccount`);
-/// - `session`: a session of theirs changed; the calendar event added for it follows (`SessionCalendar`).
+/// - `session`: a session of theirs was proposed, answered, countered or cancelled: its row (and the one
+///   it replaced) is read again for the Sessions tab and the chat cards, and the calendar event added for
+///   it follows (`SessionStore`, `SessionCalendar`).
 ///
 /// A payload only says a change happened (a photo decision carries its media and status): the row
 /// is the truth, read again on each event and on each (re)connection, so a change made while the
@@ -76,7 +78,8 @@ enum UserChannel {
                 for await message in session {
                     guard let payload = message["payload"]?.objectValue,
                           let id = payload["sessionId"]?.stringValue.flatMap(UUID.init(uuidString:)) else { continue }
-                    await SessionCalendar.shared.sessionChanged(id, status: payload["status"]?.stringValue)
+                    await SessionStore.shared.changed(id, replaces: payload["replacesId"]?.stringValue.flatMap(UUID.init(uuidString:)),
+                                                      status: payload["status"]?.stringValue)
                 }
                 return false
             }
@@ -87,7 +90,7 @@ enum UserChannel {
                     await app.refreshAccount(force: true)
                     await app.loadWallet()
                     await PurchaseCredit.shared.resume(app)
-                    await SessionCalendar.shared.refresh()
+                    await SessionStore.shared.refresh()
                 }
                 return joined
             }

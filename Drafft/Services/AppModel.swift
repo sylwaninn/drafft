@@ -44,7 +44,7 @@ final class AppModel {
     var boostEndsAt: Date?
     /// Confirmation banner after starting a boost (its id restarts the auto-dismiss).
     var boostBanner: UUID?
-    /// Sessions the person saved to their calendar (demo: in memory).
+    /// Sessions the person saved to their calendar, in this launch (the lasting link is `SessionCalendar`).
     var sessionsInCalendar: Set<UUID> = []
 
     func isBoosting(at date: Date = .now) -> Bool { (boostEndsAt ?? .distantPast) > date }
@@ -153,15 +153,6 @@ final class AppModel {
         conversations[i].muted.toggle()
     }
 
-    var upcomingSessions: [(Conversation, SessionProposal)] {
-        conversations.flatMap { c in
-            c.messages.compactMap { m -> (Conversation, SessionProposal)? in
-                if case .session(let s) = m.content, s.status == .pending || s.status == .accepted { return (c, s) }
-                return nil
-            }
-        }
-    }
-
     // MARK: Account (Supabase Auth)
 
     /// The session ended without the person logging out (revoked, expired, account deleted
@@ -252,9 +243,7 @@ final class AppModel {
             convo.messages.append(Message(opener, fromMe: true, state: .delivered))
         }
         withAnimation(Motion.snappy) { conversations.insert(convo, at: 0) }
-        if case .session(let s) = convo.messages.first?.content {
-            simulateReply(in: profile.id, acceptSession: s.id)
-        } else if !convo.messages.isEmpty {
+        if !convo.messages.isEmpty {
             simulateReply(in: profile.id)
         }
     }
@@ -304,11 +293,9 @@ final class AppModel {
             try? await Task.sleep(for: .milliseconds(250))
             self.setState(.delivered, for: msg.id, in: id)
         }
-        if case .session(let proposal) = content {
-            simulateReply(in: id, acceptSession: proposal.id)
-        } else {
-            simulateReply(in: id)
-        }
+        // Sessions are real (`SessionStore`): nobody simulated answers them.
+        if case .session = content { return }
+        simulateReply(in: id)
     }
 
     /// Your reaction on one of their messages (never on your own: WhatsApp-style, minus self-reactions).
@@ -325,34 +312,6 @@ final class AppModel {
         conversations[c].messages.removeAll { $0.id == messageID }
     }
 
-    private func updateSession(_ sessionID: UUID, in id: String, _ change: (inout SessionProposal) -> Void) {
-        guard let c = conversations.firstIndex(where: { $0.id == id }),
-              let m = conversations[c].messages.firstIndex(where: {
-                  if case .session(let s) = $0.content { return s.id == sessionID }
-                  return false
-              }),
-              case .session(var s) = conversations[c].messages[m].content else { return }
-        change(&s)
-        withAnimation(Motion.bouncy) { conversations[c].messages[m].content = .session(s) }
-        // A calendar event added for it follows (moved, or removed when it's off).
-        SessionCalendar.shared.sessionChanged(s)
-    }
-
-    /// Accept one of the proposed times (or the first one), or decline the invite.
-    func respond(to sessionID: UUID, in id: String, accept: Bool, pick: Date? = nil) {
-        updateSession(sessionID, in: id) { s in
-            s.status = accept ? .accepted : .declined
-            if accept { s.chosen = pick ?? s.options.first }
-        }
-        accept ? Haptics.success() : Haptics.tap()
-    }
-
-    /// Answer an invite with other times: the old card is marked as countered, a new invite goes out.
-    func counter(_ sessionID: UUID, in id: String, with proposal: SessionProposal) {
-        updateSession(sessionID, in: id) { $0.status = .countered }
-        send(.session(proposal), in: id)
-    }
-
     private func setState(_ state: DeliveryState, for messageID: UUID, in id: String) {
         guard let c = conversations.firstIndex(where: { $0.id == id }),
               let m = conversations[c].messages.firstIndex(where: { $0.id == messageID }) else { return }
@@ -364,7 +323,7 @@ final class AppModel {
     private var replyTasks: [String: Task<Void, Never>] = [:]
 
     /// Simulated partner: reads, types, replies. Debounced so a burst of sends gets one answer.
-    private func simulateReply(in id: String, acceptSession: UUID? = nil) {
+    private func simulateReply(in id: String) {
         replyTasks[id]?.cancel()
         // A few seconds of background time: leaving the app right after sending still gets the reply
         // (and its notification).
@@ -380,37 +339,15 @@ final class AppModel {
                 self.conversations[c].isTyping = true
             }
             // Demo: now and then they react to your last message before answering.
-            if acceptSession == nil, Int.random(in: 0..<2) == 0 { self.partnerReacts(in: id) }
+            if Int.random(in: 0..<2) == 0 { self.partnerReacts(in: id) }
             try? await Task.sleep(for: .milliseconds(1800))
             guard !Task.isCancelled, let c2 = self.conversations.firstIndex(where: { $0.id == id }) else { return }
-            if let acceptSession, let proposal = self.session(acceptSession, in: id),
-               proposal.options.count == 1, !self.hasCountered(in: id) {
-                // Demo negotiation: the first single-time invite gets other times suggested back.
-                self.updateSession(acceptSession, in: id) { $0.status = .countered }
-                var counter = SessionProposal(sport: proposal.sport, options: Self.alternatives(to: proposal.options[0]),
-                                              title: proposal.title, note: "", tags: proposal.tags, discovery: proposal.discovery)
-                counter.status = .pending
-                let incoming = [Message(.text("Can't make that one 😕 Could any of these work?"), fromMe: false),
-                                Message(.session(counter), fromMe: false)]
-                withAnimation(Motion.snappy) {
-                    self.conversations[c2].isTyping = false
-                    self.conversations[c2].messages.append(contentsOf: incoming)
-                }
-                self.received(incoming, in: id)
-                return
-            }
-            var accepted: NotificationText.Kind?
-            if let acceptSession, let proposal = self.session(acceptSession, in: id) {
-                // They pick the last option you offered.
-                self.respond(to: acceptSession, in: id, accept: true, pick: proposal.options.last)
-                accepted = .sessionAccepted(proposal.displayTitle)
-            }
-            let reply = Message(.text(Self.cannedReply(for: self.conversations[c2], accepted: acceptSession != nil)), fromMe: false)
+            let reply = Message(.text(Self.cannedReply(for: self.conversations[c2])), fromMe: false)
             withAnimation(Motion.snappy) {
                 self.conversations[c2].isTyping = false
                 self.conversations[c2].messages.append(reply)
             }
-            self.received([reply], in: id, as: accepted)
+            self.received([reply], in: id)
         }
     }
 
@@ -455,31 +392,7 @@ final class AppModel {
         }
     }
 
-    private func session(_ sessionID: UUID, in id: String) -> SessionProposal? {
-        conversation(id)?.messages.lazy.compactMap { m -> SessionProposal? in
-            if case .session(let s) = m.content, s.id == sessionID { return s }
-            return nil
-        }.first
-    }
-
-    /// Whether the other person already suggested other times in this chat.
-    private func hasCountered(in id: String) -> Bool {
-        conversation(id)?.messages.contains { m in
-            if case .session = m.content { return !m.fromMe }
-            return false
-        } ?? false
-    }
-
-    /// Two nearby alternatives: next day same time, and two days later an hour later.
-    private static func alternatives(to date: Date) -> [Date] {
-        let cal = Calendar.current
-        return [cal.date(byAdding: .day, value: 1, to: date), cal.date(byAdding: .hour, value: 49, to: date)].compactMap { $0 }
-    }
-
-    private static func cannedReply(for convo: Conversation, accepted: Bool) -> String {
-        if accepted {
-            return ["I'm in. I'll be the one stretching dramatically 🙋", "Deal. Don't be late, I warm up without waiting.", "Yes! Adding it to my calendar right now."].randomElement()!
-        }
+    private static func cannedReply(for convo: Conversation) -> String {
         let pool = [
             "Ha, love that.",
             "Okay, you have my attention.",

@@ -122,6 +122,7 @@ targets:
       - path: Drafft/Services/PushTokenRegistration.swift
       - path: Drafft/DesignSystem/ContourTrace.swift
       - path: Drafft/Services/Media/ThumbHash.swift
+      - path: Drafft/Services/Sessions/SessionLedger.swift
     dependencies:
       - package: GRDB
         product: GRDB

@@ -199,6 +199,7 @@ extension AppModel {
         boostBanner = nil
         sessionsInCalendar = []
         SessionCalendar.shared.forgetAll()
+        SessionStore.shared.reset()
         blocked = []
         dataExportRequestedAt = nil
         filters = DiscoverFilters()

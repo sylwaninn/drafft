@@ -44,11 +44,12 @@ final class PassThroughWindow: UIWindow {
 }
 
 /// What the overlay shows at the top: the photo-refused banner, a purchase on its way to the
-/// account, or calendar access refused when adding a session.
+/// account, calendar access refused when adding a session, or a session change the server turned down.
 private struct TopOverlayContent: View {
     @State private var moderation = PhotoModeration.shared
     @State private var credit = PurchaseCredit.shared
     @State private var calendar = CalendarAccessNotice.shared
+    @State private var sessionFailure = SessionFailureNotice.shared
     @Environment(\.openURL) private var openURL
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var slide: AnyTransition {
@@ -95,12 +96,23 @@ private struct TopOverlayContent: View {
                 .onDisappear { TopOverlayWindow.shared.interactiveFrame = .zero }
                 .transition(slide)
                 .padding(.top, DS.Space.xs)
+            } else if let message = sessionFailure.message {
+                SessionFailureBanner(message: message) {
+                    withAnimation(Motion.snappy) { sessionFailure.dismiss() }
+                }
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: {
+                    TopOverlayWindow.shared.interactiveFrame = $0
+                }
+                .onDisappear { TopOverlayWindow.shared.interactiveFrame = .zero }
+                .transition(slide)
+                .padding(.top, DS.Space.xs)
             }
             Spacer()
         }
         .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: moderation.refusalBanner)
         .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: credit.banner)
         .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: calendar.isShown)
+        .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: sessionFailure.message)
         // Its own window, outside the app's root: the app's language is set again here.
         .environment(\.locale, .app)
     }

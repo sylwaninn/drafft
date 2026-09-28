@@ -93,30 +93,6 @@ enum NotificationText {
         language == .fr ? "\(name)\u{00A0}: \(text)" : "\(name): \(text)"
     }
 
-    // MARK: Session reminders
-
-    static func reminderEvening(_ session: String, time: String, in language: AppLanguage) -> String {
-        pick(language,
-             en: "Tomorrow at \(time): \(session). Pack your kit tonight.",
-             fr: "Demain à \(time)\u{00A0}: \(session). Prépare ton sac ce soir.",
-             es: "Mañana a las \(time): \(session). Prepara tu bolsa esta noche.",
-             de: "Morgen um \(time): \(session). Pack heute Abend deine Sachen.",
-             it: "Domani alle \(time): \(session). Prepara la borsa stasera.",
-             pt: "Amanhã às \(time): \(session). Prepara o saco esta noite.",
-             nl: "Morgen om \(time): \(session). Pak vanavond je tas in.")
-    }
-
-    static func reminderHour(_ session: String, in language: AppLanguage) -> String {
-        pick(language,
-             en: "In an hour: \(session). See you there!",
-             fr: "Dans une heure\u{00A0}: \(session). À tout à l'heure\u{00A0}!",
-             es: "En una hora: \(session). ¡Nos vemos allí!",
-             de: "In einer Stunde: \(session). Bis gleich!",
-             it: "Tra un'ora: \(session). A dopo!",
-             pt: "Daqui a uma hora: \(session). Até já!",
-             nl: "Over een uur: \(session). Tot zo!")
-    }
-
     private static func pick(_ language: AppLanguage, en: String, fr: String, es: String, de: String,
                              it: String, pt: String, nl: String) -> String {
         switch language {

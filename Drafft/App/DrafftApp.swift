@@ -128,8 +128,8 @@ struct RootView: View {
                 // Credited while away (a purchase on another device, the weekly boost).
                 Task { await app.loadWallet() }
                 Task { await PurchaseCredit.shared.resume(app) }
-                // A session changed or was cancelled while away: its calendar event follows.
-                Task { await SessionCalendar.shared.refresh() }
+                // A session changed or was cancelled while away: read again, its calendar event follows.
+                Task { await SessionStore.shared.refresh() }
             }
             // A session that ends on its own (revoked, expired, account deleted elsewhere): back to
             // the welcome screen, which says why.
@@ -285,18 +285,20 @@ struct MainTabs: View {
                 app.subscription = Store.shared.subscription(from: info)
             }
         }
-        // Notifications: keep the status fresh, schedule session reminders, open tapped chats.
+        // Notifications: keep the status fresh, open tapped chats. Session reminders are the server's
+        // pushes (`session.reminder`), so a cancelled session never leaves one behind.
         .task(id: isActive) {
             guard isActive else { return }
             await NotificationService.shared.refresh()
         }
-        // In its own view: the sessions are read from every chat's messages, and only this follows them.
-        .background { SessionReminders(isActive: isActive) }
         .onChange(of: NotificationService.shared.openChatID) { _, id in
             if let id { app.openChat(id); NotificationService.shared.openChatID = nil }
         }
         .onChange(of: NotificationService.shared.openBoost) { _, open in
             if open { app.tab = .discover; NotificationService.shared.openBoost = false }
+        }
+        .onChange(of: NotificationService.shared.openSessions) { _, open in
+            if open { app.tab = .sessions; NotificationService.shared.openSessions = false }
         }
         // Location is required: if it's turned off, block until it's back on.
         .onAppear { if isActive { location.refresh() } }
@@ -331,25 +333,5 @@ struct MainTabs: View {
                 app.matchScreen = nil
             }
         }
-    }
-}
-
-/// Keeps the local session reminders in step with the accepted sessions. Its own view, so the chats'
-/// messages it reads re-render only this, never the tab bar.
-private struct SessionReminders: View {
-    let isActive: Bool
-    @Environment(AppModel.self) private var app
-
-    var body: some View {
-        let sessions = app.upcomingSessions
-        Color.clear
-            .task(id: "\(isActive)" + sessions.map { "\($0.1.id)\($0.1.status)" }.joined()) {
-                guard isActive else { return }
-                NotificationService.shared.scheduleSessionReminders(
-                    sessions.filter { $0.1.status == .accepted }
-                        .map { (id: $0.1.id, title: L("\($0.1.displayTitle) with \($0.0.profile.name)"),
-                                date: $0.1.date, chatID: $0.0.id) })
-            }
-            .accessibilityHidden(true)
     }
 }
