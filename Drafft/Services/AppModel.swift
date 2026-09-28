@@ -181,6 +181,9 @@ final class AppModel {
     /// The session ended without the person logging out (revoked, expired, account deleted
     /// elsewhere): back on the welcome screen, a message says so.
     var sessionEndedNotice = false
+    /// The person is logging out or deleting their account: the session that ends with it (and any
+    /// revocation that races it) is theirs, so no message. Cleared at the next sign-in.
+    var leavingOnPurpose = false
 
     // MARK: Discover
 
