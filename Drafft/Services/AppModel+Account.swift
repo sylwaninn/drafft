@@ -12,7 +12,7 @@ extension AppModel {
         bio: "", goal: "", vitalsOverride: .blank, promptsOverride: []
     )
 
-    // MARK: Auth (demo: no backend, every path succeeds after a short beat)
+    // MARK: Sign in
 
     /// An unfinished sign-up always resumes, whatever the entry point.
     func signIn(onboard: Bool) {
@@ -80,12 +80,41 @@ extension AppModel {
 
     // MARK: Account (Supabase Auth)
 
-    /// At launch: a saved session goes straight in, to sign-up if it isn't finished.
+    /// At launch: a saved session goes straight in, to sign-up if it isn't finished. A session the
+    /// server no longer accepts (revoked, account deleted elsewhere) stays on the welcome screen.
     func restoreSession() async {
+        guard phase == .welcome, await Backend.shared.hasSession else { return }
+        do {
+            _ = try await Backend.shared.client.auth.user()
+        } catch is AuthError {
+            await endSession()
+            return
+        } catch {
+            // Offline: the saved session is the best we know; the tabs retry once the network is back.
+        }
         guard phase == .welcome, await Backend.shared.hasSession else { return }
         email = await Backend.shared.client.auth.currentUser?.email ?? email
         let onboarded = (try? await Backend.shared.isOnboarded()) ?? true
         signIn(onboard: !onboarded)
+    }
+
+    /// Follows the account's session for as long as the app runs: when it ends without the person
+    /// logging out (a refresh the server refused, sessions revoked, the account deleted on another
+    /// device), the app goes back to the welcome screen and says why. Logging out or deleting the
+    /// account goes back to it first, so those never show the message.
+    func watchSession() async {
+        for await (event, _) in Backend.shared.client.auth.authStateChanges
+        where event == .signedOut || event == .userDeleted {
+            guard phase != .welcome else { continue }
+            resetAccountState()
+            sessionEndedNotice = true
+        }
+    }
+
+    /// The saved session is no good any more: dropped from this iPhone, with the same message.
+    private func endSession() async {
+        await Backend.shared.signOut()
+        sessionEndedNotice = true
     }
 
     /// A link from an auth email: a confirmed sign-up goes on to sign-up, a reset asks for the new password.
@@ -112,14 +141,14 @@ extension AppModel {
     }
 
     /// Deletes the account on the server (profile, photos, matches, chats), then resets the app.
+    /// Without a session nothing can be deleted: it throws, and the sheet says so.
     func deleteAccount() async throws {
-        if await Backend.shared.hasSession {
-            _ = try await Backend.shared.function("delete-account", [:])
-            await Store.shared.unlink()
-            OnboardingStore.clear()
-            await Backend.shared.signOut()
-        }
+        _ = try await Backend.shared.function("delete-account", [:])
+        await Store.shared.unlink()
+        OnboardingStore.clear()
+        // Back on the welcome screen before the session goes, so it isn't taken for a revoked one.
         resetAccountState()
+        await Backend.shared.signOut()
     }
 
     /// Nothing of the account stays in the app once it signs out or is deleted: the next person who

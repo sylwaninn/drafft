@@ -17,9 +17,9 @@ extension AppModel {
         pauseFromServer = false
     }
 
-    /// Sends the switch to the server; if it can't be saved, the switch goes back to the server's state.
+    /// Sends the switch to the server; if it can't be saved (signed out included), the switch goes
+    /// back to the server's state.
     func syncPause(_ paused: Bool) async {
-        guard await Backend.shared.hasSession else { return }
         do {
             try await Backend.shared.updateMyProfile(["paused": paused])
         } catch {

@@ -110,6 +110,14 @@ struct RootView: View {
                 // Credited while away (a purchase on another device, the weekly boost).
                 Task { await app.loadWallet() }
             }
+            // A session that ends on its own (revoked, expired, account deleted elsewhere): back to
+            // the welcome screen, which says why.
+            .task { await app.watchSession() }
+            .drafftConfirm(isPresented: Binding(get: { app.sessionEndedNotice }, set: { app.sessionEndedNotice = $0 }),
+                           icon: "person.crop.circle.badge.exclamationmark",
+                           title: L("You've been logged out"),
+                           message: L("Your session ended on this iPhone. Log in again to pick up where you left off."),
+                           cancelTitle: L("Got it"), actions: [])
             // Banners that must sit above everything (sheets included) live in their own window.
             .onAppear {
                 TopOverlayWindow.shared.install()
