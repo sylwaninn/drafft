@@ -8,6 +8,64 @@ private final class Handoff<T>: @unchecked Sendable {
     init(_ value: T) { self.value = value }
 }
 
+/// Every AVAudioSession call, in order on one serial queue, never on the main thread (activating can
+/// block for a noticeable moment). The session is let go once playback or recording ends, with
+/// `notifyOthersOnDeactivation`, so music from another app picks up again. The release waits a moment
+/// and is dropped if anything asked for the session after it (the next clip, a recording): requests
+/// are counted synchronously by the caller, so a release never lands after the activation that follows.
+final class AudioSessionController: @unchecked Sendable {
+    static let shared = AudioSessionController()
+
+    private let queue = DispatchQueue(label: "so.drafft.audio-session", qos: .userInitiated)
+    private let lock = NSLock()
+    /// Bumped by every activation or release request; guarded by `lock`.
+    private var generation = 0
+    private var session: AVAudioSession { .sharedInstance() }
+
+    private func bump() -> Int {
+        lock.lock(); defer { lock.unlock() }
+        generation += 1
+        return generation
+    }
+
+    private var current: Int {
+        lock.lock(); defer { lock.unlock() }
+        return generation
+    }
+
+    /// Blocks the calling (background) thread until the session is active.
+    func activate(_ category: AVAudioSession.Category, mode: AVAudioSession.Mode,
+                  options: AVAudioSession.CategoryOptions = []) throws {
+        _ = bump()
+        try queue.sync {
+            try setCategory(category, mode: mode, options: options)
+            try session.setActive(true)
+        }
+    }
+
+    /// Sets the category ahead of time, without activating (nothing else's audio is cut).
+    func prepare(_ category: AVAudioSession.Category, mode: AVAudioSession.Mode,
+                 options: AVAudioSession.CategoryOptions = []) {
+        queue.async { try? self.setCategory(category, mode: mode, options: options) }
+    }
+
+    /// Playback or recording ended: the session goes back to other apps, unless something asks for
+    /// it within the next moment.
+    func release() {
+        let mine = bump()
+        queue.asyncAfter(deadline: .now() + 0.4) {
+            guard self.current == mine else { return }
+            try? self.session.setActive(false, options: .notifyOthersOnDeactivation)
+        }
+    }
+
+    private func setCategory(_ category: AVAudioSession.Category, mode: AVAudioSession.Mode,
+                             options: AVAudioSession.CategoryOptions) throws {
+        guard session.category != category || session.mode != mode || session.categoryOptions != options else { return }
+        try session.setCategory(category, mode: mode, options: options)
+    }
+}
+
 /// One shared player: starting a clip stops whatever else was playing.
 @MainActor
 @Observable
@@ -62,9 +120,7 @@ final class AudioPlayback: NSObject, AVAudioPlayerDelegate {
             let made = await Task.detached(priority: .userInitiated) { () -> Handoff<AVAudioPlayer>? in
                 do {
                     guard let file else { return nil }
-                    let session = AVAudioSession.sharedInstance()
-                    try session.setCategory(.playback, mode: .spokenAudio)
-                    try session.setActive(true)
+                    try AudioSessionController.shared.activate(.playback, mode: .spokenAudio)
                     let p = try AVAudioPlayer(contentsOf: file)
                     p.enableRate = true
                     p.prepareToPlay()
@@ -78,6 +134,7 @@ final class AudioPlayback: NSObject, AVAudioPlayerDelegate {
             guard let p = made?.value else {
                 currentURL = nil
                 isPlaying = false
+                AudioSessionController.shared.release()
                 return
             }
             p.delegate = self
@@ -108,6 +165,9 @@ final class AudioPlayback: NSObject, AVAudioPlayerDelegate {
 
     func stop() {
         loadToken = UUID()
+        // Something was playing or starting: the session goes back to other apps (dropped if a clip
+        // starts right after, as `play` does).
+        if currentURL != nil { AudioSessionController.shared.release() }
         player?.stop()
         player = nil
         timer?.invalidate()
@@ -138,6 +198,7 @@ final class AudioPlayback: NSObject, AVAudioPlayerDelegate {
             self.elapsed = 0
             self.currentURL = nil
             self.player = nil
+            AudioSessionController.shared.release()
         }
     }
 }
@@ -163,9 +224,7 @@ final class VoiceRecorder {
     /// advance (the session itself is only activated on the hold, so music playing isn't cut).
     static func prewarm() {
         guard !AudioPlayback.shared.isPlaying else { return }
-        Task.detached(priority: .utility) {
-            try? AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
-        }
+        AudioSessionController.shared.prepare(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
     }
 
     func start() async -> Bool {
@@ -191,12 +250,8 @@ final class VoiceRecorder {
                 AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
             ]
             do {
-                let session = AVAudioSession.sharedInstance()
                 // Usually already set by prewarm(): only the activation is left to do here.
-                if session.category != .playAndRecord {
-                    try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
-                }
-                try session.setActive(true)
+                try AudioSessionController.shared.activate(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
                 let r = try AVAudioRecorder(url: url, settings: settings)
                 r.isMeteringEnabled = true
                 r.record()
@@ -207,6 +262,7 @@ final class VoiceRecorder {
         }.value
         guard let r = made?.value else {
             state = .idle
+            AudioSessionController.shared.release()
             return false
         }
         recorder = r
@@ -234,6 +290,7 @@ final class VoiceRecorder {
         timer?.invalidate()
         let d = recorder?.currentTime ?? 0
         recorder?.stop()
+        if recorder != nil { AudioSessionController.shared.release() }
         recorder = nil
         state = .idle
         defer { levels = []; duration = 0 }
@@ -277,11 +334,32 @@ extension AudioPlayback {
     static func localCopy(of remote: URL) async -> URL? {
         let file = cacheFile(for: remote)
         if FileManager.default.fileExists(atPath: file.path) { return file }
-        let link = await MediaURL.fresh(remote)
-        guard let (data, response) = try? await URLSession.shared.data(from: link),
-              (response as? HTTPURLResponse)?.statusCode == 200,
-              (try? FileManager.default.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)) != nil,
-              (try? data.write(to: file, options: .atomic)) != nil else { return nil }
-        return file
+        return await AudioDownloads.shared.fetch(remote, to: file)
+    }
+}
+
+/// Clip downloads, streamed to disk (never held in memory), one per clip however many taps ask for it.
+private actor AudioDownloads {
+    static let shared = AudioDownloads()
+    private var running: [URL: Task<URL?, Never>] = [:]
+
+    func fetch(_ remote: URL, to file: URL) async -> URL? {
+        if let task = running[file] { return await task.value }
+        let task = Task<URL?, Never> {
+            let link = await MediaURL.fresh(remote)
+            guard let (temp, response) = try? await URLSession.shared.download(from: link) else { return nil }
+            defer { try? FileManager.default.removeItem(at: temp) }
+            let fm = FileManager.default
+            guard (response as? HTTPURLResponse)?.statusCode == 200,
+                  (try? fm.createDirectory(at: file.deletingLastPathComponent(), withIntermediateDirectories: true)) != nil
+            else { return nil }
+            // Another download may have landed first: either copy is the same immutable clip.
+            if fm.fileExists(atPath: file.path) { return file }
+            return (try? fm.moveItem(at: temp, to: file)) != nil ? file : nil
+        }
+        running[file] = task
+        let result = await task.value
+        running[file] = nil
+        return result
     }
 }
