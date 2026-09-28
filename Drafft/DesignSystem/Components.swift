@@ -148,6 +148,8 @@ struct DrafftField: View {
     var contentType: UITextContentType?
     var keyboard: UIKeyboardType = .default
     var submitLabel: SubmitLabel = .next
+    /// The server's length limit for the field, if any: typing stops there.
+    var limit: Int?
     var onSubmit: () -> Void = {}
 
     @State private var revealed = false
@@ -174,6 +176,7 @@ struct DrafftField: View {
                 .autocorrectionDisabled(isSecure || keyboard == .emailAddress)
                 .submitLabel(submitLabel)
                 .onSubmit(onSubmit)
+                .maxLength(limit ?? .max, of: $text)
                 .focused($focused)
                 .font(.body)
                 .foregroundStyle(DS.Palette.ink)
@@ -501,6 +504,29 @@ extension View {
 extension String {
     /// The words without the numbers, to tell a count change from a wording change.
     var wording: String { filter { !$0.isNumber } }
+
+    /// At most `limit` characters as the database counts them (Unicode scalars, `char_length`),
+    /// never splitting a character.
+    func limited(to limit: Int) -> String {
+        guard unicodeScalars.count > limit else { return self }
+        var out = ""
+        for ch in self {
+            guard out.unicodeScalars.count + ch.unicodeScalars.count <= limit else { break }
+            out.append(ch)
+        }
+        return out
+    }
+}
+
+extension View {
+    /// Typing stops at the server's limit for that field (its `check` constraint), so a save is
+    /// never refused for length.
+    func maxLength(_ limit: Int, of text: Binding<String>) -> some View {
+        onChange(of: text.wrappedValue) { _, value in
+            let kept = value.limited(to: limit)
+            if kept != value { text.wrappedValue = kept }
+        }
+    }
 }
 
 /// Multi-line field in the DrafftField pattern: label above, one bordered box that takes
