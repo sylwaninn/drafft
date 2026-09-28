@@ -138,6 +138,8 @@ extension AppModel {
     func watchSession() async {
         for await (event, _) in Backend.shared.client.auth.authStateChanges
         where event == .signedOut || event == .userDeleted {
+            // However the session ended, the next sign-in registers this device's token again.
+            NotificationService.shared.forgetPushTokenRegistration()
             guard phase != .welcome else { continue }
             resetAccountState()
             sessionEndedNotice = true
@@ -156,18 +158,16 @@ extension AppModel {
     /// the account. watchSession then shows "You've been logged out".
     func sessionsRevoked(_ ids: [String]) async {
         guard let mine = await Backend.shared.sessionID, ids.contains(mine) else { return }
-        let token = NotificationService.shared.deviceToken
         await Store.shared.unlink()
-        if let token { _ = try? await Backend.shared.rpc("unregister_push_token", ["p_token": token]) }
+        await NotificationService.shared.unregisterPushToken()
         await Backend.shared.signOut()
     }
 
     func signOut() {
-        let token = NotificationService.shared.deviceToken
         Task {
             // This device stops getting the account's pushes, and its purchases stop following it.
             await Store.shared.unlink()
-            if let token { _ = try? await Backend.shared.rpc("unregister_push_token", ["p_token": token]) }
+            await NotificationService.shared.unregisterPushToken()
             await Backend.shared.signOut()
         }
         resetAccountState()
