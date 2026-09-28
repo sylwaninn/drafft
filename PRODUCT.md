@@ -8,7 +8,7 @@ ios
 
 ## Stack
 
-SwiftUI, iOS 26 minimum (Liquid Glass available), project generated with XcodeGen. Third-party dependencies allowed (Swift Package Manager) when proven robust and scalable. No backend yet: demo app with local mock data only.
+SwiftUI, iOS 26 minimum (Liquid Glass available), project generated with XcodeGen. Third-party dependencies allowed (Swift Package Manager) when proven robust and scalable. Backend: Supabase (drafft-backend), chat on Stream, purchases on RevenueCat; Discover and chats still show sample people until they're wired to it.
 
 ## Users
 
