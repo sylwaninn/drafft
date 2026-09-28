@@ -68,55 +68,6 @@ enum MockData {
     ]
 
     static func profile(_ id: String) -> Profile { profiles.first { $0.id == id }! }
-
-    /// Whether a person (or their chat, same id) is one of these samples. Samples stay in the app, but
-    /// nothing real happens for them: no upload or server check, no notification, no session reminder.
-    static func isSample(_ id: String) -> Bool { sampleIDs.contains(id) }
-    private static let sampleIDs = Set(profiles.map(\.id))
-
-    static func conversations() -> [Conversation] {
-        let now = Date.now
-        func ago(_ minutes: Double) -> Date { now.addingTimeInterval(-minutes * 60) }
-
-        var maya = Conversation(id: "maya", profile: profile("maya"), messages: [], matchedAt: ago(60 * 26))
-        maya.messages = [
-            Message(.icebreakerReply(quote: "I've never fallen off a bouldering wall.", reply: "Calling it: #2 is the lie. Nobody has never fallen off a wall 😄"), fromMe: true, date: ago(60 * 25)),
-            Message(.text("Caught. I fall off walls weekly. It's part of the charm."), fromMe: false, date: ago(60 * 24.8)),
-            Message(.text("Where do you usually run on Sundays?"), fromMe: true, date: ago(60 * 24.5)),
-            Message(.photo(asset: "sport_trail", imageData: nil), fromMe: false, date: ago(60 * 3)),
-            Message(.text("This one. Ridge loop, about 18k, mostly mud."), fromMe: false, date: ago(60 * 3)),
-            Message(.voice(url: audio("msg_maya_voice")!, duration: 9.1, levels: Waveform.seeded("maya-msg", count: 40)), fromMe: false, date: ago(6))
-        ]
-        maya.unread = 2
-
-        var chloe = Conversation(id: "chloe", profile: profile("chloe"), messages: [], matchedAt: ago(60 * 50))
-        chloe.messages = [
-            Message(.text("Your Tuesday dawn slot overlaps with mine. Suspicious."), fromMe: false, date: ago(60 * 49)),
-            Message(.text("Canal club? I think I've seen you do strides by the bridge."), fromMe: true, date: ago(60 * 48)),
-            Message(.voice(url: audio("msg_chloe_voice")!, duration: 5.6, levels: Waveform.seeded("chloe-msg", count: 40)), fromMe: false, date: ago(60 * 46)),
-            Message(.text("Green footbridge, then 👟"), fromMe: true, date: ago(60 * 45), state: .read, reaction: "🔥")
-        ]
-
-        var leo = Conversation(id: "leo", profile: profile("leo"), messages: [], matchedAt: ago(60 * 4))
-        leo.messages = [
-            Message(.text("OK I have to ask. Do you actually know how drafting works?"), fromMe: false, date: ago(60 * 3.5)),
-            Message(.text("I've been waiting my whole life for someone to ask"), fromMe: false, date: ago(60 * 3.5))
-        ]
-        leo.unread = 2
-
-        var sam = Conversation(id: "sam", profile: profile("sam"), messages: [], matchedAt: ago(60 * 80))
-        sam.messages = [
-            Message(.text("Bench day, apparently 😂 that was terrible, I loved it"), fromMe: true, date: ago(60 * 79)),
-            Message(.text("I have 40 more. Rest between sets."), fromMe: false, date: ago(60 * 78)),
-            Message(.file(name: "Sam — 4 week strength block.pdf", size: 482_000, url: nil), fromMe: false, date: ago(60 * 70)),
-            Message(.text("That's the plan I mentioned, if you want to try the first week together"), fromMe: false, date: ago(60 * 70)),
-            Message(.text("Bring chalk 💪"), fromMe: true, date: ago(60 * 68))
-        ]
-
-        let fresh = Conversation(id: "noah", profile: profile("noah"), messages: [], matchedAt: ago(40))
-
-        return [maya, leo, chloe, sam, fresh]
-    }
 }
 
 /// Deterministic pseudo-random waveform so mock voice notes look distinct and stable.
