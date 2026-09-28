@@ -12,6 +12,8 @@ protocol PhoneVerifying: Sendable {
     /// Texts a 6-digit code to an E.164 number.
     func sendCode(to e164: String) async throws
     func verify(code: String, for e164: String) async throws
+    /// The number already verified on the account (E.164), if any.
+    func verifiedNumber() async -> String?
 }
 
 /// The real one: Supabase Auth phone change. Sets the number on the account once the code checks
@@ -23,6 +25,16 @@ struct BackendPhoneVerifier: PhoneVerifying {
 
     func verify(code: String, for e164: String) async throws {
         do { try await Backend.shared.confirmPhoneChange(e164, code: code) } catch { throw VerificationError(error) }
+    }
+
+    /// Read from the server (a number verified on another device, or before a reinstall), else from
+    /// the saved session. Supabase Auth keeps it without the "+".
+    func verifiedNumber() async -> String? {
+        let auth = Backend.shared.client.auth
+        let fresh = try? await auth.user()
+        guard let user = fresh ?? auth.currentUser, user.phoneConfirmedAt != nil,
+              let phone = user.phone, !phone.isEmpty else { return nil }
+        return "+" + phone.filter(\.isNumber)
     }
 }
 
@@ -157,6 +169,15 @@ final class PhoneVerificationModel {
         busy = true
         error = nil
         needsHelp = false
+        // Already the account's verified number (a sign-up started over, a reinstall): nothing to
+        // send, Supabase wouldn't text it anyway. The step is done.
+        if await service.verifiedNumber() == e164 {
+            verifiedNumber = e164
+            stage = .verified
+            busy = false
+            Haptics.success()
+            return
+        }
         do {
             try await service.sendCode(to: e164)
             code = ""
