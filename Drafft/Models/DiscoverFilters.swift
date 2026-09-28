@@ -1,8 +1,10 @@
 import Foundation
 
-/// Who to show in Discover. Empty sets mean "any".
-struct DiscoverFilters: Equatable {
-    enum Audience: String, CaseIterable, Identifiable {
+/// Who to show in Discover. Empty sets mean "any". Only the sports and "In common" are filters (the
+/// badge, "Clear filters"); distance, age and who you want to meet are the search itself. Kept on
+/// this iPhone between launches.
+struct DiscoverFilters: Equatable, Codable {
+    enum Audience: String, CaseIterable, Identifiable, Codable {
         case women = "Women", men = "Men", nonBinary = "Non-binary people", everyone = "Everyone"
         var id: String { rawValue }
         /// A gender as sign-up asks it ("Woman") or the server stores it ("woman").
@@ -42,18 +44,29 @@ struct DiscoverFilters: Equatable {
     var sports: Set<Sport> = []
     var sharedSportsOnly = false
 
-    /// Resets distance, age, sports and schedule, keeping who you want to meet.
-    func loosened() -> DiscoverFilters {
-        var f = DiscoverFilters()
-        f.audience = audience
+    /// Clears the filters (sports, "In common"), keeping distance, age and who you want to meet.
+    func cleared() -> DiscoverFilters {
+        var f = self
+        f.sports = []
+        f.sharedSportsOnly = false
         return f
     }
 
-    /// Number of filters changed from the defaults, for the badge.
+    /// Filters in use, for the badge: the sports and "In common" only.
     var activeCount: Int {
-        let d = DiscoverFilters()
-        return [maxDistanceKm != d.maxDistanceKm, ages != d.ages, audience != d.audience,
-                !sports.isEmpty, sharedSportsOnly].filter { $0 }.count
+        [!sports.isEmpty, sharedSportsOnly].filter { $0 }.count
+    }
+
+    private static let storageKey = "discoverFilters"
+
+    /// The last search on this iPhone, or the defaults.
+    static var saved: DiscoverFilters {
+        UserDefaults.standard.data(forKey: storageKey)
+            .flatMap { try? JSONDecoder().decode(DiscoverFilters.self, from: $0) } ?? DiscoverFilters()
+    }
+
+    func save() {
+        UserDefaults.standard.set(try? JSONEncoder().encode(self), forKey: Self.storageKey)
     }
 
     /// The person's own gender; without one (an unfinished sign-up), their pronouns.

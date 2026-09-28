@@ -84,12 +84,12 @@ struct FiltersSheet: View {
 
             Button("Clear filters") {
                 Haptics.tap()
-                withAnimation(Motion.snappy) { draft = draft.loosened() }
+                withAnimation(Motion.snappy) { draft = draft.cleared() }
             }
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(DS.Palette.accentInk)
             .buttonStyle(.textLink)
-            .disabled(draft == draft.loosened())
+            .disabled(draft == draft.cleared())
         }
         .padding(.horizontal, DS.Space.xl)
         .padding(.top, DS.Space.md)
