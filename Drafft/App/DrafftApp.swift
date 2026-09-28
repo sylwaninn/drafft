@@ -313,7 +313,7 @@ struct MainTabs: View {
                 EmptyView()
             } else if let banner = app.banner {
                 MatchBannerView(banner: banner) {
-                    app.openChat(banner.profile.id)
+                    app.openChat(person: banner.profile.id)
                 } onDismiss: {
                     withAnimation(Motion.snappy) { app.banner = nil }
                 }
@@ -338,7 +338,7 @@ struct MainTabs: View {
         .animation(Motion.bouncy, value: app.notice)
         .fullScreenCover(item: $app.matchScreen) { p in
             MatchView(profile: p, me: app.me) {
-                app.openChat(p.id)
+                app.openChat(person: p.id)
             } onClose: {
                 app.matchScreen = nil
             }

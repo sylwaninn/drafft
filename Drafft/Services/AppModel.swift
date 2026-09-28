@@ -181,6 +181,11 @@ final class AppModel {
 
     var topCard: Profile? { deck.first }
 
+    /// The chat with this person (match screen, banner), by their profile id: a chat's id is its match's.
+    func openChat(person id: String) {
+        openChat(conversations.first { $0.profile.id == id }?.id ?? id)
+    }
+
     func openChat(_ id: String) {
         matchScreen = nil
         banner = nil

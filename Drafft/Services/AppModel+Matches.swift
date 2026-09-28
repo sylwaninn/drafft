@@ -51,8 +51,8 @@ extension AppModel {
         let new = fresh.filter { !discovery.knownMatches.contains($0.id) }
         discovery.knownMatches.formUnion(fresh.map(\.id))
         let ids = Set(fresh.map(\.profile.id))
-        // Matches that ended while this device wasn't listening: their chats go too.
-        let ended = Set(matches.map(\.profile.id)).subtracting(ids)
+        // Matches that ended while this device wasn't listening: their chats (keyed by match id) go too.
+        let ended = Set(matches.map(\.id)).subtracting(fresh.map(\.id))
         withAnimation(Motion.snappy) {
             matches = fresh
             conversations.removeAll { ended.contains($0.id) }
@@ -81,9 +81,9 @@ extension AppModel {
     private func endLocally(_ match: Match) {
         withAnimation(Motion.snappy) {
             matches.removeAll { $0.id == match.id }
-            conversations.removeAll { $0.id == match.profile.id }
+            conversations.removeAll { $0.id == match.id }
         }
-        if openChatID == match.profile.id { openChatID = nil }
+        if openChatID == match.id { openChatID = nil }
         if banner?.profile.id == match.profile.id { banner = nil }
         if matchScreen?.id == match.profile.id { matchScreen = nil }
     }
@@ -92,7 +92,7 @@ extension AppModel {
     /// the server refuses.
     func unmatch(_ profile: Profile) {
         guard let match = matches.first(where: { $0.profile.id == profile.id }) else { return }
-        let conversation = conversation(profile.id)
+        let conversation = conversation(match.id)
         endLocally(match)
         Task { [self] in
             do {
@@ -102,7 +102,7 @@ extension AppModel {
             } catch {
                 withAnimation(Motion.snappy) {
                     if !matches.contains(where: { $0.id == match.id }) { matches.insert(match, at: 0) }
-                    if let conversation, self.conversation(profile.id) == nil { conversations.insert(conversation, at: 0) }
+                    if let conversation, self.conversation(match.id) == nil { conversations.insert(conversation, at: 0) }
                 }
                 Haptics.warning()
                 say(error)
@@ -111,14 +111,14 @@ extension AppModel {
     }
 
     /// Every current match has its chat in Chats (empty until the chat service fills it), with the
-    /// match's latest card.
+    /// match's latest card. A chat's id is its match's id (the server's, as sessions and pushes use it).
     func ensureConversations() {
         var list = conversations
-        for match in matches where !list.contains(where: { $0.id == match.profile.id }) {
-            list.append(Conversation(id: match.profile.id, profile: match.profile, messages: [], matchedAt: match.matchedAt))
+        for match in matches where !list.contains(where: { $0.id == match.id }) {
+            list.append(Conversation(id: match.id, profile: match.profile, messages: [], matchedAt: match.matchedAt))
         }
         for i in list.indices {
-            if let match = matches.first(where: { $0.profile.id == list[i].id }) { list[i].profile = match.profile }
+            if let match = matches.first(where: { $0.id == list[i].id }) { list[i].profile = match.profile }
         }
         if list != conversations { withAnimation(Motion.snappy) { conversations = list } }
     }

@@ -12,7 +12,7 @@ extension AppModel {
             likedMe.removeAll { $0.id == profile.id }
             matches.removeAll { $0.profile.id == profile.id }
             history.removeAll { $0.profile.id == profile.id }
-            conversations.removeAll { $0.id == profile.id }
+            conversations.removeAll { $0.profile.id == profile.id }
         }
         if banner?.profile.id == profile.id { banner = nil }
         Task { await Safety.block(profile.id) }

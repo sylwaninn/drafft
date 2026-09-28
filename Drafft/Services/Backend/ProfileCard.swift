@@ -64,6 +64,8 @@ struct ProfileCard: Decodable, Sendable, Equatable {
         let key: String
         /// Signed for this viewer; nil when the server may not sign it (then nothing can open it).
         let url: String?
+        /// Blurred preview shown while the photo loads (`MediaPreviews`).
+        var thumbhash: String?
     }
 
     struct SportRow: Decodable, Sendable, Equatable {
