@@ -18,6 +18,7 @@ extension AppModel {
     /// under the splash (no keyboard to put away, nothing to wait for).
     func signIn(onboard: Bool, immediately: Bool = false) {
         let target: Phase = onboard || OnboardingStore.hasUnfinished ? .onboarding : .main
+        leavingOnPurpose = false
         // Purchases follow the account (the webhook credits this id), and its balances are the server's.
         Task {
             await Store.shared.link()
@@ -140,13 +141,13 @@ extension AppModel {
     /// Follows the account's session for as long as the app runs: when it ends without the person
     /// logging out (a refresh the server refused, sessions revoked, the account deleted on another
     /// device), the app goes back to the welcome screen and says why. Logging out or deleting the
-    /// account goes back to it first, so those never show the message.
+    /// account sets `leavingOnPurpose` first, so those never show the message.
     func watchSession() async {
         for await (event, _) in Backend.shared.client.auth.authStateChanges
         where event == .signedOut || event == .userDeleted {
             // However the session ended, the next sign-in registers this device's token again.
             NotificationService.shared.forgetPushTokenRegistration()
-            guard phase != .welcome else { continue }
+            guard phase != .welcome, !leavingOnPurpose else { continue }
             resetAccountState()
             sessionEndedNotice = true
         }
@@ -155,7 +156,7 @@ extension AppModel {
     /// The saved session is no good any more: dropped from this iPhone, with the same message.
     private func endSession() async {
         await Backend.shared.signOut()
-        sessionEndedNotice = true
+        if !leavingOnPurpose { sessionEndedNotice = true }
     }
 
     /// `session_revoked` on the person's topic (UserChannel): sessions ended on the server (sophros "Sign
@@ -170,6 +171,8 @@ extension AppModel {
     }
 
     func signOut() {
+        leavingOnPurpose = true
+        sessionEndedNotice = false
         Task {
             // This device stops getting the account's pushes, and its purchases stop following it.
             await Store.shared.unlink()
@@ -182,11 +185,18 @@ extension AppModel {
     /// Deletes the account on the server (profile, photos, matches, chats), then resets the app.
     /// Without a session nothing can be deleted: it throws, and the sheet says so.
     func deleteAccount() async throws {
-        _ = try await Backend.shared.function("delete-account", [:])
+        // The server revokes the session as it deletes: that end is the person's, not a surprise.
+        leavingOnPurpose = true
+        do {
+            _ = try await Backend.shared.function("delete-account", [:])
+        } catch {
+            leavingOnPurpose = false
+            throw error
+        }
         await Store.shared.unlink()
         OnboardingStore.clear()
-        // Back on the welcome screen before the session goes, so it isn't taken for a revoked one.
         resetAccountState()
+        sessionEndedNotice = false
         await Backend.shared.signOut()
     }
 
