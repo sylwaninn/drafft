@@ -397,82 +397,6 @@ struct ExtrasSheet: View {
         }
     }
 
-    /// "Save 28%" against the single-unit price of the smallest pack.
-    private func saving(_ p: Pack) -> String? {
-        guard let first = packs.first, p != first, first.amount > 0 else { return nil }
-        let unit = first.amount / Decimal(first.count)
-        let full = unit * Decimal(p.count)
-        let pct = Int((NSDecimalNumber(decimal: 1 - p.amount / full).doubleValue * 100).rounded())
-        return pct > 0 ? L("Save \(pct)%") : nil
-    }
-
-    private func packRow(_ p: Pack, best: Bool) -> some View {
-        let on = pack == p
-        return Button {
-            Haptics.select()
-            withAnimation(Motion.select) { pack = on ? nil : p }
-        } label: {
-            HStack(spacing: DS.Space.md) {
-                CheckDisc(isOn: on, onLimeFill: true)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(alignment: .firstTextBaseline, spacing: 5) {
-                        Text("\(p.count)")
-                            .font(.displayBold(22, relativeTo: .title3))
-                        Text(p.count == 1 ? singular : plural)
-                            .font(.body.weight(.semibold))
-                    }
-                    .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
-                    HStack(spacing: 6) {
-                        if let save = saving(p) {
-                            Text(save)
-                                .font(.caption.weight(.bold))
-                                .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.accentInk)
-                        }
-                        if best {
-                            Text("Best value")
-                                .font(.caption2.weight(.heavy))
-                                // Inverted on the selected (accent) row so the badge never melts into it.
-                                .foregroundStyle(on ? DS.Palette.accentInk : DS.Palette.onLime)
-                                .padding(.horizontal, 6)
-                                .frame(minHeight: 18)
-                                .background(on ? AnyShapeStyle(DS.Palette.onLime) : AnyShapeStyle(DS.Palette.lime), in: .capsule)
-                        }
-                    }
-                }
-
-                Spacer(minLength: DS.Space.sm)
-
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text(p.price)
-                        .font(.headline.monospacedDigit())
-                        .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
-                    Text(p.each ?? L("Single"))
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(on ? DS.Palette.onLime.opacity(0.85) : DS.Palette.mute)
-                }
-            }
-            .lineLimit(2)
-            .padding(.horizontal, DS.Space.md)
-            .padding(.vertical, DS.Space.md)
-            // Selected: solid accent, like every other selection (a pale wash vanished on the sheet's well).
-            .background(on ? DS.Palette.lime : .clear, in: .rect(cornerRadius: DS.Radius.lg))
-            .contentShape(.rect(cornerRadius: DS.Radius.lg))
-        }
-        .buttonStyle(PressScaleStyle(scale: 0.98))
-        .accessibilityLabel(best ? L("\(packName(p.count)), \(p.price), best value") : L("\(packName(p.count)), \(p.price)"))
-        .accessibilityAddTraits(on ? .isSelected : [])
-    }
-
-    private var singular: String { tab == .boost ? L("boost") : L("super like") }
-    private var plural: String { tab == .boost ? L("boosts") : L("super likes") }
-
-    /// "3 boosts", "1 super like": the count with its unit, as one string.
-    private func packName(_ count: Int) -> String {
-        if tab == .boost { return count == 1 ? L("1 boost") : L("\(count) boosts") }
-        return count == 1 ? L("1 super like") : L("\(count) super likes")
-    }
-
     private func buyTitle(_ p: Pack) -> String {
         if tab == .boost {
             return p.count == 1 ? L("Buy 1 boost for \(p.price)") : L("Buy \(p.count) boosts for \(p.price)")
@@ -590,6 +514,87 @@ extension ExtrasSheet {
             try? await Task.sleep(for: .milliseconds(250))
             withAnimation(Motion.bouncy) { app.startBoost() }
         }
+    }
+}
+
+// MARK: - Pack rows
+
+extension ExtrasSheet {
+    /// "Save 28%" against the single-unit price of the smallest pack.
+    fileprivate func saving(_ p: Pack) -> String? {
+        guard let first = packs.first, p != first, first.amount > 0 else { return nil }
+        let unit = first.amount / Decimal(first.count)
+        let full = unit * Decimal(p.count)
+        let pct = Int((NSDecimalNumber(decimal: 1 - p.amount / full).doubleValue * 100).rounded())
+        return pct > 0 ? L("Save \(pct)%") : nil
+    }
+
+    fileprivate func packRow(_ p: Pack, best: Bool) -> some View {
+        let on = pack == p
+        return Button {
+            Haptics.select()
+            withAnimation(Motion.select) { pack = on ? nil : p }
+        } label: {
+            HStack(spacing: DS.Space.md) {
+                CheckDisc(isOn: on, onLimeFill: true)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    // Count, unit and badge on one line; the badge drops under only at the largest text sizes.
+                    let bestBadge = best ? Text("Best value")
+                        .font(.caption2.weight(.heavy))
+                        // Inverted on the selected (accent) row so the badge never melts into it.
+                        .foregroundStyle(on ? DS.Palette.accentInk : DS.Palette.onLime)
+                        .fixedSize()
+                        .padding(.horizontal, 6)
+                        .frame(minHeight: 18)
+                        .background(on ? AnyShapeStyle(DS.Palette.onLime) : AnyShapeStyle(DS.Palette.lime), in: .capsule) : nil
+                    let name = HStack(alignment: .firstTextBaseline, spacing: 5) {
+                        Text("\(p.count)")
+                            .font(.displayBold(22, relativeTo: .title3))
+                        Text(p.count == 1 ? singular : plural)
+                            .font(.body.weight(.semibold))
+                    }
+                    .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
+                    .fixedSize()
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: DS.Space.sm) { name; bestBadge }
+                        VStack(alignment: .leading, spacing: 4) { name; bestBadge }
+                    }
+                    // "Save 28%, 2,99 € each" on one line under the name; "Single" for the one-unit pack.
+                    let detail = [saving(p), p.each].compactMap { $0 }.joined(separator: ", ")
+                    Text(detail.isEmpty ? L("Single") : detail)
+                        .font(.caption.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.mute)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .layoutPriority(1)
+
+                Spacer(minLength: DS.Space.sm)
+
+                Text(p.price)
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
+                    .fixedSize()
+            }
+            .lineLimit(2)
+            .padding(.horizontal, DS.Space.md)
+            .padding(.vertical, DS.Space.md)
+            // Selected: solid accent, like every other selection (a pale wash vanished on the sheet's well).
+            .background(on ? DS.Palette.lime : .clear, in: .rect(cornerRadius: DS.Radius.lg))
+            .contentShape(.rect(cornerRadius: DS.Radius.lg))
+        }
+        .buttonStyle(PressScaleStyle(scale: 0.98))
+        .accessibilityLabel(best ? L("\(packName(p.count)), \(p.price), best value") : L("\(packName(p.count)), \(p.price)"))
+        .accessibilityAddTraits(on ? .isSelected : [])
+    }
+
+    fileprivate var singular: String { tab == .boost ? L("boost") : L("super like") }
+    fileprivate var plural: String { tab == .boost ? L("boosts") : L("super likes") }
+
+    /// "3 boosts", "1 super like": the count with its unit, as one string.
+    fileprivate func packName(_ count: Int) -> String {
+        if tab == .boost { return count == 1 ? L("1 boost") : L("\(count) boosts") }
+        return count == 1 ? L("1 super like") : L("\(count) super likes")
     }
 }
 
