@@ -408,7 +408,9 @@ struct Composer: View {
                let movie = try? await item.loadTransferable(type: PickedMovie.self) {
                 await sendVideo(movie.url)
             } else if let data = try? await item.loadTransferable(type: Data.self) {
-                onSend(.photo(asset: nil, imageData: data))
+                // At most 2048 px, decoded off the main thread: the thread never holds a 48 MP original.
+                let photo = (try? await PhotoCompressor.prepare(data))?.data ?? data
+                onSend(.photo(asset: nil, imageData: photo))
             }
         }
     }
