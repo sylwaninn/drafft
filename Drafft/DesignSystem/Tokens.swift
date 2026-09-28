@@ -32,26 +32,29 @@ enum DS {
         /// The brand accent can switch between the original lime, plum, tangerine and violet (trials).
         /// The token names stay "lime" (the role: the one accent); only the values change.
         enum Accent { case lime, plum, tangerine, violet }
-        static let accent: Accent = .violet
+        static let accent: Accent = .tangerine
 
         private static func pick(_ lime: Color, plum: Color, tangerine: Color, violet: Color) -> Color {
             switch accent { case .lime: lime; case .plum: plum; case .tangerine: tangerine; case .violet: violet }
         }
 
-        static let lime = pick(Color(hex: 0x9FE870), plum: Color(hex: 0xC47EF2), tangerine: Color(hex: 0xFF7300), violet: Color(hex: 0x7D70FD))
-        static let limeActive = pick(Color(hex: 0xCDFFAD), plum: Color(hex: 0xE3C4FA), tangerine: Color(hex: 0xFFB27A), violet: Color(hex: 0xB5ADFE))
-        static let limeNeutral = pick(Color(hex: 0xC5EDAB), plum: Color(hex: 0xDDB8F7), tangerine: Color(hex: 0xFFA05C), violet: Color(hex: 0xA49BFE))
+        static let lime = pick(Color(hex: 0x9FE870), plum: Color(hex: 0xC47EF2),
+                               tangerine: Color(hex: 0xFF6B1A), violet: Color(hex: 0x7D70FD))
+        static let limeActive = pick(Color(hex: 0xCDFFAD), plum: Color(hex: 0xE3C4FA),
+                               tangerine: Color(hex: 0xFFAC7D), violet: Color(hex: 0xB5ADFE))
+        static let limeNeutral = pick(Color(hex: 0xC5EDAB), plum: Color(hex: 0xDDB8F7),
+                               tangerine: Color(hex: 0xFF9A5F), violet: Color(hex: 0xA49BFE))
         static let limePale = pick(Color(light: 0xE2F6D5, dark: 0x1E2A14), plum: Color(light: 0xF3E8FB, dark: 0x2A1A36),
                                    tangerine: Color(light: 0xFFEBDC, dark: 0x33200F),
                                    violet: Color(light: 0xEEECFF, dark: 0x1E1B3A))
         /// Text and glyphs on the accent. Tangerine and violet: white, by choice (bold labels and icons only).
         static let onLime = pick(Color(hex: 0x0E0F0C), plum: Color(hex: 0x1E0A2B), tangerine: Color(hex: 0xFFFFFF), violet: Color(hex: 0xFFFFFF))
         /// The accent as text or a glyph on neutral surfaces: links, the selected tab, "Typing",
-        /// the app tint. Light mode is the accent darkened just enough for 4.5:1 on white (#C45000,
-        /// still read as orange, not brown); dark mode lifts it (#FF8A2B, 7:1 on the page).
+        /// the app tint. Light mode is the accent darkened just enough for 4.5:1 on white (#B84600,
+        /// still read as orange, not brown); dark mode lifts it (#FF8A45, 8:1 on the page).
         /// Violet: #6356F5 in light (5:1 on white), #A59CFF in dark (8:1 on the page).
         static let accentInk = pick(Color(light: 0x163300, dark: 0xC5EDAB), plum: Color(light: 0x3E174F, dark: 0xDDB8F7),
-                                    tangerine: Color(light: 0xC45000, dark: 0xFF8A2B),
+                                    tangerine: Color(light: 0xB84600, dark: 0xFF8A45),
                                     violet: Color(light: 0x6356F5, dark: 0xA59CFF))
         /// Selected fill on a night surface (plan rows, time options, icebreaker picks): an accent
         /// wash, never a frame.
