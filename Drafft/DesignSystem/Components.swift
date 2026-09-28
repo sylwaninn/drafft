@@ -418,7 +418,11 @@ struct SportBadgeStack: View {
         let shown = overflow ? Array(sports.prefix(limit - 1)) : sports
         HStack(spacing: -size * 0.18) {
             ForEach(shown) { sport in
-                disc { Image(systemName: sport.symbol).font(.system(size: size * 0.42, weight: .bold)) }
+                disc {
+                    // Fitted in a box inside the ring, so wide symbols (bike, sailboat) keep a margin.
+                    Image(systemName: sport.symbol).resizable().scaledToFit().fontWeight(.bold)
+                        .frame(width: size * 0.5, height: size * 0.5)
+                }
             }
             if overflow {
                 disc {

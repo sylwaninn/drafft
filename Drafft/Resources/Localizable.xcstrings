@@ -16337,7 +16337,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Training fonctionnel"
+            "value" : "Functional training"
           }
         },
         "it" : {
@@ -19779,7 +19779,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vélo en salle"
+            "value" : "Indoor cycling"
           }
         },
         "it" : {
@@ -34573,13 +34573,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laufgruppe"
+            "value" : "Run Club"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Club de running"
+            "value" : "Run club"
           }
         },
         "fr" : {
@@ -34603,7 +34603,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clube de corrida"
+            "value" : "Run club"
           }
         }
       }
@@ -38217,42 +38217,42 @@
         }
       }
     },
-    "Stair climbing" : {
+    "Stepper" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Treppenlaufen"
+            "value" : "Stepper"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subir escaleras"
+            "value" : "Stepper"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Montée d'escaliers"
+            "value" : "Stepper"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salita di scale"
+            "value" : "Stepper"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Traplopen"
+            "value" : "Stepper"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subir escadas"
+            "value" : "Stepper"
           }
         }
       }
@@ -52757,13 +52757,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "bei der Laufgruppe"
+            "value" : "beim Run Club"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "en el club de running"
+            "value" : "en el run club"
           }
         },
         "fr" : {
@@ -52787,7 +52787,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "no clube de corrida"
+            "value" : "no run club"
           }
         }
       }
@@ -53032,42 +53032,42 @@
         }
       }
     },
-    "climbing stairs" : {
+    "on the stepper" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Treppen laufen"
+            "value" : "auf dem Stepper"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "subiendo escaleras"
+            "value" : "en el stepper"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "à monter des escaliers"
+            "value" : "sur le stepper"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "a fare le scale"
+            "value" : "sullo stepper"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "traplopen"
+            "value" : "op de stepper"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "a subir escadas"
+            "value" : "no stepper"
           }
         }
       }

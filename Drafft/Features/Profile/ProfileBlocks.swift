@@ -124,13 +124,15 @@ struct VoiceBlock: View {
 
 // MARK: - Sports
 
-/// All of someone's sports in one block, with how often they do each. Sports you share light up in lime.
+/// All of someone's sports in one block, with how often they do each. Each sport has its own tone, in the bar and on its disc; shared ones say so.
 struct SportsWeekBlock: View {
     let profile: Profile
     /// The viewer, to highlight shared sports. Nil on your own profile.
     let me: Profile?
 
     private func shared(_ s: Sport) -> Bool { me?.sports.contains { $0.sport == s } ?? false }
+    /// The sport's own tone, shared by its bar segment and its disc.
+    private func tone(_ i: Int) -> Color { DS.Palette.sportTones[i % DS.Palette.sportTones.count] }
     private var sessionsPerWeek: Int { profile.sports.reduce(0) { $0 + $1.perWeek } }
 
     var body: some View {
@@ -151,9 +153,9 @@ struct SportsWeekBlock: View {
                 let total = CGFloat(max(sessionsPerWeek, 1))
                 let usable = geo.size.width - gap * CGFloat(max(profile.sports.count - 1, 0))
                 HStack(spacing: gap) {
-                    ForEach(profile.sports) { entry in
+                    ForEach(Array(profile.sports.enumerated()), id: \.element.id) { i, entry in
                         Capsule()
-                            .fill(shared(entry.sport) ? DS.Palette.lime : .white)
+                            .fill(tone(i))
                             .frame(width: usable * CGFloat(entry.perWeek) / total)
                     }
                 }
@@ -167,9 +169,10 @@ struct SportsWeekBlock: View {
                     HStack(spacing: DS.Space.md) {
                         Image(systemName: entry.sport.symbol)
                             .font(.system(size: 15, weight: .bold))
-                            .foregroundStyle(both ? DS.Palette.onLime : DS.Palette.night)
+                            .foregroundStyle(i == 0 ? DS.Palette.onLime : DS.Palette.night)
                             .frame(width: 38, height: 38)
-                            .background(both ? DS.Palette.lime : .white, in: .circle)
+                            // Same tone as its segment in the bar above: the bar reads as a legend.
+                            .background(tone(i), in: .circle)
                         VStack(alignment: .leading, spacing: 1) {
                             Text(entry.sport.name)
                                 .font(.headline)

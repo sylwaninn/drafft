@@ -82,11 +82,11 @@ enum Sport: String, CaseIterable, Identifiable, Hashable, Codable {
         case .archery: Info(name: L("Archery"), symbol: "figure.archery", verbing: L("at the range"), poster: "sport_hike")
         // Trending
         case .hyrox: Info(name: L("Hyrox"), symbol: "stopwatch.fill", verbing: L("training for Hyrox"), poster: "sport_ropes")
-        case .runClub: Info(name: L("Run club"), symbol: "figure.run.circle", verbing: L("at run club"), poster: "sport_groupnight")
-        case .ultra: Info(name: L("Ultra running"), symbol: "figure.run.square.stack", verbing: L("running long"), poster: "sport_trail")
+        case .runClub: Info(name: L("Run club"), symbol: "person.3.fill", verbing: L("at run club"), poster: "sport_groupnight")
+        case .ultra: Info(name: L("Ultra running"), symbol: "infinity", verbing: L("running long"), poster: "sport_trail")
         case .gravel: Info(name: L("Gravel"), symbol: "road.lanes", verbing: L("riding gravel"), poster: "sport_bike")
         case .obstacleRace: Info(name: L("Obstacle racing"), symbol: "flag.2.crossed.fill", verbing: L("racing"), poster: "sport_ropes")
-        case .stairClimbing: Info(name: L("Stair climbing"), symbol: "figure.stair.stepper", verbing: L("climbing stairs"), poster: "sport_stairs")
+        case .stairClimbing: Info(name: L("Stepper"), symbol: "figure.stair.stepper", verbing: L("on the stepper"), poster: "sport_stairs")
         case .kitesurf: Info(name: L("Kitesurf"), symbol: "wind", verbing: L("kiting"), poster: "sport_swim")
         case .wingFoil: Info(name: L("Wing foil"), symbol: "water.waves", verbing: L("foiling"), poster: "sport_swim")
         case .paddleBoard: Info(name: L("Paddleboard"), symbol: "figure.water.fitness", verbing: L("paddling"), poster: "sport_swim")
@@ -100,7 +100,8 @@ enum Sport: String, CaseIterable, Identifiable, Hashable, Codable {
         case .beachTennis: Info(name: L("Beach tennis"), symbol: "sun.max.fill", verbing: L("playing beach tennis"), poster: "sport_tennis")
         case .beachVolley: Info(name: L("Beach volley"), symbol: "beach.umbrella", verbing: L("playing beach volley"), poster: "sport_groupnight")
         case .ultimate: Info(name: L("Ultimate frisbee"), symbol: "figure.disc.sports", verbing: L("playing ultimate"), poster: "sport_groupnight")
-        case .spikeball: Info(name: L("Spikeball"), symbol: "circle.circle", verbing: L("playing spikeball"), poster: "sport_groupnight")
+        case .spikeball: Info(name: L("Spikeball"), symbol: "circle.grid.cross.fill", verbing: L("playing spikeball"),
+                                     poster: "sport_groupnight")
         case .bouldering: Info(name: L("Bouldering"), symbol: "mountain.2.fill", verbing: L("bouldering"), poster: "sport_boulder")
         }
     }

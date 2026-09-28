@@ -117,6 +117,10 @@ enum DS {
         static let negative = Color(hex: 0xD03238)
         static let accentOrange = Color(hex: 0xFFC091)
         static let accentCyan = Color(hex: 0x38C8FF)
+        /// One tone per sport in a person's week (the split bar and each row's disc), in list
+        /// order. Light enough for a night glyph, distinct from one another on night.
+        static let sportTones: [Color] = [lime, accentCyan, Color(hex: 0x9FE870), Color(hex: 0xB5ADFE),
+                                          Color(hex: 0xFFD84D), Color(hex: 0xFF9EC4), .white]
     }
 
     // MARK: Spacing (4pt base)
