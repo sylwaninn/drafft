@@ -88,10 +88,10 @@ struct LikesTabView: View {
             Text(app.blurredLikes.count == 1 ? "1 person likes you." : "\(app.blurredLikes.count) people like you.")
                 .font(.display(30))
                 .displayLeading(30)
-                .foregroundStyle(DS.Palette.lime)
+                .foregroundStyle(DS.Palette.accentOnNight)
                 .accessibilityAddTraits(.isHeader)
             Text(branded: L("See who, and match in one tap with drafft tempo."), font: .subheadline,
-                 tierColor: DS.Palette.lime)
+                 tierColor: DS.Palette.accentOnNight)
                 .foregroundStyle(.white.opacity(0.72))
             Button("See who likes you") {
                 Haptics.tap()
@@ -103,7 +103,7 @@ struct LikesTabView: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
     }
 
     private var emptyState: some View {
@@ -138,9 +138,9 @@ struct LikesTabView: View {
                 if like.superLike {
                     Image(systemName: "star.fill")
                         .font(.footnote.weight(.bold))
-                        .foregroundStyle(DS.Palette.night)
+                        .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 30, height: 30)
-                        .background(DS.Palette.lime, in: .circle)
+                        .background(DS.Palette.accentOnNight, in: .circle)
                         .padding(DS.Space.sm)
                         .accessibilityHidden(true)
                 }

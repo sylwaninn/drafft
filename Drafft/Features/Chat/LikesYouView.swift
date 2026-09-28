@@ -15,7 +15,7 @@ struct LikesYouView: View {
                     VStack(alignment: .leading, spacing: DS.Space.xs) {
                         Text("They like you.")
                             .font(.display(34))
-                            .foregroundStyle(DS.Palette.lime)
+                            .foregroundStyle(DS.Palette.accentOnNight)
                             .accessibilityAddTraits(.isHeader)
                         Text("Like back and it's a match straight away.")
                             .font(.subheadline)
@@ -23,7 +23,7 @@ struct LikesYouView: View {
                     }
                     .padding(DS.Space.xl)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .draftBlock(DS.Palette.night)
+                    .nightBlock()
 
                     if app.likedMe.isEmpty {
                         Text("No new likes right now. Keep swiping, they'll show up here.")

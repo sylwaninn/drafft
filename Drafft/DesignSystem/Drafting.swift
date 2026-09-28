@@ -5,9 +5,23 @@ import SwiftUI
 
 extension View {
     /// Draws `count` fading copies of `shape` behind the view, each shifted by `step`.
-    func draftTrail<S: Shape>(_ shape: S, color: Color = DS.Palette.lime, count: Int = 2,
+    /// With no `color`, the trail takes the accent of the surface it sits on.
+    func draftTrail<S: Shape>(_ shape: S, color: Color? = nil, count: Int = 2,
                               step: CGSize = CGSize(width: -7, height: 0)) -> some View {
-        background {
+        modifier(DraftTrail(shape: shape, color: color, count: count, step: step))
+    }
+}
+
+private struct DraftTrail<S: Shape>: ViewModifier {
+    let shape: S
+    let color: Color?
+    let count: Int
+    let step: CGSize
+    @Environment(\.isNightSurface) private var onNight
+
+    func body(content: Content) -> some View {
+        let color = color ?? (onNight ? DS.Palette.accentOnNight : DS.Palette.lime)
+        return content.background {
             ZStack {
                 ForEach((1...max(count, 1)).reversed(), id: \.self) { i in
                     shape
@@ -19,6 +33,13 @@ extension View {
             .allowsHitTesting(false)
             .accessibilityHidden(true)
         }
+    }
+}
+
+extension View {
+    /// A night block: the rounded night fill, with its content marked as on night.
+    func nightBlock(radius: CGFloat = DS.Radius.xl) -> some View {
+        nightSurface().draftBlock(DS.Palette.night, radius: radius)
     }
 }
 

@@ -79,6 +79,7 @@ struct LikeComposer: View {
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, DS.Space.xl)
+            .nightSurface()
 
             VStack {
                 HStack {

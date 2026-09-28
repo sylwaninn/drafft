@@ -86,10 +86,10 @@ struct SessionsView: View {
                     .font(.caption.weight(.heavy))
                     .lineLimit(1)
                     .fixedSize()
-                    .foregroundStyle(DS.Palette.onLime)
+                    .foregroundStyle(DS.Palette.onAccentOnNight)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
-                    .background(DS.Palette.lime, in: .capsule)
+                    .background(DS.Palette.accentOnNight, in: .capsule)
                 Spacer()
                 Image(systemName: s.sport.symbol)
                     .font(.system(size: 18, weight: .bold))
@@ -107,7 +107,7 @@ struct SessionsView: View {
                     .fixedSize(horizontal: false, vertical: true)
                 Text("\(s.date.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(.app))) at \(s.timeText)")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(DS.Palette.lime)
+                    .foregroundStyle(DS.Palette.accentOnNight)
             }
 
             HStack(spacing: DS.Space.sm) {
@@ -130,7 +130,7 @@ struct SessionsView: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
         .accessibilityElement(children: .contain)
     }
 

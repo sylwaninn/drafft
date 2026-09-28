@@ -216,7 +216,7 @@ struct SessionSafetySheet: View {
                     VStack(alignment: .leading, spacing: DS.Space.sm) {
                         Label("Session confirmed", systemImage: "checkmark.circle.fill")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(DS.Palette.lime)
+                            .foregroundStyle(DS.Palette.accentOnNight)
                         Text("\(session.sport.name) with \(partner)")
                             .font(.display(28, relativeTo: .title))
                             .displayLeading(28)
@@ -229,6 +229,7 @@ struct SessionSafetySheet: View {
                     .padding(DS.Space.xl)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
+                    .nightSurface()
                     .overlay {
                         RoundedRectangle(cornerRadius: DS.Radius.xl)
                             .strokeBorder(DS.Palette.blockEdge, lineWidth: 1)

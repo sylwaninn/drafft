@@ -31,7 +31,7 @@ struct MatchView: View {
                     Text("It's a match.")
                         .font(.display(64))
                         .displayLeading(64)
-                        .foregroundStyle(DS.Palette.lime)
+                        .foregroundStyle(DS.Palette.accentOnNight)
                         .minimumScaleFactor(0.6)
                         .lineLimit(2)
                         .accessibilityAddTraits(.isHeader)
@@ -61,6 +61,7 @@ struct MatchView: View {
             }
             .padding(.horizontal, DS.Space.xl)
             .padding(.bottom, DS.Space.sm)
+            .nightSurface()
         }
         .onAppear {
             if reduceMotion {
@@ -85,7 +86,7 @@ struct MatchView: View {
             // Ghost trails behind the lead card: the drafting motif.
             ForEach(1...3, id: \.self) { i in
                 RoundedRectangle(cornerRadius: DS.Radius.xl)
-                    .fill(DS.Palette.lime.opacity(0.22 / Double(i)))
+                    .fill(DS.Palette.accentOnNight.opacity(0.22 / Double(i)))
                     .frame(width: 170, height: 230)
                     .rotationEffect(.degrees(-6))
                     .offset(x: -40 - CGFloat(i) * (trails ? 26 : 0), y: -10)
@@ -139,7 +140,7 @@ struct MatchBannerView: View {
                         .foregroundStyle(.white)
                     Text("It's a match. Tap to say hi.")
                         .font(.subheadline)
-                        .foregroundStyle(DS.Palette.lime)
+                        .foregroundStyle(DS.Palette.accentOnNight)
                 }
                 Spacer(minLength: 0)
                 Image(systemName: "heart.fill")
@@ -181,12 +182,12 @@ struct BoostBannerView: View {
         HStack(spacing: DS.Space.md) {
             Image(systemName: "bolt.fill")
                 .font(.title3.weight(.heavy))
-                .foregroundStyle(DS.Palette.onLime)
+                .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 48, height: 48)
-                .background(DS.Palette.lime, in: .circle)
+                .background(DS.Palette.accentOnNight, in: .circle)
                 .background {
                     Circle()
-                        .stroke(DS.Palette.lime, lineWidth: 2)
+                        .stroke(DS.Palette.accentOnNight, lineWidth: 2)
                         .scaleEffect(pulse ? 1.6 : 1)
                         .opacity(pulse ? 0 : 0.8)
                 }
@@ -197,7 +198,7 @@ struct BoostBannerView: View {
                     .foregroundStyle(.white)
                 Text("People nearby see you first for 30 minutes.")
                     .font(.subheadline)
-                    .foregroundStyle(DS.Palette.lime)
+                    .foregroundStyle(DS.Palette.accentOnNight)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 0)
@@ -238,9 +239,9 @@ struct NoticeBannerView: View {
         HStack(spacing: DS.Space.md) {
             Image(systemName: "exclamationmark")
                 .font(.title3.weight(.heavy))
-                .foregroundStyle(DS.Palette.onLime)
+                .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 48, height: 48)
-                .background(DS.Palette.lime, in: .circle)
+                .background(DS.Palette.accentOnNight, in: .circle)
                 .accessibilityHidden(true)
             Text(notice.text)
                 .font(.subheadline.weight(.semibold))
@@ -275,6 +276,7 @@ struct NoticeBannerView: View {
 struct BannerSurface: ViewModifier {
     func body(content: Content) -> some View {
         content
+            .nightSurface()
             .background {
                 RoundedRectangle(cornerRadius: DS.Radius.xl)
                     .fill(DS.Palette.night)

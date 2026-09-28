@@ -200,7 +200,7 @@ struct VoiceIntroRecorder: View {
                 Image(systemName: recording ? "stop.fill" : "mic.fill")
                     .font(.system(size: 26, weight: .bold))
                     .contentTransition(.symbolEffect(.replace))
-                    .foregroundStyle(recording ? DS.Palette.lime : DS.Palette.onLime)
+                    .foregroundStyle(recording ? DS.Palette.accentOnNight : DS.Palette.onLime)
                     .frame(width: 76, height: 76)
                     .background(recording ? DS.Palette.night : DS.Palette.lime, in: .circle)
             }

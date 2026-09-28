@@ -190,7 +190,7 @@ struct MeView: View {
             }
         }
         .padding(DS.Space.xl)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
         .animation(Motion.snappy, value: app.profileLoad)
     }
 
@@ -202,7 +202,7 @@ struct MeView: View {
                     Photo(name: app.me.portrait, side: 84)
                         .frame(width: 84, height: 84)
                         .clipShape(.circle)
-                        .overlay(Circle().strokeBorder(DS.Palette.lime, lineWidth: 3))
+                        .overlay(Circle().strokeBorder(DS.Palette.accentOnNight, lineWidth: 3))
                 }
                 .buttonStyle(PressScaleStyle())
                 .accessibilityLabel("Preview my profile")
@@ -210,7 +210,8 @@ struct MeView: View {
                     Text("\(app.me.name), \(app.me.age)")
                         .font(.display(26, relativeTo: .title))
                         .foregroundStyle(.white)
-                    SportBadgeStack(sports: app.me.sports.map(\.sport))
+                    // White discs, ink glyphs: a grey disc disappeared into the night card.
+                    SportBadgeStack(sports: app.me.sports.map(\.sport), fill: .white, glyph: DS.Palette.night)
                         .padding(.top, 2)
                     if app.profilePaused {
                         Label("Paused", systemImage: "pause.fill")
@@ -233,13 +234,13 @@ struct MeView: View {
                             .foregroundStyle(.white)
                     } trailing: {
                         if let next = completion.next {
-                            Text(next).font(.footnote).foregroundStyle(DS.Palette.lime)
+                            Text(next).font(.footnote).foregroundStyle(DS.Palette.accentOnNight)
                         }
                     }
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule().fill(.white.opacity(0.14))
-                            Capsule().fill(DS.Palette.lime).frame(width: geo.size.width * completion.value)
+                            Capsule().fill(DS.Palette.accentOnNight).frame(width: geo.size.width * completion.value)
                         }
                     }
                     .frame(height: 6)
@@ -267,7 +268,7 @@ struct MeView: View {
             }
         }
         .padding(DS.Space.xl)
-        .draftBlock(DS.Palette.night)
+        .nightBlock()
         .animation(Motion.snappy, value: app.profilePaused)
     }
 
@@ -283,7 +284,7 @@ struct MeView: View {
                     .background(DS.Palette.onLimeWash, in: .circle)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(branded: L("Get drafft tempo"), font: .headline, brandWeight: .heavy, tierColor: DS.Palette.night)
+                    Text(branded: L("Get drafft tempo"), font: .headline, brandWeight: .heavy, tierColor: DS.Palette.tierOnAccent)
                         .foregroundStyle(DS.Palette.onLime)
                     // White on the accent only in semibold or bolder, at full strength.
                     Text("Undo swipes, see who liked you, unlimited likes.")
