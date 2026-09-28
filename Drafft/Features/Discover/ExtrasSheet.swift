@@ -21,6 +21,8 @@ struct ExtrasSheet: View {
     @State private var boostAfterReceipt = false
     /// A purchase that didn't go through, said plainly under the button.
     @State private var failure: String?
+    /// Paid, but the server hasn't credited the pack yet: said calmly under the button.
+    @State private var notice: String?
     private var store: Store { .shared }
 
     enum Tab: String, CaseIterable, Identifiable {
@@ -146,10 +148,12 @@ struct ExtrasSheet: View {
         ScrollView {
             VStack(spacing: DS.Space.md) {
                 if !pushed { hero }
-                if !packs.isEmpty {
-                    packList(titled: !pushed)
-                } else if tab != .likes {
+                // Packs show once purchases are linked to the account: one bought before that
+                // would never be credited.
+                if tab != .likes && (packs.isEmpty || !store.isLinked) {
                     packsUnavailable
+                } else if !packs.isEmpty {
+                    packList(titled: !pushed)
                 }
             }
             .padding(.horizontal, DS.Space.lg)
@@ -484,7 +488,7 @@ struct ExtrasSheet: View {
     private var footer: some View {
         VStack(spacing: DS.Space.xs) {
             primaryButton
-            Text(failure ?? footnote)
+            Text(failure ?? notice ?? footnote)
                 .font(.caption)
                 .foregroundStyle(failure == nil ? DS.Palette.body : DS.Palette.negative)
                 .multilineTextAlignment(.center)
@@ -507,6 +511,7 @@ struct ExtrasSheet: View {
             Button(action: buy) {
                 if purchasing {
                     ProgressView().tint(DS.Palette.onLime)
+                        .accessibilityLabel("Adding it to your account")
                 } else if let pack {
                     Text(buyTitle(pack))
                 } else {
@@ -514,19 +519,27 @@ struct ExtrasSheet: View {
                 }
             }
             .buttonStyle(.drafftPrimary)
-            .disabled(pack == nil || purchasing)
+            .disabled(pack == nil || purchasing || !store.isLinked)
         }
     }
 
     private var footnote: String {
         tab == .likes ? L("Unlimited likes come with drafft tempo.") : L("One-time purchase, never expires.")
     }
+}
 
+// MARK: Purchase
+
+extension ExtrasSheet {
     private func buy() {
         guard let pack else { return }
+        let item: AppModel.Consumable = tab == .boost ? .boost : .superLike
+        let before = app.balance(of: item)
+        let credited: (AppModel) -> Bool = { $0.balance(of: item) >= before + pack.count }
         Haptics.tap()
         purchasing = true
         failure = nil
+        notice = nil
         Task {
             defer { purchasing = false }
             do {
@@ -536,10 +549,18 @@ struct ExtrasSheet: View {
                 failure = L("The purchase didn't go through. You haven't been charged.")
                 return
             }
-            withAnimation(Motion.bouncy) {
-                app.add(pack.count, of: tab == .boost ? .boost : .superLike)
-                self.pack = nil
+            // Paid: the button keeps its spinner until the server has credited the pack (webhook).
+            // The count shown is always the wallet's, never one made up on the device.
+            guard await app.waitForWallet(until: credited) else {
+                withAnimation(Motion.snappy) {
+                    notice = tab == .boost
+                        ? L("Payment went through. Your boosts will show up in a moment.")
+                        : L("Payment went through. Your super likes will show up in a moment.")
+                }
+                app.keepWaitingForWallet { $0.balance(of: item) >= before + pack.count }
+                return
             }
+            withAnimation(Motion.bouncy) { self.pack = nil }
             // Boosts: back to the launch page, now showing the new count.
             if showStore { showStore = false }
             receipt = PurchaseReceipt(item: tab == .boost

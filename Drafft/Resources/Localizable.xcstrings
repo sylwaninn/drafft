@@ -5137,6 +5137,46 @@
         }
       }
     },
+    "Adding it to your account" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird deinem Konto gutgeschrieben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadiendo a tu cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajout à ton compte"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiunta al tuo account"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wordt aan je account toegevoegd"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A adicionar à tua conta"
+          }
+        }
+      }
+    },
     "Adjust filters" : {
       "localizations" : {
         "de" : {
@@ -28176,42 +28216,122 @@
         }
       }
     },
-    "Payment went through. Tap Restore purchases to unlock." : {
+    "Payment went through. drafft tempo turns on in a moment." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zahlung erfolgreich. Tippe auf „Käufe wiederherstellen“, um freizuschalten."
+            "value" : "Zahlung erfolgreich. drafft tempo ist gleich aktiv."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El pago se ha realizado. Toca Restaurar compras para desbloquear."
+            "value" : "El pago se ha realizado. drafft tempo se activa en un momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Paiement validé. Touche Restaurer les achats pour tout débloquer."
+            "value" : "Paiement validé. drafft tempo s'active dans un instant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pagamento riuscito. Tocca Ripristina acquisti per sbloccare."
+            "value" : "Pagamento riuscito. drafft tempo si attiva tra un attimo."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Betaling gelukt. Tik op Aankopen herstellen om te ontgrendelen."
+            "value" : "Betaling gelukt. drafft tempo staat zo aan."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O pagamento foi efetuado. Toca em Restaurar compras para desbloquear."
+            "value" : "O pagamento foi efetuado. O drafft tempo fica ativo dentro de momentos."
+          }
+        }
+      }
+    },
+    "Payment went through. Your boosts will show up in a moment." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zahlung erfolgreich. Deine Boosts sind gleich da."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El pago se ha realizado. Tus boosts aparecerán en un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paiement validé. Tes boosts arrivent dans un instant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pagamento riuscito. I tuoi boost arrivano tra un attimo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Betaling gelukt. Je boosts verschijnen zo."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O pagamento foi efetuado. Os teus boosts aparecem dentro de momentos."
+          }
+        }
+      }
+    },
+    "Payment went through. Your super likes will show up in a moment." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zahlung erfolgreich. Deine Super Likes sind gleich da."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El pago se ha realizado. Tus superlikes aparecerán en un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paiement validé. Tes super likes arrivent dans un instant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pagamento riuscito. I tuoi super like arrivano tra un attimo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Betaling gelukt. Je superlikes verschijnen zo."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O pagamento foi efetuado. Os teus super likes aparecem dentro de momentos."
           }
         }
       }
@@ -30350,6 +30470,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remate, escondido até tocarem"
+          }
+        }
+      }
+    },
+    "Purchase restored. drafft tempo turns on in a moment." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kauf wiederhergestellt. drafft tempo ist gleich aktiv."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compra restaurada. drafft tempo se activa en un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achat restauré. drafft tempo s'active dans un instant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acquisto ripristinato. drafft tempo si attiva tra un attimo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aankoop hersteld. drafft tempo staat zo aan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compra restaurada. O drafft tempo fica ativo dentro de momentos."
           }
         }
       }

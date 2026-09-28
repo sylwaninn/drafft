@@ -27,10 +27,8 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
       `session`, `tab`). (`aps-environment` stays `development` in the file: archiving for TestFlight re-signs it as production.)
 - [ ] Remote pushes like the demo ones (title "drafft", sentence from `NotificationText`, sender photo as
       thumbnail): a Notification Service Extension that downloads the photo from the CDN and attaches it.
-- [ ] Weekly boost (drafft tempo): the server credits it (first one on subscribing, then weekly, `wallets.weekly_boost_at`)
-      and pushes it (`kind: weekly_boost` opens Discover). Once connected: remove the demo crediting
-      (`AppModel.creditWeeklyBoosts`, the `boosts += 1` in `PaywallView.purchase`) and the local weekly notification,
-      read `boosts` from the wallet and refresh it on the realtime `wallet` event.
+- [x] Weekly boost (drafft tempo): the server credits it (first one on subscribing, then weekly, `wallets.weekly_boost_at`)
+      and pushes it (`kind: weekly_boost` opens Discover). The app only reads `wallets` (no local crediting or notification).
 - [ ] Notification previews off: the service extension must replace the message text (Stream pushes include
       it) with `NotificationText.body(.message…)`. (The settings themselves are saved on the profile and the
       phone, read back at launch: `NotificationService.loadSettings`.)
@@ -80,9 +78,11 @@ Backend work lives in `drafft-backend/TODO.md`. Media preparation and upload are
 ## Money and trust
 
 - [ ] RevenueCat SDK (`purchases-ios`): configure with the public key `appl_tGPiuiBrncvrUfYkkFAGQzOmQEF`
-      (App Store app `appebec589867`, project `proj3dc1aebd`), `Purchases.logIn(<Supabase user id>)` right
-      after sign-in (purchases before login are ignored by the server), entitlement `drafft_tempo`,
+      (App Store app `appebec589867`, project `proj3dc1aebd`), entitlement `drafft_tempo`,
       offering `default` ($rc_monthly, $rc_six_month, $rc_annual). Packs: buy the store products
-      directly. Balances come from `wallets` (credited by the webhook), not from the device.
+      directly. Done in the app: `Purchases.logIn(<Supabase user id, lowercased>)` at every sign-in and
+      restored session, purchases disabled until then, `logOut` on sign-out and account deletion; balances
+      and drafft tempo read from `wallets` (Realtime `wallet`, back at the front, after a purchase).
+      Left: a sandbox purchase tested end to end (App Store, RevenueCat, webhook, wallet) before any submission.
 - [ ] Phone verification with the real provider in production (see the Send SMS hook above).
 - [ ] Sentry: crashes, hangs, slow frames, failed uploads.

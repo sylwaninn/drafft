@@ -175,11 +175,12 @@ struct PaywallView: View {
         }
     }
 
-    /// The plans the App Store returned, or why there are none yet.
+    /// The plans the App Store returned, or why there are none yet. They show once purchases are
+    /// linked to the account too: a plan bought before that would never be credited.
     @ViewBuilder
     private var plans: some View {
         let available = Plan.allCases.compactMap { p in store.tempo[p].map { (p, $0) } }
-        if !available.isEmpty {
+        if !available.isEmpty && store.isLinked {
             VStack(spacing: DS.Space.sm) {
                 ForEach(available, id: \.0) { p, package in planRow(p, package) }
             }
@@ -256,13 +257,14 @@ struct PaywallView: View {
             Button(action: purchase) {
                 if purchasing {
                     ProgressView().tint(DS.Palette.onLime)
+                        .accessibilityLabel("Adding it to your account")
                 } else {
                     Text(branded: L("Get drafft tempo"), font: .body.weight(.semibold), brandWeight: .heavy,
                          tierColor: DS.Palette.night)
                 }
             }
             .buttonStyle(.drafftPrimary)
-            .disabled(plan == nil || purchasing)
+            .disabled(plan == nil || purchasing || !store.isLinked)
 
             // Why it's disabled, only while it is: no empty line under the button once a plan
             // is picked.
@@ -282,7 +284,7 @@ struct PaywallView: View {
                     .overlay { if restoring { ProgressView().tint(.white) } }
                     .frame(minHeight: 44).contentShape(.rect)
             }
-            .disabled(restoring || purchasing)
+            .disabled(restoring || purchasing || !store.isLinked)
             .accessibilityLabel(restoring ? "Restoring purchases" : "Restore purchases")
             let termsLink = Button { legal = .terms } label: {
                 Text("Terms").frame(minHeight: 44).contentShape(.rect)
@@ -327,7 +329,8 @@ struct PaywallView: View {
         withAnimation(Motion.snappy) { notice = text }
     }
 
-    /// Restores from the App Store: unlocks on the spot if drafft tempo is on this Apple ID.
+    /// Restores from the App Store, for the signed-in account. Unlocks once the server has drafft
+    /// tempo on the account's wallet.
     private func restore() {
         Haptics.tap()
         restoring = true
@@ -337,8 +340,12 @@ struct PaywallView: View {
             do {
                 let info = try await store.restore()
                 if let sub = store.subscription(from: info) {
-                    Haptics.success()
                     app.subscription = sub
+                    guard await app.waitForWallet(timeout: .seconds(20), until: { $0.isPremium }) else {
+                        say(L("Purchase restored. drafft tempo turns on in a moment."))
+                        return
+                    }
+                    Haptics.success()
                     receipt = PurchaseReceipt(item: .tempo(sub))
                 } else {
                     Haptics.warning()
@@ -363,12 +370,17 @@ struct PaywallView: View {
                 case .cancelled:
                     break
                 case .purchased(let info):
-                    guard let sub = store.subscription(from: info) else {
-                        say(L("Payment went through. Tap Restore purchases to unlock."))
+                    // Paid: the button keeps its spinner until the server has drafft tempo on the
+                    // account (webhook), which also credits the first weekly boost. Nothing is
+                    // unlocked on the device's word alone.
+                    let price = package.storeProduct.localizedPriceString
+                    let sub = store.subscription(from: info) ?? TempoSubscription(plan: plan, billing: plan.billing(price))
+                    app.subscription = sub
+                    guard await app.waitForWallet(until: { $0.isPremium }) else {
+                        say(L("Payment went through. drafft tempo turns on in a moment."))
+                        app.keepWaitingForWallet(until: { $0.isPremium })
                         return
                     }
-                    app.subscription = sub
-                    app.boosts += 1 // the first weekly boost
                     receipt = PurchaseReceipt(item: .tempo(sub))
                 }
             } catch {
@@ -581,6 +593,7 @@ struct SubscriptionSheet: View {
             do {
                 let info = try await Store.shared.restore()
                 apply(info)
+                await app.loadWallet()
                 Haptics.success()
                 withAnimation(Motion.snappy) { restoreResult = L("Your subscription is up to date.") }
             } catch {
@@ -591,7 +604,8 @@ struct SubscriptionSheet: View {
     }
 
     private func refresh() async {
-        if let info = try? await Purchases.shared.customerInfo() { apply(info) }
+        if Store.shared.reportsLinkedAccount, let info = try? await Purchases.shared.customerInfo() { apply(info) }
+        await app.loadWallet()
     }
 
     /// What the App Store reports. Expired closes the page, since the drafft tempo row only

@@ -14,44 +14,22 @@ final class AppModel {
     var sessionID = 0
     var tab: Tab = .discover
     var me = MockData.me
-    /// The drafft tempo subscription. Billed and managed by the App Store: the app only reads it
-    /// and links to Apple's management sheet. Simulated for now (no StoreKit yet).
-    var subscription: TempoSubscription? {
-        didSet {
-            if subscription == nil { nextWeeklyBoostAt = nil }
-            else if oldValue == nil, let s = subscription { nextWeeklyBoostAt = Self.nextWeeklyBoost(after: .now, from: s.started) }
-        }
-    }
-    var isPremium: Bool { subscription != nil }
-    /// drafft tempo adds a free boost every week, on the weekday and time it started (the first
-    /// one comes with the purchase). With the server, it credits them and pushes; the demo does it here.
-    var nextWeeklyBoostAt: Date?
-
-    /// Adds the weekly boosts that came due. Called when the app comes to the front, and at the
-    /// due time while it's open.
-    func creditWeeklyBoosts() {
-        guard isPremium, var next = nextWeeklyBoostAt, next <= .now else { return }
-        while next <= .now {
-            boosts += 1
-            next = next.addingTimeInterval(Self.week)
-        }
-        nextWeeklyBoostAt = next
-    }
-
-    private static let week: TimeInterval = 7 * 24 * 3600
-
-    private static func nextWeeklyBoost(after date: Date, from start: Date) -> Date {
-        let weeks = max(0, (date.timeIntervalSince(start) / week).rounded(.down)) + 1
-        return start.addingTimeInterval(weeks * week)
-    }
+    /// drafft tempo's details as the App Store reports them for this account (plan, price, renewal),
+    /// shown in You. Billed and managed by the App Store: the app only reads it and links to
+    /// Apple's management sheet. Whether it's on comes from the server: `isPremium`.
+    var subscription: TempoSubscription?
+    /// The account's wallet on the server (`wallets`, credited by the purchase webhook and the weekly
+    /// boost): the only source of drafft tempo, boosts and super likes. Never credited on the device.
+    var premiumUntil: Date?
+    var isPremium: Bool { (premiumUntil ?? .distantPast) > .now }
 
     // Likes, super likes & boosts
     /// Free accounts get this many likes a day; Plus is unlimited.
     static let dailyLikes = 20
     static let boostDuration: TimeInterval = 30 * 60
     var likesLeft = 14
-    /// Bought in packs (one-time purchases); they never expire.
-    var superLikes = 2
+    /// Bought in packs (one-time purchases); they never expire. From the wallet (`loadWallet`).
+    var superLikes = 0
     var boosts = 0
     var boostEndsAt: Date?
     /// Confirmation banner after starting a boost (its id restarts the auto-dismiss).
@@ -71,13 +49,6 @@ final class AppModel {
     }
 
     enum Consumable { case boost, superLike }
-
-    func add(_ count: Int, of item: Consumable) {
-        switch item {
-        case .boost: boosts += count
-        case .superLike: superLikes += count
-        }
-    }
 
     // Account & settings (demo: kept in memory)
     var email = "alex.martin@example.com"
@@ -122,6 +93,7 @@ final class AppModel {
     func deleteAccount() async throws {
         if await Backend.shared.hasSession {
             _ = try await Backend.shared.function("delete-account", [:])
+            await Store.shared.unlink()
             await Backend.shared.signOut()
         }
         resetAfterAccountDeletion()
@@ -135,11 +107,8 @@ final class AppModel {
         blocked = []
         dataExportRequestedAt = nil
         filters = DiscoverFilters()
-        subscription = nil
+        clearWallet()
         likesLeft = Self.dailyLikes
-        superLikes = 0
-        boosts = 0
-        boostEndsAt = nil
         me = MockData.me
         sessionID += 1
         withAnimation(Motion.gentle) {
@@ -202,6 +171,11 @@ final class AppModel {
     /// An unfinished sign-up always resumes, whatever the entry point.
     func signIn(onboard: Bool) {
         let target: Phase = onboard || OnboardingStore.hasUnfinished ? .onboarding : .main
+        // Purchases follow the account (the webhook credits this id), and its balances are the server's.
+        Task {
+            await Store.shared.link()
+            await loadWallet()
+        }
         // A finished profile on the server is the one shown in You (another device, a reinstall).
         if target == .main {
             Task { if let saved = try? await ProfileSync.load() { me = saved } }
@@ -252,10 +226,12 @@ final class AppModel {
     func signOut() {
         let token = NotificationService.shared.deviceToken
         Task {
-            // This device stops getting the account's pushes.
+            // This device stops getting the account's pushes, and its purchases stop following it.
+            await Store.shared.unlink()
             if let token { _ = try? await Backend.shared.rpc("unregister_push_token", ["p_token": token]) }
             await Backend.shared.signOut()
         }
+        clearWallet()
         AudioPlayback.shared.stop()
         sessionID += 1
         withAnimation(Motion.gentle) {

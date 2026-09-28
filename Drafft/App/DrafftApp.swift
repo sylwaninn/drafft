@@ -102,10 +102,13 @@ struct RootView: View {
                 guard app.phase != .welcome else { return }
                 // Signed in or launched: the iPhone's DeviceCheck token, for ban evasion (server side).
                 Task { await DeviceIntegrity.report() }
-                await moderation.watch()
+                await UserChannel.watch(app)
             }
             .onChange(of: scenePhase) { _, p in
-                if p == .active && app.phase != .welcome { Task { await moderation.load() } }
+                guard p == .active && app.phase != .welcome else { return }
+                Task { await moderation.load() }
+                // Credited while away (a purchase on another device, the weekly boost).
+                Task { await app.loadWallet() }
             }
             // Banners that must sit above everything (sheets included) live in their own window.
             .onAppear {
@@ -226,11 +229,11 @@ struct MainTabs: View {
                 app.tab = t
             }
         }
-        // drafft tempo follows the App Store: purchases, renewals, cancellations and refunds,
-        // on this device or another, arrive through RevenueCat's stream.
+        // drafft tempo's details (plan, renewal) follow the App Store through RevenueCat's stream, for
+        // the signed-in account only. Whether it's on, and every balance, comes from the wallet.
         .task {
             await Store.shared.load()
-            for await info in Purchases.shared.customerInfoStream {
+            for await info in Purchases.shared.customerInfoStream where Store.shared.reportsLinkedAccount {
                 app.subscription = Store.shared.subscription(from: info)
             }
         }
@@ -249,17 +252,6 @@ struct MainTabs: View {
         .onChange(of: NotificationService.shared.openChatID) { _, id in
             if let id { app.openChat(id); NotificationService.shared.openChatID = nil }
         }
-        // drafft tempo's weekly boost: credited when due (at the front, or right then if open),
-        // announced by a notification the rest of the time.
-        .task(id: "\(isActive)\(app.nextWeeklyBoostAt?.timeIntervalSince1970 ?? 0)\(NotificationService.shared.isAllowed)") {
-            guard isActive else { return }
-            app.creditWeeklyBoosts()
-            NotificationService.shared.scheduleWeeklyBoost(at: app.nextWeeklyBoostAt)
-            guard let next = app.nextWeeklyBoostAt else { return }
-            try? await Task.sleep(for: .seconds(max(1, next.timeIntervalSinceNow)))
-            app.creditWeeklyBoosts()
-        }
-        .onChange(of: scenePhase) { _, p in if p == .active && isActive { app.creditWeeklyBoosts() } }
         .onChange(of: NotificationService.shared.openBoost) { _, open in
             if open { app.tab = .discover; NotificationService.shared.openBoost = false }
         }
