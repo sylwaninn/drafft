@@ -64,7 +64,7 @@ struct IcebreakerEditor: View {
             VStack(alignment: .leading, spacing: 4) {
                 Label(icebreaker.kind.title, systemImage: icebreaker.kind.symbol)
                     .font(.headline)
-                    .foregroundStyle(DS.Palette.lime)
+                    .foregroundStyle(DS.Palette.accentOnNight)
                 Text(icebreaker.kind.detail)
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.55))
@@ -75,6 +75,7 @@ struct IcebreakerEditor: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .nightSurface()
         // Editor: plain night fill.
         .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
         .overlay {
@@ -146,7 +147,7 @@ struct IcebreakerEditor: View {
             .lineLimit(1...4)
             .font(.displayBold(24, relativeTo: .title2))
             .foregroundStyle(.white)
-            .tint(DS.Palette.lime)
+            .tint(DS.Palette.accentOnNight)
             .revealsOnFocus()
             .padding(.vertical, DS.Space.xs)
     }
@@ -156,8 +157,8 @@ struct IcebreakerEditor: View {
             .lineLimit(1...3)
             .font(.body.weight(.semibold))
             .multilineTextAlignment(centered ? .center : .leading)
-            .foregroundStyle(accent ? DS.Palette.lime : .white)
-            .tint(DS.Palette.lime)
+            .foregroundStyle(accent ? DS.Palette.accentOnNight : .white)
+            .tint(DS.Palette.accentOnNight)
             .revealsOnFocus()
             .padding(.horizontal, DS.Space.md)
             .padding(.vertical, 13)
@@ -171,7 +172,7 @@ struct IcebreakerEditor: View {
                 .lineLimit(1...3)
                 .font(.body.weight(.medium))
                 .foregroundStyle(.white)
-                .tint(DS.Palette.lime)
+                .tint(DS.Palette.accentOnNight)
                 .revealsOnFocus()
             tag(label, on: tagOn, action: action)
         }
@@ -192,8 +193,8 @@ struct IcebreakerEditor: View {
                 .fixedSize()
                 .padding(.horizontal, DS.Space.md)
                 .frame(minHeight: 32)
-                .foregroundStyle(on ? DS.Palette.onLime : .white.opacity(0.6))
-                .background(on ? DS.Palette.lime : .white.opacity(0.08), in: .capsule)
+                .foregroundStyle(on ? DS.Palette.onAccentOnNight : .white.opacity(0.6))
+                .background(on ? DS.Palette.accentOnNight : .white.opacity(0.08), in: .capsule)
                 .frame(minHeight: 44)
         }
         .buttonStyle(PressScaleStyle(scale: 0.94))

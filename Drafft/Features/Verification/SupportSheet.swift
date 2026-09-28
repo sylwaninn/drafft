@@ -47,9 +47,9 @@ struct SupportSheet: View {
                 VStack(alignment: .leading, spacing: DS.Space.sm) {
                     Image(systemName: "checkmark")
                         .font(.title3.weight(.heavy))
-                        .foregroundStyle(DS.Palette.onLime)
+                        .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 48, height: 48)
-                        .background(DS.Palette.lime, in: .circle)
+                        .background(DS.Palette.accentOnNight, in: .circle)
                     Text("Message sent.")
                         .font(.display(28))
                         .foregroundStyle(.white)
@@ -59,6 +59,7 @@ struct SupportSheet: View {
                 }
                 .padding(DS.Space.xl)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .nightSurface()
                 .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
                 .transition(.scale(scale: 0.95).combined(with: .opacity))
             } else {

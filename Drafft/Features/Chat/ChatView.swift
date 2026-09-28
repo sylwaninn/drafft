@@ -708,16 +708,15 @@ struct MessageRow: View {
 
     private var isText: Bool { if case .text = message.content { true } else { false } }
 
-    /// Quote inside a text bubble: a tinted inset with a lime bar, name and the first lines.
+    /// Quote in a bubble: accent bar, name, first lines. On your ink bubble the accent reads as on night.
     private func innerQuote(_ q: Message) -> some View {
-        HStack(spacing: DS.Space.sm) {
-            Capsule().fill(DS.Palette.lime).frame(width: 3)
+        let accent = mine && colorScheme == .light ? DS.Palette.accentOnNight : DS.Palette.accentInk
+        return HStack(spacing: DS.Space.sm) {
+            Capsule().fill(mine ? accent : DS.Palette.lime).frame(width: 3).environment(\.colorScheme, mine ? .light : colorScheme)
             VStack(alignment: .leading, spacing: 1) {
                 Text(q.fromMe ? L("You") : convo.profile.name)
                     .font(.caption.weight(.bold))
-                    // Your bubble is ink: dark in light mode (the accent reads), light in dark
-                    // mode (the accent doesn't, so the deep accent of light mode is used).
-                    .foregroundStyle(mine && colorScheme == .light ? DS.Palette.lime : DS.Palette.accentInk)
+                    .foregroundStyle(accent)
                     .environment(\.colorScheme, mine ? .light : colorScheme)
                 Text(q.previewText)
                     .font(.footnote)
@@ -811,9 +810,9 @@ struct MessageRow: View {
                     }
                     Image(systemName: "play.fill")
                         .font(.title2)
-                        .foregroundStyle(DS.Palette.onLime)
+                        .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 56, height: 56)
-                        .background(DS.Palette.lime, in: .circle)
+                        .background(DS.Palette.accentOnNight, in: .circle)
                 }
                 .frame(width: size.width, height: size.height)
                 .clipShape(.rect(cornerRadius: 20))
@@ -835,7 +834,8 @@ struct MessageRow: View {
                 url: url, duration: duration, levels: levels,
                 tint: mine ? DS.Palette.white : DS.Palette.ink,
                 track: mine ? DS.Palette.white.opacity(0.3) : DS.Palette.ink.opacity(0.22),
-                buttonFill: DS.Palette.lime, buttonGlyph: DS.Palette.onLime, showsSpeed: true,
+                buttonFill: mine ? DS.Palette.white : DS.Palette.lime, // your ink bubble: its inverse
+                buttonGlyph: mine ? DS.Palette.ink : DS.Palette.onLime, showsSpeed: true,
                 scrubbable: false // a sideways drag on a bubble is swipe-to-reply
             )
             .frame(width: 250)
@@ -851,9 +851,9 @@ struct MessageRow: View {
                 HStack(spacing: DS.Space.md) {
                     Image(systemName: name.lowercased().hasSuffix(".pdf") ? "doc.richtext.fill" : "doc.fill")
                         .font(.title2)
-                        .foregroundStyle(DS.Palette.onLime)
+                        .foregroundStyle(mine ? DS.Palette.ink : DS.Palette.onLime)
                         .frame(width: 44, height: 52)
-                        .background(DS.Palette.lime, in: .rect(cornerRadius: DS.Radius.sm))
+                        .background(mine ? DS.Palette.white : DS.Palette.lime, in: .rect(cornerRadius: DS.Radius.sm))
                     VStack(alignment: .leading, spacing: 2) {
                         Text(name).font(.subheadline.weight(.semibold)).lineLimit(2).multilineTextAlignment(.leading)
                         Text(size.formatted(.byteCount(style: .file).locale(.app)))

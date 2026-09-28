@@ -101,11 +101,11 @@ struct PaywallView: View {
                         // The tier lockup: the wordmark, then "tempo" in the same face and size,
                         // lowercase, in the accent.
                         HStack(alignment: .lastTextBaseline, spacing: 26 * 0.28) {
-                            Wordmark(size: 26, color: .white, trail: DS.Palette.lime.opacity(0.5))
+                            Wordmark(size: 26, color: .white, trail: DS.Palette.accentOnNight.opacity(0.5))
                             Text(verbatim: Brand.tier)
                                 .font(.display(26))
                                 .tracking(-26 * 0.02)
-                                .foregroundStyle(DS.Palette.lime)
+                                .foregroundStyle(DS.Palette.accentOnNight)
                                 .fixedSize()
                         }
                         .accessibilityElement(children: .ignore)
@@ -113,9 +113,9 @@ struct PaywallView: View {
                         Text(headline)
                             .font(.display(52))
                             .displayLeading(52)
-                            .foregroundStyle(DS.Palette.lime)
+                            .foregroundStyle(DS.Palette.accentOnNight)
                             .accessibilityAddTraits(.isHeader)
-                        Text(branded: pitch, font: .body, tierColor: DS.Palette.lime)
+                        Text(branded: pitch, font: .body, tierColor: DS.Palette.accentOnNight)
                             .foregroundStyle(.white.opacity(0.75))
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -125,9 +125,9 @@ struct PaywallView: View {
                             HStack(alignment: .top, spacing: DS.Space.md) {
                                 Image(systemName: perk.icon)
                                     .font(.body.weight(.bold))
-                                    .foregroundStyle(DS.Palette.onLime)
+                                    .foregroundStyle(DS.Palette.onAccentOnNight)
                                     .frame(width: 40, height: 40)
-                                    .background(DS.Palette.lime, in: .circle)
+                                    .background(DS.Palette.accentOnNight, in: .circle)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(perk.title).font(.headline).foregroundStyle(.white)
                                     Text(perk.detail).font(.subheadline).foregroundStyle(.white.opacity(0.65))
@@ -145,6 +145,7 @@ struct PaywallView: View {
             }
             .scrollIndicators(.hidden)
             .bottomBar { footer }
+            .nightSurface()
 
             Button {
                 dismiss()
@@ -192,7 +193,7 @@ struct PaywallView: View {
                     .fixedSize(horizontal: false, vertical: true)
                 Button("Try again") { Task { await store.load() } }
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(DS.Palette.lime)
+                    .foregroundStyle(DS.Palette.accentOnNight)
                     .frame(minHeight: 44)
             }
             .padding(DS.Space.lg)
@@ -222,8 +223,8 @@ struct PaywallView: View {
                             .font(.caption2.weight(.bold))
                             .fixedSize()
                             .padding(.horizontal, 8).padding(.vertical, 3)
-                            .foregroundStyle(DS.Palette.onLime)
-                            .background(DS.Palette.lime, in: .capsule)
+                            .foregroundStyle(DS.Palette.onAccentOnNight)
+                            .background(DS.Palette.accentOnNight, in: .capsule)
                     }
                     ViewThatFits(in: .horizontal) {
                         HStack(spacing: DS.Space.sm) {
@@ -267,7 +268,7 @@ struct PaywallView: View {
         VStack(spacing: DS.Space.xs) {
             Button(action: purchase) {
                 if purchasing {
-                    ProgressView().tint(DS.Palette.onLime)
+                    ProgressView().tint(DS.Palette.onAccentOnNight)
                         .accessibilityLabel("Adding it to your account")
                 } else {
                     Text(branded: L("Get drafft tempo"), font: .body.weight(.semibold), brandWeight: .heavy,
@@ -459,11 +460,11 @@ struct SubscriptionSheet: View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             HStack(alignment: .firstTextBaseline) {
                 HStack(alignment: .lastTextBaseline, spacing: 22 * 0.28) {
-                    Wordmark(size: 22, color: .white, trail: DS.Palette.lime.opacity(0.5))
+                    Wordmark(size: 22, color: .white, trail: DS.Palette.accentOnNight.opacity(0.5))
                     Text(verbatim: Brand.tier)
                         .font(.display(22))
                         .tracking(-22 * 0.02)
-                        .foregroundStyle(DS.Palette.lime)
+                        .foregroundStyle(DS.Palette.accentOnNight)
                         .fixedSize()
                 }
                 .accessibilityElement(children: .ignore)
@@ -473,10 +474,10 @@ struct SubscriptionSheet: View {
                     .font(.caption.weight(.bold))
                     .lineLimit(1)
                     .fixedSize()
-                    .foregroundStyle(sub.willRenew ? DS.Palette.onLime : DS.Palette.night)
+                    .foregroundStyle(sub.willRenew ? DS.Palette.onAccentOnNight : DS.Palette.night)
                     .padding(.horizontal, 10)
                     .frame(minHeight: 24)
-                    .background(sub.willRenew ? DS.Palette.lime : .white, in: .capsule)
+                    .background(sub.willRenew ? DS.Palette.accentOnNight : .white, in: .capsule)
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text(sub.billing)
@@ -495,6 +496,7 @@ struct SubscriptionSheet: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         // Sheet block: plain night.
         .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
+        .nightSurface()
         .overlay {
             RoundedRectangle(cornerRadius: DS.Radius.xl)
                 .strokeBorder(DS.Palette.blockEdge, lineWidth: 1)

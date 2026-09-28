@@ -11,6 +11,7 @@ struct DrafftButtonStyle: ButtonStyle {
     var kind: DrafftButtonKind = .primary
     var fullWidth = true
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.isNightSurface) private var onNight
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -37,15 +38,16 @@ struct DrafftButtonStyle: ButtonStyle {
 
     private var foreground: Color {
         switch kind {
-        case .primary: DS.Palette.onLime
+        case .primary: onNight ? DS.Palette.onAccentOnNight : DS.Palette.onLime
         case .like: DS.Palette.onLike
         case .secondary, .tertiary: DS.Palette.ink
-        case .dark: DS.Palette.lime
+        case .dark: DS.Palette.accentOnNight
         }
     }
 
     private func background(pressed: Bool) -> AnyShapeStyle {
         switch kind {
+        case .primary where onNight: AnyShapeStyle(pressed ? DS.Palette.accentOnNightActive : DS.Palette.accentOnNight)
         case .primary: AnyShapeStyle(pressed ? DS.Palette.limeActive : DS.Palette.lime)
         case .like: AnyShapeStyle(pressed ? DS.Palette.likeActive : DS.Palette.like)
         case .secondary: AnyShapeStyle(DS.Palette.canvasSoft.opacity(pressed ? 0.7 : 1))
@@ -335,13 +337,14 @@ struct Avatar: View {
     let name: String
     var size: CGFloat = 48
     var ring = false
+    @Environment(\.isNightSurface) private var onNight
     var body: some View {
         Photo(name: name, side: size)
             .frame(width: size, height: size)
             .clipShape(.circle)
             .padding(ring ? 3 : 0)
             .overlay {
-                if ring { Circle().strokeBorder(DS.Palette.lime, lineWidth: 2.5) }
+                if ring { Circle().strokeBorder(onNight ? DS.Palette.accentOnNight : DS.Palette.lime, lineWidth: 2.5) }
             }
     }
 }
@@ -467,14 +470,17 @@ struct CheckDisc: View {
     var ring: Color = DS.Palette.ink.opacity(0.25)
     /// On a lime row the disc inverts (ink disc, lime tick), so it never melts into the fill.
     var onLimeFill = false
+    @Environment(\.isNightSurface) private var onNight
 
     var body: some View {
+        let accent = onNight ? DS.Palette.accentOnNight : DS.Palette.lime
+        let onAccent = onNight ? DS.Palette.onAccentOnNight : DS.Palette.onLime
         ZStack {
             if isOn {
-                Circle().fill(onLimeFill ? DS.Palette.onLime : DS.Palette.lime)
+                Circle().fill(onLimeFill ? onAccent : accent)
                 Image(systemName: "checkmark")
                     .font(.system(size: size * 0.46, weight: .heavy))
-                    .foregroundStyle(onLimeFill ? DS.Palette.lime : DS.Palette.onLime)
+                    .foregroundStyle(onLimeFill ? accent : onAccent)
             } else {
                 Circle().strokeBorder(ring, lineWidth: 2)
             }

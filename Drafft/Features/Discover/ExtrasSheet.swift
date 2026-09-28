@@ -67,7 +67,7 @@ struct ExtrasSheet: View {
 
     private var isSuper: Bool { tab == .superLike }
     private var blockFill: Color { isSuper ? DS.Palette.negative : DS.Palette.night }
-    private var accent: Color { isSuper ? .white : DS.Palette.lime }
+    private var accent: Color { isSuper ? .white : DS.Palette.accentOnNight }
 
     /// Boosts keep buying and launching apart: with boosts in hand (or one running) the sheet
     /// opens on the launch page, whose only action is "Boost now"; the store is a separate page
@@ -222,7 +222,7 @@ struct ExtrasSheet: View {
                     .displayLeading(40)
                     .foregroundStyle(accent)
                     .accessibilityAddTraits(.isHeader)
-                Text(branded: explanation, font: .body, tierColor: isSuper ? .white : DS.Palette.lime)
+                Text(branded: explanation, font: .body, tierColor: isSuper ? .white : DS.Palette.accentOnNight)
                     .foregroundStyle(.white.opacity(isSuper ? 0.9 : 0.72))
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -232,6 +232,7 @@ struct ExtrasSheet: View {
         .padding(DS.Space.xl)
         .padding(.top, -DS.Space.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .nightSurface()
         // Sheet hero: plain fill.
         .background(blockFill, in: .rect(cornerRadius: DS.Radius.xl))
         .overlay {
@@ -298,9 +299,9 @@ struct ExtrasSheet: View {
             // Likes stay green whatever the brand accent.
             Image(systemName: tab.symbol)
                 .font(.subheadline.weight(.heavy))
-                .foregroundStyle(tab == .likes ? DS.Palette.onLike : DS.Palette.onLime)
+                .foregroundStyle(tab == .likes ? DS.Palette.onLike : DS.Palette.onAccentOnNight)
                 .frame(width: 34, height: 34)
-                .background(tab == .likes ? DS.Palette.like : DS.Palette.lime, in: .circle)
+                .background(tab == .likes ? DS.Palette.like : DS.Palette.accentOnNight, in: .circle)
                 .shadow(color: .black.opacity(0.3), radius: 6, y: 3)
         }
     }
@@ -319,13 +320,13 @@ struct ExtrasSheet: View {
                         Spacer()
                         Text(clock(left))
                             .font(.displayBold(22, relativeTo: .title3).monospacedDigit())
-                            .foregroundStyle(DS.Palette.lime)
+                            .foregroundStyle(DS.Palette.accentOnNight)
                             .contentTransition(.numericText())
                     }
                     GeometryReader { geo in
                         Capsule().fill(.white.opacity(0.12))
                             .overlay(alignment: .leading) {
-                                Capsule().fill(DS.Palette.lime)
+                                Capsule().fill(DS.Palette.accentOnNight)
                                     .frame(width: geo.size.width * max(0, min(1, left / AppModel.boostDuration)))
                             }
                     }

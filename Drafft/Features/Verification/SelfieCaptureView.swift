@@ -33,6 +33,7 @@ struct SelfieCaptureView: View {
         .padding(.horizontal, DS.Space.xl)
         .padding(.top, DS.Space.sm)
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
+        .nightSurface()
         .background(DS.Palette.night.ignoresSafeArea())
         .task { await model.start() }
         .onDisappear { model.stop() }
@@ -98,7 +99,7 @@ struct SelfieCaptureView: View {
             case .captured, .sending:
                 Button { Task { await model.send() } } label: {
                     if model.isSending {
-                        ProgressView().tint(DS.Palette.onLime)
+                        ProgressView().tint(DS.Palette.onAccentOnNight)
                     } else {
                         Label("Send my selfie", systemImage: "paperplane.fill")
                     }

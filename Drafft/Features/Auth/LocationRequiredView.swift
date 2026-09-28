@@ -10,14 +10,14 @@ struct LocationRequiredView: View {
             Spacer()
             Image(systemName: "location.slash.fill")
                 .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(DS.Palette.onLime)
+                .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 72, height: 72)
-                .background(DS.Palette.lime, in: .circle)
+                .background(DS.Palette.accentOnNight, in: .circle)
             VStack(alignment: .leading, spacing: DS.Space.sm) {
                 Text("Turn location back on.")
                     .font(.display(40))
                     .displayLeading(40)
-                    .foregroundStyle(DS.Palette.lime)
+                    .foregroundStyle(DS.Palette.accentOnNight)
                     .accessibilityAddTraits(.isHeader)
                 Text(branded: L("drafft needs it to show people near you. While Using the App is enough, and only your area is ever shown."), font: .body)
                     .foregroundStyle(.white.opacity(0.75))
@@ -33,6 +33,7 @@ struct LocationRequiredView: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .nightSurface()
         .background(DS.Palette.night.ignoresSafeArea())
         .interactiveDismissDisabled()
     }
