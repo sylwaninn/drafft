@@ -5,31 +5,89 @@ import Supabase
 /// something of theirs changes. One channel per account, whatever listens:
 ///
 /// - `moderation`: the hold (`AccountModeration`);
-/// - `wallet`: drafft tempo, boosts and super likes (`AppModel.loadWallet`).
+/// - `wallet`: drafft tempo, boosts and super likes (`AppModel.loadWallet`);
+/// - `media`: a photo was approved or refused, by the automatic check or by the team
+///   (`PhotoModeration`).
 ///
-/// A payload only says a change happened: the row is the truth, read again on each event and on
-/// each (re)connection, so a change made while the socket was down isn't missed.
+/// A payload only says a change happened (a photo decision carries its media and status): the row
+/// is the truth, read again on each event and on each (re)connection, so a change made while the
+/// socket was down isn't missed.
 @MainActor
 enum UserChannel {
-    /// While signed in. Ends when the task is cancelled (sign-out).
+    /// While signed in. A channel that fails to join, is closed by the server or stays down is
+    /// replaced, after a pause that grows while it keeps failing. Ends when the task is cancelled
+    /// (sign-out).
     static func watch(_ app: AppModel) async {
         guard let id = await Backend.shared.userID else { return }
+        let topic = "user:\(id.uuidString.lowercased())"
+        var pause = Duration.seconds(2)
+        while !Task.isCancelled {
+            let joined = await listen(topic: topic, app: app)
+            pause = joined ? .seconds(2) : min(pause * 2, .seconds(60))
+            try? await Task.sleep(for: pause)
+        }
+    }
+
+    /// One channel on the topic, until it's gone (true if it was joined at some point) or the task
+    /// is cancelled.
+    private static func listen(topic: String, app: AppModel) async -> Bool {
         let client = Backend.shared.client
-        let channel = client.channel("user:\(id.uuidString.lowercased())") { $0.isPrivate = true }
+        let channel = client.channel(topic) { $0.isPrivate = true }
         let moderation = channel.broadcastStream(event: "moderation")
         let wallet = channel.broadcastStream(event: "wallet")
+        let media = channel.broadcastStream(event: "media")
         let status = channel.statusChange
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask { for await _ in moderation { await AccountModeration.shared.load() } }
-            group.addTask { for await _ in wallet { await app.loadWallet() } }
+        let joined = await withTaskGroup(of: Bool.self) { group in
+            group.addTask { for await _ in moderation { await AccountModeration.shared.load() }; return false }
+            group.addTask { for await _ in wallet { await app.loadWallet() }; return false }
             group.addTask {
+                for await message in media {
+                    guard let payload = message["payload"]?.objectValue,
+                          let mediaID = payload["mediaId"]?.stringValue,
+                          let state = payload["status"]?.stringValue else { continue }
+                    await PhotoModeration.shared.apply(mediaID: mediaID, status: state)
+                }
+                return false
+            }
+            group.addTask {
+                var joined = false
                 for await s in status where s == .subscribed {
+                    joined = true
                     await AccountModeration.shared.load()
                     await app.loadWallet()
                 }
+                return joined
             }
-            group.addTask { try? await channel.subscribeWithError() }
+            group.addTask { await stayJoined(channel, client: client) }
+            // The first task to end is the join failing or the channel being gone (the streams only
+            // end when cancelled): stop the others and tell if it was ever joined.
+            _ = await group.next()
+            group.cancelAll()
+            var joined = false
+            for await result in group { joined = joined || result }
+            return joined
         }
         await client.removeChannel(channel)
+        return joined
+    }
+
+    /// Joins, then checks the channel is still up: after a reconnect the SDK joins it again by
+    /// itself, so only a channel down for a while (closed by the server, rejoin given up, socket not
+    /// reconnecting) ends this one. False if it never joined.
+    private static func stayJoined(_ channel: RealtimeChannelV2, client: SupabaseClient) async -> Bool {
+        guard (try? await channel.subscribeWithError()) != nil else { return false }
+        var downSince: ContinuousClock.Instant?
+        while !Task.isCancelled {
+            try? await Task.sleep(for: .seconds(5))
+            let down = channel.status == .unsubscribed || client.realtimeV2.status == .disconnected
+            if !down {
+                downSince = nil
+            } else if let since = downSince, since.duration(to: .now) >= .seconds(15) {
+                return true
+            } else if downSince == nil {
+                downSince = .now
+            }
+        }
+        return true
     }
 }

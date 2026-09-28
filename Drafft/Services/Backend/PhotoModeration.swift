@@ -100,8 +100,8 @@ final class PhotoModeration {
                 let id = try JSONDecoder().decode(Row.self, from: row).id
                 mediaIDs[path] = id
                 let verdict = try await verdict(for: id)
-                states[path] = verdict
-                if verdict == .refused { announceRefusal(path) }
+                // A live `media` event may have settled it already (apply): only a newer word counts.
+                if states[path] == .checking { settle(path, verdict) }
             } catch {
                 states[path] = .failed(Self.failure(error))
             }
@@ -124,6 +124,28 @@ final class PhotoModeration {
         }
         states[path] = nil
         mediaIDs[path] = nil
+    }
+
+    /// A `media` event from the person's Realtime topic (UserChannel): the automatic
+    /// check or the team decided on one of their photos. The tile follows at once; a refusal gets
+    /// its banner, with the second look offered by its explanation. A photo this device doesn't
+    /// know (added from another phone) is left alone.
+    func apply(mediaID: String, status: String) {
+        guard let path = mediaIDs.first(where: { $0.value == mediaID })?.key else { return }
+        switch status {
+        case "approved": settle(path, .approved)
+        case "rejected": settle(path, .refused)
+        // Back to pending: a second look was asked (here or on another device).
+        case "pending" where states[path] == .refused: settle(path, .inReview)
+        default: break
+        }
+    }
+
+    /// Sets a photo's verdict; announces a refusal once, when it becomes one.
+    private func settle(_ path: String, _ state: State) {
+        let was = states[path]
+        states[path] = state
+        if state == .refused && was != .refused { announceRefusal(path) }
     }
 
     /// From the push: shows the explanation for that photo, once the app is on screen (a tap on a
@@ -152,8 +174,8 @@ final class PhotoModeration {
         refusalBanner = Refusal(path: path)
     }
 
-    /// Polls the status (every second, up to 30 s). Still pending after that: a person decides.
-    /// Realtime (`media` events on user:<id>) replaces this once the app has the SDK.
+    /// Polls the status (every second, up to 30 s). Still pending after that: a person decides, and
+    /// their decision arrives as a `media` event (apply).
     private func verdict(for id: String) async throws -> State {
         struct Status: Decodable { let status: String }
         for _ in 0..<30 {
