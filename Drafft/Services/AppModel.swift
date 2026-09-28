@@ -316,6 +316,8 @@ final class AppModel {
               case .session(var s) = conversations[c].messages[m].content else { return }
         change(&s)
         withAnimation(Motion.bouncy) { conversations[c].messages[m].content = .session(s) }
+        // A calendar event added for it follows (moved, or removed when it's off).
+        SessionCalendar.shared.sessionChanged(s)
     }
 
     /// Accept one of the proposed times (or the first one), or decline the invite.

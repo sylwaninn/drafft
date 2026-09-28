@@ -2,18 +2,21 @@ import SwiftUI
 import EventKit
 import EventKitUI
 
-/// System "New Event" sheet, prefilled with the session. iOS 17+ needs no calendar permission
-/// for this: the person reviews and saves it themselves.
+/// System "New Event" sheet, prefilled with the session: the person reviews and saves it themselves.
+/// It needs no calendar permission; with full access (asked first) the saved event is linked to the
+/// session and follows it (`SessionCalendar`), through its `drafft://session/<id>` URL.
 struct AddToCalendarSheet: UIViewControllerRepresentable {
     let session: SessionProposal
     let partner: String
-    var onDone: (Bool) -> Void
+    /// The saved event, or nil (cancelled).
+    var onDone: (EKEvent?) -> Void
 
-    private static let store = EKEventStore()
+    private static var store: EKEventStore { SessionCalendar.shared.store }
 
     func makeUIViewController(context: Context) -> EKEventEditViewController {
         let event = EKEvent(eventStore: Self.store)
-        event.title = L("\(session.displayTitle) with \(partner)")
+        event.title = SessionCalendar.title(session.displayTitle, partner: partner)
+        event.url = SessionCalendar.marker(session.id)
         event.startDate = session.date
         event.endDate = session.date.addingTimeInterval(90 * 60)
         event.notes = L("\(session.sport.name) session planned on drafft.")
@@ -30,11 +33,11 @@ struct AddToCalendarSheet: UIViewControllerRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator(onDone: onDone) }
 
     final class Coordinator: NSObject, EKEventEditViewDelegate {
-        let onDone: (Bool) -> Void
-        init(onDone: @escaping (Bool) -> Void) { self.onDone = onDone }
+        let onDone: (EKEvent?) -> Void
+        init(onDone: @escaping (EKEvent?) -> Void) { self.onDone = onDone }
 
         func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
-            onDone(action == .saved)
+            onDone(action == .saved ? controller.event : nil)
         }
     }
 }
@@ -44,6 +47,8 @@ struct AddToCalendarSheet: UIViewControllerRepresentable {
 struct CalendarButton: View {
     let session: SessionProposal
     let partner: String
+    /// The conversation it belongs to.
+    let chatID: String
     var compact = false
 
     @Environment(AppModel.self) private var app
@@ -84,9 +89,10 @@ struct CalendarButton: View {
         .accessibilityLabel(added ? "In your calendar. Add again" : "Add to calendar")
         .sheet(isPresented: $showSheet) {
             Group {
-                AddToCalendarSheet(session: session, partner: partner) { saved in
+                AddToCalendarSheet(session: session, partner: partner) { event in
                     showSheet = false
-                    if saved {
+                    if let event {
+                        SessionCalendar.shared.added(event, session: session.id, chatID: chatID, partner: partner)
                         Haptics.success()
                         withAnimation(Motion.snappy) { _ = app.sessionsInCalendar.insert(session.id) }
                     }
@@ -99,6 +105,10 @@ struct CalendarButton: View {
 
     private func open() {
         Haptics.tap()
-        showSheet = true
+        // Full access first, so the event can follow the session; the sheet opens either way.
+        Task {
+            _ = await SessionCalendar.shared.requestAccess()
+            showSheet = true
+        }
     }
 }

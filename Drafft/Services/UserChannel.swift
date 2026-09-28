@@ -9,7 +9,10 @@ import Supabase
 /// - `media`: a photo was approved or refused, by the automatic check or by the team
 ///   (`PhotoModeration`);
 /// - `session_revoked`: Auth sessions ended on the server; this device signs out at once if its own is
-///   one of them (`AppModel.sessionsRevoked`).
+///   one of them (`AppModel.sessionsRevoked`);
+/// - `profile`: the person's own profile changed, on this device or another one, with the columns that
+///   changed (`AppModel.profileChanged`: pause, settings, language, card);
+/// - `session`: a session of theirs changed; the calendar event added for it follows (`SessionCalendar`).
 ///
 /// A payload only says a change happened (a photo decision carries its media and status): the row
 /// is the truth, read again on each event and on each (re)connection, so a change made while the
@@ -39,6 +42,8 @@ enum UserChannel {
         let wallet = channel.broadcastStream(event: "wallet")
         let media = channel.broadcastStream(event: "media")
         let revoked = channel.broadcastStream(event: "session_revoked")
+        let profile = channel.broadcastStream(event: "profile")
+        let session = channel.broadcastStream(event: "session")
         let status = channel.statusChange
         let joined = await withTaskGroup(of: Bool.self) { group in
             group.addTask { for await _ in moderation { await AccountModeration.shared.load() }; return false }
@@ -60,12 +65,29 @@ enum UserChannel {
                 return false
             }
             group.addTask {
+                for await message in profile {
+                    let fields = message["payload"]?.objectValue?["fields"]?.arrayValue?.compactMap(\.stringValue)
+                    await app.profileChanged(fields.map(Set.init))
+                }
+                return false
+            }
+            group.addTask {
+                for await message in session {
+                    guard let payload = message["payload"]?.objectValue,
+                          let id = payload["sessionId"]?.stringValue.flatMap(UUID.init(uuidString:)) else { continue }
+                    await SessionCalendar.shared.sessionChanged(id, status: payload["status"]?.stringValue)
+                }
+                return false
+            }
+            group.addTask {
                 var joined = false
                 for await s in status where s == .subscribed {
                     joined = true
                     await AccountModeration.shared.load()
                     await app.loadWallet()
                     await PurchaseCredit.shared.resume(app)
+                    await app.refreshOwnProfile()
+                    await SessionCalendar.shared.refresh()
                 }
                 return joined
             }

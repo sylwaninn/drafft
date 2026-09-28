@@ -112,6 +112,10 @@ struct RootView: View {
                 // Credited while away (a purchase on another device, the weekly boost).
                 Task { await app.loadWallet() }
                 Task { await PurchaseCredit.shared.resume(app) }
+                // Changed on another device while away (pause, settings, language, card).
+                Task { await app.refreshOwnProfile() }
+                // A session changed or was cancelled while away: its calendar event follows.
+                Task { await SessionCalendar.shared.refresh() }
             }
             // A session that ends on its own (revoked, expired, account deleted elsewhere): back to
             // the welcome screen, which says why.
