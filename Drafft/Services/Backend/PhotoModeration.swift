@@ -85,7 +85,9 @@ final class PhotoModeration {
         states[path] = .uploading
         Task {
             do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path))
+                let data = try await Task.detached(priority: .userInitiated) {
+                    try Data(contentsOf: URL(fileURLWithPath: path))
+                }.value
                 let tickets = EdgeFunctionTicketProvider(functionsURL: BackendConfig.functionsURL) {
                     try await Backend.shared.accessToken()
                 }

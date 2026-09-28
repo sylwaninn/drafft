@@ -855,9 +855,8 @@ struct OnboardingView: View {
     private func addPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
         guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("photo-\(UUID().uuidString).jpg")
-        guard (try? data.write(to: url)) != nil else { return }
-        let kept = OnboardingStore.persist(photo: url.path)
+        guard let path = await PhotoCompressor.savePicked(data) else { return }
+        let kept = OnboardingStore.persist(photo: path)
         // Sent to the backend: compressed, uploaded, then judged by moderation (the tile shows it).
         PhotoModeration.shared.submit(kept)
         withAnimation(Motion.snappy) { photos.append(kept) }

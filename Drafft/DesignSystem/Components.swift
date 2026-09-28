@@ -1,4 +1,7 @@
 import SwiftUI
+import ImageIO
+import Nuke
+import NukeUI
 
 // MARK: - Buttons
 
@@ -241,10 +244,8 @@ struct Photo: View {
     var body: some View {
         Color.clear
             .overlay {
-                if name.hasPrefix("http") {
-                    RemotePhoto(url: name, side: side)
-                } else if name.hasPrefix("/"), let img = PhotoCache.image(at: name) {
-                    Image(uiImage: img).resizable().scaledToFill()
+                if name.hasPrefix("http") || name.hasPrefix("/") {
+                    LoadedPhoto(name: name)
                 } else if let img = blur > 0
                             ? ImageStore.blurred(name, fraction: blur / max(side ?? 200, 1))
                             : side == nil ? ImageStore.preparedFull(name) : ImageStore.image(name, side: side) {
@@ -258,81 +259,66 @@ struct Photo: View {
     }
 }
 
-/// A photo on the server: downloaded once (URLCache keeps the bytes), decoded at display size,
-/// kept in memory. A sage tile stands in until it's there.
-private struct RemotePhoto: View {
-    let url: String
-    let side: CGFloat?
-    @State private var image: UIImage?
+/// A photo on the server (`http…`) or picked on this phone (`/…`), through `Images`: decoded in the
+/// background at the frame's size, shared downloads, capped caches. A copy already in memory shows
+/// on the first frame; otherwise a sage tile stands in until it's there.
+private struct LoadedPhoto: View {
+    let name: String
+    @Environment(\.displayScale) private var scale
 
     var body: some View {
-        ZStack {
-            Rectangle().fill(DS.Palette.canvasSoft)
-            if let image {
-                Image(uiImage: image).resizable().scaledToFill().transition(.opacity)
+        GeometryReader { geo in
+            LazyImage(request: Images.request(name, points: geo.size, scale: scale),
+                      transaction: Transaction(animation: .easeOut(duration: 0.2))) { state in
+                ZStack {
+                    Rectangle().fill(DS.Palette.canvasSoft)
+                    if let image = state.image {
+                        image.resizable().scaledToFill().transition(.opacity)
+                    }
+                }
             }
-        }
-        .task(id: url) {
-            image = RemoteImageCache.cached(url, side: side)
-            guard image == nil, let img = await RemoteImageCache.load(url, side: side) else { return }
-            withAnimation(.easeOut(duration: 0.2)) { image = img }
+            .frame(width: geo.size.width, height: geo.size.height)
         }
     }
 }
 
-enum RemoteImageCache {
-    nonisolated(unsafe) private static let store = NSCache<NSString, UIImage>()
-    private static let session: URLSession = {
-        let config = URLSessionConfiguration.default
-        config.urlCache = URLCache(memoryCapacity: 20 << 20, diskCapacity: 300 << 20)
-        config.requestCachePolicy = .returnCacheDataElseLoad // keys are immutable
-        return URLSession(configuration: config)
-    }()
+/// Photos and video posters sent in chat (kept as Data on the message): their size is read from
+/// the header, without decoding, and the pixels are decoded in the background at the bubble's size.
+enum MessageImage {
+    /// Pixel size, upright (EXIF orientation applied), from the image header only.
+    static func size(of data: Data) -> CGSize? {
+        guard let src = CGImageSourceCreateWithData(data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),
+              let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil) as? [CFString: Any],
+              let w = props[kCGImagePropertyPixelWidth] as? CGFloat,
+              let h = props[kCGImagePropertyPixelHeight] as? CGFloat else { return nil }
+        let orientation = props[kCGImagePropertyOrientation] as? UInt32 ?? 1
+        return orientation >= 5 ? CGSize(width: h, height: w) : CGSize(width: w, height: h)
+    }
 
-    private static func key(_ url: String, _ side: CGFloat?) -> NSString { "\(url)#\(Int(side ?? 0))" as NSString }
-
-    static func cached(_ url: String, side: CGFloat?) -> UIImage? { store.object(forKey: key(url, side)) }
-
-    static func load(_ url: String, side: CGFloat?) async -> UIImage? {
-        guard let u = URL(string: url), let (data, _) = try? await session.data(from: u) else { return nil }
-        let pixels = (side ?? 600) * 3
-        let img = await Task.detached(priority: .userInitiated) { () -> UIImage? in
-            guard let src = CGImageSourceCreateWithData(data as CFData, nil),
-                  let cg = CGImageSourceCreateThumbnailAtIndex(src, 0, [
-                    kCGImageSourceCreateThumbnailFromImageAlways: true,
-                    kCGImageSourceThumbnailMaxPixelSize: pixels,
-                    kCGImageSourceCreateThumbnailWithTransform: true
-                  ] as CFDictionary) else { return nil }
-            return UIImage(cgImage: cg)
-        }.value
-        if let img { store.setObject(img, forKey: key(url, side)) }
-        return img
+    static func request(_ id: UUID, data: Data, points: CGSize, scale: CGFloat) -> ImageRequest {
+        let side = max(points.width, points.height) * scale
+        var request = ImageRequest(id: "message-\(id.uuidString)-\(Int(side))", data: { data })
+        request.thumbnail = .init(size: CGSize(width: side, height: side), unit: .pixels, contentMode: .aspectFill)
+        return request
     }
 }
 
-/// Picked photos are read from disk and decoded once, not on every render of every avatar.
-enum PhotoCache {
-    nonisolated(unsafe) private static let store = NSCache<NSString, UIImage>()
+/// A chat photo or poster from its bytes, decoded off the main thread (see `MessageImage`).
+struct MessagePhoto: View {
+    let id: UUID
+    let data: Data
+    @Environment(\.displayScale) private var scale
 
-    static func image(at path: String) -> UIImage? {
-        if let hit = store.object(forKey: path as NSString) { return hit }
-        guard let img = UIImage(contentsOfFile: path)?.preparingForDisplay() else { return nil }
-        store.setObject(img, forKey: path as NSString)
-        return img
-    }
-}
-
-/// Photos and video thumbnails sent in chat (kept as Data on the message): decoded once per
-/// message, not on every render of the thread.
-enum MessageImageCache {
-    nonisolated(unsafe) private static let store = NSCache<NSString, UIImage>()
-
-    static func image(_ id: UUID, data: Data) -> UIImage? {
-        let key = id.uuidString as NSString
-        if let hit = store.object(forKey: key) { return hit }
-        guard let img = UIImage(data: data)?.preparingForDisplay() else { return nil }
-        store.setObject(img, forKey: key)
-        return img
+    var body: some View {
+        GeometryReader { geo in
+            LazyImage(request: MessageImage.request(id, data: data, points: geo.size, scale: scale)) { state in
+                ZStack {
+                    DS.Palette.night
+                    state.image?.resizable().scaledToFill()
+                }
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+        }
     }
 }
 

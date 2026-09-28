@@ -318,6 +318,9 @@ enum JSONValue: Decodable, Hashable {
 enum MediaURL {
     private static let key = "mediaBaseURL"
 
+    /// The base already known on this phone, without asking (nil before the first `base()`).
+    static var saved: URL? { UserDefaults.standard.string(forKey: key).flatMap(URL.init(string:)) }
+
     static func base() async -> URL? {
         if let saved = UserDefaults.standard.string(forKey: key), let url = URL(string: saved) { return url }
         struct Config: Decodable { let mediaUrl: String }

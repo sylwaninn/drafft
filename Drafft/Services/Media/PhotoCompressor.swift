@@ -30,17 +30,33 @@ enum PhotoCompressor {
     static let maxPixelSize = 2048
     static let quality = 0.8
 
-    /// Nonisolated async: runs off the main actor, since decoding and encoding take tens of milliseconds.
+    /// Runs on a background thread (explicitly, whatever the caller's actor), since decoding and
+    /// encoding take tens of milliseconds.
     static func prepare(_ data: Data, maxPixelSize: Int = maxPixelSize, quality: Double = quality) async throws -> PreparedPhoto {
-        guard let source = CGImageSourceCreateWithData(data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary)
-        else { throw MediaPreparationError.unreadableImage }
-        return try prepare(source, maxPixelSize: maxPixelSize, quality: quality)
+        try await Task.detached(priority: .userInitiated) {
+            guard let source = CGImageSourceCreateWithData(data as CFData, [kCGImageSourceShouldCache: false] as CFDictionary)
+            else { throw MediaPreparationError.unreadableImage }
+            return try prepare(source, maxPixelSize: maxPixelSize, quality: quality)
+        }.value
     }
 
     static func prepare(fileAt url: URL, maxPixelSize: Int = maxPixelSize, quality: Double = quality) async throws -> PreparedPhoto {
-        guard let source = CGImageSourceCreateWithURL(url as CFURL, [kCGImageSourceShouldCache: false] as CFDictionary)
-        else { throw MediaPreparationError.unreadableImage }
-        return try prepare(source, maxPixelSize: maxPixelSize, quality: quality)
+        try await Task.detached(priority: .userInitiated) {
+            guard let source = CGImageSourceCreateWithURL(url as CFURL, [kCGImageSourceShouldCache: false] as CFDictionary)
+            else { throw MediaPreparationError.unreadableImage }
+            return try prepare(source, maxPixelSize: maxPixelSize, quality: quality)
+        }.value
+    }
+
+    /// A photo just picked, as a file on this phone: at most 2048 px, upright, without metadata.
+    /// Everything that shows or sends it then reads this copy, never the camera's 24–48 MP original.
+    /// Nil if it can't be read.
+    static func savePicked(_ data: Data) async -> String? {
+        guard let photo = try? await prepare(data) else { return nil }
+        return await Task.detached(priority: .userInitiated) { () -> String? in
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent("photo-\(UUID().uuidString).jpg")
+            return (try? photo.data.write(to: url, options: .atomic)) != nil ? url.path : nil
+        }.value
     }
 
     /// Encodes an already decoded image (a video poster frame, for instance).

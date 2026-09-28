@@ -311,17 +311,31 @@ final class PhoneVerificationModel {
 
 import Vision
 import UIKit
+import ImageIO
 
 /// On-device check (Apple Vision) that a photo shows a face big enough to be recognised.
 enum FaceCheck {
     enum Result: Equatable { case face, noFace, tooSmall }
 
     static func check(photo path: String) async -> Result {
-        let image: UIImage? = path.hasPrefix("/") ? UIImage(contentsOfFile: path) : UIImage(named: path)
-        guard let cg = image?.cgImage else { return .noFace }
+        guard let cg = await uprightImage(path) else { return .noFace }
         guard let biggest = await faces(in: cg).map({ $0.width * $0.height }).max() else { return .noFace }
         // At least ~2% of the frame: a face you could actually recognise.
         return biggest >= 0.02 ? .face : .tooSmall
+    }
+
+    /// The photo at 1024 px at most, upright, decoded off the main thread (a picked file with ImageIO).
+    private static func uprightImage(_ path: String) async -> CGImage? {
+        guard path.hasPrefix("/") else { return UIImage(named: path)?.cgImage }
+        return await Task.detached(priority: .userInitiated) { () -> CGImage? in
+            guard let src = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL,
+                                                       [kCGImageSourceShouldCache: false] as CFDictionary) else { return nil }
+            return CGImageSourceCreateThumbnailAtIndex(src, 0, [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceThumbnailMaxPixelSize: 1024
+            ] as CFDictionary)
+        }.value
     }
 
     /// The faces Vision finds, as boxes in 0...1 of the upright image (origin at the bottom left).

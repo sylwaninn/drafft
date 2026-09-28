@@ -306,12 +306,11 @@ struct EditProfileView: View {
     private func addPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
         guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("photo-\(UUID().uuidString).jpg")
-        guard (try? data.write(to: url)) != nil else { return }
-        withAnimation(Motion.snappy) { setPhotos(allPhotos + [url.path]) }
+        guard let path = await PhotoCompressor.savePicked(data) else { return }
+        withAnimation(Motion.snappy) { setPhotos(allPhotos + [path]) }
         Haptics.success()
         // Sent to the backend: compressed, uploaded, then judged by moderation (the tile shows it).
-        PhotoModeration.shared.submit(url.path)
+        PhotoModeration.shared.submit(path)
     }
 
     // MARK: About
