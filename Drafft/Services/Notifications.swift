@@ -23,7 +23,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     }
 
     // Preferences. Saved on the profile (the server's pushes follow them, and they come back on a new
-    // device) and on the phone (right at launch, offline too). See `loadSettings`.
+    // device) and on the phone (right at launch, offline too). See `applyServer`.
     var matches = true { didSet { changed() } }
     var messages = true { didSet { changed() } }
     var messagePreviews = false { didSet { changed() } }
@@ -132,13 +132,9 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
         }
     }
 
-    /// The settings saved on the profile (another device, a reinstall) replace the phone's.
-    /// Called at launch once signed in.
-    func loadSettings() async {
-        guard await Backend.shared.hasSession,
-              let data = try? await Backend.shared.myProfile(select: NotificationSettings.columns),
-              let remote = try? JSONDecoder().decode([NotificationSettings].self, from: data).first
-        else { return }
+    /// The settings saved on the profile (another device, a reinstall) replace the phone's. Read
+    /// with the rest of the profile row (`AppModel.refreshAccount`).
+    func applyServer(_ remote: NotificationSettings) {
         applying = true
         apply(remote)
         applying = false

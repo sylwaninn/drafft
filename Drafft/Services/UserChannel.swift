@@ -10,8 +10,9 @@ import Supabase
 ///   (`PhotoModeration`);
 /// - `session_revoked`: Auth sessions ended on the server; this device signs out at once if its own is
 ///   one of them (`AppModel.sessionsRevoked`);
-/// - `profile`: the person's own profile changed, on this device or another one, with the columns that
-///   changed (`AppModel.profileChanged`: pause, settings, language, card);
+/// - `profile`: the person's own profile changed, on this device, another one or by the team, with the
+///   columns that changed: the row is read again with its hold, pause, settings, language and card
+///   (`AppModel.profileChanged`, `AppModel.refreshAccount`);
 /// - `session`: a session of theirs changed; the calendar event added for it follows (`SessionCalendar`).
 ///
 /// A payload only says a change happened (a photo decision carries its media and status): the row
@@ -46,7 +47,7 @@ enum UserChannel {
         let session = channel.broadcastStream(event: "session")
         let status = channel.statusChange
         let joined = await withTaskGroup(of: Bool.self) { group in
-            group.addTask { for await _ in moderation { await AccountModeration.shared.load() }; return false }
+            group.addTask { for await _ in moderation { await app.refreshAccount(force: true) }; return false }
             group.addTask { for await _ in wallet { await app.loadWallet() }; return false }
             group.addTask {
                 for await message in media {
@@ -83,10 +84,9 @@ enum UserChannel {
                 var joined = false
                 for await s in status where s == .subscribed {
                     joined = true
-                    await AccountModeration.shared.load()
+                    await app.refreshAccount(force: true)
                     await app.loadWallet()
                     await PurchaseCredit.shared.resume(app)
-                    await app.refreshOwnProfile()
                     await SessionCalendar.shared.refresh()
                 }
                 return joined
