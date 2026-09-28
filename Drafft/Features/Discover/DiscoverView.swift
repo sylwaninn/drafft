@@ -11,8 +11,6 @@ struct DiscoverView: View {
     /// Set by the swipe that empties the stack, cleared once the empty state has shown it: only that
     /// moment plays the empty state's entrance.
     @State private var emptiedBySwipe = false
-    /// The empty screen's photos, kept while the deck stays empty (reloads included).
-    @State private var emptyPhotos: [String] = []
     @State private var detail: Profile?
     @State private var likeBurst = 0
     @State private var passBurst = 0
@@ -49,8 +47,6 @@ struct DiscoverView: View {
             VStack(spacing: 0) {
                 topBar
                     .zIndex(0)
-                    // New cards end the empty stretch: the next time the deck runs out, a new pile.
-                    .onChange(of: app.deck.isEmpty) { _, empty in if !empty { emptyPhotos = [] } }
                 ZStack(alignment: .top) {
                     if app.deck.isEmpty {
                         // Right away, even while the last card is still flying over it.
@@ -429,8 +425,7 @@ struct DiscoverView: View {
 
     /// The stack ran out (filtered or not): the same screen either way.
     private var emptyState: some View {
-        DeckEmptyView(animate: emptiedBySwipe, onChats: { app.tab = .chats }, onFilters: { showFilters = true },
-                      photos: $emptyPhotos)
+        DeckEmptyView(animate: emptiedBySwipe, onChats: { app.tab = .chats }, onFilters: { showFilters = true })
             .onAppear { DispatchQueue.main.async { emptiedBySwipe = false } }
             .padding(.horizontal, DS.Space.md)
     }
