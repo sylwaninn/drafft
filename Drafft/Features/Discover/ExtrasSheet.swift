@@ -232,7 +232,7 @@ struct ExtrasSheet: View {
         .padding(DS.Space.xl)
         .padding(.top, -DS.Space.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
-        // Sheet hero: plain fill, no contour texture (DESIGN: never on sheets).
+        // Sheet hero: plain fill.
         .background(blockFill, in: .rect(cornerRadius: DS.Radius.xl))
         .overlay {
             RoundedRectangle(cornerRadius: DS.Radius.xl)

@@ -23,7 +23,7 @@ struct LikesYouView: View {
                     }
                     .padding(DS.Space.xl)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .draftBlock(DS.Palette.night, seed: BackdropSeed.nextSession, tint: DS.Palette.lime)
+                    .draftBlock(DS.Palette.night)
 
                     if app.likedMe.isEmpty {
                         Text("No new likes right now. Keep swiping, they'll show up here.")

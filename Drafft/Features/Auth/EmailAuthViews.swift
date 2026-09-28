@@ -11,7 +11,6 @@ struct AuthScaffold<Content: View>: View {
     /// Small print under the action (demo hints).
     var footnote: String? = nil
     /// Terrain for the page background (defaults to one derived from the title).
-    var backdropSeed: String? = nil
     @ViewBuilder var content: Content
 
     var body: some View {
@@ -33,7 +32,7 @@ struct AuthScaffold<Content: View>: View {
             .padding(.top, DS.Space.lg)
         }
         .scrollDismissesKeyboard(.interactively)
-        .background { PageContourBackdrop(seed: backdropSeed ?? "page-\(title)") }
+        .background { Rectangle().fill(DS.Palette.canvasSoft).ignoresSafeArea() }
         // The title scrolls under the system back button: the same edge blur as every bar.
         .blurredNavigationEdge()
         .bottomBar {
@@ -111,8 +110,7 @@ struct SignUpView: View {
             actionTitle: L("Create account"),
             actionEnabled: canSubmit,
             loading: loading,
-            action: submit,
-            backdropSeed: "page-Create your account"
+            action: submit
         ) {
             VStack(alignment: .leading, spacing: DS.Space.xl) {
                 DrafftField(title: L("Email"), text: $email, prompt: L("you@example.com"), error: emailError,
@@ -192,8 +190,7 @@ struct ConfirmEmailView: View {
             actionTitle: L("Continue"),
             actionEnabled: flow.stage == .code && flow.code.count == 6,
             loading: flow.busy,
-            action: verify,
-            backdropSeed: "page-Create your account"
+            action: verify
         ) {
             if flow.stage == .locked {
                 CodeLockedCard(message: flow.error)
@@ -246,8 +243,7 @@ struct LogInView: View {
             actionTitle: L("Log in"),
             actionEnabled: !email.isEmpty && !password.isEmpty,
             loading: loading,
-            action: submit,
-            backdropSeed: BackdropSeed.login
+            action: submit
         ) {
             VStack(alignment: .leading, spacing: DS.Space.xl) {
                 DrafftField(title: L("Email"), text: $email, prompt: L("you@example.com"), error: emailError,

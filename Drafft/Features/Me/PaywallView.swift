@@ -482,7 +482,7 @@ struct SubscriptionSheet: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        // Sheet block: plain night, no contour texture (DESIGN: never on sheets).
+        // Sheet block: plain night.
         .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
         .overlay {
             RoundedRectangle(cornerRadius: DS.Radius.xl)

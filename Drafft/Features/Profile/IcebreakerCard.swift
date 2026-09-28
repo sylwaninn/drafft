@@ -48,7 +48,7 @@ struct IcebreakerCard: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.icebreaker, tint: DS.Palette.lime)
+        .draftBlock(DS.Palette.night)
         .animation(Motion.bouncy, value: guess)
         .animation(Motion.bouncy, value: revealed)
         .animation(Motion.bouncy, value: take)

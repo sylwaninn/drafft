@@ -87,7 +87,7 @@ struct OnboardingView: View {
         // stepper stays the same view, so its bars fill and its chapters change in place.
         .topBar { header }
         // A different terrain per step, cross-fading as the steps change.
-        .background { PageContourBackdrop(seed: "signup-\(current)") }
+        .background { Rectangle().fill(DS.Palette.canvasSoft).ignoresSafeArea() }
         .onAppear(perform: restore)
         .onChange(of: phone.stage) { _, s in if s == .verified { save() } }
         .onChange(of: photoItem) { _, item in

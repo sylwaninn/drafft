@@ -83,7 +83,7 @@ struct NotificationsSettingsView: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.me, tint: DS.Palette.lime)
+        .draftBlock(DS.Palette.night)
     }
 
     /// The section title lives inside its white block (no loose text on the sage page).

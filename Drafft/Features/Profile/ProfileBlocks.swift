@@ -117,7 +117,7 @@ struct VoiceBlock: View {
             }
         }
         .padding(DS.Space.xl)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.voice, tint: DS.Palette.lime)
+        .draftBlock(DS.Palette.night)
         .animation(Motion.snappy, value: isCurrent)
     }
 }
@@ -201,7 +201,7 @@ struct SportsWeekBlock: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.sport, tint: DS.Palette.lime)
+        .draftBlock(DS.Palette.night)
     }
 }
 
@@ -227,7 +227,7 @@ struct GoalBlock: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.lime, seed: BackdropSeed.goal, tint: DS.Palette.onLime)
+        .draftBlock(DS.Palette.lime)
     }
 }
 

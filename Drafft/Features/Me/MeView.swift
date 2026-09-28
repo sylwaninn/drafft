@@ -190,7 +190,7 @@ struct MeView: View {
             }
         }
         .padding(DS.Space.xl)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.me, tint: DS.Palette.lime)
+        .draftBlock(DS.Palette.night)
         .animation(Motion.snappy, value: app.profileLoad)
     }
 
@@ -267,7 +267,7 @@ struct MeView: View {
             }
         }
         .padding(DS.Space.xl)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.me, tint: DS.Palette.lime)
+        .draftBlock(DS.Palette.night)
         .animation(Motion.snappy, value: app.profilePaused)
     }
 
