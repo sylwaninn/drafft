@@ -14,15 +14,14 @@ extension ChatPayload.Media: AttachmentPayload {
 /// - Connection: `stream-token` gives the key and a 24 h token; the SDK asks for a new one through the
 ///   token provider before it expires, reconnects by itself (network, background), keeps an offline copy
 ///   (the last known chats show at launch) and catches up on reconnect.
-/// - Chats: one per active match (`my_matches`, the source of truth: an ended match, whose channel the
-///   server froze, is gone at once), joined with its Stream channel. The list and every open chat follow
-///   Stream's events live; matches and sessions also follow Realtime (`match`, `match_ended`, `session`)
-///   and are read again on foreground and on reconnect.
+/// - Chats: one per active match (`AppModel.matches`, read from `my_matches` and kept live by Realtime
+///   `match` / `match_ended`, the source of truth: an ended match, whose channel the server froze, is gone
+///   at once), joined with its Stream channel. The list and every open chat follow Stream's events live.
 /// - Messages: optimistic (the SDK's local copy, then the server's). Media is uploaded to drafft's bucket
 ///   first (`media-upload-url`, purpose chat) and sent as a `drafft_media` attachment carrying the object's
 ///   key; links are signed on display (`media_urls`).
-/// - Sessions live in Postgres (`sessions`): the chat carries a card pointing to the row, whose status is
-///   read here and kept live.
+/// - Sessions live in Postgres (`sessions`, `SessionStore`): the chat carries one card per session, from
+///   the channel's `drafft.type: "session"` message, showing the live row.
 @MainActor
 final class ChatService {
     static let shared = ChatService()
@@ -38,15 +37,15 @@ final class ChatService {
     var channelList: ChannelList?
     var observers: [AnyCancellable] = []
 
-    /// Active matches by match id (= channel id).
-    var matches: [String: MatchRow] = [:]
     var channels: [String: ChatChannel] = [:]
     /// Open chats: their whole loaded history, followed live.
     var chats: [String: Chat] = [:]
     var chatObservers: [String: [AnyCancellable]] = [:]
     var history: [String: [ChatMessage]] = [:]
-    /// Sessions of the active matches, by id.
-    var sessions: [UUID: SessionRow] = [:]
+    /// Invites sent from this device, shown until the channel's message for them arrives (by match).
+    var pendingSessions: [String: [Message]] = [:]
+    /// Session rows already asked for by a card.
+    var requestedSessions: Set<UUID> = []
     /// Media being prepared and uploaded, not yet a Stream message (by match).
     var uploads: [String: [Upload]] = [:]
     /// What this device sent (its own picture, video file, recording): shown instead of the downloaded copy.
@@ -56,12 +55,6 @@ final class ChatService {
     var signing: Set<String> = []
     /// Push token, kept until the client is connected.
     var deviceToken: Data?
-
-    struct MatchRow: Decodable {
-        let matchId: String
-        let matchedAt: Date
-        let profile: RemoteCard
-    }
 
     struct Upload {
         var message: Message
@@ -73,17 +66,17 @@ final class ChatService {
     // MARK: Connection
 
     /// Signed in (launch, sign-in): connects once for the account, then keeps it up. Calling it again for
-    /// the same account only reads matches and sessions again.
+    /// the same account only shows the chats again.
     func start(_ app: AppModel) async {
         self.app = app
         guard let me = await Backend.shared.userID?.uuidString.lowercased() else { return }
         if userID == me {
-            await refresh()
+            publish()
             return
         }
         if userID != nil { await stop() }
         userID = me
-        await refresh()
+        publish()
         connecting = Task { await connect(me) }
     }
 
@@ -97,8 +90,8 @@ final class ChatService {
         chats = [:]
         history = [:]
         channels = [:]
-        matches = [:]
-        sessions = [:]
+        pendingSessions = [:]
+        requestedSessions = []
         uploads = [:]
         localMedia = [:]
         links = [:]
@@ -221,41 +214,25 @@ final class ChatService {
 
     // MARK: Matches and sessions
 
-    /// Matches and their sessions, read again (launch, foreground, reconnect, Realtime `match`).
+    /// Matches and sessions read again (Stream reconnected): the chats follow the matches.
     func refresh() async {
-        guard let data = try? await Backend.shared.rpc("my_matches", [:]) else { return }
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .custom { d in
-            let text = try d.singleValueContainer().decode(String.self)
-            guard let date = ServerDate.parse(text) else {
-                throw DecodingError.dataCorruptedError(in: try d.singleValueContainer(), debugDescription: "date \(text)")
-            }
-            return date
+        await app?.loadMatches()
+        await SessionStore.shared.refresh()
+        publish()
+    }
+
+    /// An invite sent from this device: its card shows at once (`SessionStore` has its row).
+    func showPending(_ proposal: SessionProposal, in matchID: String) {
+        pendingSessions[matchID, default: []].append(Message(.session(proposal), fromMe: true, state: .sending))
+        publish()
+    }
+
+    /// The server refused it: its card goes.
+    func dropPending(_ sessionID: UUID, in matchID: String) {
+        pendingSessions[matchID]?.removeAll { m in
+            if case .session(let s) = m.content { return s.id == sessionID }
+            return false
         }
-        guard let rows = try? decoder.decode([MatchRow].self, from: data) else { return }
-        matches = Dictionary(rows.map { ($0.matchId.lowercased(), $0) }, uniquingKeysWith: { a, _ in a })
-        await loadSessions(matchIDs: Array(matches.keys))
-        publish()
-    }
-
-    /// A new match (Realtime `match`): it joins the chats, and a banner says so while the app is open.
-    func matched(_ matchID: String?) async {
-        let known = matchID.map { matches[$0] != nil } ?? true
-        await refresh()
-        guard !known, let matchID, let app, let row = matches[matchID],
-              UIApplication.shared.applicationState == .active, app.openChatID != matchID else { return }
-        withAnimation(Motion.bouncy) { app.banner = AppModel.MatchBanner(profile: row.profile.profile) }
-    }
-
-    /// A session changed (Realtime `session`): its row, read again.
-    func sessionChanged(_ id: UUID) async {
-        await loadSessions(ids: [id])
-        publish()
-    }
-
-    /// The person blocked someone: their chat leaves at once (the server ends the match meanwhile).
-    func forget(user id: String) {
-        matches = matches.filter { $0.value.profile.id.lowercased() != id.lowercased() }
         publish()
     }
 
@@ -327,7 +304,7 @@ final class ChatService {
             startUpload(Upload(message: pendingMessage(id, content, replyTo), matchID: matchID,
                                source: .voice(url, duration, levels)))
         case .session(let proposal):
-            propose(proposal, in: matchID)
+            app?.proposeSession(proposal, in: matchID)
         default:
             break
         }
@@ -457,7 +434,7 @@ final class ChatService {
     /// A message arrived. From the other person, while that chat isn't on screen: a banner (the server's
     /// own messages, openers and sessions, come with their own push).
     func received(_ message: ChatMessage, in matchID: String) {
-        guard !message.isSentByCurrentUser, let app, let match = matches[matchID] else { return }
+        guard !message.isSentByCurrentUser, let app, let match = app.matches.first(where: { $0.id == matchID }) else { return }
         let onScreen = app.openChatID == matchID && UIApplication.shared.applicationState == .active
         if onScreen {
             Haptics.tap()
@@ -465,7 +442,7 @@ final class ChatService {
             return
         }
         guard message.extraData["drafft"] == nil, let mapped = map(message, in: matchID) else { return }
-        let profile = match.profile.profile
+        let profile = match.profile
         let muted = channels[matchID]?.isMuted ?? false
         Task {
             await NotificationService.shared.notify(.message, from: profile.firstName, photo: profile.portrait,

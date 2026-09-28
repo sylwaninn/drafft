@@ -315,11 +315,11 @@ final class VoiceRecorder {
 }
 
 extension AudioPlayback {
-    /// A voice intro saved on a profile: a picked file ("/…"), a URL on the server, or a demo clip.
+    /// A voice intro saved on a profile: a picked file ("/…") or a URL on the server.
     nonisolated static func url(for voice: String) -> URL? {
         if voice.hasPrefix("/") { return URL(fileURLWithPath: voice) }
         if voice.hasPrefix("http") { return URL(string: voice) }
-        return MockData.audio(voice)
+        return nil
     }
 
     /// Where a clip on the server is kept: named after its key (the link's path), never its signature.

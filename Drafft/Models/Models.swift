@@ -134,8 +134,7 @@ struct Profile: Identifiable, Hashable {
     /// They super liked you: their card comes first in your deck, marked in red, with their note.
     var superLikedMe = false
     var superLikeNote: String?
-    /// From the server's card, or set when the user edits their own profile (sample people in Chats
-    /// take theirs from MockData.extras).
+    /// From the server's card, or set when the user edits their own profile.
     var vitalsOverride: Vitals?
     var promptsOverride: [ProfilePrompt]?
 
@@ -168,8 +167,6 @@ struct SessionProposal: Hashable, Identifiable {
     /// Set when one of you introduces the other to a sport they don't do yet.
     var discovery: Discovery?
     var status: Status = .pending
-    /// Proposed by the signed-in person (their invite, waiting on the other person).
-    var mine = false
 
     /// pending: waiting for a pick; countered: replaced by a newer proposal with other times;
     /// cancelled: called off by either person, or with the match or an account.

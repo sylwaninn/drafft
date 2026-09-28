@@ -238,7 +238,6 @@ final class AppModel {
         Haptics.tap()
         ChatService.shared.retry(messageID, in: id)
     }
-    }
 }
 
 extension Array where Element: Identifiable {

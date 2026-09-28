@@ -43,8 +43,8 @@ struct Vitals: Hashable {
 }
 
 extension Profile {
-    var vitals: Vitals? { vitalsOverride ?? MockData.extras[id]?.vitals }
-    var prompts: [ProfilePrompt] { promptsOverride ?? MockData.extras[id]?.prompts ?? [] }
+    var vitals: Vitals? { vitalsOverride }
+    var prompts: [ProfilePrompt] { promptsOverride ?? [] }
 }
 
 /// A themed set of prompt questions. Add categories or questions here; the picker scales with them.
@@ -162,49 +162,4 @@ extension ProfilePrompt {
         default: question
         }
     }
-}
-
-extension MockData {
-    struct Extras {
-        let vitals: Vitals
-        let prompts: [ProfilePrompt]
-    }
-
-    static let extras: [String: Extras] = [
-        "maya": .init(
-            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Vegetarian", chronotype: "Early bird"),
-            prompts: [
-                .init(question: "My ideal Sunday session", answer: "Muddy trail, zero plans, bakery at the finish."),
-                .init(question: "After a workout you'll find me", answer: "Stretching other people's hamstrings. Occupational hazard."),
-                .init(question: "We'll get along if", answer: "You think walking the steep bits is a strategy, not a defeat.")
-            ]),
-        "leo": .init(
-            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
-            prompts: [
-                .init(question: "My most irrational fear", answer: "A flat tyre 60k from home with no CO2 cartridge."),
-                .init(question: "Green flag in a training partner", answer: "Points out potholes. Shares gels."),
-                .init(question: "I'll know it's a match if", answer: "You beat me at padel and don't gloat. Much.")
-            ]),
-        "sam": .init(
-            vitals: .init(drinks: "Socially", smokes: "Never", diet: "High protein, obviously", chronotype: "Night owl"),
-            prompts: [
-                .init(question: "Green flag in a training partner", answer: "Re-racks their plates."),
-                .init(question: "My most irrational fear", answer: "Someone curling in the squat rack."),
-                .init(question: "We'll get along if", answer: "You laugh at puns you pretend to hate.")
-            ]),
-        "chloe": .init(
-            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Omnivore", chronotype: "Early bird"),
-            prompts: [
-                .init(question: "My ideal Sunday session", answer: "32k long run, negative split, croissant at km 33."),
-                .init(question: "A stat I'm weirdly proud of", answer: "Four years without skipping a Tuesday interval."),
-                .init(question: "I'll know it's a match if", answer: "You can hold a conversation at marathon pace.")
-            ]),
-        "noah": .init(
-            vitals: .init(drinks: "Socially", smokes: "Never", diet: "Vegetarian", chronotype: "Night owl"),
-            prompts: [
-                .init(question: "My most irrational fear", answer: "Falling off the easy moves in front of people."),
-                .init(question: "The way to win me over", answer: "Cheer for my project like it's the Olympics."),
-                .init(question: "After a workout you'll find me", answer: "Drawing the route I just failed.")
-            ])
-    ]
 }

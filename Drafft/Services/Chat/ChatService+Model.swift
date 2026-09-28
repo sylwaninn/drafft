@@ -1,8 +1,9 @@
 import Foundation
 import StreamChat
 
-/// The chats as the app shows them: Stream's channels and messages, the matches' profiles, the sessions'
-/// rows and the signed media links, turned into `Conversation`s and `Message`s.
+/// The chats as the app shows them: the matches (`AppModel.matches`, from `my_matches`), their Stream
+/// channels and messages, the sessions' rows (`SessionStore`) and the signed media links, turned into
+/// `Conversation`s and `Message`s.
 extension ChatService {
     // MARK: Building the app's model
 
@@ -10,17 +11,30 @@ extension ChatService {
     func publish() {
         guard let app else { return }
         var conversations: [Conversation] = []
-        var sessionsByChat: [String: [SessionProposal]] = [:]
         var missingSessions: Set<UUID> = []
-        for (matchID, match) in matches {
+        let store = SessionStore.shared
+        for match in app.matches {
+            let matchID = match.id
             if let channel = channels[matchID], channel.isFrozen { continue }
-            let profile = match.profile.profile
+            let profile = match.profile
             let channel = channels[matchID]
+            // One card per session: the channel's message for it (db-events posts one per proposal).
+            var shown: Set<UUID> = []
             var messages = (history[matchID] ?? channel?.latestMessages ?? [])
                 .compactMap { m -> Message? in
-                    if case .session(let id)? = sessionReference(m), sessions[id] == nil { missingSessions.insert(id) }
+                    if case .session(let id)? = sessionReference(m) {
+                        guard !shown.contains(id) else { return nil }
+                        shown.insert(id)
+                        if store.record(id) == nil { missingSessions.insert(id) }
+                    }
                     return map(m, in: matchID)
                 }
+            // An invite on its way: its card at once, until the channel's own message for it arrives.
+            pendingSessions[matchID]?.removeAll { m in
+                guard case .session(let s) = m.content else { return true }
+                return shown.contains(store.record(s.id)?.id ?? s.id)
+            }
+            messages += pendingSessions[matchID] ?? []
             let sent = Set(messages.map(\.id))
             messages += (uploads[matchID] ?? []).map(\.message).filter { !sent.contains($0.id) }
             messages.sort { $0.date < $1.date }
@@ -34,14 +48,15 @@ extension ChatService {
             convo.markedUnread = (old?.markedUnread ?? false) && app.openChatID != matchID
             convo.online = other?.isOnline ?? false
             conversations.append(convo)
-            sessionsByChat[matchID] = sessions.values.filter { $0.matchID == matchID }.map { $0.proposal(me: userID) }
         }
         conversations.sort { ($0.lastMessage?.date ?? $0.matchedAt) > ($1.lastMessage?.date ?? $1.matchedAt) }
         if app.conversations != conversations { app.conversations = conversations }
-        if app.chatSessions != sessionsByChat { app.chatSessions = sessionsByChat }
+        // Cards whose row isn't known yet: read once, then shown.
+        missingSessions.subtract(requestedSessions)
         if !missingSessions.isEmpty {
+            requestedSessions.formUnion(missingSessions)
             Task {
-                await loadSessions(ids: Array(missingSessions))
+                await store.load(missingSessions)
                 publish()
             }
         }
@@ -86,11 +101,14 @@ extension ChatService {
         case .text(let text):
             return text.isEmpty ? nil : .text(text)
         case .session(let id):
-            return sessions[id].map { .session($0.proposal(me: userID)) }
+            // The card reads the live row (`SessionStore`); this copy stands in until it redraws.
+            return SessionStore.shared.record(id).flatMap(SessionProposal.init).map { .session($0) }
         case let .icebreakerReply(quote, reply):
             return .icebreakerReply(quote: quote, reply: reply)
         case let .photoReply(key, reply):
-            return .photoReply(asset: matches[matchID]?.profile.link(forKey: key) ?? link(key) ?? "", reply: reply)
+            let liked = app?.matches.first { $0.id == matchID }?.profile.allPhotos
+                .first { URL(string: $0).flatMap(MediaURL.key(of:)) == key }
+            return .photoReply(asset: liked ?? link(key) ?? "", reply: reply)
         case .hidden:
             return nil
         }
@@ -148,75 +166,5 @@ extension ChatService {
             }
         }
         if !signed.isEmpty { publish() }
-    }
-}
-
-// MARK: - Sessions
-
-/// A row of `sessions`, as PostgREST sends it.
-struct SessionRow: Decodable, Hashable {
-    let id: UUID
-    let matchID: String
-    let proposerID: String
-    let sportID: String
-    var options: [Date]
-    var chosenAt: Date?
-    let title: String
-    let note: String
-    let tags: [String]
-    let discovery: String?
-    var status: String
-
-    static let columns = "id,match_id,proposer_id,sport_id,options,chosen_at,title,note,tags,discovery,status"
-
-    enum CodingKeys: String, CodingKey {
-        case id, options, title, note, tags, discovery, status
-        case matchID = "match_id", proposerID = "proposer_id", sportID = "sport_id", chosenAt = "chosen_at"
-    }
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = try c.decode(UUID.self, forKey: .id)
-        matchID = try c.decode(String.self, forKey: .matchID).lowercased()
-        proposerID = try c.decode(String.self, forKey: .proposerID).lowercased()
-        sportID = try c.decode(String.self, forKey: .sportID)
-        options = try c.decode([String].self, forKey: .options).compactMap(ServerDate.parse)
-        chosenAt = try c.decodeIfPresent(String.self, forKey: .chosenAt).flatMap(ServerDate.parse)
-        title = try c.decodeIfPresent(String.self, forKey: .title) ?? ""
-        note = try c.decodeIfPresent(String.self, forKey: .note) ?? ""
-        tags = try c.decodeIfPresent([String].self, forKey: .tags) ?? []
-        discovery = try c.decodeIfPresent(String.self, forKey: .discovery)
-        status = try c.decode(String.self, forKey: .status)
-    }
-
-    static func decode(_ data: Data) -> [SessionRow]? { try? JSONDecoder().decode([SessionRow].self, from: data) }
-    static func decodeOne(_ data: Data) -> SessionRow? { try? JSONDecoder().decode(SessionRow.self, from: data) }
-
-    func proposal(me: String?) -> SessionProposal {
-        var p = SessionProposal(sport: Sport(rawValue: sportID) ?? .running, options: options, chosen: chosenAt,
-                                title: title, note: note, tags: tags,
-                                discovery: discovery == "iTeach" ? .iTeach : discovery == "theyTeach" ? .theyTeach : nil,
-                                status: SessionProposal.Status(rawValue: status) ?? .pending)
-        p.id = id
-        p.mine = proposerID == me
-        return p
-    }
-}
-
-/// Timestamps as the server writes them (`2026-10-01T07:00:00+00:00`, with or without fractions).
-enum ServerDate {
-    nonisolated static func parse(_ text: String) -> Date? {
-        let plain = ISO8601DateFormatter()
-        plain.formatOptions = [.withInternetDateTime]
-        if let d = plain.date(from: text) { return d }
-        let fractional = ISO8601DateFormatter()
-        fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return fractional.date(from: text)
-    }
-
-    nonisolated static func string(_ date: Date) -> String {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime]
-        return f.string(from: date)
     }
 }
