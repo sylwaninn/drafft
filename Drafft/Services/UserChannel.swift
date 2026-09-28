@@ -5,7 +5,8 @@ import Supabase
 /// something of theirs changes. One channel per account, whatever listens:
 ///
 /// - `moderation`: the hold (`AccountModeration`);
-/// - `wallet`: drafft tempo, boosts and super likes (`AppModel.loadWallet`);
+/// - `wallet`: drafft tempo, boosts and super likes (`AppModel.loadWallet`), and who liked you, blurred
+///   or not (`AppModel.loadLikes`);
 /// - `media`: a photo was approved or refused, by the automatic check or by the team
 ///   (`PhotoModeration`);
 /// - `session_revoked`: Auth sessions ended on the server; this device signs out at once if its own is
@@ -53,7 +54,11 @@ enum UserChannel {
         let status = channel.statusChange
         let joined = await withTaskGroup(of: Bool.self) { group in
             group.addTask { for await _ in moderation { await app.refreshAccount(force: true) }; return false }
-            group.addTask { for await _ in wallet { await app.loadWallet() }; return false }
+            group.addTask {
+                // drafft tempo starting or ending changes what Likes may show.
+                for await _ in wallet { await app.loadWallet(); await app.loadLikes() }
+                return false
+            }
             group.addTask {
                 for await message in media {
                     guard let payload = message["payload"]?.objectValue,

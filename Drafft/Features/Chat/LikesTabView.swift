@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Likes tab: everyone who already liked you, as a grid of cards. Without Plus the faces are
-/// blurred and a night block explains the unlock; with Plus, open a profile and like back to match.
+/// Likes tab: everyone who already liked you, as a grid of cards. With drafft tempo, open a profile and
+/// like back to match. Without it the server sends no identity, only a ThumbHash per like
+/// (`AppModel.blurredLikes`): the grid shows those previews and a night block offers the unlock.
 struct LikesTabView: View {
     @Environment(AppModel.self) private var app
     @State private var scrollOffset: CGFloat = 0
@@ -14,18 +15,33 @@ struct LikesTabView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.md) {
-                    if app.likedMe.isEmpty {
+                    if app.isPremium {
+                        if app.likedMe.isEmpty {
+                            emptyState
+                        } else {
+                            LazyVGrid(columns: columns, spacing: DS.Space.sm) {
+                                ForEach(app.likedMe) { p in
+                                    Button {
+                                        Haptics.tap()
+                                        open = p
+                                    } label: { card(p) }
+                                    .buttonStyle(PressScaleStyle(scale: 0.97))
+                                    .accessibilityLabel("\(p.name), \(p.age). Open profile")
+                                }
+                            }
+                        }
+                    } else if app.blurredLikes.isEmpty {
                         emptyState
                     } else {
-                        if !app.isPremium { unlockBlock }
+                        unlockBlock
                         LazyVGrid(columns: columns, spacing: DS.Space.sm) {
-                            ForEach(app.likedMe) { p in
+                            ForEach(app.blurredLikes) { like in
                                 Button {
                                     Haptics.tap()
-                                    if app.isPremium { open = p } else { showPaywall = true }
-                                } label: { card(p) }
+                                    showPaywall = true
+                                } label: { blurredCard(like) }
                                 .buttonStyle(PressScaleStyle(scale: 0.97))
-                                .accessibilityLabel(app.isPremium ? "\(p.name), \(p.age). Open profile" : "Someone who likes you. Unlock with drafft tempo")
+                                .accessibilityLabel("Someone who likes you. Unlock with drafft tempo")
                             }
                         }
                     }
@@ -34,6 +50,8 @@ struct LikesTabView: View {
                 .padding(.bottom, DS.Space.xl)
             }
             .trackingScrollOffset($scrollOffset)
+            // Live afterwards through the `wallet` event and each reconnection (`UserChannel`).
+            .task { await app.loadLikes() }
             .background(DS.Palette.canvasSoft)
             .toolbarVisibility(.hidden, for: .navigationBar)
             .topBar {
@@ -67,7 +85,7 @@ struct LikesTabView: View {
 
     private var unlockBlock: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
-            Text(app.likedMe.count == 1 ? "1 person likes you." : "\(app.likedMe.count) people like you.")
+            Text(app.blurredLikes.count == 1 ? "1 person likes you." : "\(app.blurredLikes.count) people like you.")
                 .font(.display(30))
                 .displayLeading(30)
                 .foregroundStyle(DS.Palette.lime)
@@ -98,9 +116,40 @@ struct LikesTabView: View {
         .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
     }
 
+    /// A like on the free plan: the server's ThumbHash (already a blur), a lock, and a star for a
+    /// super like.
+    private func blurredCard(_ like: BlurredLike) -> some View {
+        Rectangle()
+            .fill(DS.Palette.sage)
+            .frame(height: 230)
+            .overlay {
+                if let preview = like.preview {
+                    Image(uiImage: preview).resizable().interpolation(.medium).scaledToFill()
+                }
+            }
+            .overlay {
+                Image(systemName: "lock.fill")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 48, height: 48)
+                    .background(.white.opacity(0.18), in: .circle)
+            }
+            .overlay(alignment: .topTrailing) {
+                if like.superLike {
+                    Image(systemName: "star.fill")
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(DS.Palette.night)
+                        .frame(width: 30, height: 30)
+                        .background(DS.Palette.lime, in: .circle)
+                        .padding(DS.Space.sm)
+                        .accessibilityHidden(true)
+                }
+            }
+            .clipShape(.rect(cornerRadius: DS.Radius.xl))
+    }
+
     private func card(_ p: Profile) -> some View {
-        // Locked: a copy with the blur baked in, not a live blur on every card.
-        Photo(name: p.portrait, side: 180, blur: app.isPremium ? 0 : 18)
+        Photo(name: p.portrait, side: 180)
             .frame(height: 230)
             .overlay {
                 // design-lint: allow gradient - photo scrim under the name
@@ -109,19 +158,8 @@ struct LikesTabView: View {
                                startPoint: .top, endPoint: .bottom)
             }
             .overlay(alignment: .bottomLeading) {
-                if app.isPremium {
-                    ProfileIdentity(profile: p, nameSize: 22, showsLocation: false, showsSuperLike: true)
-                        .padding(DS.Space.md)
-                }
-            }
-            .overlay {
-                if !app.isPremium {
-                    Image(systemName: "lock.fill")
-                        .font(.title3.weight(.bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 48, height: 48)
-                        .background(.white.opacity(0.18), in: .circle)
-                }
+                ProfileIdentity(profile: p, nameSize: 22, showsLocation: false, showsSuperLike: true)
+                    .padding(DS.Space.md)
             }
             .clipShape(.rect(cornerRadius: DS.Radius.xl))
     }
