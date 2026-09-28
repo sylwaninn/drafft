@@ -79,6 +79,7 @@
 		9A3AD786C2A53CE280EB3204 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B3DD68CFFAC7D2DAEC4F59 /* ReportSheet.swift */; };
 		9C0E3B776699AD64DD327E20 /* Safety.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52370EE3513BD415F37F62A /* Safety.swift */; };
 		9FB3FE2B8035B0FE8D248C2C /* InterDisplay-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D133A6D33B9D7069982A713 /* InterDisplay-ExtraBold.ttf */; };
+		A1357578AFF8F7AE487B2C07 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 211BB36B1A27A5C59BBE5F0F /* PrivacyInfo.xcprivacy */; };
 		A15B0B5C929260EA472A8AFD /* ReorderablePhotoGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B04556EED9E0F2FC80E0E44 /* ReorderablePhotoGrid.swift */; };
 		A176D9A05ABE7B7D7CCEBAE2 /* DrafftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792049807B76E8A0BF54D064 /* DrafftApp.swift */; };
 		A4437EF9B5C6CB7C5522AF73 /* intro_tom.m4a in Resources */ = {isa = PBXBuildFile; fileRef = D65082D908C7C095F90B0503 /* intro_tom.m4a */; };
@@ -156,6 +157,7 @@
 		20B74525F0A468F3258D52C2 /* NotificationText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationText.swift; sourceTree = "<group>"; };
 		20CA2E4C7B14850BB4435E22 /* PackPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackPhotos.swift; sourceTree = "<group>"; };
 		20EBF74B57B3B01D28DE507C /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
+		211BB36B1A27A5C59BBE5F0F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		214BEF0A582723680CE4ADD6 /* PromptPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptPickerSheet.swift; sourceTree = "<group>"; };
 		221DE3BB0D77782A2CD345C9 /* ProfileExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileExtras.swift; sourceTree = "<group>"; };
 		2324E42BB5A423511DA8ADB4 /* ChangePhoneSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePhoneSheet.swift; sourceTree = "<group>"; };
@@ -452,6 +454,7 @@
 			children = (
 				5925F8082D99500647D4F282 /* Drafft.entitlements */,
 				00F4B10C3148674B4338BA16 /* Info.plist */,
+				211BB36B1A27A5C59BBE5F0F /* PrivacyInfo.xcprivacy */,
 				09035EC3EBB0D3A6073A62B8 /* App */,
 				8C0F71DB129FA6279563FC0B /* DesignSystem */,
 				C3D118D8CA47A7F40BA9F113 /* Features */,
@@ -662,6 +665,7 @@
 				52FEB968D6714978635F8753 /* InterDisplay-Black.ttf in Resources */,
 				9FB3FE2B8035B0FE8D248C2C /* InterDisplay-ExtraBold.ttf in Resources */,
 				47B20F10EC27A8EC1798707A /* Localizable.xcstrings in Resources */,
+				A1357578AFF8F7AE487B2C07 /* PrivacyInfo.xcprivacy in Resources */,
 				91491F59B84D455FFAE3F665 /* intro_aya.m4a in Resources */,
 				227EF325931EDA399E7ED17E /* intro_chloe.m4a in Resources */,
 				B2FA06FE76A6F00F0F1859AC /* intro_ines.m4a in Resources */,

@@ -35,6 +35,8 @@ targets:
     type: application
     platform: iOS
     sources:
+      # Includes Drafft/PrivacyInfo.xcprivacy, copied as a resource: keep its API reasons and collected
+      # data in step with the code (App Store privacy manifest).
       - path: Drafft
     dependencies:
       - package: RevenueCat
