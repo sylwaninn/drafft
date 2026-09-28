@@ -62,7 +62,9 @@ extension AppModel {
             discovery.raw = [:]
             openLocalCache()?.remove(.deck)
         }
-        if queue.isEmpty { deckState = .loading }
+        // A refresh behind "no one new" (back at the front, the channel rejoined) keeps that screen:
+        // flashing the spinner would rebuild it with a new pile of photos.
+        if queue.isEmpty, mode == .restart || deckState != .loaded { deckState = .loading }
         let filters = filters
         discovery.load = Task { [self] in
             let outcome = await fetchDeck(filters)
