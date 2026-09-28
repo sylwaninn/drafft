@@ -21,7 +21,7 @@ struct OneTimeCodeEntry<Accessory: View>: View {
     /// Between the status line and Resend (the demo panel).
     @ViewBuilder var accessory: Accessory
 
-    @FocusState private var focused: Bool
+    @State private var focused = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
@@ -38,15 +38,11 @@ struct OneTimeCodeEntry<Accessory: View>: View {
                     .disabled(busy)
             }
 
-            // Six boxes over one hidden field, so autofill (oneTimeCode) fills them all.
+            // Six boxes over one invisible field, so autofill (oneTimeCode) fills them all.
             ZStack {
-                TextField("", text: Binding(get: { code }, set: onCode))
-                    .keyboardType(.numberPad)
-                    .textContentType(.oneTimeCode)
-                    .focused($focused)
+                OneTimeCodeField(code: code, onCode: onCode, focused: $focused)
                     .revealsOnFocus(focused)
-                    .opacity(0.02)
-                    .accessibilityLabel("Verification code")
+                    .frame(maxWidth: .infinity, minHeight: 60)
                 HStack(spacing: DS.Space.sm) {
                     ForEach(0..<6, id: \.self) { i in
                         let chars = Array(code)
@@ -119,6 +115,70 @@ extension OneTimeCodeEntry where Accessory == EmptyView {
         self.init(destination: destination, code: code, onCode: onCode, busy: busy, error: error,
                   needsHelp: needsHelp, helpTopic: helpTopic, hint: hint, resendIn: resendIn,
                   editTitle: editTitle, boxFill: boxFill, onEdit: onEdit, onResend: onResend) { EmptyView() }
+    }
+}
+
+/// The field under the six boxes. A UITextField rather than a SwiftUI TextField: on iOS 26, tapping
+/// the code from Messages above the keyboard inserts it without `editingChanged`, so a TextField's
+/// binding never hears of it. Every insertion (typing, paste, autofill) goes through the delegate.
+private struct OneTimeCodeField: UIViewRepresentable {
+    let code: String
+    let onCode: (String) -> Void
+    @Binding var focused: Bool
+
+    func makeUIView(context: Context) -> UITextField {
+        let f = UITextField()
+        f.keyboardType = .numberPad
+        f.textContentType = .oneTimeCode
+        f.textColor = .clear
+        f.tintColor = .clear
+        f.accessibilityLabel = L("Verification code")
+        f.delegate = context.coordinator
+        f.addTarget(context.coordinator, action: #selector(Coordinator.changed(_:)), for: .editingChanged)
+        f.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        f.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        return f
+    }
+
+    func updateUIView(_ f: UITextField, context: Context) {
+        context.coordinator.parent = self
+        // The model clears the code after a wrong one or a resend.
+        if f.text != code { f.text = code }
+        if focused, !f.isFirstResponder {
+            DispatchQueue.main.async { f.becomeFirstResponder() }
+        } else if !focused, f.isFirstResponder {
+            DispatchQueue.main.async { f.resignFirstResponder() }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
+
+    @MainActor
+    final class Coordinator: NSObject, UITextFieldDelegate {
+        var parent: OneTimeCodeField
+        init(parent: OneTimeCodeField) { self.parent = parent }
+
+        func textField(_ f: UITextField, shouldChangeCharactersIn range: NSRange,
+                       replacementString string: String) -> Bool {
+            let current = f.text ?? ""
+            guard let r = Range(range, in: current) else { return false }
+            // A whole code (autofill, paste) replaces what was there rather than joining it.
+            let next = string.filter(\.isNumber).count >= 6 ? string : current.replacingCharacters(in: r, with: string)
+            let clean = String(next.filter(\.isNumber).prefix(6))
+            f.text = clean
+            parent.onCode(clean)
+            return false
+        }
+
+        /// Anything that skipped the delegate (dictation, a system insertion).
+        @objc func changed(_ f: UITextField) {
+            let clean = String((f.text ?? "").filter(\.isNumber).prefix(6))
+            if f.text != clean { f.text = clean }
+            if clean != parent.code { parent.onCode(clean) }
+        }
+
+        func textFieldDidBeginEditing(_ f: UITextField) { if !parent.focused { parent.focused = true } }
+        func textFieldDidEndEditing(_ f: UITextField) { if parent.focused { parent.focused = false } }
     }
 }
 
