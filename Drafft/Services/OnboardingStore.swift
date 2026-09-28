@@ -1,7 +1,7 @@
 import Foundation
 
-/// Sign-up progress saved as it goes, so an unfinished sign-up resumes where it stopped
-/// (demo: on this device; in production, on the account).
+/// Sign-up progress saved as it goes, so an unfinished sign-up resumes where it stopped. Kept on
+/// this device, under the account it belongs to: another account signing in here never sees it.
 struct OnboardingProgress: Codable, Equatable {
     var name = ""
     var language: String?
@@ -27,18 +27,27 @@ struct OnboardingProgress: Codable, Equatable {
 }
 
 enum OnboardingStore {
-    private static let key = "onboarding.progress.v2"
+    /// One entry per account id; nothing without a signed-in account.
+    private static var key: String? {
+        // The old device-wide entry could belong to anyone: dropped, never handed to an account.
+        UserDefaults.standard.removeObject(forKey: "onboarding.progress.v2")
+        return Backend.shared.client.auth.currentUser.map { "onboarding.progress.v3.\($0.id.uuidString.lowercased())" }
+    }
 
     static func load() -> OnboardingProgress? {
-        guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
+        guard let key, let data = UserDefaults.standard.data(forKey: key) else { return nil }
         return try? JSONDecoder().decode(OnboardingProgress.self, from: data)
     }
 
     static func save(_ p: OnboardingProgress) {
-        if let data = try? JSONEncoder().encode(p) { UserDefaults.standard.set(data, forKey: key) }
+        guard let key, let data = try? JSONEncoder().encode(p) else { return }
+        UserDefaults.standard.set(data, forKey: key)
     }
 
-    static func clear() { UserDefaults.standard.removeObject(forKey: key) }
+    /// Clears the signed-in account's progress.
+    static func clear() {
+        if let key { UserDefaults.standard.removeObject(forKey: key) }
+    }
 
     static var hasUnfinished: Bool { load() != nil }
 
