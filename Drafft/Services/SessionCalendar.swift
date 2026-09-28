@@ -13,7 +13,8 @@ import Foundation
 ///
 /// Changes come from the session's own updates in the app, from the Realtime `session` event
 /// (`UserChannel`), and from a re-read on foreground and on each reconnection. Following needs full
-/// calendar access, asked when adding the event; without it the event is added as before and not followed.
+/// calendar access, asked when adding the event; with add-only access the event is added and not followed;
+/// refused or restricted, a banner says so and opens Settings (`CalendarAccessNotice`).
 @MainActor
 final class SessionCalendar {
     static let shared = SessionCalendar()
@@ -51,12 +52,26 @@ final class SessionCalendar {
 
     private var canFollow: Bool { EKEventStore.authorizationStatus(for: .event) == .fullAccess }
 
-    /// Asked before the "New Event" sheet opens: with full access the sheet runs in the app and the event
-    /// can be followed. Refused: the sheet still opens (it needs no access), unfollowed.
-    func requestAccess() async -> Bool {
-        if canFollow { return true }
-        guard EKEventStore.authorizationStatus(for: .event) == .notDetermined else { return false }
-        return (try? await store.requestFullAccessToEvents()) ?? false
+    /// What the app may do with the calendar when the person adds a session.
+    enum Access {
+        /// Full access: the event is added in the app and follows the session.
+        case full
+        /// Add-only access: the "New Event" sheet still works, the event isn't followed.
+        case addOnly
+        /// Refused or restricted: the sheet doesn't open, a banner explains it (`CalendarAccessNotice`).
+        case refused
+    }
+
+    /// Asked before the "New Event" sheet opens: full access is requested the first time.
+    func requestAccess() async -> Access {
+        if EKEventStore.authorizationStatus(for: .event) == .notDetermined {
+            _ = try? await store.requestFullAccessToEvents()
+        }
+        switch EKEventStore.authorizationStatus(for: .event) {
+        case .fullAccess: return .full
+        case .writeOnly: return .addOnly
+        default: return .refused
+        }
     }
 
     /// The person saved the event from the sheet: remembered, with what drafft wrote in it.

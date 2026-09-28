@@ -43,11 +43,13 @@ final class PassThroughWindow: UIWindow {
     }
 }
 
-/// What the overlay shows at the top: the photo-refused banner, or a purchase on its way to the
-/// account.
+/// What the overlay shows at the top: the photo-refused banner, a purchase on its way to the
+/// account, or calendar access refused when adding a session.
 private struct TopOverlayContent: View {
     @State private var moderation = PhotoModeration.shared
     @State private var credit = PurchaseCredit.shared
+    @State private var calendar = CalendarAccessNotice.shared
+    @Environment(\.openURL) private var openURL
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var slide: AnyTransition {
         reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity)
@@ -80,11 +82,25 @@ private struct TopOverlayContent: View {
                 .onDisappear { TopOverlayWindow.shared.interactiveFrame = .zero }
                 .transition(slide)
                 .padding(.top, DS.Space.xs)
+            } else if calendar.isShown {
+                CalendarAccessBanner {
+                    calendar.dismiss()
+                    if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                } onDismiss: {
+                    withAnimation(Motion.snappy) { calendar.dismiss() }
+                }
+                .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: {
+                    TopOverlayWindow.shared.interactiveFrame = $0
+                }
+                .onDisappear { TopOverlayWindow.shared.interactiveFrame = .zero }
+                .transition(slide)
+                .padding(.top, DS.Space.xs)
             }
             Spacer()
         }
         .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: moderation.refusalBanner)
         .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: credit.banner)
+        .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: calendar.isShown)
         // Its own window, outside the app's root: the app's language is set again here.
         .environment(\.locale, .app)
     }

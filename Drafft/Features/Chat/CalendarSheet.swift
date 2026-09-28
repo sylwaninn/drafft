@@ -3,8 +3,8 @@ import EventKit
 import EventKitUI
 
 /// System "New Event" sheet, prefilled with the session: the person reviews and saves it themselves.
-/// It needs no calendar permission; with full access (asked first) the saved event is linked to the
-/// session and follows it (`SessionCalendar`), through its `drafft://session/<id>` URL.
+/// Full access is asked first: the saved event is then linked to the session and follows it
+/// (`SessionCalendar`), through its `drafft://session/<id>` URL. Refused access shows a banner instead.
 struct AddToCalendarSheet: UIViewControllerRepresentable {
     let session: SessionProposal
     let partner: String
@@ -105,10 +105,15 @@ struct CalendarButton: View {
 
     private func open() {
         Haptics.tap()
-        // Full access first, so the event can follow the session; the sheet opens either way.
+        // Full access first, so the event can follow the session. Refused or restricted: no sheet, a
+        // banner says why and opens Settings.
         Task {
-            _ = await SessionCalendar.shared.requestAccess()
-            showSheet = true
+            switch await SessionCalendar.shared.requestAccess() {
+            case .full, .addOnly: showSheet = true
+            case .refused:
+                Haptics.warning()
+                withAnimation(Motion.bouncy) { CalendarAccessNotice.shared.show() }
+            }
         }
     }
 }
