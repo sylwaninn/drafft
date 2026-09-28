@@ -176,22 +176,37 @@ enum ProfileSync {
 
     /// The account as saved on the server (a new device, a reinstall, another device's changes), in
     /// one request with its sports, prompts and media embedded. Photos are the approved and pending
-    /// ones (their own), as URLs. Also returns the raw bytes, for the local cache.
+    /// ones (their own), as signed links (the bucket is private). Also returns the raw bytes, for the
+    /// local cache: they hold keys only, never a link, so a cached copy never carries an expired one.
     static func loadAccount() async throws -> (account: Account, data: Data)? {
         guard let id = await Backend.shared.userID else { return nil }
         let data = try await Backend.shared.select(
             "profiles?id=eq.\(id)&select=\(accountColumns)"
                 + "&profile_sports.order=position&profile_prompts.order=position&profile_media.order=position")
-        guard let account = decodeAccount(data, mediaBase: await MediaURL.base()) else { return nil }
+        let keys = mediaKeys(in: data)
+        let signed = await MediaURL.signed(keys)
+        // A backend from before signed links: the public base URL + key.
+        let base = signed.count == keys.count ? MediaURL.saved : await MediaURL.base()
+        guard let account = decodeAccount(data, mediaBase: base, signed: signed) else { return nil }
         await MainActor.run { loadedAccount = id }
         return (account, data)
     }
 
-    /// The account from the server's bytes (a fresh read, or the copy in the local cache).
-    static func decodeAccount(_ data: Data, mediaBase base: URL?) -> Account? {
+    /// The media keys a row shows (photos not refused, the voice intro), to sign in one request.
+    private static func mediaKeys(in data: Data) -> [String] {
+        guard let row = (try? JSONDecoder().decode([AccountRow].self, from: data))?.first else { return [] }
+        return (row.media ?? []).filter { $0.kind == "photo" && $0.status != "rejected" }.map(\.key)
+            + [row.voiceIntroKey].compactMap { $0 }
+    }
+
+    /// The account from the server's bytes (a fresh read, or the copy in the local cache). Media links:
+    /// the signed one for a key when there is one, else the base URL + key (the cached copy at launch:
+    /// photos then come from the image cache, keyed by object, until the fresh read signs them).
+    static func decodeAccount(_ data: Data, mediaBase base: URL?, signed: [String: String] = [:]) -> Account? {
         guard let row = (try? JSONDecoder().decode([AccountRow].self, from: data))?.first else { return nil }
-        let photos = (row.media ?? []).filter { $0.kind == "photo" && $0.status != "rejected" }
-            .compactMap { m -> String? in base.map { $0.appendingPathComponent(m.key).absoluteString } }
+        func link(_ key: String) -> String? { signed[key] ?? base.map { $0.appendingPathComponent(key).absoluteString } }
+        let photos = (row.media ?? []).filter { $0.kind == "photo" && $0.status != "rejected" }.map(\.key)
+            .compactMap(link)
         let age = row.birthdate.flatMap(Self.day.date(from:)).map {
             Calendar.current.dateComponents([.year], from: $0, to: .now).year ?? 18
         } ?? 18
@@ -211,7 +226,7 @@ enum ProfileSync {
             sports: (row.sports ?? []).compactMap { s in
                 Sport(rawValue: s.sportID).map { SportEntry(sport: $0, perWeek: s.perWeek) }
             },
-            voiceIntro: row.voiceIntroKey.flatMap { key in base.map { $0.appendingPathComponent(key).absoluteString } },
+            voiceIntro: row.voiceIntroKey.flatMap(link),
             voiceDuration: row.voiceDuration ?? 0,
             icebreaker: row.icebreaker.flatMap(Icebreaker.init(json:)) ?? Icebreaker.Kind.twoTruths.blank,
             favoriteSpot: row.favoriteSpot,
@@ -264,9 +279,12 @@ enum ProfileSync {
         struct Media: Decodable { let id: String; let key: String }
         let onServer = try JSONDecoder().decode([Media].self, from: await Backend.shared.select(
             "profile_media?user_id=eq.\(me)&select=id,key&order=position"))
-        // Photos loaded from the server are URLs: matched by their key.
+        // Photos loaded from the server are URLs (signed: the key is their path): matched by their key.
         let order = await photos.asyncCompactMap { path -> String? in
-            if path.hasPrefix("http") { return onServer.first { path.hasSuffix("/" + $0.key) }?.id }
+            if path.hasPrefix("http") {
+                let key = URL(string: path).flatMap(MediaURL.key(of:))
+                return onServer.first { $0.key == key }?.id
+            }
             return await PhotoModeration.shared.id(for: path)
         }
         // Photos taken off the profile: removed together rather than one after the other.
@@ -379,8 +397,10 @@ enum JSONValue: Decodable, Hashable {
 
 // MARK: - Media URLs
 
-/// Where uploaded media is served from (R2 public URL, later the CDN domain). Asked once from the
-/// backend (`app-config`), then kept on the phone.
+/// Media links. The bucket is private: the backend signs a link for each object the person may see
+/// (cards, `media_urls`), valid for about an hour. Caches are keyed by the object (`canonical`), never
+/// by the signature. `base()` is where media is served from (`app-config`), for builds and backends from
+/// before signed links.
 enum MediaURL {
     private static let key = "mediaBaseURL"
 
@@ -395,5 +415,41 @@ enum MediaURL {
               let url = URL(string: config.mediaUrl) else { return nil }
         UserDefaults.standard.set(config.mediaUrl, forKey: key)
         return url
+    }
+
+    /// Signed links for keys the app holds: its own media, and chat media of a current match. Keys the
+    /// person may not open are left out; empty when offline.
+    static func signed(_ keys: [String]) async -> [String: String] {
+        guard !keys.isEmpty,
+              let data = try? await Backend.shared.rpc("media_urls", ["p_keys": keys]),
+              let urls = try? JSONDecoder().decode([String: String].self, from: data) else { return [:] }
+        return urls
+    }
+
+    /// The object key of a media link (`u/<user>/…`, its path after the base), or nil.
+    nonisolated static func key(of url: URL) -> String? {
+        guard let start = url.path.range(of: "/u/") else { return nil }
+        return String(url.path[url.path.index(after: start.lowerBound)...])
+    }
+
+    /// The same object whatever its signature: what caches are keyed by.
+    nonisolated static func canonical(_ url: URL) -> URL {
+        guard var parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
+        parts.query = nil
+        return parts.url ?? url
+    }
+
+    /// When a signed link stops working; nil for an unsigned one.
+    nonisolated static func expiry(of url: URL) -> Date? {
+        URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?
+            .first { $0.name == "exp" }?.value.flatMap(TimeInterval.init).map(Date.init(timeIntervalSince1970:))
+    }
+
+    /// The link while it has more than a minute left; otherwise a new one from the backend (own and
+    /// chat media: cards come with fresh links each time they're read again), or the same link.
+    static func fresh(_ url: URL) async -> URL {
+        guard let expiry = expiry(of: url), expiry.timeIntervalSinceNow < 60, let key = key(of: url),
+              let renewed = await signed([key])[key].flatMap(URL.init(string:)) else { return url }
+        return renewed
     }
 }
