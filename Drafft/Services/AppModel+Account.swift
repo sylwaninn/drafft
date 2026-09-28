@@ -165,6 +165,7 @@ extension AppModel {
         banner = nil
         boostBanner = nil
         sessionsInCalendar = []
+        SessionCalendar.shared.forgetAll()
         blocked = []
         dataExportRequestedAt = nil
         filters = DiscoverFilters()

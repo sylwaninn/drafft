@@ -7,6 +7,53 @@
     "CFBundleName" : {
       "shouldTranslate" : false
     },
+    "NSCalendarsFullAccessUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft hält die Sessions in deinem Kalender aktuell und entfernt sie, wenn sie abgesagt werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft keeps the sessions you add to your calendar up to date, and removes them if they're cancelled."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft mantiene al día las sesiones que añades a tu calendario y las quita si se cancelan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft met à jour les séances que tu ajoutes à ton calendrier, et les retire si elles sont annulées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tiene aggiornate le sessioni che aggiungi al calendario e le rimuove se vengono annullate."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft houdt de sessies in je agenda up-to-date en haalt ze weg als ze worden geannuleerd."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft mantém atualizadas as sessões que adicionas ao calendário e remove-as se forem canceladas."
+          }
+        }
+      }
+    },
     "NSCameraUsageDescription" : {
       "extractionState" : "manual",
       "localizations" : {

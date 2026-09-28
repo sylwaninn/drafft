@@ -107,7 +107,7 @@ struct SessionsView: View {
                 .buttonStyle(.drafftPrimary)
                 .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
                 .padding(.leading, 12)
-                CalendarButton(session: s, partner: convo.profile.name, compact: true)
+                CalendarButton(session: s, partner: convo.profile.name, chatID: convo.id, compact: true)
             }
         }
         .padding(DS.Space.xl)

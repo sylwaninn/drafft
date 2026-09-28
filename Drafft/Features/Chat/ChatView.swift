@@ -823,7 +823,7 @@ struct MessageRow: View {
             .buttonStyle(PressScaleStyle(scale: 0.97))
 
         case .session(let s):
-            SessionCard(session: s, mine: mine, profileName: convo.profile.name,
+            SessionCard(session: s, mine: mine, profileName: convo.profile.name, chatID: convo.id,
                         onPick: { d in
                             app.respond(to: s.id, in: convo.id, accept: true, pick: d)
                             onSessionSafety(s, d)
@@ -896,7 +896,7 @@ struct MessageRow: View {
 struct SessionCard: View {
     let session: SessionProposal
     let mine: Bool
-    let profileName: String
+    let profileName: String, chatID: String
     let onPick: (Date) -> Void
     let onDecline: () -> Void
     let onCounter: () -> Void
@@ -1082,7 +1082,7 @@ struct SessionCard: View {
                 .foregroundStyle(.white.opacity(0.6))
         case .accepted:
             VStack(spacing: DS.Space.xs) {
-                CalendarButton(session: session, partner: profileName)
+                CalendarButton(session: session, partner: profileName, chatID: chatID)
                 Button(action: onSafety) {
                     Label("Meet safely", systemImage: "shield.lefthalf.filled")
                         .font(.subheadline.weight(.semibold))
