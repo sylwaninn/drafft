@@ -19,7 +19,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
 
     /// Language of the notification texts: the app's language (set by AppModel).
     var language: AppLanguage = Localization.shared.language {
-        didSet { rescheduleIfNeeded(); rescheduleWeeklyBoost(); changed() }
+        didSet { rescheduleIfNeeded(); changed() }
     }
 
     // Preferences. Saved on the profile (the server's pushes follow them, and they come back on a new
@@ -31,7 +31,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     var likes = true { didSet { changed() } }
     var sessionEvening = true { didSet { rescheduleIfNeeded(); changed() } }
     var sessionHourBefore = true { didSet { rescheduleIfNeeded(); changed() } }
-    var weeklyBoost = true { didSet { rescheduleWeeklyBoost(); changed() } }
+    /// drafft tempo's weekly boost: pushed by the server when it credits it (`notify_weekly_boost`).
+    var weeklyBoost = true { didSet { changed() } }
 
     var isAllowed: Bool { status == .authorized || status == .provisional || status == .ephemeral }
     var isDenied: Bool { status == .denied }
@@ -46,6 +47,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     override init() {
         super.init()
         center.delegate = self
+        // The weekly boost is the server's now (credit and push): drop the local one older builds scheduled.
+        center.removePendingNotificationRequests(withIdentifiers: ["weekly-boost"])
         // Always current: every return to the app (from Settings too) re-reads the permission, so no
         // screen has to refresh it.
         NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil,
@@ -237,28 +240,6 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     }
 
     private func rescheduleIfNeeded() { scheduleSessionReminders(lastSessions) }
-
-    // MARK: Weekly boost (local, real)
-
-    private var weeklyBoostDate: Date?
-
-    /// "Your weekly boost is here", every week at the time drafft tempo credits it (`date`, the
-    /// next one), while subscribed. `nil` cancels it. The server will push it instead.
-    func scheduleWeeklyBoost(at date: Date?) {
-        weeklyBoostDate = date
-        center.removePendingNotificationRequests(withIdentifiers: ["weekly-boost"])
-        guard isAllowed, weeklyBoost, let date else { return }
-        let content = UNMutableNotificationContent()
-        content.title = NotificationText.title
-        content.body = NotificationText.weeklyBoost(in: language)
-        content.sound = .default
-        content.userInfo = ["kind": "weekly_boost"]
-        let comps = Calendar.current.dateComponents([.weekday, .hour, .minute], from: date)
-        center.add(UNNotificationRequest(identifier: "weekly-boost", content: content,
-                                         trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: true)))
-    }
-
-    private func rescheduleWeeklyBoost() { scheduleWeeklyBoost(at: weeklyBoostDate) }
 
     // MARK: Delegate
 

@@ -117,19 +117,6 @@ enum NotificationText {
              nl: "Over een uur: \(session). Tot zo!")
     }
 
-    // MARK: drafft tempo
-
-    static func weeklyBoost(in language: AppLanguage) -> String {
-        pick(language,
-             en: "Your weekly boost is here. Use it anytime: 30 minutes at the top of decks nearby.",
-             fr: "Ton boost de la semaine est là. Utilise-le quand tu veux\u{00A0}: 30 minutes en tête des profils près de toi.",
-             es: "Ya tienes tu boost semanal. Úsalo cuando quieras: 30 minutos en lo más alto cerca de ti.",
-             de: "Dein Wochen-Boost ist da. Nutz ihn, wann du willst: 30 Minuten ganz oben in deiner Nähe.",
-             it: "Il tuo boost settimanale è arrivato. Usalo quando vuoi: 30 minuti in cima ai profili vicino a te.",
-             pt: "O teu boost semanal chegou. Usa-o quando quiseres: 30 minutos no topo perto de ti.",
-             nl: "Je wekelijkse boost is er. Gebruik hem wanneer je wilt: 30 minuten bovenaan bij mensen in de buurt.")
-    }
-
     private static func pick(_ language: AppLanguage, en: String, fr: String, es: String, de: String,
                              it: String, pt: String, nl: String) -> String {
         switch language {

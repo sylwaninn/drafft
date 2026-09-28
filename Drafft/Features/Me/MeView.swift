@@ -42,7 +42,7 @@ struct MeView: View {
                         separator
                         row(L("Password"), icon: "key.fill", value: L("Change your password")) { sheet = .password }
                         // Only while subscribed: without it, the tier card above is the way in.
-                        if let sub = app.subscription {
+                        if app.isPremium, let sub = app.subscription {
                             separator
                             row("drafft tempo", icon: MeView.sparkIcon,
                                 value: sub.willRenew

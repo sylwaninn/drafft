@@ -20,6 +20,16 @@ final class Store {
     private(set) var boosts: [Package] = []
     private(set) var superLikes: [Package] = []
 
+    /// The account purchases are made for: the Supabase user id, lowercased, as RevenueCat's app
+    /// user id. The server's webhook credits that id's wallet and ignores any other (an anonymous
+    /// purchase would be paid and never credited), so nothing can be bought while this is nil.
+    private(set) var linkedUserID: String?
+    var isLinked: Bool { linkedUserID != nil }
+    /// Bumped on sign-out: a log-in still on its way for the previous account is undone.
+    @ObservationIgnored private var linkGeneration = 0
+
+    enum StoreError: Error { case notLinked }
+
     /// Once, at launch, before anything reads purchases.
     static func configure() {
         #if DEBUG
@@ -29,36 +39,86 @@ final class Store {
         Purchases.configure(withAPIKey: BackendConfig.revenueCatAPIKey)
     }
 
-    /// Fetches the offerings. Does nothing while a load runs or once loaded; a failed load runs again.
-    func load() async {
-        guard state != .loading && state != .loaded else { return }
-        state = .loading
-        do {
-            let offerings = try await Purchases.shared.offerings()
-            var plans: [PaywallView.Plan: Package] = [:]
-            for package in offerings.current?.availablePackages ?? [] {
-                if let plan = PaywallView.Plan(productID: package.storeProduct.productIdentifier) {
-                    plans[plan] = package
-                }
-            }
-            tempo = plans
-            boosts = Self.packs(offerings.offering(identifier: "boosts"))
-            superLikes = Self.packs(offerings.offering(identifier: "super_likes"))
-            state = plans.isEmpty && boosts.isEmpty && superLikes.isEmpty ? .failed : .loaded
-        } catch {
-            state = .failed
+    /// Links RevenueCat to the signed-in account (`Purchases.logIn`). Called at every sign-in or
+    /// restored session, and again before a purchase if it hadn't gone through (offline).
+    @discardableResult
+    func link() async -> Bool {
+        guard let id = await Backend.shared.userID?.uuidString.lowercased() else {
+            linkedUserID = nil
+            return false
         }
+        if linkedUserID == id, Purchases.shared.appUserID == id { return true }
+        let generation = linkGeneration
+        do {
+            if Purchases.shared.appUserID != id { _ = try await Purchases.shared.logIn(id) }
+        } catch {
+            linkedUserID = nil
+            return false
+        }
+        // Signed out while it ran: this device no longer belongs to that account.
+        guard generation == linkGeneration else {
+            if Purchases.shared.appUserID == id { _ = try? await Purchases.shared.logOut() }
+            return false
+        }
+        linkedUserID = id
+        return true
+    }
+
+    /// Sign-out and account deletion: purchases on this device stop following the account.
+    func unlink() async {
+        linkGeneration += 1
+        linkedUserID = nil
+        guard !Purchases.shared.isAnonymous else { return }
+        _ = try? await Purchases.shared.logOut()
+    }
+
+    /// Links the account, then fetches the offerings. Does nothing while a load runs or once both
+    /// are done; a failed load (either part) runs again.
+    func load() async {
+        guard state != .loading, !(state == .loaded && isLinked) else { return }
+        state = .loading
+        let linked = await link()
+        if tempo.isEmpty && boosts.isEmpty && superLikes.isEmpty {
+            do {
+                let offerings = try await Purchases.shared.offerings()
+                var plans: [PaywallView.Plan: Package] = [:]
+                for package in offerings.current?.availablePackages ?? [] {
+                    if let plan = PaywallView.Plan(productID: package.storeProduct.productIdentifier) {
+                        plans[plan] = package
+                    }
+                }
+                tempo = plans
+                boosts = Self.packs(offerings.offering(identifier: "boosts"))
+                superLikes = Self.packs(offerings.offering(identifier: "super_likes"))
+            } catch {
+                state = .failed
+                return
+            }
+        }
+        let empty = tempo.isEmpty && boosts.isEmpty && superLikes.isEmpty
+        state = linked && !empty ? .loaded : .failed
     }
 
     enum Outcome { case purchased(CustomerInfo), cancelled }
 
+    /// Only for the linked account. What was bought shows once the server has credited it (the
+    /// wallet), never from here.
     func purchase(_ package: Package) async throws -> Outcome {
+        guard await link() else { throw StoreError.notLinked }
         let result = try await Purchases.shared.purchase(package: package)
         return result.userCancelled ? .cancelled : .purchased(result.customerInfo)
     }
 
     func restore() async throws -> CustomerInfo {
-        try await Purchases.shared.restorePurchases()
+        guard await link() else { throw StoreError.notLinked }
+        return try await Purchases.shared.restorePurchases()
+    }
+
+    /// Whether RevenueCat is reporting for the linked account right now (its customer info stream
+    /// also reports the anonymous user, before log-in and after log-out).
+    var reportsLinkedAccount: Bool {
+        guard let linkedUserID else { return false }
+        return Purchases.shared.appUserID == linkedUserID
     }
 
     /// How many boosts or super likes a pack holds.
@@ -66,7 +126,8 @@ final class Store {
         Int(package.storeProduct.productIdentifier.split(separator: ".").last ?? "") ?? 1
     }
 
-    /// drafft tempo as the App Store reports it, or nil when it isn't active.
+    /// drafft tempo's details as the App Store reports them (plan, price, renewal), or nil when it
+    /// isn't active. Whether it's on for the account comes from the server (`AppModel.isPremium`).
     func subscription(from info: CustomerInfo) -> TempoSubscription? {
         guard let e = info.entitlements[Self.tempoEntitlement], e.isActive,
               let plan = PaywallView.Plan(productID: e.productIdentifier) else { return nil }
