@@ -10,18 +10,20 @@ struct EmptyStateView<Actions: View>: View {
 
     var body: some View {
         VStack(spacing: DS.Space.xl) {
-            EmptyStateIllustration(art: art)
-            VStack(spacing: DS.Space.sm) {
-                Text(title)
-                    .font(.display(22, relativeTo: .title2))
-                    .foregroundStyle(DS.Palette.ink)
-                    .accessibilityAddTraits(.isHeader)
-                Text(message)
-                    .font(.body)
-                    .foregroundStyle(DS.Palette.body)
+            VStack(spacing: DS.Space.md) {
+                EmptyStateIllustration(art: art)
+                VStack(spacing: DS.Space.sm) {
+                    Text(title)
+                        .font(.display(22, relativeTo: .title2))
+                        .foregroundStyle(DS.Palette.ink)
+                        .accessibilityAddTraits(.isHeader)
+                    Text(message)
+                        .font(.body)
+                        .foregroundStyle(DS.Palette.body)
+                }
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
             }
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
             actions
         }
         .padding(.horizontal, DS.Space.lg)
@@ -53,7 +55,7 @@ struct EmptyStateIllustration: View {
     var tint: Color = DS.Palette.lime
 
     private let width: CGFloat = 200
-    private let height: CGFloat = 150
+    private let height: CGFloat = 64
     private let glyph: CGFloat = 54
 
     var body: some View {
