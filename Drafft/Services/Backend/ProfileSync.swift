@@ -164,14 +164,14 @@ enum ProfileSync {
             enum CodingKeys: String, CodingKey { case sportID = "sport_id", perWeek = "per_week" }
         }
         struct PromptRow: Decodable { let question: String; let answer: String }
-        struct MediaRow: Decodable { let id: String; let key: String; let kind: String; let status: String }
+        struct MediaRow: Decodable { let id: String; let key: String; let kind: String; let status: String; let thumbhash: String? }
     }
 
     private static let accountColumns = [
         "name", "birthdate", "pronouns", "gender", "neighborhood", "bio", "goal", "favorite_spot",
         "drinks", "smokes", "diet", "chronotype", "icebreaker", "voice_intro_key", "voice_duration",
         "paused", "moderation", "onboarded_at", NotificationSettings.columns,
-        "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status)"
+        "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status,thumbhash)"
     ].joined(separator: ",")
 
     /// The account as saved on the server (a new device, a reinstall, another device's changes), in
@@ -205,6 +205,8 @@ enum ProfileSync {
     static func decodeAccount(_ data: Data, mediaBase base: URL?, signed: [String: String] = [:]) -> Account? {
         guard let row = (try? JSONDecoder().decode([AccountRow].self, from: data))?.first else { return nil }
         func link(_ key: String) -> String? { signed[key] ?? base.map { $0.appendingPathComponent(key).absoluteString } }
+        // Each photo's blurred preview, shown while it loads.
+        for m in row.media ?? [] { MediaPreviews.register(m.thumbhash, key: m.key) }
         let photos = (row.media ?? []).filter { $0.kind == "photo" && $0.status != "rejected" }.map(\.key)
             .compactMap(link)
         let age = row.birthdate.flatMap(Self.day.date(from:)).map {
