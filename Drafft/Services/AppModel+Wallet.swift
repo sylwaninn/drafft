@@ -65,6 +65,7 @@ extension AppModel {
         superLikes = 0
         boosts = 0
         boostEndsAt = nil
+        blurredLikes = []
     }
 
     /// Postgres timestamps (`2026-10-24T10:00:00.123456+00:00`), to the second.

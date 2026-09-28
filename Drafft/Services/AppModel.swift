@@ -125,6 +125,8 @@ final class AppModel {
     // Likes and matches (AppModel+Matches)
     /// Everyone who liked you and is waiting for an answer (`liked_me`), super likes first.
     var likedMe: [Profile] = [] { didSet { refreshBadges() } }
+    /// Without drafft tempo: who liked you, blurred by the server (`liked_me` without identities).
+    var blurredLikes: [BlurredLike] = [] { didSet { refreshBadges() } }
     /// Current matches (`my_matches`), newest first.
     var matches: [Match] = []
 
@@ -163,7 +165,8 @@ final class AppModel {
     private func refreshBadges() {
         let unread = conversations.reduce(0) { $0 + ($1.muted ? 0 : $1.unread) }
         if unread != unreadTotal { unreadTotal = unread }
-        let liked = likedMe.count
+        // The full list with drafft tempo, the blurred one without.
+        let liked = isPremium ? likedMe.count : blurredLikes.count
         if liked != likedMeCount { likedMeCount = liked }
     }
 
