@@ -103,7 +103,7 @@ final class AppModel {
 
     // Discover
     /// Everyone not yet swiped, in order. `deck` is this queue seen through the filters.
-    var queue: [Profile] = MockData.deck
+    var queue: [Profile] = MockData.deck { didSet { refreshBadges() } }
     var filters = DiscoverFilters()
     var deck: [Profile] { queue.filter { filters.matches($0, me: me) } }
     var history: [(profile: Profile, liked: Bool)] = []
@@ -111,7 +111,7 @@ final class AppModel {
     var pendingOpeners: [String: MessageContent] = [:]
 
     // Chats
-    var conversations: [Conversation] = MockData.conversations()
+    var conversations: [Conversation] = MockData.conversations() { didSet { refreshBadges() } }
     /// The chat currently on screen (its messages count as read).
     var openChatID: String?
     /// A request to show a chat from the Chats tab (match screen, banner); consumed by ConversationsView.
@@ -133,8 +133,20 @@ final class AppModel {
         let profile: Profile
     }
 
-    /// Tab badge: muted chats don't count.
-    var unreadTotal: Int { conversations.reduce(0) { $0 + ($1.muted ? 0 : $1.unread) } }
+    /// Tab badge: muted chats don't count. Stored, and only written when it changes, like
+    /// `likedMeCount`: the tab bar reads these, so a new message or a typing dot doesn't re-render it.
+    private(set) var unreadTotal = 0
+    /// Tab badge: people who like you, from the deck (`likedMe`).
+    private(set) var likedMeCount = 0
+
+    init() { refreshBadges() }
+
+    private func refreshBadges() {
+        let unread = conversations.reduce(0) { $0 + ($1.muted ? 0 : $1.unread) }
+        if unread != unreadTotal { unreadTotal = unread }
+        let liked = queue.count(where: { $0.interest == .alreadyLikes || $0.superLikedMe })
+        if liked != likedMeCount { likedMeCount = liked }
+    }
 
     func toggleMute(_ id: String) {
         guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
