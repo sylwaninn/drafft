@@ -254,7 +254,7 @@ struct MainTabs: View {
             } label: {
                 tabLabel(L("Likes"), "heart", .likes)
             }
-            .badge(app.likedMe.count)
+            .badge(app.likedMeCount)
             Tab(value: AppModel.Tab.sessions) {
                 SessionsView().tint(DS.Palette.accentInk)
             } label: {
@@ -290,12 +290,8 @@ struct MainTabs: View {
             guard isActive else { return }
             await NotificationService.shared.refresh()
         }
-        .task(id: "\(isActive)" + app.upcomingSessions.map { "\($0.1.id)\($0.1.status)" }.joined()) {
-            guard isActive else { return }
-            NotificationService.shared.scheduleSessionReminders(
-                app.upcomingSessions.filter { $0.1.status == .accepted }
-                    .map { (id: $0.1.id, title: L("\($0.1.displayTitle) with \($0.0.profile.name)"), date: $0.1.date, chatID: $0.0.id) })
-        }
+        // In its own view: the sessions are read from every chat's messages, and only this follows them.
+        .background { SessionReminders(isActive: isActive) }
         .onChange(of: NotificationService.shared.openChatID) { _, id in
             if let id { app.openChat(id); NotificationService.shared.openChatID = nil }
         }
@@ -335,5 +331,25 @@ struct MainTabs: View {
                 app.matchScreen = nil
             }
         }
+    }
+}
+
+/// Keeps the local session reminders in step with the accepted sessions. Its own view, so the chats'
+/// messages it reads re-render only this, never the tab bar.
+private struct SessionReminders: View {
+    let isActive: Bool
+    @Environment(AppModel.self) private var app
+
+    var body: some View {
+        let sessions = app.upcomingSessions
+        Color.clear
+            .task(id: "\(isActive)" + sessions.map { "\($0.1.id)\($0.1.status)" }.joined()) {
+                guard isActive else { return }
+                NotificationService.shared.scheduleSessionReminders(
+                    sessions.filter { $0.1.status == .accepted }
+                        .map { (id: $0.1.id, title: L("\($0.1.displayTitle) with \($0.0.profile.name)"),
+                                date: $0.1.date, chatID: $0.0.id) })
+            }
+            .accessibilityHidden(true)
     }
 }
