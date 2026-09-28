@@ -101,7 +101,7 @@ targets:
         UIAppFonts:
           - InterDisplay-Black.ttf
           - InterDisplay-ExtraBold.ttf
-        # The first frame of SplashView: page tone and the word, centred (the relief then forms).
+        # The first frame of SplashView: page tone and the word, centred.
         UILaunchScreen:
           UIColorName: LaunchBackground
           UIImageName: LaunchMark
@@ -127,7 +127,6 @@ targets:
       - path: DrafftTests
       - path: Drafft/Services/Cache/LocalCache.swift
       - path: Drafft/Services/PushTokenRegistration.swift
-      - path: Drafft/DesignSystem/ContourTrace.swift
       - path: Drafft/Services/Media/ThumbHash.swift
       - path: Drafft/Services/Sessions/SessionLedger.swift
       - path: Drafft/Services/Backend/ProfileCard.swift

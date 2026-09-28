@@ -66,8 +66,8 @@ struct AccountHoldView: View {
                         .accessibilityHidden(true)
                         .rise(appeared, step: 0, reduceMotion: reduceMotion)
                     Spacer(minLength: DS.Space.lg)
-                    // The empty screens' sign in the terrain, its outline lined up with the text.
-                    EmptyStateIllustration(art: art, tint: tint, strength: 2.6)
+                    // The empty screens' sign, its outline lined up with the text.
+                    EmptyStateIllustration(art: art, tint: tint)
                         .offset(x: -73) // (200 - 54) / 2: the sign sits in the middle of its 200 pt map
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .rise(appeared, step: 1, reduceMotion: reduceMotion)
@@ -174,9 +174,9 @@ struct AccountHoldView: View {
 }
 
 private extension EmptyStateArt {
-    static let holdReview = EmptyStateArt(symbol: "hourglass", cutout: "hourglass", seed: "hold-review")
-    static let holdClosed = EmptyStateArt(symbol: "nosign", cutout: "nosign", seed: "hold-closed")
-    static let holdSelfie = EmptyStateArt(symbol: "faceid", cutout: "faceid", seed: "hold-selfie")
+    static let holdReview = EmptyStateArt(symbol: "hourglass")
+    static let holdClosed = EmptyStateArt(symbol: "nosign")
+    static let holdSelfie = EmptyStateArt(symbol: "faceid")
 }
 
 private extension View {

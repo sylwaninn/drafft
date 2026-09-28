@@ -75,7 +75,7 @@ struct IcebreakerEditor: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        // Editor: plain night fill, no contour texture (DESIGN: never on sheets and editors).
+        // Editor: plain night fill.
         .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
         .overlay {
             RoundedRectangle(cornerRadius: DS.Radius.xl)

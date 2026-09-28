@@ -80,7 +80,7 @@ struct SessionCard: View {
         }
         .padding(DS.Space.xl)
         .frame(width: 300, alignment: .leading)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.session, tint: .white)
+        .draftBlock(DS.Palette.night)
         .opacity(session.status == .countered || session.status == .cancelled ? 0.6 : 1)
         .accessibilityElement(children: .contain)
         .onAppear { if session.options.count == 1 { selected = session.options.first } }

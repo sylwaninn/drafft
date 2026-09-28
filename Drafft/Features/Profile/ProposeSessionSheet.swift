@@ -278,7 +278,7 @@ struct ProposeSessionSheet: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        // A sheet: plain night, no contour texture (DESIGN: never on sheets and editors).
+        // A sheet: plain night.
         .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
         .overlay {
             RoundedRectangle(cornerRadius: DS.Radius.xl)

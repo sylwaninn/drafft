@@ -103,7 +103,7 @@ struct LikesTabView: View {
         }
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .draftBlock(DS.Palette.night, seed: BackdropSeed.nextSession, tint: DS.Palette.lime)
+        .draftBlock(DS.Palette.night)
     }
 
     private var emptyState: some View {

@@ -52,7 +52,7 @@ struct ResetPasswordView: View {
 
     var body: some View {
         AuthScaffold(title: title, subtitle: subtitle, actionTitle: actionTitle, actionEnabled: actionEnabled,
-                     loading: flow.busy || saving, action: primary, backdropSeed: BackdropSeed.login) {
+                     loading: flow.busy || saving, action: primary) {
             Group {
                 switch flow.stage {
                 case .form: emailForm
