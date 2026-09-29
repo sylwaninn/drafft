@@ -47,7 +47,7 @@ private struct PausedLock: ViewModifier {
                 .foregroundStyle(DS.Palette.ink)
                 .multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
-            Text("Nobody sees you and discovery waits until you resume. Your chats and sessions carry on.")
+            Text("You're hidden from Discover, and discovery waits until you resume. Your chats and sessions carry on.")
                 .font(.body)
                 .foregroundStyle(DS.Palette.body)
                 .multilineTextAlignment(.center)

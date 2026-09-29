@@ -85,7 +85,7 @@ struct PaywallView: View {
     }
 
     private var perks: [(icon: String, title: String, detail: String)] { [
-        ("arrow.uturn.backward", L("Undo any swipe"), L("Swiped too fast? Bring them back.")),
+        ("arrow.uturn.backward", L("Undo your last swipe"), L("Swiped too fast? Bring them back.")),
         ("heart.text.square", L("See who liked you"), L("Match instantly with people already into you.")),
         ("infinity", L("Unlimited likes"), L("No daily cap, like everyone you'd train with.")),
         ("bolt.fill", L("Weekly boost"), L("One free boost every week: 30 minutes at the top of decks near you."))
@@ -416,7 +416,7 @@ struct SubscriptionSheet: View {
     @State private var legal: LegalDoc?
 
     private var perks: [(icon: String, title: String)] { [
-        ("arrow.uturn.backward", L("Undo any swipe")),
+        ("arrow.uturn.backward", L("Undo your last swipe")),
         ("heart.text.square", L("See who liked you")),
         ("infinity", L("Unlimited likes")),
         ("bolt.fill", L("One free boost every week"))

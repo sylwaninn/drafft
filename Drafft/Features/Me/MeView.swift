@@ -25,7 +25,7 @@ struct MeView: View {
                         separator
                         toggleRow(L("Pause my profile"), icon: "pause.fill",
                                   detail: app.profilePaused
-                                      ? L("Hidden from everyone. Your chats and sessions carry on.")
+                                      ? L("Hidden from Discover and likes. Your chats and sessions carry on.")
                                       : L("Take a break from discovery: you disappear, your chats stay open."),
                                   isOn: $app.profilePaused)
                     }
