@@ -33,6 +33,9 @@ enum ServerMessage {
         case "birthdate_locked": L("Your birthday can't be changed.")
         case "email_unconfirmed": L("Confirm your email first.")
         case "phone_required": L("Verify your phone number first.")
+        // accept_terms, and complete_onboarding without it
+        case "terms_required": L("Accept the terms and give your consent to continue.")
+        case "sensitive_consent_required": L("drafft needs your consent to use your gender. Tick it to continue.")
         // Photos and videos (add_profile_media, request_media_review, media-upload-url)
         case "media_limit": L("You've reached the photo limit. Remove one, then try again.")
         case "not_reviewable": L("This photo has already been reviewed.")
