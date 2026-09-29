@@ -176,11 +176,12 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
 
     // MARK: From a person
 
-    /// A notification about someone, shown right away: "drafft" as the title, the whole sentence
-    /// ("Maya t'a envoyé un message") as the body, their photo as the thumbnail. Away from the app these
-    /// come as pushes (Stream for messages, db-events for the rest); while the chat is connected (the app
-    /// open, or just left), Stream doesn't push, so a message from another chat is posted here, under the
-    /// same settings. `preview` is the message text, used when message previews are on.
+    /// A notification about someone, shown right away: their name as the title (the event for an
+    /// anonymous like), one sentence as the body ("Nouveau message.", or the text with previews on), their
+    /// photo as the thumbnail. Away from the app these come as pushes (Stream for messages, db-events for
+    /// the rest); while the chat is connected (the app open, or just left), Stream doesn't push, so a
+    /// message from another chat is posted here, under the same settings. `preview` is the message text,
+    /// used when message previews are on.
     func notify(_ kind: NotificationText.Kind, from name: String, photo: String?, chatID: String,
                 muted: Bool, preview: String? = nil) async {
         guard isAllowed, !muted else { return }
@@ -195,7 +196,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
             guard messages, reactions else { return }
         }
         let content = UNMutableNotificationContent()
-        content.title = NotificationText.title
+        content.title = NotificationText.title(kind, name: name, in: language)
         content.body = if case .message = kind, messagePreviews, let preview {
             NotificationText.preview(preview, name: name, in: language)
         } else if case .reaction(let emoji, _) = kind, !messagePreviews {
