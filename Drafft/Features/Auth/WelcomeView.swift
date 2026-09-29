@@ -53,7 +53,7 @@ struct WelcomeView: View {
 
     private var panel: some View {
         VStack(alignment: .leading, spacing: DS.Space.xl) {
-            Text("Match with people who train like you. Then meet on the track, the wall or the court.")
+            Text("Turn your matches into sessions, and meet at the start line.")
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)
