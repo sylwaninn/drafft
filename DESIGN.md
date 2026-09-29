@@ -608,6 +608,18 @@ One job per colour, everywhere:
 ### Brand name
 - The product is **drafft**, always lowercase, in copy and as the app name on the home screen. In running text it is set one weight above the sentence (semibold in regular text, heavy in semibold text) so it reads as a name: use `Text(branded:font:)`, which does it for every occurrence.
 - The paid tier is **drafft tempo**: both words lowercase, same face and weight, "tempo" in the accent colour so the pair reads as one name. `Text(branded:)` colours it: `accentInk` on light surfaces, `accentOnNight` on night, `tierOnAccent` on an accent fill (the tier card on You; a light grey with graphite), `night` on the paywall button (white on night with graphite). Never "Plus", "plus" or "+". The paywall lockup is the wordmark followed by "tempo" in Inter Display Black at the same size, in the accent. The spark stays the tier's icon.
+- **"tempo" is never the exact colour of "drafft".** The pair only reads as a name with a tier if the second word is visibly another tone. With the colour accents (orange, violet, lime) the accent does that on its own. With graphite it doesn't: `accentInk` #111214 next to ink #0E0F0C is 1.03:1, and `accentOnNight` is the same white as the word. So "tempo" takes a tier tone, one step lighter or darker than "drafft", on every surface:
+
+  | Surface | "drafft" | "tempo" | tempo on surface | drafft vs tempo |
+  |---|---|---|---|---|
+  | Light page / white block | ink #0E0F0C | #55595E (`limeNeutral`) | 6.1:1 page, 7.0:1 white | 2.7:1 |
+  | Dark mode page / block | ink #F1F3EF | #9A9EA4 | 7.1:1 page, 6.4:1 block | 2.4:1 |
+  | Night block (light / dark) | white | #B8BCC2 | 7.3:1 / 8.1:1 | 1.9:1 |
+  | Accent fill #111214 | white | #B8BCC2 (`tierOnAccent`) | 9.8:1 | 1.9:1 |
+  | Super-like red #D03238 | white | #FFBDBF | 3.2:1 (bold only) | 1.6:1 |
+
+  Rules behind the table: "tempo" keeps 4.5:1 on its surface (3:1 where the brand name is bold, which it always is in running text), and stays at least 1.5:1 away from "drafft" so the two tones are told apart at a glance. Same weight, same size, only the tone changes. A new surface picks its "tempo" tone by those two numbers before shipping.
+  Today the app breaks it with graphite wherever it passes `accentInk` or `accentOnNight` as `tierColor` (PurchaseConfirmation, PaywallView pitch and lockup, LikesTabView, ExtrasSheet): those need a `tier` token resolved per surface as above.
 - Liking stays green (`like`, `#9fe870`) whatever the brand accent: like buttons, the heart pop, "Send like", "Like with this answer" and the like markers in chat.
 - Never pre-select an answer for the person (identity, who to meet, birthday, photos). Empty until they choose.
 - On an optional step, Continue stays disabled until something is filled in; Skip is the way past it.
