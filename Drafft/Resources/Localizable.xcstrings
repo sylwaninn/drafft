@@ -2661,46 +2661,6 @@
         }
       }
     },
-    "%lld%% agree so far" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld %% stimmen bisher zu"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% de acuerdo por ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% sont d'accord pour l'instant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% d'accordo finora"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% is het tot nu toe eens"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% concordam até agora"
-          }
-        }
-      }
-    },
     "%lld×" : {},
     "%lld× a week" : {
       "localizations" : {
@@ -11361,46 +11321,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Só demo: %@"
-          }
-        }
-      }
-    },
-    "Demo text. The final legal documents will replace it." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Demotext. Die endgültigen rechtlichen Dokumente ersetzen ihn."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Texto de demo. Se sustituirá por los documentos legales definitivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Texte de démo. Les documents juridiques définitifs le remplaceront."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testo demo. Verrà sostituito dai documenti legali definitivi."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Demotekst. De definitieve juridische documenten komen hiervoor in de plaats."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Texto de demonstração. Será substituído pelos documentos legais finais."
           }
         }
       }

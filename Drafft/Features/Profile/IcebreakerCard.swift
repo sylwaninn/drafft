@@ -284,20 +284,6 @@ struct IcebreakerCard: View {
                 voteButton("Agree", icon: "hand.thumbsup.fill", value: true)
                 voteButton("Disagree", icon: "hand.thumbsdown.fill", value: false)
             }
-            if take != nil {
-                // Synthetic split for the demo.
-                let agree = profile.id.unicodeScalars.reduce(0) { $0 + Int($1.value) } % 40 + 30
-                GeometryReader { geo in
-                    HStack(spacing: 3) {
-                        Capsule().fill(DS.Palette.accentOnNight).frame(width: geo.size.width * CGFloat(agree) / 100)
-                        Capsule().fill(.white.opacity(0.25))
-                    }
-                }
-                .frame(height: 8)
-                Text("\(agree)% agree so far")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.white.opacity(0.7))
-            }
         }
     }
 
