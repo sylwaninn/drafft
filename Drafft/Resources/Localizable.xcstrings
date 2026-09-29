@@ -11285,6 +11285,52 @@
         }
       }
     },
+    "Deleting your account doesn't cancel drafft tempo. Cancel it in the App Store to stop it renewing." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleting your account doesn't cancel drafft tempo. Cancel it in the App Store to stop it renewing."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer ton compte ne résilie pas drafft tempo. Résilie-le dans l'App Store pour qu'il ne se renouvelle plus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar tu cuenta no cancela drafft tempo. Cancélalo en el App Store para que no se renueve."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du dein Konto löschst, wird drafft tempo nicht gekündigt. Kündige es im App Store, damit es sich nicht verlängert."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminare l'account non annulla drafft tempo. Annullalo nell'App Store perché non si rinnovi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar a tua conta não cancela o drafft tempo. Cancela-o na App Store para não se renovar."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je account verwijderen zegt drafft tempo niet op. Zeg het op in de App Store, anders wordt het verlengd."
+          }
+        }
+      }
+    },
     "Demo only: %@" : {
       "localizations" : {
         "de" : {
@@ -12023,6 +12069,98 @@
         }
       }
     },
+    "Hidden from Discover and likes. Your chats and sessions carry on." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hidden from Discover and likes. Your chats and sessions carry on."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invisible dans Découvrir et les likes. Tes discussions et tes séances continuent."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No apareces en Descubrir ni en los likes. Tus chats y sesiones siguen."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Entdecken und bei den Likes unsichtbar. Deine Chats und Sessions laufen weiter."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invisibile in Scopri e nei like. Le tue chat e sessioni continuano."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invisível em Descobrir e nos likes. As tuas conversas e sessões continuam."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verborgen in Ontdekken en bij likes. Je chats en sessies gaan door."
+          }
+        }
+      }
+    },
+    "I understand my account will be deleted for good." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I understand my account will be deleted for good."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je comprends que mon compte sera supprimé définitivement."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entiendo que mi cuenta se eliminará de forma permanente."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mir ist klar, dass mein Konto endgültig gelöscht wird."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ho capito che il mio account sarà eliminato definitivamente."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compreendo que a minha conta será eliminada permanentemente."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ik begrijp dat mijn account definitief wordt verwijderd."
+          }
+        }
+      }
+    },
     "Loading profiles" : {
       "localizations" : {
         "de" : {
@@ -12465,6 +12603,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compra"
+          }
+        }
+      }
+    },
+    "Read once, not tracked" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read once, not tracked"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relevée une fois, sans suivi"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se lee una vez, sin seguimiento"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einmal erfasst, nie verfolgt"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Letta una volta, senza tracciamento"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lida uma vez, sem seguimento"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eén keer bepaald, niet gevolgd"
           }
         }
       }
@@ -12949,6 +13133,52 @@
         }
       }
     },
+    "Undo your last swipe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo your last swipe"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annule ton dernier swipe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshaz tu último swipe"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach deinen letzten Swipe rückgängig"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annulla l'ultimo swipe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anula o teu último swipe"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maak je laatste swipe ongedaan"
+          }
+        }
+      }
+    },
     "Unmatch" : {
       "localizations" : {
         "de" : {
@@ -13189,6 +13419,98 @@
         }
       }
     },
+    "You can't change it later. If it's ever wrong, write to the help center in You." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can't change it later. If it's ever wrong, write to the help center in You."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce choix ne pourra plus être modifié. En cas d'erreur, écris au centre d'aide depuis Toi."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podrás cambiarlo después. Si algún día no es correcto, escribe al centro de ayuda desde Tú."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das kannst du später nicht mehr ändern. Falls es nicht stimmt, schreib dem Hilfe-Center unter Du."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non potrai cambiarlo in seguito. Se non è corretto, scrivi al centro assistenza da Tu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não vais poder alterar depois. Se não estiver certo, escreve ao centro de ajuda em Tu."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je kunt dit later niet meer wijzigen. Klopt het niet, schrijf dan naar het helpcentrum onder Jij."
+          }
+        }
+      }
+    },
+    "You're hidden from Discover, and discovery waits until you resume. Your chats and sessions carry on." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You're hidden from Discover, and discovery waits until you resume. Your chats and sessions carry on."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n'apparais plus dans Découvrir, et la découverte attend ton retour. Tes discussions et tes séances continuent."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No apareces en Descubrir, y el descubrimiento espera a que vuelvas. Tus chats y sesiones siguen."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist in Entdecken unsichtbar, und Entdecken wartet, bis du weitermachst. Deine Chats und Sessions laufen weiter."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non compari in Scopri, e la scoperta aspetta che riprendi. Le tue chat e sessioni continuano."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não apareces em Descobrir, e a descoberta espera até retomares. As tuas conversas e sessões continuam."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bent verborgen in Ontdekken, en ontdekken wacht tot je hervat. Je chats en sessies gaan door."
+          }
+        }
+      }
+    },
     "You're out of likes for today." : {
       "localizations" : {
         "de" : {
@@ -13265,6 +13587,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não tens mais super likes."
+          }
+        }
+      }
+    },
+    "Your area comes from where you are right now. drafft doesn't follow your moves or track you in the background." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your area comes from where you are right now. drafft doesn't follow your moves or track you in the background."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta zone vient de l'endroit où tu es maintenant. drafft ne suit pas tes déplacements et ne te localise jamais quand tu ne l'utilises pas."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu zona sale de donde estás ahora. drafft no sigue tus desplazamientos ni te localiza en segundo plano."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Gebiet ergibt sich aus deinem aktuellen Standort. drafft verfolgt deine Wege nicht und ortet dich nie im Hintergrund."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua zona viene da dove sei adesso. drafft non segue i tuoi spostamenti e non ti localizza in background."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua zona vem do sítio onde estás agora. O drafft não segue as tuas deslocações nem te localiza em segundo plano."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je gebied komt van waar je nu bent. drafft volgt je niet en bepaalt je locatie nooit op de achtergrond."
           }
         }
       }
@@ -13585,52 +13953,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cada boost põe-te em primeiro lugar para quem está perto de ti durante 30 minutos. Usa-os quando quiseres: nunca expiram."
-          }
-        }
-      }
-    },
-    "Each time you open drafft, your area follows you: home, work, a weekend away." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Gebiet reist mit, sobald du drafft öffnest: zu Hause, im Job, am Rennwochenende."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu zona te sigue cada vez que abres drafft: en casa, en el trabajo o en un fin de semana de carrera."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta zone te suit à chaque ouverture de drafft : chez toi, au travail, un week-end de course ailleurs."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua zona ti segue ogni volta che apri drafft: a casa, al lavoro, in trasferta per una gara."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je gebied gaat mee zodra je drafft opent: thuis, op je werk, een wedstrijdweekend weg."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A tua zona acompanha-te sempre que abres o drafft: em casa, no trabalho, num fim de semana de prova."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your area follows you each time you open drafft: home, work, a race weekend away."
           }
         }
       }
@@ -17818,46 +18140,6 @@
         }
       }
     },
-    "Hidden from everyone. Your chats and sessions carry on." : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invisible pour tous. Tes discussions et tes séances continuent."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu perfil está oculto. Tus chats y sesiones siguen."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Für alle unsichtbar. Deine Chats und Sessions laufen weiter."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invisibile a tutti. Le tue chat e sessioni continuano."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invisível para todos. As tuas conversas e sessões continuam."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voor iedereen verborgen. Je chats en sessies gaan door."
-          }
-        }
-      }
-    },
     "Hide My Email" : {
       "localizations" : {
         "de" : {
@@ -18930,46 +19212,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eu disse %@… então é %@? Conta-me mais"
-          }
-        }
-      }
-    },
-    "I understand my account and all my data will be permanently deleted." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mir ist klar, dass mein Konto und alle meine Daten endgültig gelöscht werden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entiendo que mi cuenta y todos mis datos se eliminarán de forma permanente."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je comprends que mon compte et toutes mes données seront définitivement supprimés."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ho capito che il mio account e tutti i miei dati saranno eliminati definitivamente."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ik begrijp dat mijn account en al mijn gegevens definitief worden verwijderd."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compreendo que a minha conta e todos os meus dados serão eliminados permanentemente."
           }
         }
       }
@@ -26678,46 +26920,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "De momento, ninguém por perto corresponde aos teus filtros. Alarga-os um pouco e vão aparecer pessoas novas."
-          }
-        }
-      }
-    },
-    "Nobody sees you and discovery waits until you resume. Your chats and sessions carry on." : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Personne ne te voit et la découverte attend ton retour. Tes discussions et tes séances continuent."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nadie te ve y el descubrimiento espera a que vuelvas. Tus chats y sesiones siguen."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niemand sieht dich, und Entdecken wartet, bis du weitermachst. Deine Chats und Sessions laufen weiter."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuno ti vede e la scoperta aspetta che riprendi. Le tue chat e sessioni continuano."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguém te vê e a descoberta espera até retomares. As tuas conversas e sessões continuam."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niemand ziet je en ontdekken wacht tot je hervat. Je chats en sessies gaan door."
           }
         }
       }
@@ -44553,46 +44755,6 @@
         }
       }
     },
-    "Undo any swipe" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jeden Swipe rückgängig machen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deshaz cualquier swipe"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Annule n'importe quel swipe"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Annulla qualsiasi swipe"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maak elke swipe ongedaan"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anula qualquer swipe"
-          }
-        }
-      }
-    },
     "Undo is part of drafft tempo, along with a few things that get you to a first session faster." : {
       "localizations" : {
         "de" : {
@@ -45499,46 +45661,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Atualizar palavra-passe"
-          }
-        }
-      }
-    },
-    "Updates as you move" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aktualisiert sich unterwegs"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se actualiza cuando te mueves"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se met à jour quand tu bouges"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si aggiorna mentre ti sposti"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beweegt met je mee"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acompanha-te quando te deslocas"
           }
         }
       }
@@ -49592,46 +49714,6 @@
         }
       }
     },
-    "You can change it anytime in You." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst es jederzeit unter Du ändern."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes cambiarlo cuando quieras en Tú."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux le changer quand tu veux dans Toi."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi cambiarlo quando vuoi in Tu."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je kunt het altijd wijzigen onder Jij."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podes alterar quando quiseres em Tu."
-          }
-        }
-      }
-    },
     "You can close this. We'll switch as soon as you confirm." : {
       "localizations" : {
         "de" : {
@@ -52916,6 +52998,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Os teus desportos"
+          }
+        }
+      }
+    },
+    "Your subscription" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your subscription"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton abonnement"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu suscripción"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Abo"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo abbonamento"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua subscrição"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je abonnement"
           }
         }
       }
