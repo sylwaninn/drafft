@@ -1,0 +1,48 @@
+# Points ouverts après la refonte du wording
+
+Relevés pendant la réécriture, non corrigés parce qu'ils demandent une décision produit, juridique ou
+un changement de code plus large. Une fois tranchés, les décisions éditoriales vont dans
+[WORDING.md §11](../../WORDING.md#11-decision-log).
+
+## Bloquant avant publication
+
+- **Textes légaux de démo visibles** : « Demo text. The final legal documents will replace it. » et des
+  résumés de CGU / confidentialité / règles de communauté. À remplacer par les documents définitifs
+  (qui ont aussi des masculins par défaut).
+- **Recherche de marque** « Meet me on the start line » / « Rendez-vous au départ » (INPI, EUIPO,
+  classe 45) avant tout usage public.
+- **Chiffre inventé** : le pourcentage « %lld%% agree so far » de l'icebreaker est calculé en dur
+  (`IcebreakerCard`, « Synthetic split for the demo »). À retirer ou brancher sur de vrais votes.
+
+## Décisions produit
+
+- Valider les taglines (WORDING.md §7.2, statut « proposed »).
+- Prompt « I'm looking for someone who » : proche de la question « looking for » que DESIGN.md exclut.
+  Garder ou retirer ?
+- « How often you train shapes who you meet » (onboarding) promet plus que ce que fait l'app.
+- Paywall : « Most popular » est devenu « Recommended ». Mieux : afficher l'économie calculée sur 6 mois,
+  comme sur 12 mois.
+- Orthographe de « super like » par langue (ES/NL « superlike », DE « Super Like ») : en fixer une.
+- ES/PT : « iniciar sesión / sessão » (connexion) utilise le même mot que la séance de sport.
+- Emails sans preheader : à ajouter si le client email le permet.
+- Cartes de séance dans le chat en anglais seulement (message unique pour deux personnes).
+
+## Dette de code (sans effet visible, les textes affichés sont déjà corrigés)
+
+- Des clés Swift gardent l'ancien texte anglais (« Plus », « Keep swiping », « Pitch it », « No pitch
+  yet », « Pick a plan to continue. », « …plan a first session. »). La valeur affichée vient de la
+  localisation `en`. Renommer les clés dans le code et le catalogue.
+- « Propose these times (2 times) » : le compteur est redondant dans la feuille de contre-proposition.
+- « Get boosts » et « Get more super likes » : deux formes pour le même bouton.
+- 111 clés orphelines et environ 70 phrases de `SportCatalog.swift` jamais lues.
+- `Sport.inSentence` : pas d'élision en FR (« du escalade ») si un texte place le sport après « du ».
+- `project.yml` : les textes de repli des permissions ne suivent pas le catalogue (localisation
+  alignée, les autres à vérifier).
+
+## Déploiement backend
+
+- Ordre : `scripts/stream-push.ts` (modèle Stream), puis les fonctions, puis une resynchronisation des
+  utilisateurs Stream (langue).
+- Noms des achats intégrés : reporter les nouveaux noms (« 1 boost », « 3 super likes ») dans App Store
+  Connect via `scripts/app-store-products.ts`.
+- Fiches stores : `docs/wording/store.md`, checklist « à valider » en fin de fichier.
