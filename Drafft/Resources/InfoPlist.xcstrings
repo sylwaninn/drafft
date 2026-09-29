@@ -107,43 +107,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft zeigt deine Gegend, nie deine Adresse, und rundet Entfernungen."
+            "value" : "drafft nutzt deinen Standort, um dir Leute in deiner Nähe zu zeigen. Andere sehen deine Gegend und eine gerundete Entfernung, nie deine Adresse."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft shows your area, never your address, and rounds distances."
+            "value" : "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft muestra tu zona, nunca tu dirección, y redondea las distancias."
+            "value" : "drafft usa tu ubicación para mostrarte gente cerca. Los demás ven tu zona y una distancia redondeada, nunca tu dirección."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft affiche ton quartier, jamais ton adresse, et arrondit les distances."
+            "value" : "drafft utilise ta position pour te montrer les personnes autour de toi. Les autres voient ta zone et une distance arrondie, jamais ton adresse."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft mostra la tua zona, mai il tuo indirizzo, e arrotonda le distanze."
+            "value" : "drafft usa la tua posizione per mostrarti le persone vicine. Gli altri vedono la tua zona e una distanza arrotondata, mai il tuo indirizzo."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft toont je buurt, nooit je adres, en rondt afstanden af."
+            "value" : "drafft gebruikt je locatie om mensen in de buurt te tonen. Anderen zien je buurt en een afgeronde afstand, nooit je adres."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O drafft mostra a tua zona, nunca a tua morada, e arredonda as distâncias."
+            "value" : "O drafft usa a tua localização para te mostrar pessoas perto de ti. Os outros veem a tua zona e uma distância arredondada, nunca a tua morada."
           }
         }
       }

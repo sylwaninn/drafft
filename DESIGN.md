@@ -745,6 +745,7 @@ One job per colour, everywhere:
 - An invite offers 1 to 3 date-and-time options. The other person picks one, or answers with other times (a new card; the old one shows "Other times suggested"), until you agree. Only the agreed time shows as confirmed.
 
 ### Copy
+- Words themselves (voice, lexicon, forbidden wording, examples) live in [WORDING.md](WORDING.md). The rules below are about how copy sits in the layout.
 - A person's name is never truncated or shrunk: it wraps onto a second line (hyphenated names break at the hyphen). Keep names out of one-line buttons ("Say hi", not "Say hi to Maximilien-Alexandre").
 - NEVER use a middle dot (·) as a separator, anywhere in the app. Use a comma, "at", "for", "with", parentheses or a line break instead ("Batignolles, 4,1 km", "Tue 30 Sep at 18:30", "Buy 5 boosts for €17.99").
 - The area step explains location plainly in three facts: it updates as you move (each time Drafft opens), it's blurred to about 1 km before leaving the phone, and others only see the area and a rounded distance.

@@ -122,7 +122,9 @@ struct MeView: View {
                     case .password: ChangePasswordSheet()
                     case .export: ExportDataSheet()
                     case .delete: DeleteAccountSheet()
-                    case .paywall: PaywallView()
+                    case .paywall:
+                        PaywallView(headline: L("Train at your tempo."),
+                                    pitch: L("See who already likes you, send unlimited likes and get a free boost every week."))
                     case .subscription: SubscriptionSheet()
                     case .blocked: BlockedPeopleSheet()
                     case .safety: SafetyTipsSheet()

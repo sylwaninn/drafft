@@ -10,13 +10,18 @@
       "internalID" : "6754100101",
       "localizations" : [
         {
-          "description" : "30 minutes at the top of decks nearby",
-          "displayName" : "1 Boost",
+          "description" : "30 minutes first in decks near you",
+          "displayName" : "1 boost",
           "locale" : "en_US"
+        },
+        {
+          "description" : "En tête près de chez toi pendant 30 minutes",
+          "displayName" : "1 boost",
+          "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.boost.1",
-      "referenceName" : "1 Boost",
+      "referenceName" : "1 boost",
       "type" : "Consumable"
     },
     {
@@ -25,13 +30,18 @@
       "internalID" : "6754100102",
       "localizations" : [
         {
-          "description" : "30 minutes at the top of decks nearby, five times",
-          "displayName" : "5 Boosts",
+          "description" : "30 minutes first in decks near you, 5 times",
+          "displayName" : "5 boosts",
           "locale" : "en_US"
+        },
+        {
+          "description" : "5 fois 30 minutes en tête près de chez toi",
+          "displayName" : "5 boosts",
+          "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.boost.5",
-      "referenceName" : "5 Boosts",
+      "referenceName" : "5 boosts",
       "type" : "Consumable"
     },
     {
@@ -40,13 +50,18 @@
       "internalID" : "6754100103",
       "localizations" : [
         {
-          "description" : "30 minutes at the top of decks nearby, ten times",
-          "displayName" : "10 Boosts",
+          "description" : "30 minutes first in decks near you, 10 times",
+          "displayName" : "10 boosts",
           "locale" : "en_US"
+        },
+        {
+          "description" : "10 fois 30 minutes en tête près de chez toi",
+          "displayName" : "10 boosts",
+          "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.boost.10",
-      "referenceName" : "10 Boosts",
+      "referenceName" : "10 boosts",
       "type" : "Consumable"
     },
     {
@@ -55,13 +70,18 @@
       "internalID" : "6754100104",
       "localizations" : [
         {
-          "description" : "Let them know before they swipe",
-          "displayName" : "3 Super Likes",
+          "description" : "Top of their deck, with a red heart",
+          "displayName" : "3 super likes",
           "locale" : "en_US"
+        },
+        {
+          "description" : "En tête de sa pile, avec un cœur rouge",
+          "displayName" : "3 super likes",
+          "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.superlike.3",
-      "referenceName" : "3 Super Likes",
+      "referenceName" : "3 super likes",
       "type" : "Consumable"
     },
     {
@@ -70,13 +90,18 @@
       "internalID" : "6754100105",
       "localizations" : [
         {
-          "description" : "Let them know before they swipe",
-          "displayName" : "15 Super Likes",
+          "description" : "Top of their deck, with a red heart",
+          "displayName" : "15 super likes",
           "locale" : "en_US"
+        },
+        {
+          "description" : "En tête de sa pile, avec un cœur rouge",
+          "displayName" : "15 super likes",
+          "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.superlike.15",
-      "referenceName" : "15 Super Likes",
+      "referenceName" : "15 super likes",
       "type" : "Consumable"
     },
     {
@@ -85,13 +110,18 @@
       "internalID" : "6754100106",
       "localizations" : [
         {
-          "description" : "Let them know before they swipe",
-          "displayName" : "30 Super Likes",
+          "description" : "Top of their deck, with a red heart",
+          "displayName" : "30 super likes",
           "locale" : "en_US"
+        },
+        {
+          "description" : "En tête de sa pile, avec un cœur rouge",
+          "displayName" : "30 super likes",
+          "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.superlike.30",
-      "referenceName" : "30 Super Likes",
+      "referenceName" : "30 super likes",
       "type" : "Consumable"
     }
   ],
@@ -110,6 +140,11 @@
           "description" : "",
           "displayName" : "drafft tempo",
           "locale" : "en_US"
+        },
+        {
+          "description" : "",
+          "displayName" : "drafft tempo",
+          "locale" : "fr_FR"
         }
       ],
       "name" : "drafft tempo",
@@ -128,9 +163,14 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Unlimited likes and every drafft tempo perk",
+              "description" : "Unlimited likes, undo, see who likes you",
               "displayName" : "drafft tempo 12 months",
               "locale" : "en_US"
+            },
+            {
+              "description" : "Likes illimités, annuler, voir qui te like",
+              "displayName" : "drafft tempo 12 mois",
+              "locale" : "fr_FR"
             }
           ],
           "productID" : "so.drafft.app.tempo.yearly",
@@ -156,9 +196,14 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Unlimited likes and every drafft tempo perk",
+              "description" : "Unlimited likes, undo, see who likes you",
               "displayName" : "drafft tempo 6 months",
               "locale" : "en_US"
+            },
+            {
+              "description" : "Likes illimités, annuler, voir qui te like",
+              "displayName" : "drafft tempo 6 mois",
+              "locale" : "fr_FR"
             }
           ],
           "productID" : "so.drafft.app.tempo.sixmonths",
@@ -184,9 +229,14 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Unlimited likes and every drafft tempo perk",
+              "description" : "Unlimited likes, undo, see who likes you",
               "displayName" : "drafft tempo 1 month",
               "locale" : "en_US"
+            },
+            {
+              "description" : "Likes illimités, annuler, voir qui te like",
+              "displayName" : "drafft tempo 1 mois",
+              "locale" : "fr_FR"
             }
           ],
           "productID" : "so.drafft.app.tempo.monthly",

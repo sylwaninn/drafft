@@ -671,37 +671,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@-Session, geplant über drafft."
+            "value" : "%@-Session, bestätigt auf drafft."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sesión de %@ planificada en drafft."
+            "value" : "Sesión de %@ confirmada en drafft."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Séance %@ prévue sur drafft."
+            "value" : "Séance %@ confirmée sur drafft."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sessione di %@ organizzata con drafft."
+            "value" : "Sessione di %@ confermata su drafft."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@-sessie gepland via drafft."
+            "value" : "%@-sessie, bevestigd via drafft."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sessão de %@ marcada no drafft."
+            "value" : "Sessão de %@ confirmada no drafft."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ session, confirmed on drafft."
           }
         }
       }
@@ -797,7 +803,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿%@ juntos y luego un café?"
+            "value" : "¿%@ y luego un café?"
           }
         },
         "fr" : {
@@ -821,7 +827,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ juntos e depois um café?"
+            "value" : "%@ a dois e depois um café?"
           }
         }
       }
@@ -981,7 +987,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ vai escolher um horário ou sugerir outros."
+            "value" : "%@ vai escolher um horário ou propor outros."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ will pick a time or propose others."
           }
         }
       }
@@ -1527,7 +1539,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, aún sin hora"
+            "value" : "%@, aún sin horario"
           }
         },
         "fr" : {
@@ -2520,6 +2532,12 @@
             "state" : "translated",
             "value" : "%lld horários propostos"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld times proposed"
+          }
         }
       }
     },
@@ -2639,46 +2657,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld escritas"
-          }
-        }
-      }
-    },
-    "%lld%% agree so far" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld %% stimmen bisher zu"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% de acuerdo por ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% sont d'accord pour l'instant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% d'accordo finora"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% is het tot nu toe eens"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld%% concordam até agora"
           }
         }
       }
@@ -3223,7 +3201,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 km de nage, puis petit-déjeuner ?"
+            "value" : "1 km de nage, puis petit-déjeuner ?"
           }
         },
         "it" : {
@@ -3557,7 +3535,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quelques sets avant le travail ?"
+            "value" : "Quelques sets avant le travail ?"
           }
         },
         "it" : {
@@ -3585,43 +3563,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mehr als dein Trainingsplan"
+            "value" : "In deinen Worten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más allá del plan de entrenamiento"
+            "value" : "Con tus palabras"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Au-delà du plan d'entraînement"
+            "value" : "Avec tes mots"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oltre la tabella di allenamento"
+            "value" : "Con parole tue"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meer dan je trainingsschema"
+            "value" : "In je eigen woorden"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para lá do plano de treino"
+            "value" : "Por palavras tuas"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beyond the training plan"
+            "value" : "In your own words"
           }
         }
       }
@@ -3791,37 +3769,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Fehler? Schreib uns"
+            "value" : "Support kontaktieren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Un error? Escríbenos"
+            "value" : "Contactar con soporte"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une erreur ? Écris-nous"
+            "value" : "Contacter le support"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un errore? Scrivici"
+            "value" : "Contatta l'assistenza"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Een vergissing? Laat het ons weten"
+            "value" : "Neem contact op"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um erro? Escreve-nos"
+            "value" : "Contactar o suporte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contact support"
           }
         }
       }
@@ -4530,37 +4514,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreib ein paar Worte darüber, wie du dich bewegst"
+            "value" : "Schreib eine kurze Bio"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añade unas palabras sobre cómo te mueves"
+            "value" : "Escribe una bio corta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute quelques mots sur ta façon de bouger"
+            "value" : "Écris une courte bio"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aggiungi due parole su come ti muovi"
+            "value" : "Scrivi una breve bio"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vertel in een paar woorden hoe je sport"
+            "value" : "Schrijf een korte bio"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escreve umas palavras sobre como treinas"
+            "value" : "Escreve uma bio curta"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write a short bio"
           }
         }
       }
@@ -4662,7 +4652,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajoute un mot, une idée de séance (facultatif)"
+            "value" : "Ajoute un petit mot, une idée de séance (facultatif)"
           }
         },
         "it" : {
@@ -4686,7 +4676,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add a note, like a session idea (optional)"
+            "value" : "Add a note, maybe a session idea (optional)"
           }
         }
       }
@@ -4742,7 +4732,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir hora"
+            "value" : "Añadir horario"
           }
         },
         "fr" : {
@@ -5594,7 +5584,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Déjà sur drafft ?"
+            "value" : "Déjà sur drafft ?"
           }
         },
         "it" : {
@@ -5920,7 +5910,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Autre chose ? (facultatif)"
+            "value" : "Autre chose ? (facultatif)"
           }
         },
         "it" : {
@@ -6794,25 +6784,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entspanntes %@ für Einsteiger? Ich bring die Ausrüstung mit."
+            "value" : "Entspanntes %@ zum Einstieg? Ich bring die Ausrüstung mit."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿%@ tranquilo para empezar? Yo llevo el material."
+            "value" : "¿Una sesión tranquila de %@ para empezar? Yo llevo el material."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Séance %@ spéciale débutants ? J'apporte le matériel."
+            "value" : "Séance %@ pour démarrer en douceur ? J'apporte le matériel."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ tranquillo per principianti? Porto io l'attrezzatura."
+            "value" : "Una sessione di %@ per principianti? Porto io l'attrezzatura."
           }
         },
         "nl" : {
@@ -6824,7 +6814,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ descontraído para principiantes? Eu levo o material."
+            "value" : "Uma sessão de %@ para principiantes? Eu levo o material."
           }
         },
         "en" : {
@@ -6840,37 +6830,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwei Gewinnsätze, wer gewinnt, wählt das Abendessen?"
+            "value" : "Zwei Gewinnsätze, wer gewinnt, sucht das Café aus?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al mejor de tres, ¿quien gane elige la cena?"
+            "value" : "Al mejor de tres, ¿quien gane elige la cafetería?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En deux sets gagnants, le vainqueur choisit le resto ?"
+            "value" : "En deux sets gagnants, qui gagne choisit le café ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al meglio dei tre, chi vince sceglie la cena?"
+            "value" : "Al meglio dei tre, chi vince sceglie il caffè?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Best of three, winnaar kiest het restaurant?"
+            "value" : "Best of three, winnaar kiest het koffietentje?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À melhor de três, quem ganha escolhe o jantar?"
+            "value" : "À melhor de três, quem ganha escolhe o café?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best of three, winner picks the café?"
           }
         }
       }
@@ -7440,37 +7436,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bouldern, dann ein Bier?"
+            "value" : "Bouldern, dann ein Smoothie?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Boulder y luego unas cañas?"
+            "value" : "¿Boulder y luego un smoothie?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bloc, puis une bière ?"
+            "value" : "Du bloc, puis un smoothie ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bouldering, poi una birra?"
+            "value" : "Bouldering, poi uno smoothie?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boulderen, daarna een biertje?"
+            "value" : "Boulderen, daarna een smoothie?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bouldering e depois uma cerveja?"
+            "value" : "Bouldering e depois um smoothie?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bouldering, then a smoothie?"
           }
         }
       }
@@ -7800,37 +7802,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wusste ich's doch: Das ist die Lüge 😏 Was ist die wahre Geschichte?"
+            "value" : "Wusste ich's doch: Das ist die Lüge 👀 Was ist die wahre Geschichte?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo sabía: esa es la mentira 😏 ¿Cuál es la historia real?"
+            "value" : "Lo sabía: esa es la mentira 👀 ¿Cuál es la historia real?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je le savais : c'est celle-là, le mensonge 😏 C'est quoi, la vraie histoire ?"
+            "value" : "Je le savais : c'est celle-là, le mensonge 👀 C'est quoi, la vraie histoire ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo sapevo: la bugia è quella 😏 Com'è andata davvero?"
+            "value" : "Lo sapevo: la bugia è quella 👀 Com'è andata davvero?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wist ik het wel: dat is de leugen 😏 Wat is het echte verhaal?"
+            "value" : "Wist ik het wel: dat is de leugen 👀 Wat is het echte verhaal?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acertei: essa é a mentira 😏 Qual é a verdadeira história?"
+            "value" : "Acertei: essa é a mentira 👀 Qual é a verdadeira história?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Called it: that one's the lie 👀 What's the real story?"
           }
         }
       }
@@ -8246,7 +8254,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia o elimina esta hora"
+            "value" : "Cambiar o quitar este horario"
           }
         },
         "fr" : {
@@ -8286,7 +8294,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia de plan o cancela en los ajustes de suscripción de Apple."
+            "value" : "Cámbiala o cancélala en los ajustes de suscripción de Apple."
           }
         },
         "fr" : {
@@ -8298,7 +8306,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia piano o annulla nelle impostazioni abbonamenti di Apple."
+            "value" : "Modificalo o annullalo nelle impostazioni abbonamenti di Apple."
           }
         },
         "nl" : {
@@ -8310,7 +8318,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muda de plano ou cancela nas definições de subscrição da Apple."
+            "value" : "Altera-a ou cancela-a nas definições de subscrição da Apple."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change or cancel it in Apple's subscription settings."
           }
         }
       }
@@ -8326,7 +8340,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambiar hora"
+            "value" : "Cambiar horario"
           }
         },
         "fr" : {
@@ -8400,37 +8414,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chat nicht gefunden"
+            "value" : "Dieser Chat ist nicht mehr verfügbar."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chat no encontrado"
+            "value" : "Este chat ya no está disponible."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Discussion introuvable"
+            "value" : "Cette discussion n'est plus disponible."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chat non trovata"
+            "value" : "Questa chat non è più disponibile."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chat niet gevonden"
+            "value" : "Deze chat is niet meer beschikbaar."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversa não encontrada"
+            "value" : "Esta conversa já não está disponível."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This chat isn't available anymore."
           }
         }
       }
@@ -9166,37 +9186,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Text löschen"
+            "value" : "Notiz löschen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Borrar título"
+            "value" : "Borrar nota"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Effacer l'accroche"
+            "value" : "Effacer le petit mot"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cancella proposta"
+            "value" : "Cancella nota"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pitch wissen"
+            "value" : "Berichtje wissen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Limpar texto"
+            "value" : "Apagar nota"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear note"
           }
         }
       }
@@ -9596,7 +9622,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diretrizes da Comunidade"
+            "value" : "Diretrizes da comunidade"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Community guidelines"
           }
         }
       }
@@ -10086,37 +10118,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frischer Morgenlauf im Parc de la Tête d'Or?"
+            "value" : "Früher Lauf, solange der Park noch leer ist?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Rodaje al fresco de la mañana en el Parc de la Tête d'Or?"
+            "value" : "¿Rodaje temprano, con el parque aún vacío?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Petit footing au frais au parc de la Tête d'Or ?"
+            "value" : "Footing matinal, avant que le parc se remplisse ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corsa al fresco del mattino al Parc de la Tête d'Or?"
+            "value" : "Corsa presto, col parco ancora vuoto?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frisse ochtendrun in het Parc de la Tête d'Or?"
+            "value" : "Vroeg rondje, nu het park nog leeg is?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corrida matinal ao fresco no Parc de la Tête d'Or?"
+            "value" : "Corrida cedo, com o parque ainda vazio?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Early run while the park's still quiet?"
           }
         }
       }
@@ -11018,7 +11056,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je tente mon record au soulevé de terre, tu viens m'encourager ?"
+            "value" : "Je tente mon record au soulevé de terre, tu viens m'encourager ?"
           }
         },
         "it" : {
@@ -11206,37 +11244,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beim Löschen werden dein Profil, deine Fotos, Matches und Nachrichten endgültig entfernt. Deine Matches können dich dann nicht mehr erreichen."
+            "value" : "Dein Profil, deine Fotos, Matches und Nachrichten, endgültig. Deine Matches können dich dann nicht mehr erreichen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al eliminarla, se borran para siempre tu perfil, tus fotos, tus matches y tus mensajes. Tus matches ya no podrán contactarte."
+            "value" : "Tu perfil, tus fotos, tus matches y tus mensajes, para siempre. Tus matches ya no podrán contactarte."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La suppression efface définitivement ton profil, tes photos, tes matchs et tes messages. Tes matchs ne pourront plus te contacter."
+            "value" : "Ton profil, tes photos, tes matchs et tes messages, définitivement. Tes matchs ne pourront plus te contacter."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'eliminazione rimuove per sempre profilo, foto, match e messaggi. I tuoi match non potranno più contattarti."
+            "value" : "Profilo, foto, match e messaggi, per sempre. I tuoi match non potranno più contattarti."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verwijderen wist je profiel, foto's, matches en berichten voorgoed. Je matches kunnen je dan niet meer bereiken."
+            "value" : "Je profiel, foto's, matches en berichten, voorgoed. Je matches kunnen je dan niet meer bereiken."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar a conta apaga para sempre o teu perfil, fotos, matches e mensagens. Os teus matches deixam de te poder contactar."
+            "value" : "O teu perfil, fotos, matches e mensagens, para sempre. Os teus matches deixam de te poder contactar."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your profile, photos, matches and messages, for good. Your matches won't be able to reach you."
           }
         }
       }
@@ -11277,46 +11321,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Só demo: %@"
-          }
-        }
-      }
-    },
-    "Demo text. The final legal documents will replace it." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Demotext. Die endgültigen rechtlichen Dokumente ersetzen ihn."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Texto de demo. Se sustituirá por los documentos legales definitivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Texte de démo. Les documents juridiques définitifs le remplaceront."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testo demo. Verrà sostituito dai documenti legali definitivi."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Demotekst. De definitieve juridische documenten komen hiervoor in de plaats."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Texto de demonstração. Será substituído pelos documentos legais finais."
           }
         }
       }
@@ -11532,31 +11536,37 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciación"
+            "value" : "Descubrir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Découverte"
+            "value" : "Découvrir"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scoperta"
+            "value" : "Scopri"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kennismaking"
+            "value" : "Ontdekken"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descoberta"
+            "value" : "Descobrir"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discover"
           }
         }
       }
@@ -11806,37 +11816,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verpass keine Einladung"
+            "value" : "Verpass keinen Vorschlag"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No te pierdas ninguna invitación"
+            "value" : "No te pierdas ninguna propuesta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne rate aucune invitation"
+            "value" : "Ne rate aucune proposition de séance"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non perdere nessun invito"
+            "value" : "Non perdere nessuna proposta"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mis geen uitnodiging"
+            "value" : "Mis geen enkel voorstel"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não percas nenhum convite"
+            "value" : "Não percas nenhuma proposta"
           }
         },
         "en" : {
@@ -11932,37 +11942,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doppel, wer verliert, zahlt die Drinks?"
+            "value" : "Doppel, wer verliert, zahlt den Brunch?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Partido de dobles y quien pierda paga las cañas?"
+            "value" : "¿Partido de dobles y quien pierda invita al brunch?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En double, les perdants paient les verres ?"
+            "value" : "En double, l'équipe qui perd offre le brunch ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doppio, chi perde offre da bere?"
+            "value" : "Doppio, chi perde offre il brunch?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dubbelspel, de verliezers trakteren?"
+            "value" : "Dubbelspel, de verliezers trakteren op brunch?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pares, quem perde paga as bebidas?"
+            "value" : "Pares, quem perder paga o brunch?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doubles, losers buy brunch?"
           }
         }
       }
@@ -11990,7 +12006,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inserisci l'email con cui ti sei registrato. Ti inviamo un codice di 6 cifre."
+            "value" : "Inserisci l'email che hai usato per registrarti. Ti inviamo un codice di 6 cifre."
           }
         },
         "nl" : {
@@ -12304,7 +12320,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personne ne voit encore ton profil : un boost ne toucherait personne."
+            "value" : "Personne ne voit encore ton profil : un boost ne toucherait personne."
           }
         },
         "it" : {
@@ -12344,7 +12360,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis 1 à 3 horaires à venir."
+            "value" : "Choisis 1 à 3 créneaux à venir."
           }
         },
         "it" : {
@@ -12384,7 +12400,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis l'un des horaires proposés."
+            "value" : "Choisis l'un des créneaux proposés."
           }
         },
         "it" : {
@@ -12403,6 +12419,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escolhe um dos horários propostos."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick one of the proposed times."
           }
         }
       }
@@ -12443,6 +12465,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compra"
+          }
+        }
+      }
+    },
+    "See who already likes you, send unlimited likes and get a free boost every week." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vois qui te like déjà, envoie des likes sans limite et profite d'un boost gratuit chaque semaine."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mira a quién ya le gustas, da likes sin límite y consigue un boost gratis cada semana."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sieh, wer dich schon likt, like ohne Limit und hol dir jede Woche einen Gratis-Boost."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scopri a chi piaci già, metti like senza limiti e ricevi un boost gratis ogni settimana."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vê quem já gosta de ti, dá likes sem limite e recebe um boost grátis todas as semanas."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zie wie jou al liket, like zonder limiet en krijg elke week een gratis boost."
           }
         }
       }
@@ -12532,37 +12594,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Einladung wurde schon beantwortet."
+            "value" : "Auf diesen Vorschlag wurde schon geantwortet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta invitación ya tiene respuesta."
+            "value" : "Esta propuesta ya tiene respuesta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette invitation a déjà reçu une réponse."
+            "value" : "Cette proposition de séance a déjà reçu une réponse."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questo invito ha già una risposta."
+            "value" : "Questa proposta ha già una risposta."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deze uitnodiging is al beantwoord."
+            "value" : "Op dit voorstel is al gereageerd."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este convite já foi respondido."
+            "value" : "Esta proposta já foi respondida."
           }
         }
       }
@@ -12807,6 +12869,46 @@
         }
       }
     },
+    "Train at your tempo." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À ton tempo."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tu ritmo."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In deinem Tempo."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al tuo ritmo."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ao teu ritmo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Op jouw tempo."
+          }
+        }
+      }
+    },
     "Unmatch" : {
       "localizations" : {
         "de" : {
@@ -12904,7 +13006,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annuler le match avec %@ ?"
+            "value" : "Annuler le match avec %@ ?"
           }
         },
         "it" : {
@@ -13304,7 +13406,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne boit qu'après les courses"
+            "value" : "Ne boit qu'après une course"
           }
         },
         "it" : {
@@ -13464,7 +13566,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta zone te suit à chaque ouverture de drafft : chez toi, au travail, un week-end de course ailleurs."
+            "value" : "Ta zone te suit à chaque ouverture de drafft : chez toi, au travail, un week-end de course ailleurs."
           }
         },
         "it" : {
@@ -13658,37 +13760,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lockere 8 km am Kanal, dann Croissants?"
+            "value" : "Lockere 8 km am Wasser, dann Croissants?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿8 km suaves junto al canal y luego unos cruasanes?"
+            "value" : "¿8 km suaves junto al agua y luego unos cruasanes?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "8 km tranquilles le long du canal, puis croissants ?"
+            "value" : "8 km tranquilles au bord de l'eau, puis croissants ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "8 km tranquilli lungo il canale, poi cornetti?"
+            "value" : "8 km tranquilli lungo l'acqua, poi cornetti?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rustige 8 km langs het kanaal, dan croissants?"
+            "value" : "Rustige 8 km langs het water, dan croissants?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "8 km tranquilos junto ao canal e depois croissants?"
+            "value" : "8 km tranquilos à beira da água e depois croissants?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Easy 8k by the water, then croissants?"
           }
         }
       }
@@ -13704,7 +13812,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Un entreno aeróbico suave juntos?"
+            "value" : "¿Un rodaje aeróbico suave a dúo?"
           }
         },
         "fr" : {
@@ -13728,7 +13836,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um treino aeróbico leve juntos?"
+            "value" : "Um treino aeróbico leve a dois?"
           }
         }
       }
@@ -13750,7 +13858,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des blocs faciles pour une première séance ?"
+            "value" : "Des blocs faciles pour une première séance ?"
           }
         },
         "it" : {
@@ -13790,7 +13898,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Petite sortie vélo tranquille jusqu'à un café ?"
+            "value" : "Balade à vélo jusqu'à un café ?"
           }
         },
         "it" : {
@@ -14900,37 +15008,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fehlgeschlagen, tippen für Details"
+            "value" : "Nicht hochgeladen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Error, toca para ver el motivo"
+            "value" : "No subida"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Échec, touche pour voir pourquoi"
+            "value" : "Non envoyée"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non riuscito, tocca per sapere perché"
+            "value" : "Non caricata"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mislukt, tik om te zien waarom"
+            "value" : "Niet geüpload"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Falhou, toca para ver porquê"
+            "value" : "Não carregada"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not uploaded"
           }
         }
       }
@@ -15147,7 +15261,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscando hora"
+            "value" : "Buscando horario"
           }
         },
         "fr" : {
@@ -15193,7 +15307,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recherche de ton secteur…"
+            "value" : "Recherche de ta zone…"
           }
         },
         "it" : {
@@ -15387,43 +15501,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum ersten Mal %@? Ich zeig dir, wie's geht."
+            "value" : "Noch nie %@ gemacht? Ich zeig dir die Basics."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Primera vez haciendo %@? Te enseño lo básico."
+            "value" : "¿Nunca has hecho %@? Te enseño lo básico."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Première séance de %@ ? Je te montre les bases."
+            "value" : "Je te montre les bases en %@ ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prima volta a %@? Ti mostro come si fa."
+            "value" : "Ti insegno le basi di %@?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eerste keer %@? Ik laat je zien hoe het moet."
+            "value" : "Nog nooit %@ gedaan? Ik leer je de basis."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primeira vez a fazer %@? Eu mostro-te como é."
+            "value" : "Nunca fizeste %@? Eu mostro-te o básico."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "First time doing %@? I'll show you the ropes."
+            "value" : "New to %@? I'll show you the basics."
           }
         }
       }
@@ -15765,7 +15879,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pendant 30 minutes, tu passes en premier pour les sportifs autour de toi."
+            "value" : "Pendant 30 minutes, tu passes en premier pour qui s'entraîne autour de toi."
           }
         },
         "it" : {
@@ -16171,7 +16285,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une partie après le travail ?"
+            "value" : "Une partie après le travail ?"
           }
         },
         "it" : {
@@ -16190,6 +16304,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Um jogo amigável depois do trabalho?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Friendly game after work?"
           }
         }
       }
@@ -16737,19 +16857,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Likes ilimitados"
+            "value" : "Pásate a ilimitado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Likes illimités"
+            "value" : "Passer en illimité"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Like illimitati"
+            "value" : "Passa all'illimitato"
           }
         },
         "nl" : {
@@ -16761,7 +16881,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Likes ilimitados"
+            "value" : "Passar a ilimitado"
           }
         }
       }
@@ -16771,43 +16891,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach es leicht, dich einzuladen"
+            "value" : "Gib ihnen einen Grund, dir zu schreiben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pónselo fácil para invitarte"
+            "value" : "Dales una excusa para escribirte"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Donne-leur envie de t'inviter"
+            "value" : "Donne-leur de quoi t'écrire"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rendi facile invitarti"
+            "value" : "Rendi facile scriverti"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maak uitnodigen makkelijk"
+            "value" : "Geef ze een reden om je te schrijven"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Facilita o convite"
+            "value" : "Dá-lhes um motivo para te escreverem"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Make it easy to invite you"
+            "value" : "Give them an easy opener"
           }
         }
       }
@@ -17149,13 +17269,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag chez un partenaire d'entraînement"
+            "value" : "Green flag chez un binôme de sport"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag in un compagno di allenamento"
+            "value" : "Green flag quando ci si allena insieme"
           }
         },
         "nl" : {
@@ -17167,7 +17287,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag num parceiro de treino"
+            "value" : "Green flag em quem treina comigo"
           }
         }
       }
@@ -17189,7 +17309,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu connais %@ ?"
+            "value" : "Tu connais %@ ?"
           }
         },
         "it" : {
@@ -17309,13 +17429,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trouvé : %@ ! Ça me vaut une séance ?"
+            "value" : "Trouvé : %@ ! Ça me vaut une séance ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Indovinato: %@! Mi sono guadagnato una sessione?"
+            "value" : "Indovinato: %@! Mi merito una sessione?"
           }
         },
         "nl" : {
@@ -17669,7 +17789,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oculto para todos. Tus chats y sesiones siguen."
+            "value" : "Tu perfil está oculto. Tus chats y sesiones siguen."
           }
         },
         "de" : {
@@ -18135,6 +18255,12 @@
             "state" : "translated",
             "value" : "Opinião polémica"
           }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unpopular opinion"
+          }
         }
       }
     },
@@ -18174,6 +18300,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Opinião polémica. Concordas?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unpopular opinion. Agree?"
           }
         }
       }
@@ -18223,25 +18355,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So bewegt sich %@"
+            "value" : "So trainiert %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo se mueve %@"
+            "value" : "Cómo entrena %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment %@ bouge"
+            "value" : "Comment %@ s'entraîne"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come si muove %@"
+            "value" : "Come si allena %@"
           }
         },
         "nl" : {
@@ -18254,6 +18386,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Como %@ treina"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How %@ trains"
           }
         }
       }
@@ -18275,7 +18413,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qu'est-ce qui te fait bouger ?"
+            "value" : "Qu'est-ce qui te fait bouger ?"
           }
         },
         "it" : {
@@ -18401,7 +18539,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu t'entraînes combien de fois ?"
+            "value" : "Tu t'entraînes combien de fois ?"
           }
         },
         "it" : {
@@ -18475,25 +18613,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So bewegst du dich"
+            "value" : "So trainierst du"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo te mueves"
+            "value" : "Cómo entrenas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta façon de bouger"
+            "value" : "Comment tu t'entraînes"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come ti muovi"
+            "value" : "Come ti alleni"
           }
         },
         "nl" : {
@@ -18506,6 +18644,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Como treinas"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How you train"
           }
         }
       }
@@ -18915,37 +19059,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich weiß, dass es passt, wenn"
+            "value" : "Wir haben das gleiche Tempo, wenn"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sabré que hay match si"
+            "value" : "Iremos al mismo ritmo si"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je saurai que c'est un match si"
+            "value" : "On sera au même rythme si"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capirò che è un match se"
+            "value" : "Andremo allo stesso ritmo se"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ik weet dat het een match is als"
+            "value" : "We lopen in hetzelfde tempo als"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vou saber que é match se"
+            "value" : "Vamos ao mesmo ritmo se"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We're on the same pace if"
           }
         }
       }
@@ -19887,37 +20037,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gesendete und erhaltene Einladungen"
+            "value" : "Gesendete und erhaltene Session-Vorschläge"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invitaciones enviadas y recibidas"
+            "value" : "Propuestas de sesión enviadas y recibidas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invitations envoyées et reçues"
+            "value" : "Propositions de séance envoyées et reçues"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inviti inviati e ricevuti"
+            "value" : "Proposte di sessione inviate e ricevute"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uitnodigingen die je hebt verstuurd en ontvangen"
+            "value" : "Verstuurde en ontvangen sessievoorstellen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Convites que enviaste e recebeste"
+            "value" : "Propostas de sessão que enviaste e recebeste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session invites you sent and received"
           }
         }
       }
@@ -19939,7 +20095,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton visage est-il net et bien éclairé ?"
+            "value" : "Ton visage est-il net et bien éclairé ?"
           }
         },
         "it" : {
@@ -20093,37 +20249,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es steht auf deinem Profil als „Trainiert für…“. Ob groß oder klein: ein toller Gesprächseinstieg."
+            "value" : "Es steht auf deinem Profil unter „Trainiert für“. Ob groß oder klein: Andere können dich direkt danach fragen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aparece en tu perfil como «Entrenando para…». Grande o pequeño, es un gran tema para empezar a hablar."
+            "value" : "Aparece en tu perfil como «Entrenando para». Grande o pequeño, les da a los demás algo que preguntarte."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il apparaît sur ton profil sous la forme « Objectif… ». Grand ou petit, c'est un super sujet de conversation."
+            "value" : "Il s'affiche sur ton profil sous « Objectif ». Grand ou petit, c'est une question toute trouvée pour les autres."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appare sul tuo profilo come “Mi alleno per…”. Grande o piccolo, è un ottimo spunto per iniziare a parlare."
+            "value" : "Appare sul tuo profilo come “Mi alleno per”. Grande o piccolo, dà agli altri qualcosa da chiederti."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het staat op je profiel als ‘Traint voor…’. Groot of klein, het is een mooie gespreksopener."
+            "value" : "Het staat op je profiel onder ‘Traint voor’. Groot of klein, zo hebben anderen meteen iets om je te vragen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aparece no teu perfil como “A treinar para…”. Grande ou pequeno, é ótimo para começar uma conversa."
+            "value" : "Aparece no teu perfil como “A treinar para”. Grande ou pequeno, dá aos outros algo para te perguntarem."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It shows on your profile under “Training for”. Big or small, it gives people something to ask you about."
           }
         }
       }
@@ -20133,37 +20295,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ihr habt ein Match."
+            "value" : "Ihr mögt euch beide."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es un match."
+            "value" : "Es mutuo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C'est un match."
+            "value" : "C'est réciproque."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "È un match."
+            "value" : "È reciproco."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het is een match."
+            "value" : "Het is wederzijds."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "É um match."
+            "value" : "É recíproco."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It's mutual."
           }
         }
       }
@@ -20173,43 +20341,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es ist ein Match. Tippe, um eine Session vorzuschlagen."
+            "value" : "Ihr mögt euch beide. Tippe, um Hallo zu sagen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es un match. Toca para proponer una sesión."
+            "value" : "Es mutuo. Toca para saludar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C'est un match. Touche pour proposer une séance."
+            "value" : "C'est réciproque. Touche pour dire bonjour."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "È un match. Tocca per proporre una sessione."
+            "value" : "È reciproco. Tocca per salutare."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het is een match. Tik om een sessie voor te stellen."
+            "value" : "Het is wederzijds. Tik om hoi te zeggen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "É um match. Toca para propor uma sessão."
+            "value" : "É recíproco. Toca para dizer olá."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "It's a match. Tap to propose a session."
+            "value" : "It's mutual. Tap to say hi."
           }
         }
       }
@@ -20339,37 +20507,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nur blockieren, ohne Meldung"
+            "value" : "Nur blockieren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo bloquear, sin denunciar"
+            "value" : "Solo bloquear"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seulement bloquer, sans signaler"
+            "value" : "Bloquer seulement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blocca soltanto, senza segnalare"
+            "value" : "Blocca soltanto"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alleen blokkeren, zonder melding"
+            "value" : "Alleen blokkeren"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Só bloquear, sem denunciar"
+            "value" : "Só bloquear"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just block"
           }
         }
       }
@@ -20431,7 +20605,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Besoin d'une simple pause ?"
+            "value" : "Juste besoin d'une pause ?"
           }
         },
         "it" : {
@@ -20739,37 +20913,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiter swipen"
+            "value" : "Zurück zu Entdecken"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguir deslizando"
+            "value" : "Volver a Descubrir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuer à swiper"
+            "value" : "Retour à Découvrir"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continua a scorrere"
+            "value" : "Torna a Scopri"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verder swipen"
+            "value" : "Terug naar Ontdekken"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar a deslizar"
+            "value" : "Voltar a Descobrir"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to Discover"
           }
         }
       }
@@ -21311,7 +21491,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Séance jambes, je t'assiste ?"
+            "value" : "Séance jambes, je t'assiste ?"
           }
         },
         "it" : {
@@ -21539,43 +21719,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Like zurück und es ist ein Match. Nächster Schritt: eine Session planen."
+            "value" : "Like zurück, dann ist es gegenseitig. Danach schlag eine Session vor."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Devuelve el like y es un match. Siguiente paso: elegir una sesión."
+            "value" : "Devuelve el like y será mutuo. Luego, propón una sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Like en retour et c'est un match. Prochaine étape : choisir une séance."
+            "value" : "Like en retour et c'est réciproque. Ensuite, propose une séance."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ricambia il like ed è un match. Poi scegliete una sessione."
+            "value" : "Ricambia il like ed è reciproco. Poi proponi una sessione."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Like terug en het is een match. Volgende stap: een sessie kiezen."
+            "value" : "Like terug en het is wederzijds. Stel daarna een sessie voor."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Devolve o like e é um match. A seguir: escolher uma sessão."
+            "value" : "Devolve o like e fica recíproco. Depois, propõe uma sessão."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Like back and it's a match. Next step: pick a session."
+            "value" : "Like them back and it's mutual. Then propose a session."
           }
         }
       }
@@ -22031,7 +22211,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cargando planes"
+            "value" : "Cargando opciones"
           }
         },
         "fr" : {
@@ -22043,7 +22223,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Caricamento piani"
+            "value" : "Caricamento opzioni"
           }
         },
         "nl" : {
@@ -22055,7 +22235,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A carregar planos"
+            "value" : "A carregar opções"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading options"
           }
         }
       }
@@ -22135,7 +22321,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A localização está desativada para o drafft. Ativa-a nas Definições (Durante a utilização da app é suficiente) para continuar."
+            "value" : "A localização está desativada para o drafft. Ativa-a nas Definições («Durante a utilização da app» é suficiente) para continuar."
           }
         }
       }
@@ -22345,43 +22531,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melde dich an und sieh, wer in deiner Nähe deinen Rhythmus teilt."
+            "value" : "Melde dich an und sieh, wer in deiner Nähe trainiert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entra y descubre quién vive a tu ritmo cerca de ti."
+            "value" : "Entra y descubre quién entrena cerca de ti."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connecte-toi et découvre qui vit à ton rythme près de chez toi."
+            "value" : "Connecte-toi et vois qui s'entraîne près de chez toi."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accedi e scopri chi vive al tuo ritmo vicino a te."
+            "value" : "Accedi e scopri chi si allena vicino a te."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Log in en zie wie bij jou in de buurt jouw ritme deelt."
+            "value" : "Log in en zie wie er bij jou in de buurt traint."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entra e vê quem vive ao teu ritmo perto de ti."
+            "value" : "Entra e vê quem treina perto de ti."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Log in and see who's on your pace nearby."
+            "value" : "Log in and see who trains near you."
           }
         }
       }
@@ -22511,37 +22697,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Runden in Longchamp bei Sonnenaufgang?"
+            "value" : "Runden bei Sonnenaufgang, vor der Arbeit?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Vueltas en Longchamp al amanecer?"
+            "value" : "¿Vueltas al amanecer antes del trabajo?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tours de Longchamp au lever du soleil ?"
+            "value" : "Des tours au lever du soleil, avant le boulot ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Giri a Longchamp all'alba?"
+            "value" : "Giri all'alba prima del lavoro?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rondjes Longchamp bij zonsopgang?"
+            "value" : "Rondjes bij zonsopgang, voor het werk?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voltas a Longchamp ao nascer do sol?"
+            "value" : "Voltas ao nascer do sol antes do trabalho?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sunrise laps before work?"
           }
         }
       }
@@ -22911,7 +23103,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sieh, wer dich schon liked, und matche mit einem Tipp."
+            "value" : "Sieh, wer dich schon likt, und matche mit einem Tipp."
           }
         },
         "es" : {
@@ -22923,7 +23115,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vois qui t'a déjà liké et matche en un geste."
+            "value" : "Vois qui te like déjà et matche en un geste."
           }
         },
         "it" : {
@@ -22957,43 +23149,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Triff jemanden, der deinen Rhythmus teilt. Das erste Date ist eine Session: ein Lauf, eine Route, ein Padel-Match."
+            "value" : "Dein Sport kommt zuerst. Mach aus deinen Matches Sessions und trefft euch an der Startlinie."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conoce a alguien que vive a tu ritmo. La primera cita, una sesión juntos: un rodaje, una vía, un pádel."
+            "value" : "Tus deportes, primero. Convierte tus matches en sesiones y quedad en la línea de salida."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rencontre quelqu'un qui vit à ton rythme. Le premier rendez-vous, c'est une séance : un footing, une voie, un padel."
+            "value" : "Tes sports d'abord. Transforme tes matchs en séances, et rendez-vous au départ."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incontra qualcuno che vive al tuo ritmo. Il primo appuntamento è una sessione insieme: una corsa, una via, una partita di padel."
+            "value" : "Prima i tuoi sport. Trasforma i tuoi match in sessioni e datevi appuntamento alla partenza."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ontmoet iemand die jouw ritme deelt. Je eerste date is een sessie samen: een loopje, een klimroute, een potje padel."
+            "value" : "Eerst je sporten. Maak van je matches sessies en spreek af aan de start."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conhece alguém que vive ao teu ritmo. O primeiro encontro é uma sessão juntos: uma corrida, uma via, um padel."
+            "value" : "Primeiro, os teus desportos. Transforma os teus matches em sessões e encontrem-se na linha de partida."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meet someone who gets your pace. Make the first date a session: a run, a climb, a padel match."
+            "value" : "Your sports come first. Turn your matches into sessions, and meet at the start line."
           }
         }
       }
@@ -23003,43 +23195,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Matche in Entdecken, und das erste Date wird eine Session."
+            "value" : "Matche in Entdecken und schlag eine Session vor."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz match en Descubrir y que la primera cita sea una sesión juntos."
+            "value" : "Haz match en Descubrir y propón una sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Matche dans Découvrir, et le premier rendez-vous sera une séance."
+            "value" : "Matche dans Découvrir, puis propose une séance."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fai match su Scopri e il primo appuntamento sarà una sessione insieme."
+            "value" : "Fai match su Scopri e proponi una sessione."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Match in Ontdekken en maak van je eerste date een sessie samen."
+            "value" : "Match in Ontdekken en stel een sessie voor."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faz match em Descobrir e o primeiro encontro será uma sessão juntos."
+            "value" : "Faz match em Descobrir e propõe uma sessão."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Match on Discover, then make the first date a session."
+            "value" : "Match on Discover, then propose a session."
           }
         }
       }
@@ -23209,43 +23401,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das erste Date ist eine Session."
+            "value" : "Wähl einen Sport, dann ein paar Zeiten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La primera cita, una sesión juntos."
+            "value" : "Elige un deporte y luego unos horarios."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le premier rendez-vous, c'est une séance."
+            "value" : "Choisis un sport, puis quelques créneaux."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il primo appuntamento è una sessione insieme."
+            "value" : "Scegli uno sport, poi qualche orario."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je eerste date is een sessie samen."
+            "value" : "Kies een sport en daarna een paar tijden."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O primeiro encontro é uma sessão juntos."
+            "value" : "Escolhe um desporto e depois uns horários."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Make the first date a session."
+            "value" : "Pick a sport, then a few times."
           }
         }
       }
@@ -23301,7 +23493,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trefft euch, wo Leute trainieren"
+            "value" : "Triff dich dort, wo trainiert wird"
           }
         },
         "es" : {
@@ -23313,13 +23505,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retrouvez-vous là où on s'entraîne"
+            "value" : "Donne rendez-vous là où on s'entraîne"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incontratevi dove ci si allena"
+            "value" : "Scegli un posto dove ci si allena"
           }
         },
         "nl" : {
@@ -23331,7 +23523,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encontrem-se onde se treina"
+            "value" : "Marca encontro onde se treina"
           }
         }
       }
@@ -23947,37 +24139,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Am beliebtesten"
+            "value" : "Empfohlen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más popular"
+            "value" : "Recomendado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le plus populaire"
+            "value" : "Recommandé"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il più scelto"
+            "value" : "Consigliato"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Populairst"
+            "value" : "Aanbevolen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais popular"
+            "value" : "Recomendado"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommended"
           }
         }
       }
@@ -24107,37 +24305,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Matschige Runde in Fontainebleau?"
+            "value" : "Matschige Runde im Wald?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Ruta con barro por Fontainebleau?"
+            "value" : "¿Ruta con barro por el bosque?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boucle boueuse à Fontainebleau ?"
+            "value" : "Boucle boueuse en forêt ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Giro nel fango a Fontainebleau?"
+            "value" : "Giro nel fango nel bosco?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Modderig rondje in Fontainebleau?"
+            "value" : "Modderig rondje door het bos?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volta enlameada em Fontainebleau?"
+            "value" : "Volta enlameada no bosque?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muddy loop in the woods?"
           }
         }
       }
@@ -24307,43 +24511,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mein erstes Mal %@. Machst du langsam mit mir?"
+            "value" : "%@ ist komplett neu für mich. Gibst du das Tempo vor?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi primera vez haciendo %@. ¿Me tienes paciencia?"
+            "value" : "Cero experiencia en %@. ¿Marcas tú el ritmo?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ma première séance de %@. Tu y vas doucement ?"
+            "value" : "Zéro expérience en %@. Tu donnes le rythme ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La mia prima volta a %@. Mi prendi con calma?"
+            "value" : "Mai fatto %@. Detti tu il ritmo?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn eerste keer %@. Doe je rustig aan?"
+            "value" : "Nog nooit %@ gedaan. Bepaal jij het tempo?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A minha primeira vez a fazer %@. Vais com calma?"
+            "value" : "Nunca fiz %@. Marcas tu o ritmo?"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "My first time doing %@. Go easy on me?"
+            "value" : "Never done %@. You set the pace?"
           }
         }
       }
@@ -24433,37 +24637,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine Liebessprache ist im Grunde"
+            "value" : "So feuere ich jemanden an"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi lenguaje del amor es básicamente"
+            "value" : "Mi forma de animar a alguien"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mon langage de l'amour, c'est surtout"
+            "value" : "Ma façon d'encourager quelqu'un"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il mio linguaggio dell'amore è praticamente"
+            "value" : "Il mio modo di fare il tifo per qualcuno"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn liefdestaal is eigenlijk"
+            "value" : "Zo moedig ik iemand aan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A minha linguagem do amor é basicamente"
+            "value" : "A minha forma de apoiar alguém"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How I cheer someone on"
           }
         }
       }
@@ -25120,37 +25330,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Einladung"
+            "value" : "Neuer Vorschlag"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueva invitación"
+            "value" : "Nueva propuesta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouvelle invitation"
+            "value" : "Nouvelle proposition"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuovo invito"
+            "value" : "Nuova proposta"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nieuwe uitnodiging"
+            "value" : "Nieuw voorstel"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novo convite"
+            "value" : "Nova proposta"
           }
         }
       }
@@ -25372,7 +25582,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueva hora"
+            "value" : "Nuevo horario"
           }
         },
         "fr" : {
@@ -25646,37 +25856,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch keine Chats"
+            "value" : "Noch keine Chats."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay chats"
+            "value" : "Aún no hay chats."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune discussion"
+            "value" : "Aucune discussion pour l'instant."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ancora nessuna chat"
+            "value" : "Ancora nessuna chat."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nog geen chats"
+            "value" : "Nog geen chats."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda sem conversas"
+            "value" : "Ainda sem conversas."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No chats yet."
           }
         }
       }
@@ -25704,7 +25920,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nessun limite giornaliero. Metti like a tutti quelli con cui ti alleneresti."
+            "value" : "Nessun limite giornaliero. Metti like a tutte le persone con cui ti alleneresti."
           }
         },
         "nl" : {
@@ -26197,7 +26413,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai visto tutti."
+            "value" : "Hai visto tutto."
           }
         },
         "nl" : {
@@ -26209,7 +26425,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Já viste todos."
+            "value" : "Já viste tudo."
           }
         },
         "en" : {
@@ -26225,37 +26441,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch kein Vorschlag"
+            "value" : "Noch keine Notiz"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún sin título"
+            "value" : "Aún sin nota"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas encore d'accroche"
+            "value" : "Pas encore de petit mot"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ancora nessuna proposta"
+            "value" : "Ancora nessuna nota"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nog geen pitch"
+            "value" : "Nog geen berichtje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda sem proposta"
+            "value" : "Ainda sem nota"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No note yet"
           }
         }
       }
@@ -26369,7 +26591,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nog geen sessies gepland."
+            "value" : "Nog geen sessies in je agenda."
           }
         },
         "pt" : {
@@ -27517,7 +27739,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Propón unas horas que encajen en tu semana."
+            "value" : "Propón unos horarios que encajen en tu semana."
           }
         },
         "fr" : {
@@ -27535,7 +27757,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kies een paar momenten die in je week passen."
+            "value" : "Stel een paar tijden voor die in je week passen."
           }
         },
         "pt" : {
@@ -27547,7 +27769,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pick a few slots that fit your week."
+            "value" : "Propose a few times that fit your week."
           }
         }
       }
@@ -27563,7 +27785,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Propón hasta %lld horas. %@ elige una o propone otras."
+            "value" : "Propón hasta %lld horarios. %@ elige uno o propone otros."
           }
         },
         "fr" : {
@@ -27587,7 +27809,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Propõe até %lld horários. %@ escolhe um ou sugere outros."
+            "value" : "Propõe até %lld horários. %@ escolhe um ou propõe outros."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Propose up to %lld times. %@ picks one or proposes others."
           }
         }
       }
@@ -27597,7 +27825,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Okay, da musste ich stöhnen UND lachen. Respekt 😂"
+            "value" : "Okay, da musste ich seufzen UND lachen. Respekt 😂"
           }
         },
         "es" : {
@@ -27809,7 +28037,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un boost gratuit chaque semaine : 30 minutes en tête pour les sportifs près de chez toi."
+            "value" : "Un boost gratuit chaque semaine : 30 minutes en tête pour qui s'entraîne près de chez toi."
           }
         },
         "it" : {
@@ -27889,7 +28117,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una de tus horas ya ha pasado."
+            "value" : "Uno de tus horarios ya ha pasado."
           }
         },
         "fr" : {
@@ -28163,43 +28391,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle ein Match, schlag Sport, Ort und Uhrzeit vor. Bestätigte Sessions landen hier."
+            "value" : "Schlag in einem Chat eine Session vor: Sport, Tag, Uhrzeit. Bestätigte Sessions landen hier."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige un match y propón deporte, lugar y hora. Las sesiones confirmadas aparecen aquí."
+            "value" : "Propón una sesión desde cualquier chat: deporte, día y hora. Las sesiones confirmadas aparecen aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis un match, propose un sport, un lieu et une heure. Les séances confirmées arrivent ici."
+            "value" : "Propose une séance depuis une discussion : un sport, un jour, une heure. Les séances confirmées arrivent ici."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli un match, proponi sport, luogo e orario. Le sessioni confermate arrivano qui."
+            "value" : "Proponi una sessione da una chat: sport, giorno e orario. Le sessioni confermate arrivano qui."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kies een match, stel een sport, plek en tijd voor. Bevestigde sessies komen hier."
+            "value" : "Stel vanuit een chat een sessie voor: sport, dag, tijd. Bevestigde sessies komen hier."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolhe um match e propõe desporto, local e hora. As sessões confirmadas aparecem aqui."
+            "value" : "Propõe uma sessão a partir de uma conversa: desporto, dia e hora. As sessões confirmadas aparecem aqui."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pick a match, propose a sport, a place and a time. Confirmed sessions land here."
+            "value" : "Propose a session from any chat: a sport, a day, a time. Confirmed sessions land here."
           }
         }
       }
@@ -28685,7 +28913,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Outros horários sugeridos"
+            "value" : "Outros horários propostos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other times proposed"
           }
         }
       }
@@ -28901,7 +29135,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "NOPE"
+            "value" : "WEITER"
           }
         },
         "es" : {
@@ -29061,37 +29295,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Padel und danach auf die Terrasse?"
+            "value" : "Padel in der Mittagspause?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Pádel y luego una terraza?"
+            "value" : "¿Pádel en la pausa de la comida?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Padel et terrasse ?"
+            "value" : "Padel sur la pause déj ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Padel e poi una terrazza?"
+            "value" : "Padel in pausa pranzo?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Padel en een terrasje?"
+            "value" : "Padel in de lunchpauze?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Padel e uma esplanada?"
+            "value" : "Padel na hora de almoço?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Padel on your lunch break?"
           }
         }
       }
@@ -29793,7 +30033,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pendant 30 minutes, tu passes en premier pour les sportifs autour de toi."
+            "value" : "Pendant 30 minutes, tu passes en premier pour les personnes qui s'entraînent autour de toi."
           }
         },
         "it" : {
@@ -29811,7 +30051,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Durante 30 minutos, és o primeiro para quem treina perto de ti."
+            "value" : "Durante 30 minutos, apareces primeiro a quem treina perto de ti."
           }
         },
         "en" : {
@@ -30227,37 +30467,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähl ein Format für deine interaktive Frage. Matches spielen mit und antworten mit einem Fingertipp."
+            "value" : "Wähl ein Format für deine interaktive Frage. Wer dein Profil sieht, kann mitspielen und mit einem Tipp antworten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige un formato para tu pregunta interactiva. Tus matches juegan y responden con un toque."
+            "value" : "Elige un formato para tu pregunta interactiva. Quien vea tu perfil puede jugar y responderte con un toque."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis un format pour ta question interactive. Tes matchs jouent le jeu et répondent en un geste."
+            "value" : "Choisis un format pour ta question interactive. Qui voit ton profil peut jouer et te répondre en un geste."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli un formato per la tua domanda interattiva. I match giocano e rispondono con un tocco."
+            "value" : "Scegli un formato per la tua domanda interattiva. Chi vede il tuo profilo può giocare e risponderti con un tocco."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kies een vorm voor je interactieve vraag. Matches spelen mee en reageren met één tik."
+            "value" : "Kies een vorm voor je interactieve vraag. Wie je profiel ziet, kan meespelen en met één tik reageren."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolhe um formato para a tua pergunta interativa. Os matches jogam e respondem com um toque."
+            "value" : "Escolhe um formato para a tua pergunta interativa. Quem vê o teu perfil pode jogar e responder-te com um toque."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a format for your interactive prompt. Anyone who sees your profile can play and reply in one tap."
           }
         }
       }
@@ -30267,13 +30513,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähl ein Abo, um fortzufahren."
+            "value" : "Wähl eine Option, um fortzufahren."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige un plan para continuar."
+            "value" : "Elige una opción para continuar."
           }
         },
         "fr" : {
@@ -30285,19 +30531,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli un piano per continuare."
+            "value" : "Scegli un'opzione per continuare."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kies een abonnement om verder te gaan."
+            "value" : "Kies een optie om verder te gaan."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolhe um plano para continuar."
+            "value" : "Escolhe uma opção para continuar."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick an option to continue."
           }
         }
       }
@@ -30513,7 +30765,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige al menos una hora para enviar."
+            "value" : "Elige al menos un horario para enviar."
           }
         },
         "fr" : {
@@ -30759,7 +31011,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis jusqu'à 5 sports. Ensuite, à quelle fréquence : c'est ton rythme."
+            "value" : "Choisis jusqu'à 5 sports. Ensuite, à quelle fréquence : c'est ton rythme."
           }
         },
         "it" : {
@@ -30783,7 +31035,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pick up to 5 sports. Next, how often: that's how we find your pace."
+            "value" : "Pick up to 5 sports. Next, how often: that's your rhythm."
           }
         }
       }
@@ -30953,37 +31205,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorschlag"
+            "value" : "Notiz"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Título"
+            "value" : "Nota"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accroche"
+            "value" : "Petit mot"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Proposta"
+            "value" : "Nota"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pitch"
+            "value" : "Berichtje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Proposta"
+            "value" : "Nota"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
           }
         }
       }
@@ -30993,37 +31251,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Vorschlag"
+            "value" : "Kurze Notiz"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ponle título"
+            "value" : "Una nota"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton accroche"
+            "value" : "Un petit mot"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In una frase"
+            "value" : "Una nota"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je pitch"
+            "value" : "Een berichtje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apresenta a ideia"
+            "value" : "Uma nota"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A short note"
           }
         }
       }
@@ -31073,37 +31337,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abo"
+            "value" : "Laufzeit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plan"
+            "value" : "Duración"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formule"
+            "value" : "Durée"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Piano"
+            "value" : "Durata"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abonnement"
+            "value" : "Looptijd"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plano"
+            "value" : "Duração"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Length"
           }
         }
       }
@@ -31119,7 +31389,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido cargar los planes. Revisa tu conexión e inténtalo de nuevo."
+            "value" : "No se han podido cargar las opciones. Revisa tu conexión e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -31131,7 +31401,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossibile caricare i piani. Controlla la connessione e riprova."
+            "value" : "Impossibile caricare le opzioni. Controlla la connessione e riprova."
           }
         },
         "nl" : {
@@ -31143,7 +31413,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar os planos. Verifica a tua ligação e tenta novamente."
+            "value" : "Não foi possível carregar as opções. Verifica a tua ligação e tenta novamente."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options couldn't load. Check your connection and try again."
           }
         }
       }
@@ -31629,7 +31905,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Política de Privacidade"
+            "value" : "Política de privacidade"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy policy"
           }
         }
       }
@@ -32051,7 +32333,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des échanges sans score, juste pour le plaisir ?"
+            "value" : "Des échanges sans score, juste pour le plaisir ?"
           }
         },
         "it" : {
@@ -32818,7 +33100,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Red flag : tu fais l'impasse sur"
+            "value" : "Red flag : tu fais l'impasse sur"
           }
         },
         "it" : {
@@ -33212,7 +33494,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitar esta hora"
+            "value" : "Quitar este horario"
           }
         },
         "fr" : {
@@ -34453,37 +34735,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Richtig! Du kennst %@ schon."
+            "value" : "Richtig. Du kennst %@ schon."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Correcto! Ya conoces a %@."
+            "value" : "Correcto. Ya conoces a %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exact ! Tu connais déjà %@."
+            "value" : "Exact. Tu connais déjà %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esatto! Conosci già %@."
+            "value" : "Esatto. Conosci già %@."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Klopt! Je kent %@ al."
+            "value" : "Klopt. Je kent %@ al."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certo! Já conheces %@."
+            "value" : "Certo. Já conheces %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Right. You already know %@."
           }
         }
       }
@@ -34733,37 +35021,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gleiche Wahl wie %@!"
+            "value" : "Gleiche Wahl wie %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡La misma elección que %@!"
+            "value" : "La misma elección que %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Même choix que %@ !"
+            "value" : "Même choix que %@."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stessa scelta di %@!"
+            "value" : "Stessa scelta di %@."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zelfde keuze als %@!"
+            "value" : "Zelfde keuze als %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A mesma escolha que %@!"
+            "value" : "A mesma escolha que %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same pick as %@."
           }
         }
       }
@@ -34779,7 +35073,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Misma sesión, nuevas horas"
+            "value" : "Misma sesión, nuevos horarios"
           }
         },
         "fr" : {
@@ -35133,43 +35427,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sag einem neuen Match Hallo und schlag eine erste Session vor."
+            "value" : "Sag einem neuen Match Hallo oder schlag eine erste Session vor."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saluda a un nuevo match y propón una primera sesión."
+            "value" : "Saluda a un nuevo match o propón una primera sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis bonjour à un nouveau match et propose une première séance."
+            "value" : "Dis bonjour à un nouveau match, ou propose une première séance."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saluta un nuovo match e proponi una prima sessione."
+            "value" : "Saluta un nuovo match o proponi una prima sessione."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeg hoi tegen een nieuwe match en stel een eerste sessie voor."
+            "value" : "Zeg hoi tegen een nieuwe match of stel een eerste sessie voor."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diz olá a um novo match e propõe uma primeira sessão."
+            "value" : "Diz olá a um novo match ou propõe uma primeira sessão."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Say hi to a new match and plan a first session."
+            "value" : "Say hi to a new match, or propose a first session."
           }
         }
       }
@@ -35465,7 +35759,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sieh, wer dich geliket hat"
+            "value" : "Sieh, wer dich likt"
           }
         },
         "es" : {
@@ -35477,7 +35771,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vois qui t'a liké"
+            "value" : "Vois qui te like"
           }
         },
         "it" : {
@@ -35489,13 +35783,19 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bekijk wie je heeft geliket"
+            "value" : "Zie wie jou liket"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vê quem gostou de ti"
+            "value" : "Vê quem gosta de ti"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See who likes you"
           }
         }
       }
@@ -35585,43 +35885,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sieh mit drafft tempo, wer es ist, matche mit einem Tipp und plane eure erste Session."
+            "value" : "Sieh mit drafft tempo, wer es ist, und matche mit einem Tipp."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descubre quién es con drafft tempo, haz match con un toque y propón tu primera sesión."
+            "value" : "Descubre quién es con drafft tempo y haz match con un toque."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Découvre qui avec drafft tempo, matche en un geste et propose ta première séance."
+            "value" : "Découvre qui c'est avec drafft tempo et matche en un geste."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scopri chi è con drafft tempo, fai match con un tocco e proponi la prima sessione."
+            "value" : "Scopri chi è con drafft tempo e fai match con un tocco."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zie met drafft tempo wie het is, match met één tik en plan je eerste sessie."
+            "value" : "Zie met drafft tempo wie het is en match met één tik."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descobre quem é com drafft tempo, faz match com um toque e propõe a primeira sessão."
+            "value" : "Descobre quem é com o drafft tempo e faz match com um toque."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "See who it is with drafft tempo, match in one tap and plan your first session."
+            "value" : "See who it is with drafft tempo and match in one tap."
           }
         }
       }
@@ -35923,7 +36223,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer le like avec un commentaire"
+            "value" : "Envoyer avec un commentaire"
           }
         },
         "it" : {
@@ -35942,6 +36242,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar like com comentário"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send with comment"
           }
         }
       }
@@ -35991,37 +36297,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Zeiten senden"
+            "value" : "Diese Zeiten vorschlagen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar nuevos horarios"
+            "value" : "Proponer estos horarios"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer les nouveaux créneaux"
+            "value" : "Proposer ces créneaux"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invia nuovi orari"
+            "value" : "Proponi questi orari"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nieuwe tijden sturen"
+            "value" : "Deze tijden voorstellen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar novos horários"
+            "value" : "Propor estes horários"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Propose these times"
           }
         }
       }
@@ -36031,43 +36343,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einladung senden"
+            "value" : "Session vorschlagen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar invitación"
+            "value" : "Proponer la sesión"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer l'invitation"
+            "value" : "Proposer la séance"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invia invito"
+            "value" : "Proponi la sessione"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uitnodiging sturen"
+            "value" : "Sessie voorstellen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar convite"
+            "value" : "Propor a sessão"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Send invite"
+            "value" : "Propose a session"
           }
         }
       }
@@ -36129,7 +36441,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer le super like avec un mot"
+            "value" : "Envoyer avec un petit mot"
           }
         },
         "it" : {
@@ -36148,6 +36460,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviar super like com nota"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send with a note"
           }
         }
       }
@@ -36770,37 +37088,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeigst du mir deine %@-Moves?"
+            "value" : "Zeigst du mir deine %@-Routine?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Me enseñas tus trucos de %@?"
+            "value" : "¿Me enseñas tu rutina de %@?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu me montres ce que tu sais faire en %@ ?"
+            "value" : "Tu me montres ta routine en %@ ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi fai vedere le tue mosse di %@?"
+            "value" : "Mi fai vedere la tua routine di %@?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laat me zien wat je kunt bij %@?"
+            "value" : "Laat je me je %@-routine zien?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostras-me o que vales em %@?"
+            "value" : "Mostras-me a tua rotina de %@?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show me your %@ routine?"
           }
         }
       }
@@ -36930,43 +37254,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeig dein Tempo"
+            "value" : "Dein Gesicht, dein Sport"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enseña tu ritmo"
+            "value" : "Tu cara, tu deporte"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Montre ton rythme"
+            "value" : "Ton visage, ton sport"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra il tuo ritmo"
+            "value" : "Il tuo viso, il tuo sport"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Laat je tempo zien"
+            "value" : "Je gezicht, je sport"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra o teu ritmo"
+            "value" : "A tua cara, o teu desporto"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show your pace"
+            "value" : "Your face, your sport"
           }
         }
       }
@@ -37108,7 +37432,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Couchers tôt, week-ends de course, jours de repos : aide les bonnes personnes à repérer ton rythme. Passe ce que tu veux."
+            "value" : "Couchers tôt, week-ends de course, jours de repos : aide les bonnes personnes à repérer ton rythme. Passe ce que tu veux."
           }
         },
         "it" : {
@@ -37902,37 +38226,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un problème est survenu. Réessaie dans un instant."
+            "value" : "Ça n'a pas abouti. Réessaie dans un instant."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo ha fallado. Vuelve a intentarlo en un momento."
+            "value" : "No ha funcionado. Vuelve a intentarlo en un momento."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etwas ist schiefgelaufen. Versuch es gleich noch mal."
+            "value" : "Das hat nicht geklappt. Versuch es gleich noch mal."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qualcosa è andato storto. Riprova tra poco."
+            "value" : "Non è andato a buon fine. Riprova tra poco."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo correu mal. Tenta de novo daqui a pouco."
+            "value" : "Não resultou. Tenta de novo daqui a pouco."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Er ging iets mis. Probeer het zo opnieuw."
+            "value" : "Dat lukte niet. Probeer het zo opnieuw."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It didn't go through. Try again in a moment."
           }
         }
       }
@@ -38342,43 +38672,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Loslegen"
+            "value" : "Leute entdecken"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conocer gente"
+            "value" : "Ver quién hay cerca"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rencontrer"
+            "value" : "Voir qui est autour"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inizia"
+            "value" : "Scopri chi c'è vicino"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aan de slag"
+            "value" : "Mensen ontdekken"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar"
+            "value" : "Ver quem está perto"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Start meeting"
+            "value" : "See who's nearby"
           }
         }
       }
@@ -38766,7 +39096,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Besoin d'une idée ?"
+            "value" : "Besoin d'une idée ?"
           }
         },
         "it" : {
@@ -38870,7 +39200,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sugerir outros horários"
+            "value" : "Propor outros horários"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Propose other times"
           }
         }
       }
@@ -39520,37 +39856,43 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fais une pause dans la découverte : tu disparais, tes discussions restent ouvertes."
+            "value" : "Disparais de Découvrir un moment. Tes discussions restent ouvertes."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tómate un respiro del descubrimiento: desapareces y tus chats siguen abiertos."
+            "value" : "Desaparece de Descubrir un tiempo. Tus chats siguen abiertos."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach eine Pause vom Entdecken: Du verschwindest, deine Chats bleiben offen."
+            "value" : "Verschwinde eine Weile aus Entdecken. Deine Chats bleiben offen."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prenditi una pausa dalla scoperta: sparisci, le tue chat restano aperte."
+            "value" : "Sparisci da Scopri per un po'. Le tue chat restano aperte."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faz uma pausa na descoberta: desapareces e as tuas conversas ficam abertas."
+            "value" : "Desaparece de Descobrir por uns tempos. As tuas conversas continuam abertas."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neem een pauze van ontdekken: je verdwijnt, je chats blijven open."
+            "value" : "Verdwijn even uit Ontdekken. Je chats blijven open."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide from Discover for a while. Your chats stay open."
           }
         }
       }
@@ -39806,7 +40148,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca una hora para cambiarla. %@ elige una o propone otras."
+            "value" : "Toca un horario para cambiarlo. %@ elige uno o propone otros."
           }
         },
         "fr" : {
@@ -39830,7 +40172,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca num horário para o alterar. %@ escolhe um ou sugere outros."
+            "value" : "Toca num horário para o alterar. %@ escolhe um ou propõe outros."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a time to change it. %@ picks one or proposes others."
           }
         }
       }
@@ -40110,7 +40458,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avvisa un amico"
+            "value" : "Avvisa qualcuno"
           }
         },
         "nl" : {
@@ -40122,7 +40470,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avisa um amigo"
+            "value" : "Avisa alguém"
           }
         }
       }
@@ -40368,7 +40716,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termos de Utilização"
+            "value" : "Termos de utilização"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terms of use"
           }
         }
       }
@@ -41138,43 +41492,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Ziellinie, von der du träumst"
+            "value" : "Das Ziel, für das du trainierst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La meta que persigues"
+            "value" : "El objetivo para el que entrenas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La ligne d'arrivée dont tu rêves"
+            "value" : "L'objectif pour lequel tu t'entraînes"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il traguardo che insegui"
+            "value" : "L'obiettivo per cui ti alleni"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De finish waar je van droomt"
+            "value" : "Het doel waarvoor je traint"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A meta que persegues"
+            "value" : "O objetivo para que treinas"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The finish line you're chasing"
+            "value" : "The goal you're training for"
           }
         }
       }
@@ -41304,37 +41658,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So gewinnst du mein Herz"
+            "value" : "Schlag mir das vor und ich bin dabei"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La forma de conquistarme"
+            "value" : "Proponme esto y me apunto"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment me faire craquer"
+            "value" : "Propose-moi ça et c'est oui"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il modo per conquistarmi"
+            "value" : "Proponimi questo e ci sto"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zo win je mijn hart"
+            "value" : "Stel dit voor en ik ben erbij"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A forma de me conquistar"
+            "value" : "Propõe-me isto e eu alinho"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Propose this and I'm in"
           }
         }
       }
@@ -41584,37 +41944,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorgeschlagen"
+            "value" : "Vorgeschlagene Zeiten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te propone"
+            "value" : "Sus horarios"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ses propositions"
+            "value" : "Ses créneaux"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ha proposto"
+            "value" : "I suoi orari"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hun voorstel"
+            "value" : "Voorgestelde tijden"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Propostos"
+            "value" : "Horários propostos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Their times"
           }
         }
       }
@@ -41741,6 +42107,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Veem-te primeiro, com um coração vermelho no teu perfil. Usa-os quando quiseres: nunca expiram."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each one puts you at the top of their deck with a red heart. Use them when you like: they never expire."
           }
         }
       }
@@ -42248,7 +42620,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'un ou l'autre ? Choisis ton camp."
+            "value" : "L'un ou l'autre ? Choisis ton camp."
           }
         },
         "it" : {
@@ -42408,7 +42780,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta hora ya ha pasado."
+            "value" : "Este horario ya ha pasado."
           }
         },
         "fr" : {
@@ -43288,43 +43660,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zusammen, ohne Druck, einfach aus Spaß?"
+            "value" : "%@ mit mir ausprobieren, ganz ohne Druck?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿%@ juntos, sin presión, solo por diversión?"
+            "value" : "¿Pruebas %@ conmigo, sin presión?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du %@ ensemble, sans pression, juste pour le plaisir ?"
+            "value" : "Séance découverte en %@, sans pression ?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ insieme, senza pressioni, solo per divertirci?"
+            "value" : "Provi %@ con me, senza pressioni?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Samen %@, zonder druk, gewoon voor de lol?"
+            "value" : "Probeer je %@ met mij, zonder druk?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ juntos, sem pressão, só por diversão?"
+            "value" : "Experimentas %@ comigo, sem pressão?"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ together, no pressure, just fun?"
+            "value" : "Try %@ with me, no pressure?"
           }
         }
       }
@@ -43506,7 +43878,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deux lignes sous ton prénom : comment tu t'entraînes, et qui tu es après la séance."
+            "value" : "Deux lignes sous ton prénom : comment tu t'entraînes, et qui tu es après la séance."
           }
         },
         "it" : {
@@ -43546,7 +43918,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dos de tus horas son iguales."
+            "value" : "Dos de tus horarios son iguales."
           }
         },
         "fr" : {
@@ -43620,19 +43992,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwei Wahrheiten und eine Lüge über meine Fitness"
+            "value" : "Zwei Wahrheiten und eine Lüge über mein Training"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dos verdades y una mentira sobre mi forma física"
+            "value" : "Dos verdades y una mentira sobre mis entrenos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deux vérités et un mensonge sur ma forme"
+            "value" : "Deux vérités et un mensonge sur mon entraînement"
           }
         },
         "it" : {
@@ -43644,13 +44016,19 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twee waarheden en een leugen over mij als sporter"
+            "value" : "Twee waarheden en een leugen over mijn training"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Duas verdades e uma mentira sobre a minha forma física"
+            "value" : "Duas verdades e uma mentira sobre os meus treinos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Two truths and a lie about my training"
           }
         }
       }
@@ -43712,7 +44090,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deux vérités, un mensonge. Lequel est faux ?"
+            "value" : "Deux vérités, un mensonge. Lequel est faux ?"
           }
         },
         "it" : {
@@ -44226,43 +44604,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rückgängig ist Teil von drafft tempo, mit allem, was dich schneller zur ersten Session bringt."
+            "value" : "Rückgängig machen gehört zu drafft tempo, genau wie zu sehen, wer dich schon likt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deshacer viene con drafft tempo, junto con todo lo que te lleva antes a una primera sesión."
+            "value" : "Deshacer viene con drafft tempo, igual que ver a quién ya le gustas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'annulation est incluse dans drafft tempo, avec tout ce qui te mène plus vite à une première séance."
+            "value" : "Annuler fait partie de drafft tempo, tout comme voir qui te like déjà."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'annullamento è incluso in drafft tempo, con tutto ciò che ti porta prima a una prima sessione."
+            "value" : "Annullare fa parte di drafft tempo, come scoprire a chi piaci già."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ongedaan maken hoort bij drafft tempo, met alles wat je sneller naar een eerste sessie brengt."
+            "value" : "Ongedaan maken hoort bij drafft tempo, net als zien wie jou al liket."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anular vem com o drafft tempo, com tudo o que te leva mais depressa a uma primeira sessão."
+            "value" : "Anular faz parte do drafft tempo, tal como ver quem já gosta de ti."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Undo comes with drafft tempo, plus everything that gets you to a first session sooner."
+            "value" : "Undo comes with drafft tempo. So does seeing who already likes you."
           }
         }
       }
@@ -44364,7 +44742,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annule tes swipes, vois qui t'a liké, likes illimités."
+            "value" : "Annule tes swipes, vois qui te like, likes illimités."
           }
         },
         "it" : {
@@ -44382,7 +44760,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anula swipes, vê quem gostou de ti, likes ilimitados."
+            "value" : "Anula swipes, vê quem gosta de ti, likes ilimitados."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo swipes, see who likes you, unlimited likes."
           }
         }
       }
@@ -44392,7 +44776,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rückgängig, sehen, wer dich geliket hat, unbegrenzte Likes und ein Gratis-Boost pro Woche. Alles ist ab sofort aktiv."
+            "value" : "Rückgängig machen, sehen, wer dich likt, unbegrenzte Likes und ein Gratis-Boost pro Woche. Alles ist ab sofort aktiv."
           }
         },
         "es" : {
@@ -44404,7 +44788,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annuler, voir qui t'a liké, likes illimités et un boost gratuit chaque semaine. Tout est activé dès maintenant."
+            "value" : "Annuler, voir qui te like, likes illimités et un boost gratuit chaque semaine. Tout est activé dès maintenant."
           }
         },
         "it" : {
@@ -44416,13 +44800,19 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ongedaan maken, zien wie je heeft geliket, onbeperkt liken en elke week een gratis boost. Alles staat aan, vanaf nu."
+            "value" : "Ongedaan maken, zien wie jou liket, onbeperkt liken en elke week een gratis boost. Alles staat aan, vanaf nu."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anular, ver quem gostou de ti, likes ilimitados e um boost grátis por semana. Está tudo ativo, a partir de agora."
+            "value" : "Anular, ver quem gosta de ti, likes ilimitados e um boost grátis por semana. Está tudo ativo, a partir de agora."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Undo, see who likes you, unlimited likes and a free boost every week. Everything is on, starting now."
           }
         }
       }
@@ -44878,7 +45268,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bis zu %lld Termine"
+            "value" : "Bis zu %lld Zeiten"
           }
         },
         "es" : {
@@ -46016,7 +46406,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quel est le problème ?"
+            "value" : "Quel est le problème ?"
           }
         },
         "it" : {
@@ -46056,7 +46446,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Où devons-nous te répondre ?"
+            "value" : "Où te répondre ?"
           }
         },
         "it" : {
@@ -46210,7 +46600,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿WOD juntos, sin piedad?"
+            "value" : "¿WOD a dúo, sin piedad?"
           }
         },
         "fr" : {
@@ -46234,7 +46624,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "WOD juntos, sem piedade?"
+            "value" : "WOD a dois, sem piedade?"
           }
         }
       }
@@ -46964,37 +47354,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schade, dass du gehst."
+            "value" : "Deine Entscheidung. Das wird gelöscht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sentimos que te vayas."
+            "value" : "Tú decides. Esto es lo que se borra."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dommage de te voir partir."
+            "value" : "À toi de voir. Voici ce qui sera effacé."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ci dispiace che tu te ne vada."
+            "value" : "Decidi tu. Ecco cosa viene eliminato."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jammer dat je gaat."
+            "value" : "Jouw keuze. Dit wordt verwijderd."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "É pena ver-te partir."
+            "value" : "A decisão é tua. Isto é o que se apaga."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your call. Here's what deleting removes."
           }
         }
       }
@@ -47182,7 +47578,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Content de te revoir"
+            "value" : "Te revoilà"
           }
         },
         "it" : {
@@ -47382,7 +47778,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment on t'appelle ?"
+            "value" : "Comment on t'appelle ?"
           }
         },
         "it" : {
@@ -47948,7 +48344,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Où t'entraînes-tu ?"
+            "value" : "Où t'entraînes-tu ?"
           }
         },
         "it" : {
@@ -48068,7 +48464,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qui aimerais-tu rencontrer ?"
+            "value" : "Qui aimerais-tu rencontrer ?"
           }
         },
         "it" : {
@@ -48154,7 +48550,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pourquoi tu pars ?"
+            "value" : "Pourquoi tu pars ?"
           }
         },
         "it" : {
@@ -49029,37 +49425,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Zeit schlägst du schon vor."
+            "value" : "Diese Zeit hast du schon hinzugefügt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya propones esta hora."
+            "value" : "Ya has añadido este horario."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu proposes déjà ce créneau."
+            "value" : "Tu as déjà ajouté ce créneau."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai già proposto questo orario."
+            "value" : "Hai già aggiunto questo orario."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je biedt deze tijd al aan."
+            "value" : "Deze tijd heb je al toegevoegd."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Já propões este horário."
+            "value" : "Já adicionaste este horário."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've already added this time."
           }
         }
       }
@@ -49069,43 +49471,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du und %@ macht beide %@. Kein endloses Chatten: Das erste Date ist eine Session."
+            "value" : "Du und %@ macht beide %@. Sag Hallo oder schlag eine Session vor, solange es noch frisch ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ y tú practicáis %@. Nada de chats eternos: la primera cita, una sesión juntos."
+            "value" : "%@ y tú practicáis %@. Saluda o propón una sesión ahora que está reciente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ et toi, vous faites tous les deux du %@. Pas besoin de discuter des semaines : le premier rendez-vous, c'est une séance."
+            "value" : "%@ et toi, vous partagez un sport : %@. Dis bonjour, ou propose une séance tant que c'est frais."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu e %@ fate entrambi %@. Niente chat infinite: il primo appuntamento è una sessione insieme."
+            "value" : "Tu e %@ fate entrambi %@. Saluta o proponi subito una sessione."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jij en %@ doen allebei %@. Geen eindeloos chatten: je eerste date is een sessie samen."
+            "value" : "Jij en %@ doen allebei %@. Zeg hoi of stel een sessie voor nu het nog vers is."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu e %@ praticam os dois %@. Nada de conversas sem fim: o primeiro encontro é uma sessão juntos."
+            "value" : "Tu e %@ praticam %@. Diz olá ou propõe já uma sessão."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You and %@ both do %@. Skip the endless chat: make the first date a session."
+            "value" : "You and %@ both do %@. Say hi, or propose a session while it's fresh."
           }
         }
       }
@@ -49115,43 +49517,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du und %@ habt euch geliked. Sag hallo, dann wählt Sport, Ort und Uhrzeit."
+            "value" : "%@ likt dich auch. Sag Hallo oder schlag eine Session vor, solange es noch frisch ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ y tú os habéis dado like. Saluda y elegid deporte, lugar y hora."
+            "value" : "A %@ también le gustas. Saluda o propón una sesión ahora que está reciente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ et toi, vous vous êtes likés. Dis bonjour, puis choisissez un sport, un lieu et une heure."
+            "value" : "%@ te like aussi. Dis bonjour, ou propose une séance tant que c'est frais."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu e %@ vi siete messi like. Saluta, poi scegliete sport, luogo e orario."
+            "value" : "Piaci anche a %@. Saluta o proponi subito una sessione."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jij en %@ hebben elkaar geliked. Zeg hoi en kies samen een sport, plek en tijd."
+            "value" : "%@ liket jou ook. Zeg hoi of stel een sessie voor nu het nog vers is."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu e %@ deram like um ao outro. Diz olá e escolham desporto, local e hora."
+            "value" : "%@ também gosta de ti. Diz olá ou propõe já uma sessão."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You and %@ liked each other. Say hi, then pick a sport, a place and a time."
+            "value" : "%@ likes you too. Say hi, or propose a session while it's fresh."
           }
         }
       }
@@ -49321,37 +49723,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst eine Session jederzeit beenden, ohne Erklärung."
+            "value" : "Du kannst eine Session jederzeit verlassen, ohne Begründung."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes terminar una sesión cuando quieras, sin dar explicaciones."
+            "value" : "Puedes irte de una sesión cuando quieras, sin dar explicaciones."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu peux arrêter une séance à tout moment, sans avoir à te justifier."
+            "value" : "Tu peux quitter une séance à tout moment, sans te justifier."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puoi interrompere una sessione quando vuoi, senza dare spiegazioni."
+            "value" : "Puoi lasciare una sessione quando vuoi, senza giustificarti."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je kunt een sessie altijd beëindigen, zonder uitleg."
+            "value" : "Je kunt een sessie altijd verlaten, zonder uitleg."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podes terminar uma sessão quando quiseres, sem precisares de explicar."
+            "value" : "Podes sair de uma sessão quando quiseres, sem te justificares."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can leave a session anytime, no reason needed."
           }
         }
       }
@@ -49533,13 +49941,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C'est un match avec %@"
+            "value" : "Tu as matché avec %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "È un match con %@"
+            "value" : "Hai fatto match con %@"
           }
         },
         "nl" : {
@@ -50053,13 +50461,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta session est fermée, rien n'a donc été supprimé. Reconnecte-toi, puis supprime ton compte."
+            "value" : "Ta connexion a expiré, rien n'a donc été supprimé. Reconnecte-toi, puis supprime ton compte."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La sessione è terminata, quindi non è stato eliminato nulla. Accedi di nuovo, poi elimina il tuo account."
+            "value" : "Il tuo accesso è scaduto, quindi non è stato eliminato nulla. Accedi di nuovo, poi elimina il tuo account."
           }
         },
         "nl" : {
@@ -50173,13 +50581,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Session terminée"
+            "value" : "Ta connexion a pris fin"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sessione terminata"
+            "value" : "Accesso terminato"
           }
         },
         "nl" : {
@@ -50213,13 +50621,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta session a été fermée. Reconnecte-toi pour continuer."
+            "value" : "Ta connexion a pris fin. Reconnecte-toi pour continuer."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La sessione è terminata. Accedi di nuovo per continuare."
+            "value" : "Il tuo accesso è terminato. Accedi di nuovo per continuare."
           }
         },
         "nl" : {
@@ -50241,43 +50649,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast alle gesehen, die zu deinen Filtern passen. Jeden Tag kommen Neue dazu: Schau nach deiner nächsten Session wieder rein oder erweitere sie."
+            "value" : "Du hast alle gesehen, die zu deinen Filtern passen. Schau nach deiner nächsten Session wieder rein oder erweitere sie."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has visto a todos los que encajan con tus filtros. Llega gente nueva cada día: vuelve después de tu próxima sesión o amplíalos."
+            "value" : "Has visto todos los perfiles que encajan con tus filtros. Vuelve después de tu próxima sesión o amplíalos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as vu tous les profils qui correspondent à tes filtres. De nouvelles personnes arrivent chaque jour : reviens après ta prochaine séance, ou élargis-les."
+            "value" : "Tu as vu toutes les personnes qui correspondent à tes filtres. Reviens après ta prochaine séance, ou élargis-les."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hai visto tutti quelli che rientrano nei tuoi filtri. Arrivano persone nuove ogni giorno: torna dopo la prossima sessione o allargali."
+            "value" : "Hai visto tutti i profili che rientrano nei tuoi filtri. Torna dopo la prossima sessione o allargali."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je hebt iedereen gezien die bij je filters past. Er komen elke dag nieuwe mensen bij: kijk na je volgende sessie weer, of verruim ze."
+            "value" : "Je hebt iedereen gezien die bij je filters past. Kijk na je volgende sessie weer, of verruim ze."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Já viste todos os que encaixam nos teus filtros. Chega gente nova todos os dias: volta depois da próxima sessão ou alarga-os."
+            "value" : "Já viste todos os perfis que encaixam nos teus filtros. Volta depois da próxima sessão ou alarga-os."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You've seen everyone who fits your filters. New people join every day: check back after your next session, or widen them."
+            "value" : "You've seen everyone who fits your filters. Check back after your next session, or widen them."
           }
         }
       }
@@ -52397,37 +52805,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Sitzung auf diesem iPhone ist beendet. Melde dich wieder an, um weiterzumachen."
+            "value" : "Melde dich auf diesem iPhone wieder an, um weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu sesión ha terminado en este iPhone. Vuelve a iniciar sesión para seguir donde lo dejaste."
+            "value" : "Vuelve a iniciar sesión en este iPhone para seguir donde lo dejaste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta session a pris fin sur cet iPhone. Reconnecte-toi pour reprendre là où tu en étais."
+            "value" : "Reconnecte-toi sur cet iPhone pour reprendre là où tu en étais."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La tua sessione su questo iPhone è terminata. Accedi di nuovo per riprendere da dove avevi lasciato."
+            "value" : "Accedi di nuovo su questo iPhone per riprendere da dove avevi lasciato."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je sessie op deze iPhone is beëindigd. Log opnieuw in om verder te gaan waar je was."
+            "value" : "Log opnieuw in op deze iPhone om verder te gaan waar je was."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A tua sessão terminou neste iPhone. Inicia sessão novamente para continuar onde ficaste."
+            "value" : "Inicia sessão de novo neste iPhone para continuar onde ficaste."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log in again on this iPhone to pick up where you left off."
           }
         }
       }
@@ -52523,7 +52937,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu suscripción se factura a través de tu cuenta de Apple y se renueva automáticamente salvo que la canceles al menos 24 horas antes del final del periodo actual. Para cambiar de plan o cancelar, ve a tus suscripciones del App Store. Eliminar drafft no la cancela."
+            "value" : "Tu suscripción se factura a través de tu cuenta de Apple y se renueva automáticamente salvo que la canceles al menos 24 horas antes del final del periodo actual. Para cambiarla o cancelarla, ve a tus suscripciones del App Store. Eliminar drafft no la cancela."
           }
         },
         "fr" : {
@@ -52535,7 +52949,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il tuo abbonamento viene addebitato sul tuo Account Apple e si rinnova automaticamente, a meno che non lo annulli almeno 24 ore prima della fine del periodo in corso. Per cambiare piano o annullare, vai agli abbonamenti dell'App Store. Eliminare drafft non annulla l'abbonamento."
+            "value" : "Il tuo abbonamento viene addebitato sul tuo Account Apple e si rinnova automaticamente, a meno che non lo annulli almeno 24 ore prima della fine del periodo in corso. Per modificarlo o annullarlo, vai agli abbonamenti dell'App Store. Eliminare drafft non annulla l'abbonamento."
           }
         },
         "nl" : {
@@ -52547,7 +52961,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A tua subscrição é cobrada através da tua Conta Apple e renova-se automaticamente, a menos que a canceles pelo menos 24 horas antes do fim do período atual. Para mudar de plano ou cancelar, vai às tuas subscrições da App Store. Apagar o drafft não a cancela."
+            "value" : "A tua subscrição é cobrada através da tua Conta Apple e renova-se automaticamente, a menos que a canceles pelo menos 24 horas antes do fim do período atual. Para a alterar ou cancelar, vai às tuas subscrições da App Store. Apagar o drafft não a cancela."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change or cancel it, go to your App Store subscriptions. Deleting drafft doesn't cancel it."
           }
         }
       }
@@ -53569,7 +53989,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft en a besoin pour te montrer les gens autour de toi. « Lorsque l'app est active » suffit, et seul ton secteur est affiché."
+            "value" : "drafft en a besoin pour te montrer les gens autour de toi. « Lorsque l'app est active » suffit, et seule ta zone est affichée."
           }
         },
         "it" : {
@@ -53587,7 +54007,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O drafft precisa dela para te mostrar pessoas perto de ti. Durante a utilização da app é suficiente, e só a tua zona é mostrada."
+            "value" : "O drafft precisa dela para te mostrar pessoas perto de ti. «Durante a utilização da app» é suficiente, e só a tua zona é mostrada."
           }
         }
       }
@@ -53695,7 +54115,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft tempo non ha limiti giornalieri. Metti like a tutti quelli con cui ti alleneresti."
+            "value" : "drafft tempo non ha limiti giornalieri. Metti like a tutte le persone con cui ti alleneresti."
           }
         },
         "nl" : {
@@ -53769,19 +54189,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft tempo te muestra a todos los que ya te han dado like. Haz match con un toque y propón una sesión."
+            "value" : "drafft tempo te muestra quién te ha dado like. Haz match con un toque y propón una sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft tempo te montre tous ceux qui t'ont déjà liké. Matche en un geste, puis propose une séance."
+            "value" : "drafft tempo te montre qui te like déjà. Matche en un geste, puis propose une séance."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft tempo ti mostra tutti quelli che ti hanno già messo like. Fai match con un tocco e proponi una sessione."
+            "value" : "drafft tempo ti mostra chi ti ha già messo like. Fai match con un tocco e proponi una sessione."
           }
         },
         "nl" : {
@@ -53793,7 +54213,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "drafft tempo mostra-te todos os que já te deram like. Faz match com um toque e propõe uma sessão."
+            "value" : "drafft tempo mostra-te quem já te deu like. Faz match com um toque e propõe uma sessão."
           }
         },
         "en" : {
@@ -55941,19 +56361,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "lo practicáis los dos"
+            "value" : "deporte en común"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "vous en faites tous les deux"
+            "value" : "sport en commun"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "lo fate entrambi"
+            "value" : "sport in comune"
           }
         },
         "nl" : {
@@ -55965,7 +56385,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ambos praticam"
+            "value" : "desporto em comum"
           }
         }
       }

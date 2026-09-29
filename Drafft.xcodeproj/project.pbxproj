@@ -1071,7 +1071,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "drafft keeps the sessions you add to your calendar up to date, and removes them if they're cancelled.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "drafft uses your camera for photos in your profile and chats, and for the selfie that confirms it's you.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft shows your area, never your address, and rounds distances.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1162,7 +1162,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "drafft keeps the sessions you add to your calendar up to date, and removes them if they're cancelled.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "drafft uses your camera for photos in your profile and chats, and for the selfie that confirms it's you.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft shows your area, never your address, and rounds distances.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1354,7 +1354,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "drafft keeps the sessions you add to your calendar up to date, and removes them if they're cancelled.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "drafft uses your camera for photos in your profile and chats, and for the selfie that confirms it's you.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft shows your area, never your address, and rounds distances.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1402,7 +1402,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "drafft keeps the sessions you add to your calendar up to date, and removes them if they're cancelled.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "drafft uses your camera for photos in your profile and chats, and for the selfie that confirms it's you.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft shows your area, never your address, and rounds distances.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -51,10 +51,6 @@ struct LegalDocSheet: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
                     }
-                    Text("Demo text. The final legal documents will replace it.")
-                        .font(.footnote)
-                        .foregroundStyle(DS.Palette.body)
-                        .padding(.horizontal, DS.Space.xs)
                 }
                 .padding(DS.Space.lg)
             }
