@@ -55,6 +55,10 @@ struct MeView: View {
                         separator
                         row(L("Export my data"), icon: "square.and.arrow.down.fill",
                             value: app.dataExportRequestedAt == nil ? L("Sent to you by email") : L("Requested, check your inbox")) { sheet = .export }
+                        separator
+                        // drafft can't work without the gender: withdrawing the consent is deleting the account.
+                        row(L("Sensitive data consent"), icon: "checkmark.shield.fill",
+                            value: L("Withdrawing it means deleting your account.")) { sheet = .delete }
                     }
                     group(L("Help")) {
                         row(L("Safety tips"), icon: "shield.lefthalf.filled", value: L("Meeting someone for the first time")) { sheet = .safety }
