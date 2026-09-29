@@ -47,9 +47,9 @@ struct SessionFailureBanner: View {
         HStack(spacing: DS.Space.md) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.title3.weight(.bold))
-                .foregroundStyle(DS.Palette.onLime)
+                .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 48, height: 48)
-                .background(DS.Palette.lime, in: .circle)
+                .background(DS.Palette.accentOnNight, in: .circle)
                 .accessibilityHidden(true)
             Text(message)
                 .font(.headline)
