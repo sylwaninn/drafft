@@ -86,6 +86,9 @@ final class AppModel {
     var blockedCount: Int { blocked.count }
     /// Data export: requested here, sent by email as a download link (server side).
     var dataExportRequestedAt: Date?
+    /// The server has no record of this account accepting the current terms and the use of its
+    /// sensitive data: `TermsConsentView` asks once, over everything (from a fresh read only).
+    var termsConsentNeeded = false
 
     /// 0…1, with the next thing worth adding.
     var profileCompletion: (value: Double, next: String?) {

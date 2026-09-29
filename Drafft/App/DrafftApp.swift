@@ -307,6 +307,10 @@ struct MainTabs: View {
         .onChange(of: isActive) { _, active in if active { location.refresh() } }
         .onChange(of: scenePhase) { _, p in if p == .active && isActive { location.refresh() } }
         .fullScreenCover(isPresented: .constant(isActive && location.isBlocked)) { LocationRequiredView() }
+        // No record of the current terms and the consent to sensitive data: asked once, before the rest.
+        .fullScreenCover(isPresented: .constant(isActive && !location.isBlocked && app.termsConsentNeeded)) {
+            TermsConsentView()
+        }
         .overlay(alignment: .top) {
             if !isActive {
                 EmptyView()

@@ -218,6 +218,7 @@ extension AppModel {
         SessionStore.shared.reset()
         blocked = []
         dataExportRequestedAt = nil
+        termsConsentNeeded = false
         filters = DiscoverFilters()
         clearWallet()
         me = Self.nobody

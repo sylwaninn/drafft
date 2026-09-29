@@ -120,6 +120,8 @@ enum ProfileSync {
         let hold: AccountHold?
         let onboarded: Bool
         let notifications: NotificationSettings?
+        /// Onboarded without the current terms and the consent on record (`TermsConsent`).
+        let termsNeeded: Bool
     }
 
     /// The row as the server sends it; the local cache stores these bytes as they are.
@@ -142,6 +144,10 @@ enum ProfileSync {
         let paused: Bool
         let moderation: AccountHold?
         let onboardedAt: String?
+        /// Recorded by `accept_terms`; nil on an account that never accepted on the server.
+        let termsVersion: String?
+        let termsAcceptedAt: String?
+        let sensitiveConsentAt: String?
         let sports: [SportRow]?
         let prompts: [PromptRow]?
         let media: [MediaRow]?
@@ -153,6 +159,9 @@ enum ProfileSync {
             case voiceIntroKey = "voice_intro_key"
             case voiceDuration = "voice_duration"
             case onboardedAt = "onboarded_at"
+            case termsVersion = "terms_version"
+            case termsAcceptedAt = "terms_accepted_at"
+            case sensitiveConsentAt = "sensitive_consent_at"
             case sports = "profile_sports"
             case prompts = "profile_prompts"
             case media = "profile_media"
@@ -170,7 +179,8 @@ enum ProfileSync {
     private static let accountColumns = [
         "name", "birthdate", "pronouns", "gender", "neighborhood", "bio", "goal", "favorite_spot",
         "drinks", "smokes", "diet", "chronotype", "icebreaker", "voice_intro_key", "voice_duration",
-        "paused", "moderation", "onboarded_at", NotificationSettings.columns,
+        "paused", "moderation", "onboarded_at", "terms_version", "terms_accepted_at", "sensitive_consent_at",
+        NotificationSettings.columns,
         "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status,thumbhash)"
     ].joined(separator: ",")
 
@@ -237,9 +247,12 @@ enum ProfileSync {
             vitalsOverride: vitals,
             promptsOverride: (row.prompts ?? []).map { ProfilePrompt(question: $0.question, answer: $0.answer) }
         )
+        let termsNeeded = row.onboardedAt != nil && (row.termsAcceptedAt == nil
+            || TermsConsent.isNeeded(acceptedVersion: row.termsVersion, sensitiveConsentAt: row.sensitiveConsentAt))
         return Account(
             profile: profile, paused: row.paused, hold: row.moderation, onboarded: row.onboardedAt != nil,
-            notifications: try? JSONDecoder().decode([NotificationSettings].self, from: data).first
+            notifications: try? JSONDecoder().decode([NotificationSettings].self, from: data).first,
+            termsNeeded: termsNeeded
         )
     }
 

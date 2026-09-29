@@ -27,6 +27,8 @@ extension AppModel {
                 openLocalCache()?.save(data, as: .profile)
                 lastAccountRead = (.now, account)
                 apply(account)
+                // Only from the server: a cached copy may predate the consent or lack it.
+                termsConsentNeeded = account.termsNeeded
                 return account
             } catch {
                 guard session == sessionID else { return nil }
