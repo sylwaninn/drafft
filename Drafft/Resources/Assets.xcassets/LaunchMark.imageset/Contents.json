@@ -4,17 +4,6 @@
       "idiom": "universal",
       "filename": "launch-mark@3x.png",
       "scale": "3x"
-    },
-    {
-      "idiom": "universal",
-      "filename": "launch-mark-dark@3x.png",
-      "scale": "3x",
-      "appearances": [
-        {
-          "appearance": "luminosity",
-          "value": "dark"
-        }
-      ]
     }
   ],
   "info": {
