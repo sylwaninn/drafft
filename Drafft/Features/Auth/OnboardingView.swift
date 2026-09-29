@@ -11,7 +11,6 @@ struct OnboardingView: View {
     @State private var birthday: Date?
     @State private var acceptedTerms = false
     @State private var language: AppLanguage = .deviceDefault
-    @State private var legalDoc: LegalDoc?
     @State private var identity: String?
     @State private var interestedIn: Set<String> = []
     @State private var locator = AreaLocator()
@@ -564,7 +563,7 @@ struct OnboardingView: View {
     static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now)! }
 
     /// Required consent, unchecked by default. The checkbox toggles; the document names in the
-    /// sentence are links that open each document.
+    /// sentence are links that open each document on getdrafft.com, in the in-app browser.
     private var consent: some View {
         HStack(alignment: .top, spacing: DS.Space.sm) {
             Button {
@@ -583,13 +582,9 @@ struct OnboardingView: View {
                 .tint(DS.Palette.accentInk)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.vertical, 11) // Level with the box on top, the same room under the last line.
-                .environment(\.openURL, OpenURLAction { url in
-                    legalDoc = LegalDoc(rawValue: url.lastPathComponent)
-                    return .handled
-                })
+                .environment(\.openURL, OpenURLAction { url in .systemAction(url, prefersInApp: true) })
         }
         .padding(.leading, -DS.Space.sm)
-        .sheet(item: $legalDoc) { item in Group { LegalDocSheet(doc: item) }.sheetSurface() }
     }
 
     private var consentText: AttributedString {
@@ -598,7 +593,7 @@ struct OnboardingView: View {
         var s = AttributedString(L("I'm 18 or older and I accept the \(terms), the \(privacy) and the \(community)."))
         for doc in LegalDoc.allCases {
             guard let r = s.range(of: doc.title) else { continue }
-            s[r].link = URL(string: "drafft://legal/\(doc.rawValue)")
+            s[r].link = doc.url
             s[r].underlineStyle = .single
             s[r].font = .subheadline.weight(.semibold)
         }
