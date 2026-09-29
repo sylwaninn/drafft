@@ -24,6 +24,9 @@ enum LegalDoc: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The privacy policy's section on sensitive data, linked from the consent to it.
+    static var sensitiveData: URL { page("privacy", section: "sensitive-data") }
+
     /// getdrafft.com/<language>/<page>#<section>, English without a language prefix. Section
     /// anchors are the same in every language.
     static func page(_ page: String, section: String? = nil) -> URL {

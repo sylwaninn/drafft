@@ -7,6 +7,8 @@ struct OnboardingProgress: Codable, Equatable {
     var language: String?
     var birthday: Date?
     var acceptedTerms = false
+    /// The terms version recorded on the server with the consent (`TermsConsent`), nil until then.
+    var termsVersion: String?
     var verifiedPhone: String?
     var identity: String?
     var interestedIn: [String] = []
