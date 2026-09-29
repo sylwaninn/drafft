@@ -87,7 +87,7 @@ targets:
         SWIFT_EMIT_LOC_STRINGS: YES
         LOCALIZATION_PREFERS_STRING_CATALOGS: YES
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UILaunchStoryboardName: LaunchScreen
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_CFBundleDisplayName: $(APP_DISPLAY_NAME)
         INFOPLIST_KEY_NSMicrophoneUsageDescription: drafft uses the microphone to record voice messages and your voice intro.
@@ -101,11 +101,9 @@ targets:
         UIAppFonts:
           - InterDisplay-Black.ttf
           - InterDisplay-ExtraBold.ttf
-        # The first frame of SplashView: page tone and the word, centred.
-        UILaunchScreen:
-          UIColorName: LaunchBackground
-          UIImageName: LaunchMark
-          UIImageRespectsSafeAreaInsets: false
+        # The first frame of SplashView: the night surface and the white word where SplashView
+        # draws it (a storyboard: UILaunchScreen can only centre its image).
+        UILaunchStoryboardName: LaunchScreen
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         CFBundleDisplayName: $(APP_DISPLAY_NAME)
         # Read by BackendConfig; values from Config/*.xcconfig.
