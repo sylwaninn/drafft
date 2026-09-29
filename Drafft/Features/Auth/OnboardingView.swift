@@ -607,7 +607,7 @@ struct OnboardingView: View {
 
     private var genderStep: some View {
         page {
-            stepTitle(L("Which describes you best?"), L("You can change it anytime in You."))
+            stepTitle(L("Which describes you best?"), L("You can't change it later. If it's ever wrong, write to the help center in You."))
             choiceRows(["Woman", "Man", "Non-binary"], isOn: { identity == $0 }) { o in
                 identity = identity == o ? nil : o
             }
@@ -719,11 +719,11 @@ struct OnboardingView: View {
         }
     }
 
-    /// How location works, plainly: when it updates, how it's blurred, what others see.
+    /// How location works, plainly: when it's read, how it's blurred, what others see.
     private var locationFacts: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
-            fact("arrow.triangle.2.circlepath", L("Updates as you move"),
-                 L("Each time you open drafft, your area follows you: home, work, a weekend away."))
+            fact("location", L("Read once, not tracked"),
+                 L("Your area comes from where you are right now. drafft doesn't follow your moves or track you in the background."))
             fact("circle.dotted.circle", L("Blurred before it leaves your phone"),
                  L("Your position is rounded to about 1 km. Your exact spot is never sent or stored."))
             fact("eye", L("What others see"),
