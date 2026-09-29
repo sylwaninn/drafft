@@ -3,6 +3,15 @@
 drafft iOS app (SwiftUI, XcodeGen). Product and design context: [PRODUCT.md](PRODUCT.md),
 [DESIGN.md](DESIGN.md). Backend: the `drafft-backend` repository.
 
+## User-facing text: WORDING.md first (priority rule)
+
+Before writing or changing any text people see (UI strings in any of the 7 languages, CTAs, errors,
+empty states, push, email, paywall, store listings, website, screenshots, marketing), read and apply
+[WORDING.md](WORDING.md), then run its review checklist (section 10). The `wording` skill
+(`.agents/skills/wording/`) walks through it. Never write "plan" in any sense or language, and never
+present a match as turning into something. New editorial decisions go into WORDING.md only (here, the
+canonical copy; `scripts/sync-wording.sh` copies it to drafft-backend and drafft-web).
+
 ## Rules for every agent
 
 Read these before committing or opening a pull request. They live in `.agents/` so any agent can use
@@ -10,7 +19,7 @@ them; Claude Code loads them through `CLAUDE.md`.
 
 - Commits and branches: [.agents/rules/commits.md](.agents/rules/commits.md)
 - GitHub (pull requests, comments): [.agents/rules/github.md](.agents/rules/github.md)
-- Skills: `.agents/skills/` (`create-pr`, `technical-writer`)
+- Skills: `.agents/skills/` (`create-pr`, `technical-writer`, `wording`)
 - Git hooks that enforce them for everyone, agents and humans (`.agents/git-hooks/`): `commit-msg`
   (format, one line, no Co-Authored-By) and `pre-push` (no push to `main`). Enable once per clone:
   `git config core.hooksPath .agents/git-hooks`
@@ -28,8 +37,9 @@ CI (`.github/workflows/app.yml`) runs the last two lines plus gitleaks and actio
 request. SwiftLint fails on new violations only (existing debt is in `.swiftlint-baseline.json`). The
 design lint encodes DESIGN.md's rules (no gradients but photo scrims, no '·', no '…' on copy, lowercase
 brand, palette colours only, a surface on every sheet); a deliberate exception carries its reason:
-`// design-lint: allow <rule> - <why>`. The i18n lint wants all 7 languages, matching placeholders and
-a catalog in sync with the code.
+`// design-lint: allow <rule> - <why>`. The i18n lint wants all 7 languages, matching placeholders,
+a catalog in sync with the code, and none of the wording WORDING.md forbids (its `wording-forbidden`
+block, also applied to `Services/NotificationText.swift`).
 
 Environments: scheme **Drafft** (production backend) and **Drafft Staging** ("drafft β", staging
 backend), from `Config/*.xcconfig`. **Drafft Local** ("drafft local") runs on the local Supabase of

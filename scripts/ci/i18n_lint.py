@@ -2,8 +2,8 @@
 """Translation checks for drafft's string catalogs, on every change.
 
 Fails when a string people see is missing a language, isn't reviewed, loses or gains a placeholder,
-capitalises the brand, or when the catalog no longer matches the code (stale keys, L("…") keys the
-catalog doesn't have). Warns when a short English string grows much longer in another language.
+capitalises the brand, uses a wording WORDING.md forbids (its `wording-forbidden` block), or when
+the catalog no longer matches the code (stale keys, L("…") keys the catalog doesn't have). Warns when a short English string grows much longer in another language.
 """
 import json
 import pathlib
@@ -15,6 +15,28 @@ CATALOGS = [ROOT / "Drafft/Resources/Localizable.xcstrings", ROOT / "Drafft/Reso
 LANGUAGES = ["en", "fr", "es", "de", "it", "pt", "nl"]
 PLACEHOLDER = re.compile(r"%(?:\d+\$)?(@|lld|ld|lu|d|u|f|\.\d+f|%)")
 WORD = re.compile(r"[A-Za-zÀ-ÿ]{2,}")
+# Copy that lives outside the catalogs but still reaches people.
+HARD_CODED_COPY = [ROOT / "Drafft/Services/NotificationText.swift"]
+
+
+def forbidden_wording() -> list[tuple[re.Pattern, str]]:
+    """The `pattern | reason` lines of WORDING.md's wording-forbidden block."""
+    block = re.search(r"```wording-forbidden\n(.*?)```", (ROOT / "WORDING.md").read_text(encoding="utf-8"), re.S)
+    rules = []
+    for line in block.group(1).splitlines() if block else []:
+        pattern, _, reason = line.rpartition(" | ")
+        if pattern:
+            rules.append((re.compile(pattern, re.I), reason))
+    return rules
+
+
+FORBIDDEN = forbidden_wording()
+
+
+def check_wording(where: str, value: str, errors: list[str]) -> None:
+    for pattern, reason in FORBIDDEN:
+        if pattern.search(value):
+            errors.append(f"{where}: {reason}, see WORDING.md: {value!r}")
 
 
 def placeholders(text: str) -> list[str]:
@@ -62,6 +84,7 @@ def check_catalog(path: pathlib.Path, errors: list[str], warnings: list[str]) ->
                     errors.append(f"{where}: the brand is 'drafft', lowercase: {value!r}")
                 if "·" in value:
                     errors.append(f"{where}: no '·' separators: {value!r}")
+                check_wording(where, value, errors)
                 if lang != source_language and len(source) <= 24 and len(value) > max(2.2 * len(source), len(source) + 16):
                     warnings.append(f"{where}: short English grew to {len(value)} chars: {value!r}")
     return set(data["strings"])
@@ -83,6 +106,10 @@ def main() -> int:
     known = set()
     for catalog in CATALOGS:
         known |= check_catalog(catalog, errors, warnings)
+    for path in HARD_CODED_COPY:
+        for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            for literal in re.findall(r'"((?:[^"\\]|\\.)*)"', line):
+                check_wording(f"{path.relative_to(ROOT)}:{n}", literal, errors)
     for key in sorted(code_keys() - known):
         errors.append(f"L({key!r}) isn't in Localizable.xcstrings: build once in Xcode, then translate it")
     for w in warnings:
