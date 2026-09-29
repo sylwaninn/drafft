@@ -74,15 +74,15 @@ struct WelcomeView: View {
         .padding(.top, DS.Space.xl)
         .padding(.bottom, DS.Space.sm)
         .background(alignment: .bottom) {
-            // Sized by the panel, so it follows Dynamic Type and the language: the photo sharpens
-            // back above it. A progressive blur softens the photo under the words, and an eased
-            // night scrim (smoothstep, no visible edge) carries their contrast.
-            ZStack {
-                ProgressiveBlur(edge: .bottom, maxRadius: 18)
+            // Sized by the panel, so it follows Dynamic Type and the language. An eased night scrim
+            // (smoothstep, no visible edge) rises well above the words and carries their contrast;
+            // the progressive blur starts just above the text, so the photo stays sharp down to it.
+            ZStack(alignment: .bottom) {
                 // design-lint: allow gradient - photo scrim under the panel
                 LinearGradient(stops: Self.easedScrim(peak: 0.82), startPoint: .top, endPoint: .bottom)
+                    .padding(.top, -120)
+                ProgressiveBlur(edge: .bottom, maxRadius: 18)
             }
-            .padding(.top, -120)
             .ignoresSafeArea(edges: .bottom)
         }
         .nightSurface()
