@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 /// Shared chrome for account sheets: title, close on the right, content blocks,
 /// and a pinned primary action that stays visible (disabled until it can run; only a real error under it).
@@ -438,6 +439,7 @@ struct DeleteAccountSheet: View {
     @State private var understood = false
     @State private var loading = false
     @State private var failure: String?
+    @State private var managingSubscription = false
 
     private var reasons: [String] { [L("I met someone"), L("I need a break"), L("Not enough people nearby"), L("Something else")] }
 
@@ -471,6 +473,25 @@ struct DeleteAccountSheet: View {
                     .font(.subheadline)
                     .foregroundStyle(DS.Palette.body)
                     .fixedSize(horizontal: false, vertical: true)
+            }
+
+            // Billing belongs to the App Store: deleting the account leaves a renewing subscription on.
+            if app.subscription?.willRenew == true {
+                SheetBlock(title: L("Your subscription")) {
+                    Text(branded: L("Deleting your account doesn't cancel drafft tempo. Cancel it in the App Store to stop it renewing."),
+                         font: .subheadline)
+                        .foregroundStyle(DS.Palette.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button {
+                        Haptics.tap()
+                        managingSubscription = true
+                    } label: {
+                        Text("Manage subscription")
+                    }
+                    .buttonStyle(.drafftSecondary)
+                }
+                // Once cancelled there, the App Store's update (DrafftApp) takes this block away.
+                .manageSubscriptionsSheet(isPresented: $managingSubscription)
             }
 
             SheetBlock(title: L("Just need a break?")) {
@@ -516,7 +537,7 @@ struct DeleteAccountSheet: View {
 
             SheetBlock {
                 Toggle(isOn: $understood.animation(Motion.snappy)) {
-                    Text("I understand my account and all my data will be permanently deleted.")
+                    Text("I understand my account will be deleted for good.")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(DS.Palette.ink)
                         .fixedSize(horizontal: false, vertical: true)
