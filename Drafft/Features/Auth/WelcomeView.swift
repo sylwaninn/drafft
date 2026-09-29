@@ -12,16 +12,15 @@ struct WelcomeView: View {
 
     var body: some View {
         NavigationStack(path: $route) {
-            GeometryReader { geo in
-                ZStack(alignment: .bottom) {
-                    DS.Palette.night.ignoresSafeArea()
-
-                    hero(height: geo.size.height * 0.68 + geo.safeAreaInsets.top)
-                        .frame(maxHeight: .infinity, alignment: .top)
-                        .ignoresSafeArea(edges: .top)
-
-                    panel
-                }
+            ZStack(alignment: .bottom) {
+                DS.Palette.night.ignoresSafeArea()
+                // The photo runs edge to edge, as on the splash: the panel floats on it.
+                HeroSlideshow(photos: Self.photos)
+                    .ignoresSafeArea()
+                    .accessibilityHidden(true)
+                wordmark
+                    .frame(maxHeight: .infinity, alignment: .top)
+                panel
             }
             .navigationDestination(for: AuthRoute.self) { r in
                 switch r {
@@ -36,58 +35,33 @@ struct WelcomeView: View {
         .tint(DS.Palette.accentInk)
     }
 
-    private func hero(height: CGFloat) -> some View {
-        ZStack(alignment: .topLeading) {
-            HeroSlideshow(photos: Self.photos)
-            // design-lint: allow gradient - photo scrim under the wordmark
-            LinearGradient(
-                // Eased top scrim, deep enough under the wordmark for any photo.
-                stops: [.init(color: DS.Palette.night.opacity(0.78), location: 0),
-                        .init(color: DS.Palette.night.opacity(0.55), location: 0.12),
-                        .init(color: DS.Palette.night.opacity(0.25), location: 0.24),
-                        .init(color: DS.Palette.night.opacity(0.08), location: 0.34),
-                        .init(color: .clear, location: 0.42),
-                        // Bottom: a long eased fade (smoothstep), so the photo melts into the
-                        // panel with no visible edge.
-                        .init(color: .clear, location: 0.6),
-                        .init(color: DS.Palette.night.opacity(0.04), location: 0.66),
-                        .init(color: DS.Palette.night.opacity(0.14), location: 0.72),
-                        .init(color: DS.Palette.night.opacity(0.3), location: 0.78),
-                        .init(color: DS.Palette.night.opacity(0.5), location: 0.84),
-                        .init(color: DS.Palette.night.opacity(0.7), location: 0.89),
-                        .init(color: DS.Palette.night.opacity(0.86), location: 0.93),
-                        .init(color: DS.Palette.night.opacity(0.96), location: 0.97),
-                        .init(color: DS.Palette.night, location: 1)],
-                startPoint: .top, endPoint: .bottom
-            )
-            Wordmark(color: .white, trail: DS.Palette.night)
-                // Soft halo: keeps the white legible on bright photos without a visible box.
-                .shadow(color: DS.Palette.night.opacity(0.45), radius: 12, y: 2)
-                .padding(.horizontal, DS.Space.xl)
-                .safeAreaPadding(.top, 64)
-        }
-        .frame(height: height)
-        .clipped()
-        .accessibilityHidden(true)
+    private var wordmark: some View {
+        Wordmark(color: .white, trail: DS.Palette.night)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, DS.Space.xl)
+            .safeAreaPadding(.top, 64)
+            .background(alignment: .top) {
+                // design-lint: allow gradient - photo scrim under the wordmark
+                LinearGradient(stops: Self.easedScrim(peak: 0.75), startPoint: .bottom, endPoint: .top)
+                .padding(.bottom, -72)
+                .ignoresSafeArea(edges: .top)
+            }
+            .accessibilityHidden(true)
     }
 
     private var panel: some View {
         VStack(alignment: .leading, spacing: DS.Space.xl) {
-            VStack(alignment: .leading, spacing: DS.Space.md) {
-                Text("Match with people who train like you. Then meet on the track, the wall or the court.")
-                    .font(.body)
-                    .foregroundStyle(.white.opacity(0.72))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            Text("Match with people who train like you. Then meet on the track, the wall or the court.")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+                .fixedSize(horizontal: false, vertical: true)
 
-            VStack(spacing: DS.Space.sm + 2) {
-                Button("Sign up with email") { route.append(.signUpEmail) }
-                    .buttonStyle(.drafftPrimary)
-            }
+            Button("Sign up with email") { route.append(.signUpEmail) }
+                .buttonStyle(.drafftPrimary)
 
             HStack(spacing: DS.Space.xs) {
                 Text("Already training with us?")
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(.white.opacity(0.72))
                 Button("Log in") { route.append(.logIn) }
                     .fontWeight(.semibold)
                     .foregroundStyle(DS.Palette.accentOnNight)
@@ -97,8 +71,29 @@ struct WelcomeView: View {
             .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, DS.Space.xl)
+        .padding(.top, DS.Space.xl)
         .padding(.bottom, DS.Space.sm)
+        .background(alignment: .bottom) {
+            // Sized by the panel, so it follows Dynamic Type and the language: the photo sharpens
+            // back above it. A progressive blur softens the photo under the words, and an eased
+            // night scrim (smoothstep, no visible edge) carries their contrast.
+            ZStack {
+                ProgressiveBlur(edge: .bottom, maxRadius: 18)
+                // design-lint: allow gradient - photo scrim under the panel
+                LinearGradient(stops: Self.easedScrim(peak: 0.82), startPoint: .top, endPoint: .bottom)
+            }
+            .padding(.top, -120)
+            .ignoresSafeArea(edges: .bottom)
+        }
         .nightSurface()
+    }
+
+    /// Night from clear to `peak`, eased as a smoothstep so the scrim never shows where it starts.
+    private static func easedScrim(peak: Double) -> [Gradient.Stop] {
+        (0...10).map { i in
+            let t = Double(i) / 10
+            return .init(color: DS.Palette.night.opacity(peak * t * t * (3 - 2 * t)), location: t)
+        }
     }
 }
 
