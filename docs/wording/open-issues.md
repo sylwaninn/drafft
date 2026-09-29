@@ -6,13 +6,10 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 
 ## Bloquant avant publication
 
-- **Textes légaux de démo visibles** : « Demo text. The final legal documents will replace it. » et des
-  résumés de CGU / confidentialité / règles de communauté. À remplacer par les documents définitifs
-  (qui ont aussi des masculins par défaut).
+- **Textes légaux** : la mention « Demo text… » est retirée, mais les résumés de CGU / confidentialité /
+  règles de communauté restent provisoires (et ont des masculins par défaut). À remplacer.
 - **Recherche de marque** « Meet me on the start line » / « Rendez-vous au départ » (INPI, EUIPO,
   classe 45) avant tout usage public.
-- **Chiffre inventé** : le pourcentage « %lld%% agree so far » de l'icebreaker est calculé en dur
-  (`IcebreakerCard`, « Synthetic split for the demo »). À retirer ou brancher sur de vrais votes.
 
 ## Décisions produit
 
