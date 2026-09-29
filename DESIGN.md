@@ -748,7 +748,7 @@ One job per colour, everywhere:
 - Words themselves (voice, lexicon, forbidden wording, examples) live in [WORDING.md](WORDING.md). The rules below are about how copy sits in the layout.
 - A person's name is never truncated or shrunk: it wraps onto a second line (hyphenated names break at the hyphen). Keep names out of one-line buttons ("Say hi", not "Say hi to Maximilien-Alexandre").
 - NEVER use a middle dot (·) as a separator, anywhere in the app. Use a comma, "at", "for", "with", parentheses or a line break instead ("Batignolles, 4,1 km", "Tue 30 Sep at 18:30", "Buy 5 boosts for €17.99").
-- The area step explains location plainly in three facts: it updates as you move (each time Drafft opens), it's blurred to about 1 km before leaving the phone, and others only see the area and a rounded distance.
+- The area step explains location plainly in three facts: it's read once, at sign-up (again only if the server has none on file), never followed or tracked in the background; it's blurred to about 1 km before leaving the phone; and others only see the area and a rounded distance.
 - Location shows an area only ("Lyon 4", "Paris 11", or the city elsewhere), never a street. Distances are rounded to the km ("Less than 1 km" below 1). The position is blurred to a ~1 km cell before it leaves the device, and the area comes from the server (`AreaResolving`), identical on iOS and Android.
 - No location pin icon next to the neighborhood on the deck card or the profile detail; the place name stands on its own.
 - Sport names are never truncated with an ellipsis. Show as many as fit, then "+X" (`SportsLine`, `SportChipsPreview`).
