@@ -77,6 +77,8 @@ struct RootView: View {
 
     var body: some View {
         rootStack
+            // Under the splash, the welcome photos wait for it: it hands over on the photo it shows.
+            .environment(\.heroSlideshowLeads, !splashShown)
             // The launch: it covers the first screen until it's ready, then fades onto it.
             .overlay {
                 if splashShown {

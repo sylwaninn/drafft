@@ -99,39 +99,53 @@ struct WelcomeView: View {
     }
 }
 
+/// Which hero photo is showing, shared by every slideshow: the splash hands over to the welcome
+/// screen on the photo it was showing, and the welcome screen goes on from there.
+@MainActor @Observable
+final class HeroRotation {
+    static let shared = HeroRotation(count: WelcomeView.photos.count)
+
+    var index: Int
+
+    /// A random first photo, never the one the previous launch opened on.
+    private static let lastStartKey = "heroSlideshow.lastStart"
+    private init(count: Int) {
+        let last = UserDefaults.standard.object(forKey: Self.lastStartKey) as? Int
+        index = (0..<count).filter { $0 != last }.randomElement() ?? 0
+        UserDefaults.standard.set(index, forKey: Self.lastStartKey)
+    }
+}
+
+extension EnvironmentValues {
+    /// False while another slideshow covers this one (the welcome screen under the splash): it
+    /// shows the shared photo but leaves the turning to the one on top.
+    @Entry var heroSlideshowLeads = true
+}
+
 /// Photos rotating on their own, one quick crossfade every few seconds; nothing to swipe or tap.
 struct HeroSlideshow: View {
     let photos: [String]
     var interval: Duration = .seconds(4)
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var index: Int
-
-    init(photos: [String], interval: Duration = .seconds(4)) {
-        self.photos = photos
-        self.interval = interval
-        _index = State(initialValue: Self.freshStart(count: photos.count))
-    }
-
-    /// A random first photo, never the one the previous slideshow opened on (even across launches).
-    private static let lastStartKey = "heroSlideshow.lastStart"
-    private static func freshStart(count: Int) -> Int {
-        let last = UserDefaults.standard.object(forKey: lastStartKey) as? Int
-        return (0..<count).filter { $0 != last }.randomElement() ?? 0
-    }
+    @Environment(\.heroSlideshowLeads) private var leads
+    @State private var rotation = HeroRotation.shared
 
     var body: some View {
         ZStack {
             ForEach(Array(photos.enumerated()), id: \.offset) { i, name in
                 FocusedPhoto(name: name, focus: WelcomeView.focus[name] ?? 0.5)
-                    .opacity(i == index ? 1 : 0)
+                    .opacity(i == rotation.index ? 1 : 0)
             }
         }
-        // Recorded once shown: a re-render's init only proposes a start, it never counts.
-        .onAppear { UserDefaults.standard.set(index, forKey: Self.lastStartKey) }
-        .task(id: index) {
+        // Restarts on every turn and when this slideshow takes the lead: a full interval each time.
+        .task(id: "\(rotation.index)-\(leads)") {
+            guard leads else { return }
             try? await Task.sleep(for: interval)
-            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.45)) { index = (index + 1) % photos.count }
+            guard !Task.isCancelled else { return }
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.45)) {
+                rotation.index = (rotation.index + 1) % photos.count
+            }
         }
     }
 }
