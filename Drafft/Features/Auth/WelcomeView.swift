@@ -4,11 +4,22 @@ struct WelcomeView: View {
     @State private var route: [AuthRoute] = []
     /// Framed portrait crops, women and men alternating. The splash shows the same ones.
     static let photos = ["hero_1", "hero_2", "hero_3", "hero_4", "hero_5", "hero_6"]
-    /// Per photo, the height (0 top, 1 bottom) of the athlete: the face and upper body, or the
-    /// whole rider when they are small in the frame. `FocusedPhoto` lifts it into the clear band
-    /// between the wordmark and the panel.
-    static let focus: [String: CGFloat] = [
-        "hero_1": 0.48, "hero_2": 0.45, "hero_3": 0.52, "hero_4": 0.3, "hero_5": 0.52, "hero_6": 0.72
+    /// Per photo, its own framing: a point of the photo (the athlete) pinned to a point of the
+    /// screen, zoomed in so it can move. The band between the wordmark and the panel (12 to 64 %
+    /// of the height) is where the athlete reads; each photo is framed its own way, and some let a
+    /// hand, a hold or a face run past the edge on purpose.
+    static let framing: [String: PhotoFraming] = [
+        // Tennis: the player whole, face and swing in the band.
+        "hero_1": .init(zoom: 1.12, focus: UnitPoint(x: 0.5, y: 0.48), at: UnitPoint(x: 0.5, y: 0.42)),
+        "hero_2": .init(zoom: 1.05, focus: UnitPoint(x: 0.5, y: 0.45), at: UnitPoint(x: 0.5, y: 0.42)),
+        // Marathon: a close portrait, off-centre, her waving hand cut by the left edge.
+        "hero_3": .init(zoom: 1.45, focus: UnitPoint(x: 0.62, y: 0.46), at: UnitPoint(x: 0.62, y: 0.36)),
+        // Trail: wide action, the runner in the left third, the stride running into the panel.
+        "hero_4": .init(zoom: 1.15, focus: UnitPoint(x: 0.5, y: 0.3), at: UnitPoint(x: 0.4, y: 0.3)),
+        // Bouldering: the reach, hands and holds high, her profile half past the left edge.
+        "hero_5": .init(zoom: 1.25, focus: UnitPoint(x: 0.42, y: 0.52), at: UnitPoint(x: 0.36, y: 0.44)),
+        // Gravel: the rider small and off-centre in the forest, the road leading down into the panel.
+        "hero_6": .init(zoom: 1.3, focus: UnitPoint(x: 0.53, y: 0.68), at: UnitPoint(x: 0.62, y: 0.56))
     ]
 
     var body: some View {
@@ -134,7 +145,7 @@ struct HeroSlideshow: View {
     var body: some View {
         ZStack {
             ForEach(Array(photos.enumerated()), id: \.offset) { i, name in
-                FocusedPhoto(name: name, focus: WelcomeView.focus[name] ?? 0.5)
+                FocusedPhoto(name: name, framing: WelcomeView.framing[name] ?? PhotoFraming())
                     .opacity(i == rotation.index ? 1 : 0)
             }
         }
@@ -150,30 +161,30 @@ struct HeroSlideshow: View {
     }
 }
 
-/// A photo filling its frame, its focus (the athlete) placed at 42 % of the frame: the clear band
-/// between the wordmark and the panel. A photo with no height to spare (the heroes are exactly the
-/// screen's size) is zoomed just enough to lift its focus there, at most 1.5x so it stays sharp;
-/// it never shows past its edges, so the panel always sits on the bottom of the photo.
+/// How a photo sits in its frame: filled, zoomed by `zoom`, with its `focus` point moved to the
+/// frame's `at` point as far as the photo's edges allow (it never shows past them).
+struct PhotoFraming {
+    var zoom: CGFloat = 1
+    var focus = UnitPoint.center
+    var at = UnitPoint.center
+}
+
 private struct FocusedPhoto: View {
     let name: String
-    let focus: CGFloat
-    private let target: CGFloat = 0.42
-    private let maxZoom: CGFloat = 1.5
+    let framing: PhotoFraming
 
     var body: some View {
         GeometryReader { geo in
             if let img = ImageStore.preparedFull(name) ?? UIImage(named: name) {
                 let fill = max(geo.size.width / img.size.width, geo.size.height / img.size.height)
-                // Lowest zoom at which the focus reaches the target without uncovering the bottom.
-                let needed = (1 - target) * geo.size.height / ((1 - focus) * img.size.height * fill)
-                let scale = fill * min(maxZoom, max(1, needed))
-                let w = img.size.width * scale
-                let h = img.size.height * scale
-                let y = min(0, max(geo.size.height - h, geo.size.height * target - focus * h))
+                let w = img.size.width * fill * framing.zoom
+                let h = img.size.height * fill * framing.zoom
+                let x = min(0, max(geo.size.width - w, geo.size.width * framing.at.x - framing.focus.x * w))
+                let y = min(0, max(geo.size.height - h, geo.size.height * framing.at.y - framing.focus.y * h))
                 Image(uiImage: img)
                     .resizable()
                     .frame(width: w, height: h)
-                    .offset(x: (geo.size.width - w) / 2, y: y)
+                    .offset(x: x, y: y)
             }
         }
         .clipped()
