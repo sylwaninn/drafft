@@ -4,10 +4,11 @@ struct WelcomeView: View {
     @State private var route: [AuthRoute] = []
     /// Framed portrait crops, women and men alternating. The splash shows the same ones.
     static let photos = ["hero_1", "hero_2", "hero_3", "hero_4", "hero_5", "hero_6"]
-    /// Per photo, the height (0 top, 1 bottom) of what must stay in view when the frame is shorter
-    /// than the photo, as in the log-in's hero: the head and body of each athlete.
+    /// Per photo, the height (0 top, 1 bottom) of the athlete: the face and upper body, or the
+    /// whole rider when they are small in the frame. `FocusedPhoto` lifts it into the clear band
+    /// between the wordmark and the panel.
     static let focus: [String: CGFloat] = [
-        "hero_1": 0.5, "hero_2": 0.45, "hero_3": 0.55, "hero_4": 0.3, "hero_5": 0.45, "hero_6": 0.45
+        "hero_1": 0.48, "hero_2": 0.45, "hero_3": 0.52, "hero_4": 0.3, "hero_5": 0.52, "hero_6": 0.72
     ]
 
     var body: some View {
@@ -36,10 +37,11 @@ struct WelcomeView: View {
     }
 
     private var wordmark: some View {
-        Wordmark(color: .white, trail: DS.Palette.night)
+        // The plain word: no trail on a photo.
+        Wordmark(color: .white, trailStrength: 0)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, DS.Space.xl)
-            .safeAreaPadding(.top, 64)
+            .safeAreaPadding(.top, 40)
             .background(alignment: .top) {
                 // design-lint: allow gradient - photo scrim under the wordmark
                 LinearGradient(stops: Self.easedScrim(peak: 0.75), startPoint: .bottom, endPoint: .top)
@@ -134,22 +136,30 @@ struct HeroSlideshow: View {
     }
 }
 
-/// A photo filling its frame, cropped around a focus height rather than its centre: the focus sits
-/// at 40 % of the frame, without ever showing past the photo's edges.
+/// A photo filling its frame, its focus (the athlete) placed at 42 % of the frame: the clear band
+/// between the wordmark and the panel. A photo with no height to spare (the heroes are exactly the
+/// screen's size) is zoomed just enough to lift its focus there, at most 1.5x so it stays sharp;
+/// it never shows past its edges, so the panel always sits on the bottom of the photo.
 private struct FocusedPhoto: View {
     let name: String
     let focus: CGFloat
+    private let target: CGFloat = 0.42
+    private let maxZoom: CGFloat = 1.5
 
     var body: some View {
         GeometryReader { geo in
             if let img = ImageStore.preparedFull(name) ?? UIImage(named: name) {
-                let scale = max(geo.size.width / img.size.width, geo.size.height / img.size.height)
+                let fill = max(geo.size.width / img.size.width, geo.size.height / img.size.height)
+                // Lowest zoom at which the focus reaches the target without uncovering the bottom.
+                let needed = (1 - target) * geo.size.height / ((1 - focus) * img.size.height * fill)
+                let scale = fill * min(maxZoom, max(1, needed))
+                let w = img.size.width * scale
                 let h = img.size.height * scale
-                let y = min(0, max(geo.size.height - h, geo.size.height * 0.4 - focus * h))
+                let y = min(0, max(geo.size.height - h, geo.size.height * target - focus * h))
                 Image(uiImage: img)
                     .resizable()
-                    .frame(width: img.size.width * scale, height: h)
-                    .offset(x: (geo.size.width - img.size.width * scale) / 2, y: y)
+                    .frame(width: w, height: h)
+                    .offset(x: (geo.size.width - w) / 2, y: y)
             }
         }
         .clipped()
