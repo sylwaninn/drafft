@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- The first frame of SplashView: the night surface and the white word, centred 48 pt above the
-     bottom safe area. LaunchMark is rendered from the word at display 34, so it sits where SplashView
+     bottom safe area. LaunchWordmark is rendered from the word at display 34, so it sits where SplashView
      draws it. -->
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="launch-vc">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
@@ -18,12 +18,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchMark" translatesAutoresizingMaskIntoConstraints="NO" id="launch-mark">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchWordmark" translatesAutoresizingMaskIntoConstraints="NO" id="launch-mark">
                                 <rect key="frame" x="151.66666666666666" y="728" width="90.333333333333343" height="41"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="launch-safe-area"/>
-                        <color key="backgroundColor" name="LaunchBackground"/>
+                        <color key="backgroundColor" name="LaunchSurface"/>
                         <constraints>
                             <constraint firstItem="launch-mark" firstAttribute="centerX" secondItem="launch-view" secondAttribute="centerX" id="launch-mark-x"/>
                             <constraint firstItem="launch-safe-area" firstAttribute="bottom" secondItem="launch-mark" secondAttribute="bottom" constant="48" id="launch-mark-bottom"/>
@@ -36,8 +36,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchMark" width="90.333335876464844" height="41"/>
-        <namedColor name="LaunchBackground">
+        <image name="LaunchWordmark" width="90.333335876464844" height="41"/>
+        <namedColor name="LaunchSurface">
             <color red="0.16470588235294117" green="0.17647058823529413" blue="0.19215686274509805" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
