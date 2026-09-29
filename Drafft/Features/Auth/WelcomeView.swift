@@ -4,24 +4,35 @@ struct WelcomeView: View {
     @State private var route: [AuthRoute] = []
     /// Framed portrait crops, women and men alternating. The splash shows the same ones.
     static let photos = ["hero_1", "hero_2", "hero_3", "hero_4", "hero_5", "hero_6"]
-    /// Per photo, the height (0 top, 1 bottom) of what must stay in view when the frame is shorter
-    /// than the photo, as in the log-in's hero: the head and body of each athlete.
-    static let focus: [String: CGFloat] = [
-        "hero_1": 0.5, "hero_2": 0.45, "hero_3": 0.55, "hero_4": 0.3, "hero_5": 0.45, "hero_6": 0.45
+    /// Per photo, its own framing: a point of the photo (the athlete) pinned to a point of the
+    /// screen, zoomed in so it can move. The band between the wordmark and the panel (12 to 64 %
+    /// of the height) is where the athlete reads; each photo is framed its own way, and some let a
+    /// hand, a hold or a face run past the edge on purpose.
+    static let framing: [String: PhotoFraming] = [
+        // Tennis: the player whole, face and swing in the band.
+        "hero_1": .init(zoom: 1.12, focus: UnitPoint(x: 0.5, y: 0.48), at: UnitPoint(x: 0.5, y: 0.42)),
+        "hero_2": .init(zoom: 1.05, focus: UnitPoint(x: 0.5, y: 0.45), at: UnitPoint(x: 0.5, y: 0.42)),
+        // Marathon: a close portrait, off-centre, her waving hand cut by the left edge.
+        "hero_3": .init(zoom: 1.45, focus: UnitPoint(x: 0.62, y: 0.46), at: UnitPoint(x: 0.62, y: 0.36)),
+        // Trail: wide action, the runner in the left third, the stride running into the panel.
+        "hero_4": .init(zoom: 1.15, focus: UnitPoint(x: 0.5, y: 0.3), at: UnitPoint(x: 0.4, y: 0.3)),
+        // Bouldering: the reach, hands and holds high, her profile half past the left edge.
+        "hero_5": .init(zoom: 1.25, focus: UnitPoint(x: 0.42, y: 0.52), at: UnitPoint(x: 0.36, y: 0.44)),
+        // Gravel: the rider small and off-centre in the forest, the road leading down into the panel.
+        "hero_6": .init(zoom: 1.3, focus: UnitPoint(x: 0.53, y: 0.68), at: UnitPoint(x: 0.62, y: 0.56))
     ]
 
     var body: some View {
         NavigationStack(path: $route) {
-            GeometryReader { geo in
-                ZStack(alignment: .bottom) {
-                    DS.Palette.night.ignoresSafeArea()
-
-                    hero(height: geo.size.height * 0.68 + geo.safeAreaInsets.top)
-                        .frame(maxHeight: .infinity, alignment: .top)
-                        .ignoresSafeArea(edges: .top)
-
-                    panel
-                }
+            ZStack(alignment: .bottom) {
+                DS.Palette.night.ignoresSafeArea()
+                // The photo runs edge to edge, as on the splash: the panel floats on it.
+                HeroSlideshow(photos: Self.photos)
+                    .ignoresSafeArea()
+                    .accessibilityHidden(true)
+                wordmark
+                    .frame(maxHeight: .infinity, alignment: .top)
+                panel
             }
             .navigationDestination(for: AuthRoute.self) { r in
                 switch r {
@@ -36,58 +47,34 @@ struct WelcomeView: View {
         .tint(DS.Palette.accentInk)
     }
 
-    private func hero(height: CGFloat) -> some View {
-        ZStack(alignment: .topLeading) {
-            HeroSlideshow(photos: Self.photos)
-            // design-lint: allow gradient - photo scrim under the wordmark
-            LinearGradient(
-                // Eased top scrim, deep enough under the wordmark for any photo.
-                stops: [.init(color: DS.Palette.night.opacity(0.78), location: 0),
-                        .init(color: DS.Palette.night.opacity(0.55), location: 0.12),
-                        .init(color: DS.Palette.night.opacity(0.25), location: 0.24),
-                        .init(color: DS.Palette.night.opacity(0.08), location: 0.34),
-                        .init(color: .clear, location: 0.42),
-                        // Bottom: a long eased fade (smoothstep), so the photo melts into the
-                        // panel with no visible edge.
-                        .init(color: .clear, location: 0.6),
-                        .init(color: DS.Palette.night.opacity(0.04), location: 0.66),
-                        .init(color: DS.Palette.night.opacity(0.14), location: 0.72),
-                        .init(color: DS.Palette.night.opacity(0.3), location: 0.78),
-                        .init(color: DS.Palette.night.opacity(0.5), location: 0.84),
-                        .init(color: DS.Palette.night.opacity(0.7), location: 0.89),
-                        .init(color: DS.Palette.night.opacity(0.86), location: 0.93),
-                        .init(color: DS.Palette.night.opacity(0.96), location: 0.97),
-                        .init(color: DS.Palette.night, location: 1)],
-                startPoint: .top, endPoint: .bottom
-            )
-            Wordmark(color: .white, trail: DS.Palette.night)
-                // Soft halo: keeps the white legible on bright photos without a visible box.
-                .shadow(color: DS.Palette.night.opacity(0.45), radius: 12, y: 2)
-                .padding(.horizontal, DS.Space.xl)
-                .safeAreaPadding(.top, 64)
-        }
-        .frame(height: height)
-        .clipped()
-        .accessibilityHidden(true)
+    private var wordmark: some View {
+        // The plain word: no trail on a photo.
+        Wordmark(color: .white, trailStrength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, DS.Space.xl)
+            .safeAreaPadding(.top, DS.Space.lg)
+            .background(alignment: .top) {
+                // design-lint: allow gradient - photo scrim under the wordmark
+                LinearGradient(stops: Self.easedScrim(peak: 0.75), startPoint: .bottom, endPoint: .top)
+                .padding(.bottom, -72)
+                .ignoresSafeArea(edges: .top)
+            }
+            .accessibilityHidden(true)
     }
 
     private var panel: some View {
         VStack(alignment: .leading, spacing: DS.Space.xl) {
-            VStack(alignment: .leading, spacing: DS.Space.md) {
-                Text("Match with people who train like you. Then meet on the track, the wall or the court.")
-                    .font(.body)
-                    .foregroundStyle(.white.opacity(0.72))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            Text("Turn your matches into sessions, and meet at the start line.")
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.white)
+                .fixedSize(horizontal: false, vertical: true)
 
-            VStack(spacing: DS.Space.sm + 2) {
-                Button("Sign up with email") { route.append(.signUpEmail) }
-                    .buttonStyle(.drafftPrimary)
-            }
+            Button("Sign up with email") { route.append(.signUpEmail) }
+                .buttonStyle(.drafftPrimary)
 
             HStack(spacing: DS.Space.xs) {
                 Text("Already training with us?")
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(.white.opacity(0.72))
                 Button("Log in") { route.append(.logIn) }
                     .fontWeight(.semibold)
                     .foregroundStyle(DS.Palette.accentOnNight)
@@ -97,9 +84,53 @@ struct WelcomeView: View {
             .frame(maxWidth: .infinity)
         }
         .padding(.horizontal, DS.Space.xl)
+        .padding(.top, DS.Space.xl)
         .padding(.bottom, DS.Space.sm)
+        .background(alignment: .bottom) {
+            // Sized by the panel, so it follows Dynamic Type and the language. An eased night scrim
+            // (smoothstep, no visible edge) rises well above the words and carries their contrast;
+            // the progressive blur starts just above the text, so the photo stays sharp down to it.
+            ZStack(alignment: .bottom) {
+                // design-lint: allow gradient - photo scrim under the panel
+                LinearGradient(stops: Self.easedScrim(peak: 0.82), startPoint: .top, endPoint: .bottom)
+                    .padding(.top, -120)
+                ProgressiveBlur(edge: .bottom, maxRadius: 18)
+            }
+            .ignoresSafeArea(edges: .bottom)
+        }
         .nightSurface()
     }
+
+    /// Night from clear to `peak`, eased as a smoothstep so the scrim never shows where it starts.
+    private static func easedScrim(peak: Double) -> [Gradient.Stop] {
+        (0...10).map { i in
+            let t = Double(i) / 10
+            return .init(color: DS.Palette.night.opacity(peak * t * t * (3 - 2 * t)), location: t)
+        }
+    }
+}
+
+/// Which hero photo is showing, shared by every slideshow: the splash hands over to the welcome
+/// screen on the photo it was showing, and the welcome screen goes on from there.
+@MainActor @Observable
+final class HeroRotation {
+    static let shared = HeroRotation(count: WelcomeView.photos.count)
+
+    var index: Int
+
+    /// A random first photo, never the one the previous launch opened on.
+    private static let lastStartKey = "heroSlideshow.lastStart"
+    private init(count: Int) {
+        let last = UserDefaults.standard.object(forKey: Self.lastStartKey) as? Int
+        index = (0..<count).filter { $0 != last }.randomElement() ?? 0
+        UserDefaults.standard.set(index, forKey: Self.lastStartKey)
+    }
+}
+
+extension EnvironmentValues {
+    /// False while another slideshow covers this one (the welcome screen under the splash): it
+    /// shows the shared photo but leaves the turning to the one on top.
+    @Entry var heroSlideshowLeads = true
 }
 
 /// Photos rotating on their own, one quick crossfade every few seconds; nothing to swipe or tap.
@@ -108,53 +139,52 @@ struct HeroSlideshow: View {
     var interval: Duration = .seconds(4)
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var index: Int
-
-    init(photos: [String], interval: Duration = .seconds(4)) {
-        self.photos = photos
-        self.interval = interval
-        _index = State(initialValue: Self.freshStart(count: photos.count))
-    }
-
-    /// A random first photo, never the one the previous slideshow opened on (even across launches).
-    private static let lastStartKey = "heroSlideshow.lastStart"
-    private static func freshStart(count: Int) -> Int {
-        let last = UserDefaults.standard.object(forKey: lastStartKey) as? Int
-        return (0..<count).filter { $0 != last }.randomElement() ?? 0
-    }
+    @Environment(\.heroSlideshowLeads) private var leads
+    @State private var rotation = HeroRotation.shared
 
     var body: some View {
         ZStack {
             ForEach(Array(photos.enumerated()), id: \.offset) { i, name in
-                FocusedPhoto(name: name, focus: WelcomeView.focus[name] ?? 0.5)
-                    .opacity(i == index ? 1 : 0)
+                FocusedPhoto(name: name, framing: WelcomeView.framing[name] ?? PhotoFraming())
+                    .opacity(i == rotation.index ? 1 : 0)
             }
         }
-        // Recorded once shown: a re-render's init only proposes a start, it never counts.
-        .onAppear { UserDefaults.standard.set(index, forKey: Self.lastStartKey) }
-        .task(id: index) {
+        // Restarts on every turn and when this slideshow takes the lead: a full interval each time.
+        .task(id: "\(rotation.index)-\(leads)") {
+            guard leads else { return }
             try? await Task.sleep(for: interval)
-            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.45)) { index = (index + 1) % photos.count }
+            guard !Task.isCancelled else { return }
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.45)) {
+                rotation.index = (rotation.index + 1) % photos.count
+            }
         }
     }
 }
 
-/// A photo filling its frame, cropped around a focus height rather than its centre: the focus sits
-/// at 40 % of the frame, without ever showing past the photo's edges.
+/// How a photo sits in its frame: filled, zoomed by `zoom`, with its `focus` point moved to the
+/// frame's `at` point as far as the photo's edges allow (it never shows past them).
+struct PhotoFraming {
+    var zoom: CGFloat = 1
+    var focus = UnitPoint.center
+    var at = UnitPoint.center
+}
+
 private struct FocusedPhoto: View {
     let name: String
-    let focus: CGFloat
+    let framing: PhotoFraming
 
     var body: some View {
         GeometryReader { geo in
             if let img = ImageStore.preparedFull(name) ?? UIImage(named: name) {
-                let scale = max(geo.size.width / img.size.width, geo.size.height / img.size.height)
-                let h = img.size.height * scale
-                let y = min(0, max(geo.size.height - h, geo.size.height * 0.4 - focus * h))
+                let fill = max(geo.size.width / img.size.width, geo.size.height / img.size.height)
+                let w = img.size.width * fill * framing.zoom
+                let h = img.size.height * fill * framing.zoom
+                let x = min(0, max(geo.size.width - w, geo.size.width * framing.at.x - framing.focus.x * w))
+                let y = min(0, max(geo.size.height - h, geo.size.height * framing.at.y - framing.focus.y * h))
                 Image(uiImage: img)
                     .resizable()
-                    .frame(width: img.size.width * scale, height: h)
-                    .offset(x: (geo.size.width - img.size.width * scale) / 2, y: y)
+                    .frame(width: w, height: h)
+                    .offset(x: x, y: y)
             }
         }
         .clipped()

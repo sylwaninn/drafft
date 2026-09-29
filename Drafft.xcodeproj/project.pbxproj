@@ -134,6 +134,7 @@
 		C4F8001A66A960980E10B957 /* DiscoverFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFBEF0E0124793C095719B8 /* DiscoverFilters.swift */; };
 		C51DC793F7C60296A85577B0 /* CalendarAccessBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19730D08BD6D9A31A2AD6529 /* CalendarAccessBanner.swift */; };
 		C6C5B293230C128C943505B0 /* SessionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004064FF5372E7DDF8EFCB5A /* SessionCard.swift */; };
+		C893B7B61BAF81B6DF88AF3A /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7E267940900204F1DA1807A7 /* Launch.storyboard */; };
 		CBAFEB2B30DA895FCEFEA4BA /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED475785E5CCE3685F02ACA3 /* ChatView.swift */; };
 		CD89C283C8A690A2CE3132DE /* ThumbHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2499D2C98B44F3EE58B2A9D5 /* ThumbHash.swift */; };
 		CFB2E624D48DAF186CE13060 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 15FF70419B1BEAA0702662B3 /* Assets.xcassets */; };
@@ -248,6 +249,7 @@
 		744277058F4B7B5E9EB73F1A /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		792049807B76E8A0BF54D064 /* DrafftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrafftApp.swift; sourceTree = "<group>"; };
 		7E2228E2F4C0DC86AC70681C /* PurchaseCreditBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseCreditBanner.swift; sourceTree = "<group>"; };
+		7E267940900204F1DA1807A7 /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
 		7F3BA3FD1373BE851ECC20A7 /* MediaPreviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPreviews.swift; sourceTree = "<group>"; };
 		7F3FAFF42A58C11A213BBC35 /* VoiceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceViews.swift; sourceTree = "<group>"; };
 		80EE6CBB9259B7718A29F7C9 /* LifestylePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifestylePicker.swift; sourceTree = "<group>"; };
@@ -401,6 +403,7 @@
 			children = (
 				15FF70419B1BEAA0702662B3 /* Assets.xcassets */,
 				C5E7D968B0F2038B779A7B32 /* InfoPlist.xcstrings */,
+				7E267940900204F1DA1807A7 /* Launch.storyboard */,
 				201218E955E997711E0CBFFA /* Localizable.xcstrings */,
 				76E126FD26955B41F6005DA3 /* Fonts */,
 			);
@@ -811,6 +814,7 @@
 				70160593C9BD600FD6A71DD7 /* InfoPlist.xcstrings in Resources */,
 				52FEB968D6714978635F8753 /* InterDisplay-Black.ttf in Resources */,
 				9FB3FE2B8035B0FE8D248C2C /* InterDisplay-ExtraBold.ttf in Resources */,
+				C893B7B61BAF81B6DF88AF3A /* Launch.storyboard in Resources */,
 				47B20F10EC27A8EC1798707A /* Localizable.xcstrings in Resources */,
 				A1357578AFF8F7AE487B2C07 /* PrivacyInfo.xcprivacy in Resources */,
 			);
@@ -1074,7 +1078,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Launch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1165,7 +1169,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Launch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1357,7 +1361,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Launch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1405,7 +1409,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = Launch;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

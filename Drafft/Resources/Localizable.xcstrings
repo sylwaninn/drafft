@@ -12909,6 +12909,46 @@
         }
       }
     },
+    "Turn your matches into sessions, and meet at the start line." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach aus deinen Matches Sessions und trefft euch an der Startlinie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convierte tus matches en sesiones y quedad en la línea de salida."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transforme tes matchs en séances, et rendez-vous au départ."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trasforma i tuoi match in sessioni e datevi appuntamento alla partenza."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maak van je matches sessies en spreek af aan de start."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transforma os teus matches em sessões e encontrem-se na linha de partida."
+          }
+        }
+      }
+    },
     "Unmatch" : {
       "localizations" : {
         "de" : {
@@ -23140,52 +23180,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "See who already likes you and match in one tap."
-          }
-        }
-      }
-    },
-    "Match with people who train like you. Then meet on the track, the wall or the court." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Sport kommt zuerst. Mach aus deinen Matches Sessions und trefft euch an der Startlinie."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus deportes, primero. Convierte tus matches en sesiones y quedad en la línea de salida."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes sports d'abord. Transforme tes matchs en séances, et rendez-vous au départ."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prima i tuoi sport. Trasforma i tuoi match in sessioni e datevi appuntamento alla partenza."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eerst je sporten. Maak van je matches sessies en spreek af aan de start."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Primeiro, os teus desportos. Transforma os teus matches em sessões e encontrem-se na linha de partida."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your sports come first. Turn your matches into sessions, and meet at the start line."
           }
         }
       }
