@@ -41,7 +41,7 @@ struct WelcomeView: View {
         Wordmark(color: .white, trailStrength: 0)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, DS.Space.xl)
-            .safeAreaPadding(.top, 40)
+            .safeAreaPadding(.top, DS.Space.lg)
             .background(alignment: .top) {
                 // design-lint: allow gradient - photo scrim under the wordmark
                 LinearGradient(stops: Self.easedScrim(peak: 0.75), startPoint: .bottom, endPoint: .top)
