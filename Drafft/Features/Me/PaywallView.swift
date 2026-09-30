@@ -101,7 +101,7 @@ struct PaywallView: View {
                         // The tier lockup: the wordmark, then "tempo" in the same face and size,
                         // lowercase, in the accent.
                         HStack(alignment: .lastTextBaseline, spacing: 26 * 0.28) {
-                            Wordmark(size: 26, color: .white, trail: DS.Palette.accentOnNight.opacity(0.5))
+                            Wordmark(size: 26, color: .white)
                             Text(verbatim: Brand.tier)
                                 .font(.display(26))
                                 .tracking(-26 * 0.02)
@@ -457,7 +457,7 @@ struct SubscriptionSheet: View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             HStack(alignment: .firstTextBaseline) {
                 HStack(alignment: .lastTextBaseline, spacing: 22 * 0.28) {
-                    Wordmark(size: 22, color: .white, trail: DS.Palette.accentOnNight.opacity(0.5))
+                    Wordmark(size: 22, color: .white)
                     Text(verbatim: Brand.tier)
                         .font(.display(22))
                         .tracking(-22 * 0.02)

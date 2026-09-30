@@ -48,8 +48,7 @@ struct WelcomeView: View {
     }
 
     private var wordmark: some View {
-        // The plain word: no trail on a photo.
-        Wordmark(color: .white, trailStrength: 0)
+        Wordmark(color: .white)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, DS.Space.xl)
             .safeAreaPadding(.top, DS.Space.lg)
@@ -193,27 +192,17 @@ private struct FocusedPhoto: View {
 
 enum AuthRoute: Hashable { case signUpEmail, logIn }
 
-/// "drafft" set in the display face with a trailing ghost: the drafting motif from the app icon.
+/// The logo: "drafft" set in the display face, solid. Never a drafting trail behind it.
 struct Wordmark: View {
     var size: CGFloat = 28
     var color: Color = DS.Palette.lime
-    /// Ghost copy behind the lead word; defaults to a faded copy of the ink.
-    var trail: Color?
-    /// Scales both ghosts: 1 is the logo; lower keeps the motif quiet in the app's chrome.
-    var trailStrength: Double = 1
     var body: some View {
-        // Same as the logo: the word solid, two copies trailing behind it (20% and 45%).
-        let ghost = trail ?? color
-        ZStack(alignment: .leading) {
-            Text(verbatim: "drafft").foregroundStyle(ghost.opacity(0.2 * trailStrength)).offset(x: -size * 0.21)
-            Text(verbatim: "drafft").foregroundStyle(ghost.opacity(0.45 * trailStrength)).offset(x: -size * 0.104)
-            Text(verbatim: "drafft").foregroundStyle(color)
-        }
-        .font(.display(size))
-        .tracking(-size * 0.02)
-        .lineLimit(1)
-        .fixedSize()
-        .accessibilityElement()
-        .accessibilityLabel(Text(verbatim: "drafft"))
+        Text(verbatim: "drafft")
+            .foregroundStyle(color)
+            .font(.display(size))
+            .tracking(-size * 0.02)
+            .lineLimit(1)
+            .fixedSize()
+            .accessibilityLabel(Text(verbatim: "drafft"))
     }
 }

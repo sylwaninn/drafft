@@ -62,7 +62,7 @@ struct AccountHoldView: View {
         GeometryReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.xl) {
-                    Wordmark(size: 26, color: .white, trail: DS.Palette.accentOnNight)
+                    Wordmark(size: 26, color: .white)
                         .accessibilityHidden(true)
                         .rise(appeared, step: 0, reduceMotion: reduceMotion)
                     Spacer(minLength: DS.Space.lg)

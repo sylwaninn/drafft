@@ -1,7 +1,7 @@
 import SwiftUI
 
-// The drafting motif from the app icon: a lead shape followed by fading ghost copies,
-// like riders tucked in behind each other. On the profile it is used under buttons only.
+// The drafting motif: a lead shape followed by fading ghost copies, like riders tucked in
+// behind each other. Under buttons only, never under the logo (Wordmark).
 
 extension View {
     /// Draws `count` fading copies of `shape` behind the view, each shifted by `step`.
