@@ -157,6 +157,7 @@
 		E04E5CBE16B17A3388909CD4 /* AppModel+Discover.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3366CA42164DD96D08CE6 /* AppModel+Discover.swift */; };
 		E05FE4A2FC40CD2749AA2165 /* PromptPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214BEF0A582723680CE4ADD6 /* PromptPickerSheet.swift */; };
 		E192643C65AF7C4AE27046AD /* ChatMediaCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AD6CA6FD914C918AA0DF3C /* ChatMediaCheck.swift */; };
+		E32B9E15FEC7C9821AD47B2F /* OnboardingProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2ED76FFC6DC766F672E7AFB /* OnboardingProgress.swift */; };
 		E4C3B7626EB1429C0679EBDC /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EACE86DA994D351B5917634 /* PaywallView.swift */; };
 		E6E2C4094E6B2A3F507C44FA /* FiltersSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D832C603D204C1B930F38A /* FiltersSheet.swift */; };
 		E71CCBD892E823BAF2858FB9 /* ProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A15292CC3CE557E9DC0DF04 /* ProfileCard.swift */; };
@@ -330,6 +331,7 @@
 		EBC5879E137F89B2870864B1 /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
 		ED475785E5CCE3685F02ACA3 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		F17B87D2CAFA3428A9FD7C28 /* DrafftTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DrafftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2ED76FFC6DC766F672E7AFB /* OnboardingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProgress.swift; sourceTree = "<group>"; };
 		F44E047B37AAE6A38029ACD0 /* EdgeTone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeTone.swift; sourceTree = "<group>"; };
 		F58F62378D97439F0D9EE593 /* ProgressiveBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressiveBlur.swift; sourceTree = "<group>"; };
 		F8754FDAF44F814482BB7940 /* AppModel+Matches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppModel+Matches.swift"; sourceTree = "<group>"; };
@@ -481,6 +483,7 @@
 				A2EEB82D4C01AB5AA9BF239D /* Diagnostics.swift */,
 				8EC1F88AB1013AABDF6534D2 /* Notifications.swift */,
 				20B74525F0A468F3258D52C2 /* NotificationText.swift */,
+				F2ED76FFC6DC766F672E7AFB /* OnboardingProgress.swift */,
 				C35EBB2EBA07E965FB072B2C /* OnboardingStore.swift */,
 				4AC86AF977A1EDBF5DE763BB /* PurchaseCredit.swift */,
 				95658A39FD4ED7A95113E7BB /* PushTokenRegistration.swift */,
@@ -921,6 +924,7 @@
 				FA58D647C3C66F6041379F00 /* Notifications.swift in Sources */,
 				1290898EA123758FCE5E922C /* NotificationsSettingsView.swift in Sources */,
 				BABD3DB9BFC21C2E1C3FD556 /* OnboardingHeader.swift in Sources */,
+				E32B9E15FEC7C9821AD47B2F /* OnboardingProgress.swift in Sources */,
 				074BF52340FE6F1AB7AEBDF0 /* OnboardingStore.swift in Sources */,
 				8AFB996D3C93D1D599D85AEA /* OnboardingView.swift in Sources */,
 				61C36E7B0A28F4E261B1E11B /* OneTimeCodeEntry.swift in Sources */,
