@@ -4343,6 +4343,46 @@
         }
       }
     },
+    "Account & login" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konto & Anmeldung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta y acceso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compte et connexion"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account e accesso"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account en inloggen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conta e acesso"
+          }
+        }
+      }
+    },
     "Account check" : {
       "localizations" : {
         "de" : {
@@ -6293,6 +6333,46 @@
         }
       }
     },
+    "Asking for money, pushing to leave the app, a story that keeps changing." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Geld fragen, drängen, die App zu verlassen, eine Geschichte, die sich ständig ändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedir dinero, insistir en salir de la app, una historia que cambia sin parar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une demande d'argent, une insistance pour quitter l'app, une histoire qui change sans cesse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiedere soldi, insistere per lasciare l'app, una storia che cambia di continuo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Om geld vragen, aandringen om de app te verlaten, een verhaal dat steeds verandert."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pedir dinheiro, insistir em sair da app, uma história que está sempre a mudar."
+          }
+        }
+      }
+    },
     "At %@, a reminder of tomorrow's session." : {
       "localizations" : {
         "de" : {
@@ -7151,6 +7231,46 @@
         }
       }
     },
+    "Block anytime" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blockiere jederzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloquea cuando quieras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloque à tout moment"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocca quando vuoi"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blokkeer wanneer je wilt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloqueia quando quiseres"
+          }
+        }
+      }
+    },
     "Blocked people" : {
       "localizations" : {
         "de" : {
@@ -7833,6 +7953,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Calistenia"
+          }
+        }
+      }
+    },
+    "Call 112" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "112 anrufen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamar al 112"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appeler le 112"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiama il 112"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bel 112"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ligar 112"
           }
         }
       }
@@ -9953,6 +10113,46 @@
         }
       }
     },
+    "Contact the team" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team kontaktieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contactar al equipo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contacter l'équipe"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contatta il team"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neem contact op"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contactar a equipa"
+          }
+        }
+      }
+    },
     "Contact us" : {
       "localizations" : {
         "de" : {
@@ -11239,6 +11439,46 @@
         }
       }
     },
+    "Deleting removes them with your profile, photos, matches and messages, for good." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beim Löschen verschwinden sie mit deinem Profil, deinen Fotos, Matches und Nachrichten, endgültig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al eliminar la cuenta, se borran con tu perfil, tus fotos, tus matches y tus mensajes, para siempre."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La suppression les efface avec ton profil, tes photos, tes matchs et tes messages, définitivement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminando l'account spariscono per sempre, insieme a profilo, foto, match e messaggi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bij verwijderen verdwijnen ze voorgoed, samen met je profiel, foto's, matches en berichten."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ao eliminar a conta, desaparecem para sempre com o teu perfil, fotos, matches e mensagens."
+          }
+        }
+      }
+    },
     "Deleting removes your profile, photos, matches and messages for good. Your matches won't be able to reach you." : {
       "localizations" : {
         "de" : {
@@ -11367,6 +11607,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Só demo: %@"
+          }
+        }
+      }
+    },
+    "Describe your question. If something doesn't work, say what you tapped and what happened." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschreib deine Frage. Wenn etwas nicht funktioniert, sag, was du angetippt hast und was passiert ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe tu pregunta. Si algo no funciona, cuenta qué tocaste y qué pasó."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décris ta question. Si quelque chose ne marche pas, dis ce que tu as touché et ce qui s'est passé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descrivi la tua domanda. Se qualcosa non funziona, dicci cosa hai toccato e cosa è successo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschrijf je vraag. Werkt iets niet, zeg dan waarop je tikte en wat er gebeurde."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descreve a tua dúvida. Se algo não funciona, diz o que tocaste e o que aconteceu."
           }
         }
       }
@@ -12069,6 +12349,126 @@
         }
       }
     },
+    "drafft never asks for your password or a login code in a chat." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft fragt in einem Chat nie nach deinem Passwort oder einem Anmeldecode."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft nunca te pide tu contraseña ni un código de acceso en un chat."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ne demande jamais ton mot de passe ni un code de connexion dans une discussion."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft non ti chiede mai la password o un codice di accesso in chat."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft vraagt in een chat nooit om je wachtwoord of een inlogcode."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft nunca pede a tua palavra-passe nem um código de acesso numa conversa."
+          }
+        }
+      }
+    },
+    "drafft needs your gender and the genders you want to see to suggest anyone." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft braucht dein Geschlecht und die Geschlechter, die du sehen willst, um dir jemanden vorzuschlagen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft necesita tu género y los géneros que quieres ver para sugerirte a alguien."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft a besoin de ton genre et des genres que tu veux voir pour te suggérer quelqu'un."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ha bisogno del tuo genere e dei generi che vuoi vedere per suggerirti qualcuno."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft heeft je gender en de genders die je wilt zien nodig om iemand voor te stellen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft precisa do teu género e dos géneros que queres ver para te sugerir alguém."
+          }
+        }
+      }
+    },
+    "drafft tempo & billing" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tempo & Zahlung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tempo y pagos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tempo et paiement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tempo e pagamenti"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tempo en betaling"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tempo e pagamentos"
+          }
+        }
+      }
+    },
     "Enter the email you signed up with. We'll send you a 6-digit code." : {
       "localizations" : {
         "de" : {
@@ -12109,6 +12509,86 @@
         }
       }
     },
+    "Get somewhere safe first, then report them in the app." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring dich zuerst in Sicherheit, dann melde die Person in der App."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ponte a salvo primero y luego denuncia a esa persona en la app."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mets-toi d'abord en sécurité, puis signale la personne dans l'app."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prima mettiti al sicuro, poi segnala la persona nell'app."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zorg eerst dat je veilig bent en meld de persoon daarna in de app."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiro põe-te em segurança, depois denuncia a pessoa na app."
+          }
+        }
+      }
+    },
+    "Here's what deleting removes." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das wird gelöscht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto es lo que se borra."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voici ce que la suppression efface."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ecco cosa viene eliminato."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit wordt verwijderd."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isto é o que se apaga."
+          }
+        }
+      }
+    },
     "Hides you from Discover and likes. Your chats and sessions carry on." : {
       "localizations" : {
         "de" : {
@@ -12145,6 +12625,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Deixas de aparecer em Descobrir e nos likes. As tuas conversas e sessões continuam."
+          }
+        }
+      }
+    },
+    "How can we help?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie können wir helfen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cómo te ayudamos?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment peut-on t'aider ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come possiamo aiutarti?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoe kunnen we helpen?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como podemos ajudar?"
+          }
+        }
+      }
+    },
+    "How drafft uses this data" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie drafft diese Daten nutzt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo usa drafft estos datos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment drafft utilise ces données"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come drafft usa questi dati"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoe drafft deze gegevens gebruikt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como o drafft usa estes dados"
           }
         }
       }
@@ -12191,6 +12751,292 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ik begrijp dat mijn account definitief wordt verwijderd."
+          }
+        }
+      }
+    },
+    "If something feels wrong" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn sich etwas falsch anfühlt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si algo no te cuadra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si quelque chose cloche"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se qualcosa non ti convince"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Als iets niet goed voelt"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se algo não parecer bem"
+          }
+        }
+      }
+    },
+    "In danger? Call 112." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Gefahr? Ruf die 112 an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿En peligro? Llama al 112."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En danger ? Appelle le 112."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In pericolo? Chiama il 112."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In gevaar? Bel 112."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em perigo? Liga para o 112."
+          }
+        }
+      }
+    },
+    "It's never your fault" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es ist nie deine Schuld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nunca es culpa tuya"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce n'est jamais ta faute"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è mai colpa tua"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Het is nooit jouw schuld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nunca é culpa tua"
+          }
+        }
+      }
+    },
+    "Keep personal details private" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behalte Persönliches für dich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda tus datos personales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garde tes infos perso pour toi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieni per te i dati personali"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Houd persoonlijke info voor jezelf"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda os teus dados pessoais"
+          }
+        }
+      }
+    },
+    "Keep your codes to yourself" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codes bleiben bei dir"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus códigos son solo tuyos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garde tes codes pour toi"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieni i codici per te"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Houd je codes voor jezelf"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os teus códigos são só teus"
+          }
+        }
+      }
+    },
+    "Legal information" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechtliches"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Información legal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informations légales"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informazioni legali"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juridisch"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informação legal"
+          }
+        }
+      }
+    },
+    "Legal Notice" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impressum"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aviso legal"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mentions légales"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note legali"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juridische informatie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aviso legal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legal notice"
           }
         }
       }
@@ -12311,6 +13157,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Os serviços de localização estão desativados neste iPhone. Ativa-os nas Definições, em Privacidade e segurança."
+          }
+        }
+      }
+    },
+    "Matches & chats" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matches & Chats"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matches y chats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matchs et discussions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Match e chat"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matches en chats"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Matches e conversas"
           }
         }
       }
@@ -12801,6 +13687,86 @@
         }
       }
     },
+    "Pressure or harassment is on them, never on you. Report it, even if you're unsure." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Druck oder Belästigung geht auf ihr Konto, nie auf deins. Melde es, auch wenn du unsicher bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La presión o el acoso es culpa suya, nunca tuya. Denúncialo, aunque tengas dudas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La pression ou le harcèlement, c'est sa faute, jamais la tienne. Signale-le, même en cas de doute."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pressioni o molestie sono colpa loro, mai tua. Segnalale, anche se hai dei dubbi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Druk of intimidatie ligt bij hen, nooit bij jou. Meld het, ook als je twijfelt."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pressão ou assédio são culpa de quem o faz, nunca tua. Denuncia, mesmo com dúvidas."
+          }
+        }
+      }
+    },
+    "Profile & photos" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil & Fotos"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil y fotos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil et photos"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilo e foto"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profiel en foto's"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil e fotos"
+          }
+        }
+      }
+    },
     "Profile paused" : {
       "localizations" : {
         "de" : {
@@ -12927,6 +13893,46 @@
         }
       }
     },
+    "Safety & reports" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sicherheit & Meldungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguridad y denuncias"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sécurité et signalements"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sicurezza e segnalazioni"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veiligheid en meldingen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segurança e denúncias"
+          }
+        }
+      }
+    },
     "See who already likes you, send unlimited likes and get a free boost every week." : {
       "localizations" : {
         "fr" : {
@@ -13003,6 +14009,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Partilha a tua localização para ver pessoas perto de ti."
+          }
+        }
+      }
+    },
+    "Something doesn't work" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwas funktioniert nicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo no funciona"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelque chose ne marche pas"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualcosa non funziona"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iets werkt niet"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo não funciona"
           }
         }
       }
@@ -13653,6 +14699,46 @@
         }
       }
     },
+    "Watch for red flags" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achte auf Warnsignale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atento a las señales de alarma"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repère les signaux d'alerte"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attenzione ai campanelli d'allarme"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let op waarschuwingssignalen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atenção aos sinais de alerta"
+          }
+        }
+      }
+    },
     "We couldn't check this number right now. Try again in a moment." : {
       "localizations" : {
         "de" : {
@@ -13693,6 +14779,46 @@
         }
       }
     },
+    "We read every message and reply to %@." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir lesen jede Nachricht und antworten an %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leemos cada mensaje y te respondemos a %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On lit chaque message et on te répond à %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leggiamo ogni messaggio e ti rispondiamo a %@."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We lezen elk bericht en antwoorden naar %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lemos cada mensagem e respondemos para %@."
+          }
+        }
+      }
+    },
     "We're adding your purchase to your account." : {
       "localizations" : {
         "de" : {
@@ -13729,6 +14855,126 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estamos a adicionar a tua compra à tua conta."
+          }
+        }
+      }
+    },
+    "What's it about?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Worum geht's?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿De qué se trata?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est à quel sujet ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di cosa si tratta?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waar gaat het over?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre o que é?"
+          }
+        }
+      }
+    },
+    "While you chat" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Während ihr schreibt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mientras chateáis"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendant que vous discutez"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mentre chattate"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terwijl jullie chatten"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enquanto conversam"
+          }
+        }
+      }
+    },
+    "Withdrawing your consent means deleting your account." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Einwilligung widerrufst du, indem du dein Konto löschst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirar tu consentimiento supone eliminar tu cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirer ton accord, c'est supprimer ton compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revocare il consenso significa eliminare il tuo account."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je toestemming intrekken betekent je account verwijderen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirar o teu consentimento implica eliminar a tua conta."
           }
         }
       }
@@ -13901,6 +15147,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não tens mais super likes."
+          }
+        }
+      }
+    },
+    "Your address, workplace and last name can wait until you trust them." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse, Arbeitsplatz und Nachname können warten, bis du vertraust."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu dirección, tu trabajo y tu apellido pueden esperar a que confíes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton adresse, ton travail et ton nom de famille peuvent attendre que tu aies confiance."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indirizzo, lavoro e cognome possono aspettare finché non ti fidi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je adres, werk en achternaam kunnen wachten tot je iemand vertrouwt."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua morada, o teu trabalho e o teu apelido podem esperar até confiares."
           }
         }
       }
@@ -17072,46 +18358,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Treino funcional"
-          }
-        }
-      }
-    },
-    "General question" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allgemeine Frage"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pregunta general"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Question générale"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Domanda generale"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Algemene vraag"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pergunta geral"
           }
         }
       }
@@ -40665,86 +41911,6 @@
         }
       }
     },
-    "Terms & privacy" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AGB & Datenschutz"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Condiciones y privacidad"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conditions et confidentialité"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termini e privacy"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voorwaarden en privacy"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termos e privacidade"
-          }
-        }
-      }
-    },
-    "Terms & privacy policy" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AGB & Datenschutzerklärung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Condiciones y política de privacidad"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conditions et politique de confidentialité"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termini e informativa sulla privacy"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voorwaarden en privacybeleid"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Termos e política de privacidade"
-          }
-        }
-      }
-    },
     "Terms of Use" : {
       "localizations" : {
         "de" : {
@@ -47283,52 +48449,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estamos a preparar a tua exportação. Um link para descarregar vai para %@, normalmente até 24 horas depois de %@. O link é válido durante 7 dias."
-          }
-        }
-      }
-    },
-    "We're sorry to see you go." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Entscheidung. Das wird gelöscht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tú decides. Esto es lo que se borra."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À toi de voir. Voici ce qui sera effacé."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Decidi tu. Ecco cosa viene eliminato."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jouw keuze. Dit wordt verwijderd."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A decisão é tua. Isto é o que se apaga."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your call. Here's what deleting removes."
           }
         }
       }
