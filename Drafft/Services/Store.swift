@@ -1,4 +1,5 @@
 import Foundation
+import os
 import RevenueCat
 
 /// In-app purchases, through RevenueCat. Prices are never written in the app: App Store Connect
@@ -29,6 +30,7 @@ final class Store {
     @ObservationIgnored private var linkGeneration = 0
 
     enum StoreError: Error { case notLinked }
+    private static let log = Logger(subsystem: "so.drafft.app", category: "store")
 
     /// Once, at launch, before anything reads purchases.
     static func configure() {
@@ -121,6 +123,23 @@ final class Store {
     var reportsLinkedAccount: Bool {
         guard let linkedUserID else { return false }
         return Purchases.shared.appUserID == linkedUserID
+    }
+
+    /// The linked account's purchases as the App Store says them now, past RevenueCat's cache:
+    /// turning renewal off in Apple's sheet makes no transaction, so the stream (DrafftApp) may not
+    /// report it for a while. Nil when RevenueCat isn't reporting for the linked account or the read
+    /// failed, both logged.
+    func currentCustomerInfo() async -> CustomerInfo? {
+        guard reportsLinkedAccount else {
+            Self.log.notice("Subscription refresh skipped: RevenueCat isn't reporting for the linked account")
+            return nil
+        }
+        do {
+            return try await Purchases.shared.customerInfo(fetchPolicy: .fetchCurrent)
+        } catch {
+            Self.log.error("Subscription refresh failed: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
     }
 
     /// How many boosts or super likes a pack holds.

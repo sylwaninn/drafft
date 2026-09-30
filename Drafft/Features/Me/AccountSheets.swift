@@ -496,8 +496,6 @@ struct DeleteAccountSheet: View {
                     }
                     .buttonStyle(.drafftSecondary)
                 }
-                // Once cancelled there, the App Store's update (DrafftApp) takes this block away.
-                .manageSubscriptionsSheet(isPresented: $managingSubscription)
             }
 
             SheetBlock(title: L("Just need a break?")) {
@@ -551,6 +549,15 @@ struct DeleteAccountSheet: View {
                 .tint(DS.Palette.negative)
                 .onChange(of: understood) { Haptics.select() }
             }
+        }
+        // On the sheet itself, not the subscription block: the refresh can take the block away
+        // while Apple's sheet is still up.
+        .manageSubscriptionsSheet(isPresented: $managingSubscription)
+        // Cancelling there makes no transaction, so RevenueCat's stream (DrafftApp) can lag behind:
+        // read the App Store again once Apple's sheet closes.
+        .onChange(of: managingSubscription) { _, open in
+            guard !open else { return }
+            Task { await app.refreshSubscription { sub in withAnimation(Motion.snappy) { app.subscription = sub } } }
         }
     }
 }

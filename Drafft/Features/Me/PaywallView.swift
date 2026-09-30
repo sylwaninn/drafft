@@ -448,8 +448,8 @@ struct SubscriptionSheet: View {
             .bottomBar { footer }
             .manageSubscriptionsSheet(isPresented: $managing)
             .sheet(item: $legal) { item in Group { LegalDocSheet(doc: item) }.sheetSurface() }
-            // Back from Apple's sheet: read what the App Store now says (cancelled, plan change).
-            .onChange(of: managing) { _, open in if !open { Task { await refresh() } } }
+            // Back from Apple's sheet: read what the App Store now says (cancelled, another length).
+            .onChange(of: managing) { _, open in if !open { Task { await app.refreshSubscription(apply: apply) } } }
         }
         .presentationDragIndicator(.visible)
     }
@@ -603,7 +603,7 @@ struct SubscriptionSheet: View {
             defer { restoring = false }
             do {
                 let info = try await Store.shared.restore()
-                apply(info)
+                apply(Store.shared.subscription(from: info))
                 await app.loadWallet()
                 Haptics.success()
                 withAnimation(Motion.snappy) { restoreResult = L("Your subscription is up to date.") }
@@ -614,15 +614,9 @@ struct SubscriptionSheet: View {
         }
     }
 
-    private func refresh() async {
-        if Store.shared.reportsLinkedAccount, let info = try? await Purchases.shared.customerInfo() { apply(info) }
-        await app.loadWallet()
-    }
-
-    /// What the App Store reports. Expired closes the page, since the drafft tempo row only
-    /// shows while subscribed.
-    private func apply(_ info: CustomerInfo) {
-        let sub = Store.shared.subscription(from: info)
+    /// What the App Store reports (nil: not active). Expired closes the page, since the drafft
+    /// tempo row only shows while subscribed.
+    private func apply(_ sub: TempoSubscription?) {
         if sub == nil {
             dismiss()
             Task {
