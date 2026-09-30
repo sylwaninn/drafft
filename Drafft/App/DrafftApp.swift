@@ -302,16 +302,20 @@ struct MainTabs: View {
         .onChange(of: NotificationService.shared.openSessions) { _, open in
             if open { app.tab = .sessions; NotificationService.shared.openSessions = false }
         }
-        // Location is required: if it's turned off, block until it's back on.
+        // Location is required: while it's off (or never answered), a screen in its own window blocks
+        // everything, sheets included, until it's back on. Read again at each return to the app.
         .onAppear { if isActive { location.refresh() } }
         .onChange(of: isActive) { _, active in if active { location.refresh() } }
         .onChange(of: scenePhase) { _, p in if p == .active && isActive { location.refresh() } }
-        .fullScreenCover(isPresented: .constant(isActive && location.isBlocked)) { LocationRequiredView() }
+        .onChange(of: isActive && !location.isAllowed, initial: true) { _, blocked in
+            LocationWindow.shared.update(visible: blocked, language: app.language.locale)
+        }
+        .onDisappear { LocationWindow.shared.update(visible: false, language: app.language.locale) }
         // A fresh read found no record of the current terms and the consent to sensitive data: asked
         // at each open until accepted, after the location gate. Unknown (no read yet, offline) asks
         // nothing: the read is retried until it says (refreshAccount), and a sign-up can't finish
         // without the consent on the server (complete_onboarding).
-        .fullScreenCover(isPresented: .constant(isActive && !location.isBlocked && app.termsConsent == .required)) {
+        .fullScreenCover(isPresented: .constant(isActive && location.isAllowed && app.termsConsent == .required)) {
             TermsConsentView()
         }
         .overlay(alignment: .top) {
@@ -343,7 +347,7 @@ struct MainTabs: View {
         .animation(Motion.bouncy, value: app.boostBanner)
         .animation(Motion.bouncy, value: app.notice)
         .fullScreenCover(item: $app.matchScreen) { p in
-            MatchView(profile: p, me: app.me) {
+            MatchView(profile: p, me: app.publicMe) {
                 app.openChat(person: p.id)
             } onClose: {
                 app.matchScreen = nil

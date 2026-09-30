@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Launch: the session photos rotate full screen (the log-in's quick crossfade, faster here) under
-/// the white wordmark, centred at the bottom, its ghost trail in a darker tone. It stays long enough to see a
+/// the white wordmark, centred at the bottom. It stays long enough to see a
 /// photo, then fades onto the first screen as soon as the app is ready.
 struct SplashView: View {
     /// True once the first screen is ready (tabs mounted, session restored).
@@ -18,7 +18,7 @@ struct SplashView: View {
                 .ignoresSafeArea()
             // Flat dim: keeps the white word legible on bright photos.
             DS.Palette.night.opacity(0.28).ignoresSafeArea()
-            Wordmark(size: 34, color: .white, trail: DS.Palette.night)
+            Wordmark(size: 34, color: .white)
                 .padding(.bottom, 48)
                 .frame(maxHeight: .infinity, alignment: .bottom)
         }

@@ -622,7 +622,7 @@ private struct PackFan<Badge: View>: View {
                     .rotationEffect(.degrees(angles[i]), anchor: .bottom)
                     .offset(x: xs[i], y: i == 1 ? -6 : 8)
             }
-            Photo(name: app.me.portrait, side: 108)
+            Photo(name: app.publicMe.portrait, side: 108)
                 .frame(width: 108, height: 144)
                 .clipShape(.rect(cornerRadius: DS.Radius.lg))
                 // The badge sits inside the card's corner: nothing hangs off a block.

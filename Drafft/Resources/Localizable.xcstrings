@@ -8781,42 +8781,42 @@
         }
       }
     },
-    "Checking your first photo…" : {
+    "Checking your photos…" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein erstes Foto wird geprüft…"
+            "value" : "Deine Fotos werden geprüft…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprobando tu primera foto…"
+            "value" : "Comprobando tus fotos…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérification de ta première photo…"
+            "value" : "Vérification de tes photos…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Controllo della tua prima foto…"
+            "value" : "Controllo delle tue foto…"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je eerste foto wordt gecontroleerd…"
+            "value" : "Je foto's worden gecontroleerd…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A verificar a tua primeira foto…"
+            "value" : "A verificar as tuas fotos…"
           }
         }
       }
@@ -12161,6 +12161,46 @@
         }
       }
     },
+    "Location Services are off on this iPhone. Turn them on in Settings, under Privacy & Security." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Ortungsdienste sind auf diesem iPhone deaktiviert. Aktiviere sie in den Einstellungen unter „Datenschutz & Sicherheit“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La localización está desactivada en este iPhone. Actívala en Ajustes, en Privacidad y seguridad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le service de localisation est désactivé sur cet iPhone. Active-le dans Réglages, sous Confidentialité et sécurité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La localizzazione è disattivata su questo iPhone. Attivala in Impostazioni, in Privacy e sicurezza."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locatievoorzieningen staan uit op deze iPhone. Zet ze aan in Instellingen, onder Privacy en beveiliging."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os serviços de localização estão desativados neste iPhone. Ativa-os nas Definições, em Privacidade e segurança."
+          }
+        }
+      }
+    },
     "My purchase hasn't reached my account." : {
       "localizations" : {
         "de" : {
@@ -12401,6 +12441,46 @@
         }
       }
     },
+    "Our team is checking your first photo. Put another one first, or wait." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unser Team prüft dein erstes Foto. Setz ein anderes an den Anfang oder warte."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuestro equipo está revisando tu primera foto. Pon otra primero o espera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notre équipe vérifie ta première photo. Mets-en une autre en premier, ou patiente."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il nostro team sta controllando la tua prima foto. Metti un'altra per prima o aspetta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ons team bekijkt je eerste foto. Zet een andere vooraan of wacht."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A nossa equipa está a verificar a tua primeira foto. Põe outra primeiro ou espera."
+          }
+        }
+      }
+    },
     "Pick 1 to 3 times that haven't passed." : {
       "localizations" : {
         "de" : {
@@ -12483,6 +12563,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pick one of the proposed times."
+          }
+        }
+      }
+    },
+    "Pick While Using the App" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle „Beim Verwenden der App“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige «Cuando se use la app»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis « Lorsque l'app est active »"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli \"Mentre usi l'app\""
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kies 'Bij gebruik van app'"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhe «Durante a utilização da app»"
           }
         }
       }
@@ -12649,6 +12769,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Partilha a tua localização para ver pessoas perto de ti."
+          }
+        }
+      }
+    },
+    "Tap Location" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe auf „Standort“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca «Ubicación»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touche « Position »"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca \"Posizione\""
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tik op 'Locatie'"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca em «Localização»"
           }
         }
       }
@@ -13593,6 +13753,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A conversa termina para os dois e não voltam a ver-se em Descobrir."
+          }
+        }
+      }
+    },
+    "Your first photo wasn't approved. Put another one first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein erstes Foto wurde nicht freigegeben. Setz ein anderes an den Anfang."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primera foto no se ha aprobado. Pon otra primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta première photo n'a pas été acceptée. Mets-en une autre en premier."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prima foto non è stata approvata. Metti un'altra per prima."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je eerste foto is niet goedgekeurd. Zet een andere vooraan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua primeira foto não foi aprovada. Põe outra primeiro."
           }
         }
       }

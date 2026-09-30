@@ -83,6 +83,8 @@ extension AppModel {
     }
 
     private func apply(_ account: ProfileSync.Account) {
+        // Before the profile: a refused or pending photo must never show as the profile, not even for a frame.
+        PhotoModeration.shared.track(account.photos)
         me = account.profile
         profileLoad = .loaded
         applyServerPause(account.paused)

@@ -16,6 +16,9 @@ final class AppModel {
     /// The signed-in person's own profile, as read from the server (never sample data). Empty until
     /// `profileLoad` is `.loaded`: You shows a loading or retry state instead of it until then.
     var me = AppModel.nobody
+    /// `me` as others see it: only the photos moderation approved. A photo being checked, refused or
+    /// waiting for a person stays in Edit profile, never on the profile.
+    var publicMe: Profile { me.showingApprovedPhotos() }
     enum ProfileLoad: Equatable { case loading, failed, loaded }
     var profileLoad: ProfileLoad = .loading
     /// The signed-in account's last known state on this iPhone (see `LocalCache`, `refreshAccount`).
@@ -99,7 +102,7 @@ final class AppModel {
     /// 0…1, with the next thing worth adding.
     var profileCompletion: (value: Double, next: String?) {
         let checks: [(Bool, String)] = [
-            (me.allPhotos.count >= 4, L("Add a few more photos")),
+            (publicMe.allPhotos.count >= 4, L("Add a few more photos")),
             (!me.bio.isEmpty, L("Write a short bio")),
             (me.voiceIntro != nil, L("Record a voice intro")),
             (me.prompts.count >= 3, L("Answer a third prompt")),

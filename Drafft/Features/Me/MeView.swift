@@ -111,7 +111,7 @@ struct MeView: View {
                     case .edit: EditProfileView(profile: app.me)
                     case .preview:
                         NavigationStack {
-                            ProfileDetailView(profile: app.me, mode: .me)
+                            ProfileDetailView(profile: app.publicMe, mode: .me)
                                 .toolbar {
                                     ToolbarItem(placement: .topBarTrailing) {
                                         Button("Close", systemImage: "xmark") { sheet = nil }
@@ -205,7 +205,7 @@ struct MeView: View {
         return VStack(alignment: .leading, spacing: DS.Space.lg) {
             HStack(spacing: DS.Space.lg) {
                 Button { sheet = .preview } label: {
-                    Photo(name: app.me.portrait, side: 84)
+                    Photo(name: app.publicMe.portrait, side: 84)
                         .frame(width: 84, height: 84)
                         .clipShape(.circle)
                         .overlay(Circle().strokeBorder(DS.Palette.accentOnNight, lineWidth: 3))

@@ -20,6 +20,8 @@ final class PhotoModeration {
 
         /// Still on its way: the tile is dimmed with a small loader.
         var isWorking: Bool { self == .uploading || self == .checking }
+        /// The automatic check has spoken (approved, refused, or handed to a person).
+        var isJudged: Bool { self == .approved || self == .refused || self == .inReview }
     }
 
     /// A refused photo, for its banner and its explanation.
@@ -42,8 +44,77 @@ final class PhotoModeration {
     /// A photo to take off the profile (from the refusal sheet): the grid showing it removes it.
     var removeRequest: String?
 
-    /// The server id of a picked photo, once registered.
-    func id(for path: String) -> String? { mediaIDs[path] }
+    /// Photos read back from the server (their link, as the grids show them): the id of each one
+    /// moderation hasn't approved, so it can be looked at again or removed. Not kept on the device:
+    /// every read of the account gives them again.
+    private var serverIDs: [String: String] = [:]
+
+    /// The server id of a photo, once registered.
+    func id(for path: String) -> String? { mediaIDs[path] ?? serverIDs[path] }
+
+    /// Where a photo stands, as the grid and the profile read it. Nil: nothing to say (a photo on the
+    /// server moderation approved, or one never sent).
+    func state(of path: String) -> State? { states[path] }
+
+    /// Whether a photo may show as the profile, to the person themselves included: only once approved.
+    /// A photo read back from the server with no state was approved (the others are tracked below).
+    func isShown(_ path: String) -> Bool {
+        guard let state = states[path] else { return !path.hasPrefix("/") }
+        return state == .approved
+    }
+
+    /// The account's photos as the server has them: a refused one stays on the person's own grid
+    /// (to ask for a second look or remove it) and one still pending shows as in review. Neither is
+    /// ever on the profile.
+    func track(_ photos: [ProfileSync.OwnPhoto]) {
+        for photo in photos {
+            // One link per photo: the previous signed link of the same photo goes.
+            for (link, id) in serverIDs where id == photo.id && link != photo.link {
+                serverIDs[link] = nil
+                states[link] = nil
+            }
+            switch photo.status {
+            case "approved":
+                // Its id stays known: a later refusal (the team, a second look) must still reach it.
+                serverIDs[photo.link] = photo.id
+                states[photo.link] = nil
+            case "rejected":
+                serverIDs[photo.link] = photo.id
+                states[photo.link] = .refused
+            default:
+                serverIDs[photo.link] = photo.id
+                states[photo.link] = .inReview
+            }
+        }
+    }
+
+    /// A picked photo whose state this launch doesn't know (a sign-up resumed after the app was
+    /// closed): its verdict read again, or the photo sent again if the server never got it.
+    func ensureChecked(_ path: String) {
+        guard path.hasPrefix("/"), states[path] == nil else { return }
+        guard let id = mediaIDs[path] else { submit(path); return }
+        states[path] = .checking
+        Task {
+            struct Status: Decodable { let status: String }
+            guard let data = try? await Backend.shared.select("profile_media?id=eq.\(id)&select=status"),
+                  let rows = try? JSONDecoder().decode([Status].self, from: data) else {
+                states[path] = .failed(Self.failure(Backend.BackendError.http(0, "unreachable")))
+                return
+            }
+            switch rows.first?.status {
+            case "approved": settle(path, .approved)
+            case "rejected": states[path] = .refused
+            case "pending":
+                let verdict = (try? await verdict(for: id)) ?? .inReview
+                if states[path] == .checking { settle(path, verdict) }
+            default:
+                // Gone from the server: sent again.
+                mediaIDs[path] = nil
+                states[path] = nil
+                submit(path)
+            }
+        }
+    }
 
     /// Waits for a picked photo to be uploaded and registered (moderation may still be running).
     /// Nil if it failed.
@@ -60,7 +131,8 @@ final class PhotoModeration {
     /// Clears a failed attempt and sends the photo again.
     func retry(_ path: String) {
         states[path] = nil
-        submit(path)
+        // Already on the server (only its verdict couldn't be read): read it again, never a second upload.
+        if mediaIDs[path] != nil { ensureChecked(path) } else { submit(path) }
     }
 
     /// The failure reason for a photo, in plain words when we know the cause.
@@ -113,7 +185,7 @@ final class PhotoModeration {
     /// Asks a person to look at a refused photo again. It stays off the profile meanwhile.
     func requestReview(_ path: String) async throws {
         // Not uploaded (yet): nothing the team could look at, so never say it was sent.
-        guard let id = mediaIDs[path] else { throw Backend.BackendError.http(404, "photo not on the server") }
+        guard let id = id(for: path) else { throw Backend.BackendError.http(404, "photo not on the server") }
         _ = try await Backend.shared.rpc("request_media_review", ["p_media": id])
         states[path] = .inReview
     }
@@ -121,11 +193,12 @@ final class PhotoModeration {
     /// Takes a refused photo off the profile: from the grid, and from the server.
     func remove(_ path: String) {
         removeRequest = path
-        if let id = mediaIDs[path] {
+        if let id = id(for: path) {
             Task { _ = try? await Backend.shared.rpc("delete_media", ["p_id": id]) }
         }
         states[path] = nil
         mediaIDs[path] = nil
+        serverIDs[path] = nil
     }
 
     /// A `media` event from the person's Realtime topic (UserChannel): the automatic
@@ -133,28 +206,36 @@ final class PhotoModeration {
     /// its banner, with the second look offered by its explanation. A photo this device doesn't
     /// know (added from another phone) is left alone.
     func apply(mediaID: String, status: String) {
-        guard let path = mediaIDs.first(where: { $0.value == mediaID })?.key else { return }
-        switch status {
-        case "approved": settle(path, .approved)
-        case "rejected": settle(path, .refused)
-        // Back to pending: a second look was asked (here or on another device).
-        case "pending" where states[path] == .refused: settle(path, .inReview)
-        default: break
+        // The same photo can be known by its local path and by its server link: both follow.
+        for path in paths(of: mediaID) {
+            switch status {
+            case "approved": settle(path, .approved)
+            case "rejected": settle(path, .refused, announce: path == paths(of: mediaID).first)
+            // Back to pending: a second look was asked (here or on another device).
+            case "pending" where states[path] == .refused: settle(path, .inReview)
+            default: break
+            }
         }
     }
 
+    /// Every path a server id is known by: picked on this device, and read back from the server.
+    private func paths(of mediaID: String) -> [String] {
+        mediaIDs.filter { $0.value == mediaID }.map(\.key) + serverIDs.filter { $0.value == mediaID }.map(\.key)
+    }
+
     /// Sets a photo's verdict; announces a refusal once, when it becomes one.
-    private func settle(_ path: String, _ state: State) {
+    private func settle(_ path: String, _ state: State, announce: Bool = true) {
         let was = states[path]
         states[path] = state
-        if state == .refused && was != .refused { announceRefusal(path) }
+        if state == .refused && was != .refused && announce { announceRefusal(path) }
     }
 
     /// From the push: shows the explanation for that photo, once the app is on screen (a tap on a
     /// push can launch it: its window takes a moment to exist).
     func openRefusal(mediaID: String) {
-        guard let path = mediaIDs.first(where: { $0.value == mediaID })?.key else { return }
-        states[path] = .refused
+        let paths = paths(of: mediaID)
+        guard let path = paths.first else { return }
+        paths.forEach { states[$0] = .refused }
         refusalBanner = nil
         Task {
             for _ in 0..<30 {
@@ -190,5 +271,17 @@ final class PhotoModeration {
             }
         }
         return .inReview
+    }
+}
+
+extension Profile {
+    /// The same profile with only the photos that may show (`PhotoModeration.isShown`), in order: the
+    /// first approved one is the portrait.
+    @MainActor func showingApprovedPhotos() -> Profile {
+        let shown = allPhotos.filter { !$0.isEmpty && PhotoModeration.shared.isShown($0) }
+        var profile = self
+        profile.portrait = shown.first ?? ""
+        profile.photos = Array(shown.dropFirst())
+        return profile
     }
 }

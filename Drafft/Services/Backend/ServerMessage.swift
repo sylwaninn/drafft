@@ -20,6 +20,8 @@ enum ServerMessage {
         case "gender_required": L("Pick the one that fits you best.")
         case "sport_required": L("Add at least one sport.")
         case "photo_required": L("Add at least one photo.")
+        // The first photo isn't approved yet, was refused, or shows no face (server check).
+        case "portrait_required": L("Put a clear photo of your face first.")
         case "birthdate_locked": L("Your birthday can't be changed.")
         case "email_unconfirmed": L("Confirm your email first.")
         case "phone_required": L("Verify your phone number first.")

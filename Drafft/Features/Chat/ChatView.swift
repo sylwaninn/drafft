@@ -324,7 +324,7 @@ struct ChatView: View {
         }
         .sheet(item: $counterTo) { original in
             Group {
-                ProposeSessionSheet(profile: convo.profile, me: app.me, sendTitle: L("Send new times"), counterTo: original) { p in
+                ProposeSessionSheet(profile: convo.profile, me: app.publicMe, sendTitle: L("Send new times"), counterTo: original) { p in
                     app.counterSession(original.id, in: conversationID, with: p)
                 }
             }
@@ -332,7 +332,7 @@ struct ChatView: View {
         }
         .sheet(isPresented: $proposing) {
             Group {
-                ProposeSessionSheet(profile: convo.profile, me: app.me) { p in
+                ProposeSessionSheet(profile: convo.profile, me: app.publicMe) { p in
                     app.proposeSession(p, in: conversationID)
                 }
             }

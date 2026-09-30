@@ -26,10 +26,11 @@ final class TopOverlayWindow {
         self.window = window
     }
 
-    /// The app's own window (for presenting sheets), never this overlay or the hold screen's.
+    /// The app's own window (for presenting sheets), never this overlay, the hold screen's or the
+    /// location screen's.
     static var appWindow: UIWindow? {
         let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
-            .filter { !($0 is PassThroughWindow) && !($0 is HoldUIWindow) }
+            .filter { !($0 is PassThroughWindow) && !($0 is HoldUIWindow) && !($0 is LocationUIWindow) }
         return windows.first(where: \.isKeyWindow) ?? windows.first
     }
 }

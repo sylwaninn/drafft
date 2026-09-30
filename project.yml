@@ -137,9 +137,12 @@ targets:
       - path: Drafft/Services/Backend/TermsConsent.swift
       - path: Drafft/Services/Backend/ServerMessage.swift
       - path: Drafft/Services/OnboardingProgress.swift
+      - path: Drafft/Services/PhoneCountry.swift
     dependencies:
       - package: GRDB
         product: GRDB
+      - package: PhoneNumberKit
+        product: PhoneNumberKit
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: so.drafft.tests

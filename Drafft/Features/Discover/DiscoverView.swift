@@ -266,7 +266,7 @@ struct DiscoverView: View {
         // Boosts sit on the screen's centre line unless the wordmark needs the room.
         CenterUnlessCrowded {
             HStack(spacing: 6) {
-                Wordmark(size: 30, color: DS.Palette.ink, trail: DS.Palette.accentInk, trailStrength: 0.55)
+                Wordmark(size: 30, color: DS.Palette.ink)
                 // Plus members get the spark next to the wordmark, as on the paywall.
                 if app.isPremium {
                     SparkPlus()
