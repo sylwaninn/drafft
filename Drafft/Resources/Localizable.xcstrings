@@ -11989,48 +11989,42 @@
         }
       }
     },
-    "Hidden from Discover and likes. Your chats and sessions carry on." : {
+    "Hides you from Discover and likes. Your chats and sessions carry on." : {
       "localizations" : {
-        "en" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hidden from Discover and likes. Your chats and sessions carry on."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invisible dans Découvrir et les likes. Tes discussions et tes séances continuent."
+            "value" : "Du erscheinst nicht mehr in Entdecken und bei den Likes. Deine Chats und Sessions laufen weiter."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No apareces en Descubrir ni en los likes. Tus chats y sesiones siguen."
+            "value" : "Dejas de aparecer en Descubrir y en los likes. Tus chats y sesiones siguen."
           }
         },
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In Entdecken und bei den Likes unsichtbar. Deine Chats und Sessions laufen weiter."
+            "value" : "Tu n'apparais plus dans Découvrir ni dans les likes. Tes discussions et tes séances continuent."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Invisibile in Scopri e nei like. Le tue chat e sessioni continuano."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Invisível em Descobrir e nos likes. As tuas conversas e sessões continuam."
+            "value" : "Non appari più in Scopri e nei like. Le tue chat e sessioni continuano."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verborgen in Ontdekken en bij likes. Je chats en sessies gaan door."
+            "value" : "Je verschijnt niet meer in Ontdekken en bij likes. Je chats en sessies gaan door."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deixas de aparecer em Descobrir e nos likes. As tuas conversas e sessões continuam."
           }
         }
       }
@@ -39803,46 +39797,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tai chi"
-          }
-        }
-      }
-    },
-    "Hide from Discover for a while. Your chats stay open." : {
-      "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disparais de Découvrir un moment. Tes discussions restent ouvertes."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desaparece de Descubrir un tiempo. Tus chats siguen abiertos."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verschwinde eine Weile aus Entdecken. Deine Chats bleiben offen."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sparisci da Scopri per un po'. Le tue chat restano aperte."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desaparece de Descobrir por uns tempos. As tuas conversas continuam abertas."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verdwijn even uit Ontdekken. Je chats blijven open."
           }
         }
       }

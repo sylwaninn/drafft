@@ -87,7 +87,7 @@ struct RootView: View {
             }
             // The server turned an action down because the profile is paused: lock discovery.
             .onReceive(NotificationCenter.default.publisher(for: .profilePausedByServer)) { _ in
-                app.applyServerPause(true)
+                app.serverRefusedPaused()
                 // A hold pauses the profile too (and bans it from chats): check which it is.
                 Task { await moderation.load() }
             }

@@ -5,8 +5,9 @@ import Foundation
 extension AppModel {
     /// The person flipped the switch: send it (the server's own state isn't sent back).
     func pauseChanged(from old: Bool) {
-        // Resumed: discovery reads the deck again (nothing was read while paused).
-        if old, !profilePaused { refreshDiscovery() }
+        // Resumed by the server (another device, a lifted hold): discovery reads the deck again. A
+        // flip on this iPhone does it once saved (`syncPause`).
+        if old, !profilePaused, pauseFromServer { refreshDiscovery() }
         guard profilePaused != old, !pauseFromServer else { return }
         let paused = profilePaused
         pauseEdits += 1
@@ -23,6 +24,13 @@ extension AppModel {
         pauseFromServer = false
     }
 
+    /// A request was refused because the profile is paused. While a flip is being saved the refusal
+    /// may predate it, and the save's own outcome decides.
+    func serverRefusedPaused() {
+        guard pauseSaves == 0 else { return }
+        applyServerPause(true)
+    }
+
     /// Sends the switch to the server; if it can't be saved (signed out included), the switch goes
     /// back to the server's state.
     func syncPause(_ paused: Bool, edit: Int) async {
@@ -30,6 +38,9 @@ extension AppModel {
         defer { pauseSaves -= 1 }
         do {
             try await Backend.shared.updateMyProfile(["paused": paused])
+            // Resumed: discovery reads the deck again (nothing was read while paused). Only once
+            // the server has it: asked sooner, it answers "paused" and the pause came back on.
+            if !paused, edit == pauseEdits { refreshDiscovery() }
         } catch {
             // A later flip is on its way: it decides.
             guard edit == pauseEdits else { return }

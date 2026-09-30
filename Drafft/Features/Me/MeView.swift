@@ -33,9 +33,8 @@ struct MeView: View {
                         row(L("Filters"), icon: "slider.horizontal.3", value: filtersSummary) { sheet = .filters }
                         separator
                         toggleRow(L("Pause my profile"), icon: "pause.fill",
-                                  detail: app.profilePaused
-                                      ? L("Hidden from Discover and likes. Your chats and sessions carry on.")
-                                      : L("Hide from Discover for a while. Your chats stay open."),
+                                  // One text, on or off: the strip under the card says it's on.
+                                  detail: L("Hides you from Discover and likes. Your chats and sessions carry on."),
                                   tint: DS.Palette.paused, isOn: $app.profilePaused)
                     }
                     group(L("Preferences")) {
@@ -405,7 +404,6 @@ struct MeView: View {
                     if let detail {
                         Text(detail).font(.footnote).foregroundStyle(DS.Palette.body)
                             .fixedSize(horizontal: false, vertical: true)
-                            .contentTransition(.opacity)
                     }
                 }
             }
@@ -434,7 +432,8 @@ private struct PausedStrip: View {
         .padding(.horizontal, DS.Space.xl)
         .padding(.top, DS.Radius.xl + DS.Space.md)
         .padding(.bottom, DS.Space.md)
-        .background(DS.Palette.paused, in: .rect(cornerRadius: DS.Radius.xl))
+        // Square at the top: it continues the card rather than sitting behind it.
+        .background(DS.Palette.paused, in: .rect(bottomLeadingRadius: DS.Radius.xl, bottomTrailingRadius: DS.Radius.xl))
         .accessibilityElement(children: .combine)
     }
 
