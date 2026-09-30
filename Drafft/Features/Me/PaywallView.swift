@@ -143,7 +143,6 @@ struct PaywallView: View {
                 .padding(.top, DS.Space.xxxl)
                 .padding(.bottom, DS.Space.xl)
             }
-            .scrollIndicators(.hidden)
             .bottomBar { footer }
             .nightSurface()
 

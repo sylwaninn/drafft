@@ -118,7 +118,6 @@ struct ExtrasSheet: View {
                 .padding(.top, DS.Space.lg)
                 .padding(.bottom, DS.Space.xl)
         }
-        .scrollIndicators(.hidden)
         .bottomBar {
             VStack(spacing: DS.Space.sm) {
                 launchButton
@@ -158,7 +157,6 @@ struct ExtrasSheet: View {
             .padding(.top, pushed ? DS.Space.sm : DS.Space.lg)
             .padding(.bottom, DS.Space.xl)
         }
-        .scrollIndicators(.hidden)
         .blurredNavigationEdge()
         .bottomBar { footer }
         .background(DS.Palette.canvasSoft)
