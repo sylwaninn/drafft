@@ -12161,6 +12161,46 @@
         }
       }
     },
+    "Location Services are off on this iPhone. Turn them on in Settings, under Privacy & Security." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Ortungsdienste sind auf diesem iPhone deaktiviert. Aktiviere sie in den Einstellungen unter „Datenschutz & Sicherheit“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La localización está desactivada en este iPhone. Actívala en Ajustes, en Privacidad y seguridad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le service de localisation est désactivé sur cet iPhone. Active-le dans Réglages, sous Confidentialité et sécurité."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La localizzazione è disattivata su questo iPhone. Attivala in Impostazioni, in Privacy e sicurezza."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locatievoorzieningen staan uit op deze iPhone. Zet ze aan in Instellingen, onder Privacy en beveiliging."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os serviços de localização estão desativados neste iPhone. Ativa-os nas Definições, em Privacidade e segurança."
+          }
+        }
+      }
+    },
     "My purchase hasn't reached my account." : {
       "localizations" : {
         "de" : {
@@ -12487,6 +12527,46 @@
         }
       }
     },
+    "Pick While Using the App" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle „Beim Verwenden der App“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige «Cuando se use la app»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis « Lorsque l'app est active »"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegli \"Mentre usi l'app\""
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kies 'Bij gebruik van app'"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolhe «Durante a utilização da app»"
+          }
+        }
+      }
+    },
     "Purchase" : {
       "localizations" : {
         "de" : {
@@ -12649,6 +12729,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Partilha a tua localização para ver pessoas perto de ti."
+          }
+        }
+      }
+    },
+    "Tap Location" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe auf „Standort“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca «Ubicación»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touche « Position »"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca \"Posizione\""
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tik op 'Locatie'"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca em «Localização»"
           }
         }
       }

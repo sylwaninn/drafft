@@ -181,8 +181,9 @@ private extension EmptyStateArt {
     static let holdSelfie = EmptyStateArt(symbol: "faceid")
 }
 
-private extension View {
-    /// Entrance: each part rises into place a beat after the one above it.
+extension View {
+    /// Entrance of the blocking screens (hold, location): each part rises into place a beat after
+    /// the one above it.
     func rise(_ appeared: Bool, step: Int, reduceMotion: Bool) -> some View {
         self
             .opacity(appeared || reduceMotion ? 1 : 0)

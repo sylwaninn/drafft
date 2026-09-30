@@ -162,8 +162,9 @@ final class AreaLocator: NSObject, CLLocationManagerDelegate {
     }
 }
 
-/// Location is required to use Drafft (at least "While using the app"). Watches the permission;
-/// when it's off, the app shows a blocking screen until it's back on.
+/// Location is required to use drafft: "While Using the App" or "Always", precise or approximate.
+/// Watches the permission and Location Services; while either is off (or the permission was never
+/// answered, as after "Ask Next Time"), the app shows a blocking screen until it's back on.
 @MainActor
 @Observable
 final class LocationGate: NSObject, CLLocationManagerDelegate {
@@ -172,6 +173,8 @@ final class LocationGate: NSObject, CLLocationManagerDelegate {
     static let shared = LocationGate()
 
     private(set) var status: CLAuthorizationStatus
+    /// Location Services turned off for the whole phone (the permission then reads as denied).
+    private(set) var servicesOff = false
     private let manager = CLLocationManager()
 
     override private init() {
@@ -180,17 +183,35 @@ final class LocationGate: NSObject, CLLocationManagerDelegate {
         manager.delegate = self
     }
 
-    var isAllowed: Bool { status == .authorizedWhenInUse || status == .authorizedAlways }
-    var isBlocked: Bool { status == .denied || status == .restricted }
+    /// The only state the app may be used in.
+    var isAllowed: Bool { !servicesOff && (status == .authorizedWhenInUse || status == .authorizedAlways) }
 
-    /// Re-read on launch and each time the app comes back (e.g. from Settings).
+    /// Re-read on launch and each time the app comes back (e.g. from Settings). Never answered: the
+    /// system prompt shows over the blocking screen.
     func refresh() {
         status = manager.authorizationStatus
         if status == .notDetermined { manager.requestWhenInUseAuthorization() }
+        readServices()
+    }
+
+    /// The system prompt, from the blocking screen's button.
+    func request() {
+        manager.requestWhenInUseAuthorization()
+    }
+
+    /// Off the main thread: Apple warns the check can block it.
+    private func readServices() {
+        Task.detached(priority: .userInitiated) {
+            let on = CLLocationManager.locationServicesEnabled()
+            await MainActor.run { LocationGate.shared.servicesOff = !on }
+        }
     }
 
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let s = manager.authorizationStatus
-        MainActor.assumeIsolated { status = s }
+        MainActor.assumeIsolated {
+            status = s
+            readServices()
+        }
     }
 }
