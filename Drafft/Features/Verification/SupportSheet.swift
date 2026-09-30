@@ -35,7 +35,7 @@ struct SupportSheet: View {
     var body: some View {
         AccountSheet(title: L("Get help"),
                      actionTitle: reference != nil ? L("Done") : L("Send to support"),
-                     actionIcon: reference != nil ? "checkmark" : "paperplane.fill",
+                     actionIcon: reference != nil ? "check" : "plain",
                      enabled: reference != nil || (hasMessage && hasEmail && session != .unknown && captchaReady),
                      loading: sending,
                      error: error,
@@ -45,7 +45,7 @@ struct SupportSheet: View {
         } content: {
             if let reference {
                 VStack(alignment: .leading, spacing: DS.Space.sm) {
-                    Image(systemName: "checkmark")
+                    Image("check")
                         .font(.title3.weight(.heavy))
                         .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 48, height: 48)
@@ -184,7 +184,7 @@ struct GetHelpButton: View {
             Haptics.tap()
             show = true
         } label: {
-            Label("Get help", systemImage: "questionmark.circle.fill")
+            Label("Get help", image: "question-circle")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(DS.Palette.accentInk)
                 .frame(minHeight: 44)

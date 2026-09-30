@@ -39,7 +39,7 @@ struct PhoneVerificationView: View {
                         Text("\(model.country.flag) \(model.country.dial)")
                             .font(.body.weight(.semibold).monospacedDigit())
                             .foregroundStyle(DS.Palette.ink)
-                        Image(systemName: "chevron.down").font(.caption.weight(.bold)).foregroundStyle(DS.Palette.body)
+                        Image("alt-arrow-down").font(.caption.weight(.bold)).foregroundStyle(DS.Palette.body)
                     }
                     .padding(.horizontal, DS.Space.md)
                     .frame(maxHeight: .infinity)
@@ -102,7 +102,7 @@ struct PhoneVerificationView: View {
     private func errorOrHint(default text: String) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             if let error = model.error {
-                Label(error, systemImage: "exclamationmark.circle.fill")
+                Label(error, image: "danger-circle")
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(DS.Palette.negative)
                     .transition(.opacity.combined(with: .move(edge: .top)))
@@ -157,7 +157,7 @@ struct CountryPickerSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
         }

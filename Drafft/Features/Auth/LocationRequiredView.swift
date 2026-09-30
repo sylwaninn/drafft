@@ -33,7 +33,7 @@ struct LocationRequiredView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.xl) {
                     Spacer(minLength: DS.Space.lg)
-                    EmptyStateIllustration(art: EmptyStateArt(symbol: "location.slash"), tint: DS.Palette.accentOnNight)
+                    EmptyStateIllustration(art: EmptyStateArt(symbol: "map-point-remove"), tint: DS.Palette.accentOnNight)
                         .offset(x: -73) // (200 - 54) / 2: the sign sits in the middle of its 200 pt map
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .rise(appeared, step: 0, reduceMotion: reduceMotion)
@@ -98,12 +98,12 @@ struct LocationRequiredView: View {
     private var action: some View {
         Group {
             if situation == .notAsked {
-                Button { location.request() } label: { Label("Allow location", systemImage: "location.fill") }
+                Button { location.request() } label: { Label("Allow location", image: "map-point") }
             } else {
                 Button {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                 } label: {
-                    Label("Open Settings", systemImage: "gearshape.fill")
+                    Label("Open Settings", image: "settings")
                 }
             }
         }

@@ -91,7 +91,7 @@ struct SessionsView: View {
                     .padding(.vertical, 5)
                     .background(DS.Palette.accentOnNight, in: .capsule)
                 Spacer()
-                Image(systemName: s.sport.symbol)
+                Image(s.sport.symbol)
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(DS.Palette.night)
                     .frame(width: 44, height: 44)
@@ -120,7 +120,7 @@ struct SessionsView: View {
 
             HStack(spacing: DS.Space.sm) {
                 Button { path.append(ChatRoute(chatID: item.chatID, sessionID: s.id)) } label: {
-                    Label("Open chat", systemImage: "bubble.left.fill")
+                    Label("Open chat", image: "chat-round-line")
                 }
                 .buttonStyle(.drafftPrimary)
                 .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
@@ -202,7 +202,7 @@ struct SessionsView: View {
                         .foregroundStyle(DS.Palette.body)
                 }
                 Spacer(minLength: DS.Space.sm)
-                Image(systemName: s.sport.symbol)
+                Image(s.sport.symbol)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(DS.Palette.onLime)
                     .frame(width: 36, height: 36)

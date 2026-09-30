@@ -135,7 +135,7 @@ struct RootView: View {
             // the welcome screen, which says why.
             .task { await app.watchSession() }
             .drafftConfirm(isPresented: Binding(get: { app.sessionEndedNotice }, set: { app.sessionEndedNotice = $0 }),
-                           icon: "person.crop.circle.badge.exclamationmark",
+                           icon: "user-warning",
                            title: L("You've been logged out"),
                            message: L("Your session ended on this iPhone. Log in again to pick up where you left off."),
                            cancelTitle: L("Got it"), actions: [])
@@ -211,10 +211,9 @@ struct MainTabs: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var location = LocationGate.shared
 
-    /// Outline when the tab is idle, filled when it's the current one (the system would fill them all).
+    /// Line icon when the tab is idle, its Solar bold twin ("<name>-bold") when it's the current one.
     private func tabLabel(_ title: String, _ symbol: String, _ tab: AppModel.Tab) -> some View {
-        Label(title, systemImage: symbol)
-            .environment(\.symbolVariants, app.tab == tab ? .fill : .none)
+        Label(title, image: app.tab == tab ? "\(symbol)-bold" : symbol)
     }
 
     /// Opens each tab once while nobody sees it (under the splash on a signed-in launch, under the
@@ -247,7 +246,7 @@ struct MainTabs: View {
             Tab(value: AppModel.Tab.discover) {
                 DiscoverView().tint(DS.Palette.accentInk).pausedLock()
             } label: {
-                tabLabel(L("Discover"), "flame", .discover)
+                tabLabel(L("Discover"), "fire", .discover)
             }
             Tab(value: AppModel.Tab.likes) {
                 LikesTabView().tint(DS.Palette.accentInk).pausedLock(PauseScope.locksLikes)
@@ -258,18 +257,18 @@ struct MainTabs: View {
             Tab(value: AppModel.Tab.sessions) {
                 SessionsView().tint(DS.Palette.accentInk)
             } label: {
-                tabLabel(L("Sessions"), "flag.2.crossed", .sessions)
+                tabLabel(L("Sessions"), "stopwatch-play", .sessions)
             }
             Tab(value: AppModel.Tab.chats) {
                 ConversationsView().tint(DS.Palette.accentInk)
             } label: {
-                tabLabel(L("Chats"), "bubble.left.and.bubble.right", .chats)
+                tabLabel(L("Chats"), "dialog-2", .chats)
             }
             .badge(app.unreadTotal)
             Tab(value: AppModel.Tab.me) {
                 MeView().tint(DS.Palette.accentInk)
             } label: {
-                tabLabel(L("You"), "person.crop.circle", .me)
+                tabLabel(L("You"), "user-circle", .me)
             }
         }
         // The tab bar stays monochrome (selected tab in ink): the home already carries the accent,

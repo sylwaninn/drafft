@@ -24,7 +24,7 @@ private struct ConfirmSheet: View {
         VStack(alignment: .leading, spacing: DS.Space.xl) {
             VStack(alignment: .leading, spacing: DS.Space.md) {
                 if let icon {
-                    Image(systemName: icon)
+                    Image(icon)
                         .font(.title3.weight(.bold))
                         .foregroundStyle(actions.contains { $0.kind == .destructive } ? .white : DS.Palette.onLime)
                         .frame(width: 52, height: 52)

@@ -27,7 +27,7 @@ struct ChangePhoneSheet: View {
                     Spacer()
                     // Only a number that exists can be verified.
                     if app.phoneNumber != nil {
-                        Label("Verified", systemImage: "checkmark.seal.fill")
+                        Label("Verified", image: "verified-check")
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(DS.Palette.positiveDeep)
                             .lineLimit(1)

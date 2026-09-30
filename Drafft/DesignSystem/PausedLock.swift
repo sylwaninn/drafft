@@ -36,7 +36,7 @@ private struct PausedLock: ViewModifier {
 
     private var notice: some View {
         VStack(spacing: DS.Space.md) {
-            Image(systemName: "pause.fill")
+            Image("pause")
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(DS.Palette.onLime)
                 .frame(width: 48, height: 48)

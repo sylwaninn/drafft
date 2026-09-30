@@ -33,12 +33,12 @@ struct AccountSheet<Content: View>: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") {
+                    Button("Close", image: .icon("close")) {
                         if hasChanges { confirmDiscard = true } else { dismiss() }
                     }
                 }
             }
-            .drafftConfirm(isPresented: $confirmDiscard, icon: "trash",
+            .drafftConfirm(isPresented: $confirmDiscard, icon: "trash-bin-minimalistic",
                            title: L("Discard your changes?"),
                            message: L("What you typed here will be lost."),
                            cancelTitle: L("Keep editing"),
@@ -50,7 +50,7 @@ struct AccountSheet<Content: View>: View {
                         if loading {
                             ProgressView().tint(destructive ? .white : DS.Palette.onLime)
                         } else if let actionIcon {
-                            Label(actionTitle, systemImage: actionIcon)
+                            Label(actionTitle, image: actionIcon)
                         } else {
                             Text(actionTitle)
                         }
@@ -165,7 +165,7 @@ struct ChangeEmailSheet: View {
 
     var body: some View {
         AccountSheet(title: L("Email"), actionTitle: actionTitle,
-                     actionIcon: flow.stage == .form ? "paperplane.fill" : flow.stage == .done ? "checkmark" : nil,
+                     actionIcon: flow.stage == .form ? "plain" : flow.stage == .done ? "check" : nil,
                      enabled: enabled, loading: flow.busy, error: error,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(newEmail.isEmpty && password.isEmpty))) {
             switch flow.stage {
@@ -274,8 +274,8 @@ struct ChangePasswordSheet: View {
 
     var body: some View {
         AccountSheet(title: L("Password"), actionTitle: actionTitle,
-                     actionIcon: flow.stage == .form ? "paperplane.fill" : flow.stage == .code ? "lock.fill"
-                         : flow.stage == .done ? "checkmark" : nil,
+                     actionIcon: flow.stage == .form ? "plain" : flow.stage == .code ? "lock-keyhole-minimalistic"
+                         : flow.stage == .done ? "check" : nil,
                      enabled: enabled, loading: flow.busy, error: error,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(new.isEmpty && confirm.isEmpty))) {
             switch flow.stage {
@@ -360,11 +360,11 @@ struct ExportDataSheet: View {
     @State private var exportError: String?
 
     private var included: [(icon: String, title: String, detail: String)] { [
-        ("person.fill", L("Profile"), L("Name, bio, sports, prompts, lifestyle")),
-        ("photo.on.rectangle", L("Photos & voice"), L("Everything you've uploaded")),
-        ("bubble.left.and.bubble.right.fill", L("Messages"), L("Your conversations with matches")),
+        ("user-rounded", L("Profile"), L("Name, bio, sports, prompts, lifestyle")),
+        ("gallery-wide", L("Photos & voice"), L("Everything you've uploaded")),
+        ("dialog-2", L("Messages"), L("Your conversations with matches")),
         ("calendar", L("Sessions"), L("Invites you sent and received")),
-        ("heart.fill", L("Likes & matches"), L("Who you liked and matched with"))
+        ("heart", L("Likes & matches"), L("Who you liked and matched with"))
     ] }
 
     private var requested: Date? { app.dataExportRequestedAt }
@@ -372,7 +372,7 @@ struct ExportDataSheet: View {
     var body: some View {
         AccountSheet(title: L("Export my data"),
                      actionTitle: requested == nil ? L("Email me my export") : L("Export requested"),
-                     actionIcon: requested == nil ? "envelope.fill" : "checkmark",
+                     actionIcon: requested == nil ? "letter" : "check",
                      enabled: requested == nil && !sending, loading: sending, error: exportError) {
             sending = true
             exportError = nil
@@ -391,7 +391,7 @@ struct ExportDataSheet: View {
         } content: {
             if let requested {
                 SheetBlock {
-                    Label("Check your inbox", systemImage: "envelope.open.fill")
+                    Label("Check your inbox", image: "letter-opened")
                         .font(.headline)
                         .foregroundStyle(DS.Palette.ink)
                     Text("We're preparing your export. A download link goes to \(app.email), usually within 24 hours of \(requested.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened).locale(.app))). The link works for 7 days.")
@@ -411,7 +411,7 @@ struct ExportDataSheet: View {
                 VStack(spacing: DS.Space.md) {
                     ForEach(included, id: \.title) { item in
                         HStack(alignment: .firstTextBaseline, spacing: DS.Space.md) {
-                            Image(systemName: item.icon)
+                            Image(item.icon)
                                 .font(.system(size: 13, weight: .bold))
                                 .foregroundStyle(DS.Palette.ink)
                                 .frame(width: 32, height: 32)
@@ -449,7 +449,7 @@ struct DeleteAccountSheet: View {
     private var reasons: [String] { [L("I met someone"), L("I need a break"), L("Not enough people nearby"), L("Something else")] }
 
     var body: some View {
-        AccountSheet(title: L("Delete account"), actionTitle: L("Delete my account"), actionIcon: "trash.fill",
+        AccountSheet(title: L("Delete account"), actionTitle: L("Delete my account"), actionIcon: "trash-bin-minimalistic",
                      destructive: true, enabled: understood, loading: loading,
                      error: failure) {
             loading = true
@@ -505,7 +505,7 @@ struct DeleteAccountSheet: View {
                     app.profilePaused = true
                     dismiss()
                 } label: {
-                    Label(app.profilePaused ? "Your profile is paused" : "Pause my profile instead", systemImage: "pause.fill")
+                    Label(app.profilePaused ? "Your profile is paused" : "Pause my profile instead", image: "pause")
                 }
                 .buttonStyle(.drafftSecondary)
                 .disabled(app.profilePaused)

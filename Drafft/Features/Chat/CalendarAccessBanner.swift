@@ -37,7 +37,7 @@ struct CalendarAccessBanner: View {
 
     var body: some View {
         HStack(spacing: DS.Space.md) {
-            Image(systemName: "calendar.badge.exclamationmark")
+            Image("calendar-warning")
                 .font(.title3.weight(.bold))
                 .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 48, height: 48)

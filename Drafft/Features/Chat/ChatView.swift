@@ -48,7 +48,7 @@ struct ChatView: View {
             if let convo {
                 content(convo)
             } else {
-                ContentUnavailableView("Chat not found", systemImage: "bubble.left")
+                ContentUnavailableView("Chat not found", image: "chat-round")
             }
         }
         .onAppear {
@@ -291,21 +291,21 @@ struct ChatView: View {
             // iOS 26 puts bar items on a shared glass pill: not this one.
             .sharedBackgroundVisibility(.hidden)
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Propose a session", systemImage: "calendar.badge.plus") { proposing = true }
+                Button("Propose a session", image: .icon("calendar-add")) { proposing = true }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Menu("More", systemImage: "ellipsis") {
+                Menu("More", image: .icon("menu-dots")) {
                     // Profile and sessions are one tap away in the bar: this is about the chat, then
                     // safety, apart.
                     Section {
                         Button(convo.muted ? "Unmute notifications" : "Mute notifications",
-                               systemImage: convo.muted ? "bell" : "bell.slash") {
+                               image: .icon(convo.muted ? "bell" : "bell-off")) {
                             app.toggleMute(conversationID)
                         }
-                        Button("Mark as unread", systemImage: "envelope.badge") { markUnread() }
+                        Button("Mark as unread", image: .icon("letter-unread")) { markUnread() }
                     }
                     Section {
-                        Button("Report or block", systemImage: "shield.lefthalf.filled", role: .destructive) { showSafety = true }
+                        Button("Report or block", image: .icon("shield-warning"), role: .destructive) { showSafety = true }
                     }
                 }
                 // Neutral icons: the menu doesn't take the accent tint.
@@ -458,7 +458,7 @@ private struct JumpToLatestButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: "chevron.down")
+            Image("alt-arrow-down")
                 .font(.system(size: 16, weight: .bold))
                 .foregroundStyle(DS.Palette.ink)
                 .frame(width: 44, height: 44)
@@ -637,7 +637,7 @@ struct MessageRow: View {
                 if !mine { Spacer(minLength: 56) }
                 if message.state == .failed {
                     Button { onRetry(message) } label: {
-                        Image(systemName: "exclamationmark.circle.fill")
+                        Image("danger-circle")
                             .font(.title3)
                             .foregroundStyle(DS.Palette.negative)
                             .frame(width: 44, height: 44)
@@ -651,7 +651,7 @@ struct MessageRow: View {
         }
         .offset(x: swipe)
         .background(alignment: .leading) {
-            Image(systemName: "arrowshape.turn.up.left.fill")
+            Image("reply")
                 .font(.body.weight(.bold))
                 .foregroundStyle(swipe >= replyThreshold ? DS.Palette.onLime : DS.Palette.ink)
                 .frame(width: 36, height: 36)
@@ -808,7 +808,7 @@ struct MessageRow: View {
                     } else {
                         DS.Palette.night
                     }
-                    Image(systemName: "play.fill")
+                    Image("play")
                         .font(.title2)
                         .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 56, height: 56)
@@ -817,7 +817,7 @@ struct MessageRow: View {
                 .frame(width: size.width, height: size.height)
                 .clipShape(.rect(cornerRadius: 20))
                 .overlay(alignment: .bottomLeading) {
-                    Label(duration.clock, systemImage: "video.fill")
+                    Label(duration.clock, image: "videocamera")
                         .font(.caption.weight(.bold).monospacedDigit())
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
@@ -849,7 +849,7 @@ struct MessageRow: View {
                 if let url { onOpen(MediaItem(id: message.id, kind: .file(url))) }
             } label: {
                 HStack(spacing: DS.Space.md) {
-                    Image(systemName: name.lowercased().hasSuffix(".pdf") ? "doc.richtext.fill" : "doc.fill")
+                    Image(name.lowercased().hasSuffix(".pdf") ? "file-text" : "file")
                         .font(.title2)
                         .foregroundStyle(mine ? DS.Palette.ink : DS.Palette.onLime)
                         .frame(width: 44, height: 52)

@@ -34,12 +34,12 @@ struct MessageFocusOverlay: View {
     private let gap: CGFloat = 10
 
     private var actions: [(title: String, icon: String, role: ButtonRole?, run: () -> Void)] {
-        var out: [(String, String, ButtonRole?, () -> Void)] = [(L("Reply"), "arrowshape.turn.up.left", nil, onReply)]
+        var out: [(String, String, ButtonRole?, () -> Void)] = [(L("Reply"), "reply", nil, onReply)]
         if case .text(let t) = message.content {
-            out.append((L("Copy"), "doc.on.doc", nil, { UIPasteboard.general.string = t }))
+            out.append((L("Copy"), "copy", nil, { UIPasteboard.general.string = t }))
         }
         if mine {
-            out.append((L("Unsend"), "arrow.uturn.backward", .destructive, {
+            out.append((L("Unsend"), "undo-left", .destructive, {
                 withAnimation(Motion.snappy) { app.delete(message.id, in: convo.id) }
             }))
         }
@@ -135,7 +135,7 @@ struct MessageFocusOverlay: View {
                 Haptics.tap()
                 pickingEmoji = true
             } label: {
-                Image(systemName: "plus")
+                Image("add")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundStyle(DS.Palette.ink)
                     .frame(width: 40, height: 40)
@@ -173,7 +173,7 @@ struct MessageFocusOverlay: View {
                     close(then: { a.run(); onDismiss() })
                 } label: {
                     HStack(spacing: DS.Space.md) {
-                        Image(systemName: a.icon)
+                        Image(a.icon)
                             .font(.body.weight(.semibold))
                             .frame(width: 24)
                         Text(a.title).font(.body)

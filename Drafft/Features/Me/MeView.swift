@@ -21,26 +21,26 @@ struct MeView: View {
                     profileCard
                     if !app.isPremium { plusCard }
                     group(L("Discovery")) {
-                        row(L("Filters"), icon: "slider.horizontal.3", value: filtersSummary) { sheet = .filters }
+                        row(L("Filters"), icon: "tuning-2", value: filtersSummary) { sheet = .filters }
                         separator
-                        toggleRow(L("Pause my profile"), icon: "pause.fill",
+                        toggleRow(L("Pause my profile"), icon: "pause",
                                   detail: app.profilePaused
                                       ? L("Hidden from Discover and likes. Your chats and sessions carry on.")
                                       : L("Hide from Discover for a while. Your chats stay open."),
                                   isOn: $app.profilePaused)
                     }
                     group(L("Preferences")) {
-                        row(L("Notifications"), icon: "bell.fill",
+                        row(L("Notifications"), icon: "bell",
                             value: NotificationService.shared.isAllowed ? L("Matches, messages, sessions") : L("Off")) { sheet = .notifications }
                         separator
-                        row(L("Language"), icon: "globe", value: app.language.name) { sheet = .language }
+                        row(L("Language"), icon: "global", value: app.language.name) { sheet = .language }
                     }
                     group(L("Account")) {
-                        row(L("Email"), icon: "envelope.fill", value: app.email) { sheet = .email }
+                        row(L("Email"), icon: "letter", value: app.email) { sheet = .email }
                         separator
-                        row(L("Phone"), icon: "phone.fill", value: app.phoneNumber ?? L("Add your number")) { sheet = .phone }
+                        row(L("Phone"), icon: "phone", value: app.phoneNumber ?? L("Add your number")) { sheet = .phone }
                         separator
-                        row(L("Password"), icon: "key.fill", value: L("Change your password")) { sheet = .password }
+                        row(L("Password"), icon: "key", value: L("Change your password")) { sheet = .password }
                         // Only while subscribed: without it, the tier card above is the way in.
                         if app.isPremium, let sub = app.subscription {
                             separator
@@ -51,21 +51,22 @@ struct MeView: View {
                         }
                     }
                     group(L("Privacy & data")) {
-                        row(L("Blocked people"), icon: "hand.raised.fill", value: app.blockedCount == 0 ? L("No one") : "\(app.blockedCount)") { sheet = .blocked }
+                        row(L("Blocked people"), icon: "user-block",
+                            value: app.blockedCount == 0 ? L("No one") : "\(app.blockedCount)") { sheet = .blocked }
                         separator
-                        row(L("Export my data"), icon: "square.and.arrow.down.fill",
+                        row(L("Export my data"), icon: "download-minimalistic",
                             value: app.dataExportRequestedAt == nil ? L("Sent to you by email") : L("Requested, check your inbox")) { sheet = .export }
                         separator
                         // drafft can't work without the gender: withdrawing the consent is deleting the account.
-                        row(L("Sensitive data consent"), icon: "checkmark.shield.fill",
+                        row(L("Sensitive data consent"), icon: "shield-check",
                             value: L("Withdrawing it means deleting your account.")) { sheet = .delete }
                     }
                     group(L("Help")) {
-                        row(L("Safety tips"), icon: "shield.lefthalf.filled", value: L("Meeting someone for the first time")) { sheet = .safety }
+                        row(L("Safety tips"), icon: "shield-check", value: L("Meeting someone for the first time")) { sheet = .safety }
                         separator
-                        row(L("Help center"), icon: "questionmark.circle.fill", value: nil) { sheet = .help }
+                        row(L("Help center"), icon: "question-circle", value: nil) { sheet = .help }
                         separator
-                        row(L("Terms & privacy policy"), icon: "doc.text.fill", value: nil) { sheet = .legal }
+                        row(L("Terms & privacy policy"), icon: "document-text", value: nil) { sheet = .legal }
                     }
                     VStack(spacing: 0) {
                         Button { confirmLogout = true } label: {
@@ -101,7 +102,7 @@ struct MeView: View {
             .toolbarVisibility(.hidden, for: .navigationBar)
             // No title on You: just the blur under the status bar.
             .topBar { Color.clear.frame(height: DS.Space.xs) }
-            .drafftConfirm(isPresented: $confirmLogout, icon: "rectangle.portrait.and.arrow.right",
+            .drafftConfirm(isPresented: $confirmLogout, icon: "logout-2",
                            title: L("Log out?"),
                            message: L("Your matches and chats stay safe. Log back in to see them."),
                            actions: [ConfirmAction(title: L("Log out"), kind: .destructive) { app.signOut() }])
@@ -114,7 +115,7 @@ struct MeView: View {
                             ProfileDetailView(profile: app.publicMe, mode: .me)
                                 .toolbar {
                                     ToolbarItem(placement: .topBarTrailing) {
-                                        Button("Close", systemImage: "xmark") { sheet = nil }
+                                        Button("Close", image: .icon("close")) { sheet = nil }
                                     }
                                 }
                         }
@@ -168,7 +169,7 @@ struct MeView: View {
                     .frame(width: 84, height: 84)
                     .overlay {
                         if failed {
-                            Image(systemName: "person.fill").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
+                            Image("user-rounded").font(.system(size: 32, weight: .bold)).foregroundStyle(.white)
                         } else {
                             ProgressView().tint(.white)
                         }
@@ -190,7 +191,7 @@ struct MeView: View {
             }
             if failed {
                 Button { Task { await app.loadProfile() } } label: {
-                    Label("Try again", systemImage: "arrow.clockwise")
+                    Label("Try again", image: "refresh")
                 }
                 .buttonStyle(.drafftPrimary)
             }
@@ -212,15 +213,15 @@ struct MeView: View {
                 }
                 .buttonStyle(PressScaleStyle())
                 .accessibilityLabel("Preview my profile")
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("\(app.me.name), \(app.me.age)")
-                        .font(.display(26, relativeTo: .title))
-                        .foregroundStyle(.white)
-                    // White discs, ink glyphs: a grey disc disappeared into the night card.
-                    SportBadgeStack(sports: app.me.sports.map(\.sport), fill: .white, glyph: DS.Palette.night)
+                VStack(alignment: .leading, spacing: DS.Space.sm) {
+                    // Same line as your profile page: display name, the age set apart without a comma.
+                    NameAgeLine(profile: app.me, nameSize: 32, nameColor: .white, ageColor: .white.opacity(0.8))
+                        .accessibilityAddTraits(.isHeader)
+                    // Named chips on one line: what fits, then "+X".
+                    SportChipsLine(sports: app.me.sports.map(\.sport))
                         .padding(.top, 2)
                     if app.profilePaused {
-                        Label("Paused", systemImage: "pause.fill")
+                        Label("Paused", image: "pause")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(DS.Palette.night)
                             .padding(.horizontal, 8).padding(.vertical, 3)
@@ -257,13 +258,13 @@ struct MeView: View {
 
             HStack(spacing: DS.Space.sm) {
                 Button { sheet = .edit } label: {
-                    Label("Edit profile", systemImage: "pencil")
+                    Label("Edit profile", image: "pen")
                 }
                 .buttonStyle(.drafftPrimary)
                 .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
                 .padding(.leading, 12)
                 Button { sheet = .preview } label: {
-                    Image(systemName: "eye.fill")
+                    Image("eye")
                         .font(.body.weight(.bold))
                         .foregroundStyle(.white)
                         .frame(width: 52, height: 52)
@@ -298,7 +299,7 @@ struct MeView: View {
                         .foregroundStyle(DS.Palette.onLime)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
+                Image("alt-arrow-right")
                     .font(.footnote.weight(.bold))
                     .foregroundStyle(DS.Palette.onLime)
             }
@@ -344,7 +345,7 @@ struct MeView: View {
             if name == Self.sparkIcon {
                 SparkPlus().fill(DS.Palette.ink).frame(width: 18, height: 13)
             } else {
-                Image(systemName: name)
+                Image(name)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(DS.Palette.ink)
             }
@@ -367,7 +368,7 @@ struct MeView: View {
                     }
                 }
                 Spacer(minLength: DS.Space.sm)
-                Image(systemName: "chevron.right")
+                Image("alt-arrow-right")
                     .font(.footnote.weight(.bold))
                     .foregroundStyle(DS.Palette.mute)
             }

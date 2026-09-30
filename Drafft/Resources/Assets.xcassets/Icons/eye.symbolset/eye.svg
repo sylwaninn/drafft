@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="3300" height="2200">
+ <g id="Notes">
+  <text style="stroke:none;fill:black;font-family:sans-serif;font-size:13;" transform="matrix(1 0 0 1 263 1933)">Template v.3.0</text>
+  <text id="template-version" style="stroke:none;fill:black;font-family:sans-serif;font-size:13;" transform="matrix(1 0 0 1 3036 1933)">Template v.3.0</text>
+ </g>
+ <g id="Guides">
+  <line id="Baseline-S" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="696" y2="696"/>
+  <line id="Capline-S" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="625.541" y2="625.541"/>
+  <line id="Baseline-M" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1126" y2="1126"/>
+  <line id="Capline-M" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1055.54" y2="1055.54"/>
+  <line id="Baseline-L" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1556" y2="1556"/>
+  <line id="Capline-L" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1485.54" y2="1485.54"/>
+  <line id="left-margin-Regular-M" style="fill:none;stroke:#00AEEF;stroke-width:0.5;opacity:1.0;" x1="1391.0" x2="1391.0" y1="1030.79" y2="1150.12"/>
+  <line id="right-margin-Regular-M" style="fill:none;stroke:#00AEEF;stroke-width:0.5;opacity:1.0;" x1="1502.500" x2="1502.500" y1="1030.79" y2="1150.12"/>
+ </g>
+ <g id="Symbols">
+  <g id="Regular-M" transform="matrix(1 0 0 1 1391.0 1126)">
+   <path d="M9.155,-16.485 Q2,-25.775 2,-35.25 Q2,-44.725 9.155,-54.015 Q28.385,-79 55.75,-79 Q83.115,-79 102.345,-54.015 L102.35,-54.015 Q109.5,-44.725 109.5,-35.25 Q109.5,-25.775 102.35,-16.485 L102.345,-16.485 Q83.115,8.5 55.75,8.5 Q28.385,8.5 9.155,-16.485 Z M15.095,-21.06 Q32.075,1 55.75,1 Q79.425,1 96.405,-21.06 Q102,-28.33 102,-35.25 Q102,-42.17 96.405,-49.44 Q79.425,-71.5 55.75,-71.5 Q32.075,-71.5 15.095,-49.44 Q9.5,-42.17 9.5,-35.25 Q9.5,-28.33 15.095,-21.06 Z M74.5,-35.25 Q74.5,-16.5 55.75,-16.5 Q37,-16.5 37,-35.25 Q37,-54 55.75,-54 Q74.5,-54 74.5,-35.25 Z M67,-35.25 Q67,-46.5 55.75,-46.5 Q44.5,-46.5 44.5,-35.25 Q44.5,-24 55.75,-24 Q67,-24 67,-35.25 Z"/>
+  </g>
+ </g>
+</svg>

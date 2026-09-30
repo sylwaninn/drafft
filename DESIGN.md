@@ -575,8 +575,16 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
 - Discover ignores the keyboard safe area (the deck keeps its size), and signing in puts the keyboard away before showing the next screen.
 - You has no title: only the blur under the status bar.
 
+### Icons
+- One icon family: **Solar, linear style** (solar-icons.vercel.app, 24 px grid, 1.5 px stroke, round caps). Every glyph in the app comes from it; no system symbols, no mix of families.
+- The current tab shows its **Solar bold** twin (`<name>-bold`: fire, heart, stopwatch-play, dialog-2, user-circle); idle tabs stay linear. No other filled glyphs.
+- When Solar has nothing for a **sport**, take **Material Symbols Light** (fonts.google.com/icons, weight 300, whose stroke matches Solar's), outline variant when there is one. Solar always comes first, even when Material has a closer picture.
+- When neither has it, draw it in the Solar grammar (24 grid, 1.5 stroke, round caps and joins, soft corners, open gaps) from Solar parts: padel, table tennis, badminton, pickleball, fencing, martial arts (belt), jump rope, tai chi, ultimate, spikeball, climbing (carabiner), bouldering, horse riding (horseshoe), calendar-check / -minus / -warning, user-warning.
+- Fixed meanings: Sessions = stopwatch-play, Running = sneaker (steps-outline), Trail = mountain (landscape-2-outline), Mobility = accessibility, "In common" filter = link-circle, like = heart, report or block = shield-warning, see who liked you = user-heart.
+- Icons are custom symbols in `Resources/Assets.xcassets/Icons` (`<name>.symbolset`, one Regular-M glyph generated from the SVG, strokes outlined), named after the Solar name: `Image("heart")`, `Label(title, image: "heart")`, and `.icon("heart")` for `Button`/`Menu`, which only take an `ImageResource`. They size with the font like SF Symbols. Never `Image(systemName:)`.
+
 ### Selection marks and banners
-- One selection mark everywhere: `CheckDisc` (lime disc, on-lime tick when on; a ring when off, lighter on night). Never a lime tick on a light fill, never an SF "checkmark.circle.fill" whose cut-out tick shows the background.
+- One selection mark everywhere: `CheckDisc` (lime disc, on-lime tick when on; a ring when off, lighter on night). Never a lime tick on a light fill, never a check-circle glyph whose tick cuts through to the background.
 - In-app banners (match, boost) use `BannerSurface`: solid night, a thin light rim and a layered shadow, so they detach from any page.
 - Never a gradient in a background or a surface fill. Solid colours only (gradients stay limited to legibility scrims over photos and to masks of the progressive blur).
 
@@ -753,7 +761,7 @@ One job per colour, everywhere:
 - No location pin icon next to the neighborhood on the deck card or the profile detail; the place name stands on its own.
 - Sport names are never truncated with an ellipsis. Show as many as fit, then "+X" (`SportsLine`, `SportChipsPreview`).
 - Interface copy is never cut with "…" in any of the 7 languages. In order: wrap (buttons take up to 2 centred lines), reflow (`AdaptiveRow`: a trailing value moves under its label; `ViewThatFits`: a pill switches to its short wording or its icon, a link row stacks), then scale (never below 0.9). Only excerpts of people's content (message previews, bios, pitches) end with "…".
-- On your profile card (You tab), sports show as a stack of overlapping round badges (`SportBadgeStack`: sport symbol on a solid disc, ringed in the card colour, "+X" as the last disc beyond four).
+- On your profile card (You tab), your name and age read as on your profile page (`NameAgeLine`: display name, the age apart without a comma, lighter), and your sports show as named chips under them on **one line, never two** (`SportChipsLine`): as many as fit, then "+X"; when not even one chip and its "+X" fit, the shortest sport leads and only its name is cut short. Never icon-only discs.
 - No training days or moments of the day on profiles. A profile shows sports and how often ("3× a week"); a session invite carries an exact date and time ("Tue 30 Sep, 18:30").
 
 ### The drafting motif

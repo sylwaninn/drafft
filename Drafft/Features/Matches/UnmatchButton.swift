@@ -10,7 +10,7 @@ struct UnmatchButton: View {
 
     var body: some View {
         Button { confirming = true } label: {
-            Label("Unmatch", systemImage: "heart.slash")
+            Label("Unmatch", image: "heart-crack")
                 .font(.footnote.weight(.medium))
                 .foregroundStyle(DS.Palette.body)
                 .padding(.horizontal, DS.Space.lg)
@@ -22,7 +22,7 @@ struct UnmatchButton: View {
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity)
         .accessibilityLabel("Unmatch \(profile.name)")
-        .drafftConfirm(isPresented: $confirming, icon: "heart.slash",
+        .drafftConfirm(isPresented: $confirming, icon: "heart-crack",
                        title: L("Unmatch \(profile.name)?"),
                        message: L("Your chat ends for both of you, and you won't see each other in Discover again."),
                        actions: [ConfirmAction(title: L("Unmatch"), kind: .destructive) { unmatch() }])

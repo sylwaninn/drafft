@@ -39,7 +39,7 @@ struct TabHeader<Leading: View, Trailing: View>: View {
                         withAnimation(Motion.snappy) { searchExpanded = true }
                         searchFocused = true
                     } label: {
-                        Image(systemName: "magnifyingglass")
+                        Image("magnifier")
                             .font(.body.weight(.semibold))
                             .foregroundStyle(DS.Palette.ink)
                             .frame(width: 40, height: 40)
@@ -59,7 +59,7 @@ struct TabHeader<Leading: View, Trailing: View>: View {
                 GlassEffectContainer(spacing: DS.Space.sm) {
                     HStack(spacing: DS.Space.sm) {
                         HStack(spacing: DS.Space.sm) {
-                            Image(systemName: "magnifyingglass").foregroundStyle(DS.Palette.body)
+                            Image("magnifier").foregroundStyle(DS.Palette.body)
                             TextField(searchPrompt, text: search)
                                 .focused($searchFocused)
                                 .submitLabel(.search)
@@ -84,7 +84,7 @@ struct TabHeader<Leading: View, Trailing: View>: View {
                                 }
                                 searchFocused = false
                             } label: {
-                                Image(systemName: "xmark")
+                                Image("close")
                                     .font(.body.weight(.bold))
                                     .foregroundStyle(DS.Palette.onLime)
                                     .frame(width: 40, height: 40)

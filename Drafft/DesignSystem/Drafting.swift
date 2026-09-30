@@ -51,7 +51,7 @@ struct DraftGlyph: View {
     var glyph: Color = DS.Palette.onLime
 
     var body: some View {
-        Image(systemName: symbol)
+        Image(symbol)
             .font(.system(size: size * 0.38, weight: .bold))
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(glyph)
@@ -115,7 +115,7 @@ struct SuperLikeMark: View {
     }
 
     private var heart: some View {
-        Image(systemName: "heart.fill").font(.system(size: size, weight: .heavy))
+        Image("heart").font(.system(size: size, weight: .heavy))
     }
 }
 

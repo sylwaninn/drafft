@@ -35,9 +35,9 @@ struct ExtrasSheet: View {
         }
         var symbol: String {
             switch self {
-            case .boost: "bolt.fill"
-            case .superLike: "heart.fill"
-            case .likes: "heart.text.square.fill"
+            case .boost: "bolt"
+            case .superLike: "heart"
+            case .likes: "user-heart"
             }
         }
     }
@@ -168,7 +168,7 @@ struct ExtrasSheet: View {
         .toolbar {
             if pushed {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
         }
@@ -185,7 +185,7 @@ struct ExtrasSheet: View {
                     withAnimation(Motion.bouncy) { app.startBoost() }
                 }
             } label: {
-                Label(running ? "Boost running" : "Boost now", systemImage: "bolt.fill")
+                Label(running ? "Boost running" : "Boost now", image: "bolt")
             }
             .buttonStyle(.drafftPrimary)
             .disabled(running || app.boosts == 0)
@@ -201,7 +201,7 @@ struct ExtrasSheet: View {
                 inventory
                 Spacer()
                 Button { dismiss() } label: {
-                    Image(systemName: "xmark")
+                    Image("close")
                         .font(.body.weight(.bold))
                         .foregroundStyle(.white)
                         .frame(width: 40, height: 40)
@@ -248,7 +248,7 @@ struct ExtrasSheet: View {
             if isSuper {
                 SuperLikeMark(size: 11, color: .white)
             } else {
-                Image(systemName: tab.symbol).font(.caption.weight(.heavy))
+                Image(tab.symbol).font(.caption.weight(.heavy))
             }
             Text(inventoryText)
                 .font(.footnote.weight(.bold))
@@ -297,7 +297,7 @@ struct ExtrasSheet: View {
                 .shadow(color: .black.opacity(0.3), radius: 6, y: 3)
         case .boost, .likes:
             // Likes stay green whatever the brand accent.
-            Image(systemName: tab.symbol)
+            Image(tab.symbol)
                 .font(.subheadline.weight(.heavy))
                 .foregroundStyle(tab == .likes ? DS.Palette.onLike : DS.Palette.onAccentOnNight)
                 .frame(width: 34, height: 34)
