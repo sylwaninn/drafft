@@ -57,7 +57,7 @@ struct ConsentChecks: View {
         // One sentence for translators; the document names in it become the links.
         let terms = LegalDoc.terms.title, privacy = LegalDoc.privacy.title, community = LegalDoc.community.title
         var s = AttributedString(L("I'm 18 or older and I accept the \(terms), the \(privacy) and the \(community)."))
-        for doc in LegalDoc.allCases {
+        for doc in LegalDoc.accepted {
             link(doc.title, to: doc.url(), in: &s)
         }
         return s

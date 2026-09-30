@@ -162,6 +162,25 @@ enum SafetyTips {
 
     static var report: Tip { ("flag", L("Report anything off"),
                               L("Tap Report or block on their profile or in the chat. Reports are confidential.")) }
+
+    /// While you chat, before you've met.
+    static var chatting: [Tip] { [
+        ("incognito", L("Keep personal details private"),
+         L("Your address, workplace and last name can wait until you trust them.")),
+        ("danger-triangle", L("Watch for red flags"),
+         L("Asking for money, pushing to leave the app, a story that keeps changing.")),
+        ("key", L("Keep your codes to yourself"),
+         L("drafft never asks for your password or a login code in a chat."))
+    ] }
+
+    /// When something went wrong, during or after.
+    static var afterwards: [Tip] { [
+        report,
+        ("user-block", L("Block anytime"),
+         L("They can't see your profile or message you, and you won't see them.")),
+        ("forbidden-circle", L("It's never your fault"),
+         L("Pressure or harassment is on them, never on you. Report it, even if you're unsure."))
+    ] }
 }
 
 /// Tips as rows: round badge, title, one line of detail, hairlines between.
@@ -192,13 +211,64 @@ struct SafetyTipRows: View {
     }
 }
 
+/// The Safety tips page: who to call first, then the advice by moment (chatting, meeting,
+/// afterwards), then a way to reach the team.
 struct SafetyTipsSheet: View {
+    @Environment(\.openURL) private var openURL
+    @State private var showSupport = false
+
     var body: some View {
         MeInfoSheet(title: L("Safety tips")) {
+            emergency
+            SheetBlock(title: L("While you chat")) {
+                SafetyTipRows(tips: SafetyTips.chatting)
+            }
             SheetBlock(title: L("Meeting someone for the first time")) {
-                SafetyTipRows(tips: SafetyTips.meeting + [SafetyTips.report])
+                SafetyTipRows(tips: SafetyTips.meeting)
+            }
+            SheetBlock(title: L("If something feels wrong")) {
+                SafetyTipRows(tips: SafetyTips.afterwards)
+                Button {
+                    Haptics.tap()
+                    showSupport = true
+                } label: {
+                    Label("Contact the team", image: "letter")
+                }
+                .buttonStyle(.drafftSecondary)
             }
         }
+        .sheet(isPresented: $showSupport) {
+            Group { SupportSheet(topic: HelpTopics.safety) }.sheetSurface()
+        }
+    }
+
+    /// First, in case someone opens this in a hurry. 112 reaches emergency services all over
+    /// Europe, where drafft runs; the phone asks before it calls.
+    private var emergency: some View {
+        VStack(alignment: .leading, spacing: DS.Space.md) {
+            VStack(alignment: .leading, spacing: DS.Space.xs) {
+                Text("In danger? Call 112.")
+                    .font(.display(24, relativeTo: .title2))
+                    .foregroundStyle(.white)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("Get somewhere safe first, then report them in the app.")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.72))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .accessibilityElement(children: .combine)
+            Button {
+                Haptics.tap()
+                if let url = URL(string: "tel:112") { openURL(url) }
+            } label: {
+                Label("Call 112", image: "phone")
+            }
+            .buttonStyle(.drafftPrimary)
+        }
+        .padding(DS.Space.xl)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DS.Palette.night, in: .rect(cornerRadius: DS.Radius.xl))
+        .nightSurface()
     }
 }
 
@@ -267,7 +337,7 @@ struct SessionSafetySheet: View {
 
 // MARK: - Legal documents
 
-/// The three documents, each opened on getdrafft.com in the in-app browser, over this list.
+/// The legal documents, each opened on getdrafft.com in the in-app browser, over this list.
 struct LegalDocsListSheet: View {
     @Environment(\.openURL) private var openURL
 
@@ -276,11 +346,12 @@ struct LegalDocsListSheet: View {
         case .terms: "document-text"
         case .privacy: "lock-keyhole-minimalistic"
         case .community: "users-group-rounded"
+        case .notice: "info-circle"
         }
     }
 
     var body: some View {
-        MeInfoSheet(title: L("Terms & privacy")) {
+        MeInfoSheet(title: L("Legal information")) {
             SheetBlock {
                 VStack(spacing: 0) {
                     ForEach(Array(LegalDoc.allCases.enumerated()), id: \.element) { index, doc in

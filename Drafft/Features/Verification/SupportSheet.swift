@@ -4,8 +4,9 @@ import SwiftUI
 /// adds a few words, and it goes to the team (backend `support`), which replies by email. Signed out (a
 /// stuck sign-up or reset), the form also asks where to reply. The reference comes back from the server
 /// and is emailed too. Signed out, the message carries a Cloudflare Turnstile token (TurnstileChallenge).
+/// Without a topic it's the help center: the person picks one of `HelpTopics.all` first.
 struct SupportSheet: View {
-    let topic: String
+    var topic: String?
     /// Already written for the person (a purchase's reference); they can change it.
     var prefill = ""
     /// Sent with the message for the team (a transaction id), never shown.
@@ -13,6 +14,8 @@ struct SupportSheet: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     @State private var message = ""
+    /// The topic picked in the help center, none until the person taps one.
+    @State private var picked: String?
     @State private var replyEmail = ""
     /// Signed in, the reply goes to the account's email; signed out, to one typed here.
     enum Session { case unknown, signedIn, signedOut }
@@ -31,12 +34,15 @@ struct SupportSheet: View {
     /// Signed out, sending waits for a Turnstile token.
     private var captchaReady: Bool { session == .signedIn || captcha.token != nil }
     private var replyTo: String { session == .signedIn ? app.email : replyEmail.trimmingCharacters(in: .whitespaces) }
+    private var isHelpCenter: Bool { topic == nil }
+    private var sentTopic: String? { topic ?? picked }
 
     var body: some View {
-        AccountSheet(title: L("Get help"),
+        AccountSheet(title: isHelpCenter ? L("Help center") : L("Get help"),
                      actionTitle: reference != nil ? L("Done") : L("Send to support"),
                      actionIcon: reference != nil ? "check" : "plain",
-                     enabled: reference != nil || (hasMessage && hasEmail && session != .unknown && captchaReady),
+                     enabled: reference != nil
+                        || (sentTopic != nil && hasMessage && hasEmail && session != .unknown && captchaReady),
                      loading: sending,
                      error: error,
                      hasChanges: reference == nil && hasMessage) {
@@ -93,13 +99,17 @@ struct SupportSheet: View {
 
     private var form: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
-            HStack {
-                Text("Topic").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
-                Spacer()
-                Text(topic).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+            if let topic {
+                HStack {
+                    Text("Topic").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.body)
+                    Spacer()
+                    Text(topic).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+                }
+                .padding(DS.Space.lg)
+                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+            } else {
+                topicPicker
             }
-            .padding(DS.Space.lg)
-            .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
 
             if session == .signedOut {
                 SheetBlock(title: L("Where should we reply?")) {
@@ -108,9 +118,12 @@ struct SupportSheet: View {
                 }
             }
 
-            SheetBlock(title: L("What happened?")) {
-                TextField("A few words help us fix it faster", text: $message, axis: .vertical)
-                    .lineLimit(4...8)
+            SheetBlock(title: isHelpCenter ? L("How can we help?") : L("What happened?")) {
+                // Grows with the message: room to explain from the start, never a scrolling box.
+                TextField(isHelpCenter ? L("Describe your question. If something doesn't work, say what you tapped and what happened.")
+                                       : L("A few words help us fix it faster"),
+                          text: $message, axis: .vertical)
+                    .lineLimit(8...)
                     .font(.body)
                     .focused($messageFocused)
                     .revealsOnFocus(messageFocused)
@@ -126,8 +139,40 @@ struct SupportSheet: View {
                                           lineWidth: messageFocused ? 2 : 1)
                     }
                     .animation(Motion.gentle, value: messageFocused)
+                if session == .signedIn {
+                    Text("We read every message and reply to \(app.email).")
+                        .font(.footnote)
+                        .foregroundStyle(DS.Palette.mute)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
+        }
+    }
 
+    /// Help center only: what the message is about, so it reaches the right person. Nothing picked
+    /// until the person taps a topic.
+    private var topicPicker: some View {
+        SheetBlock(title: L("What's it about?")) {
+            FlowLayout(spacing: DS.Space.sm) {
+                ForEach(HelpTopics.all, id: \.self) { t in
+                    let on = picked == t
+                    Button {
+                        Haptics.select()
+                        withAnimation(Motion.snappy) { picked = on ? nil : t }
+                    } label: {
+                        Text(branded: t, font: .footnote.weight(.semibold))
+                            .lineLimit(1)
+                            .fixedSize()
+                            .padding(.horizontal, DS.Space.md)
+                            .frame(minHeight: 36)
+                            .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
+                            .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvasSoft), in: .capsule)
+                            .frame(minHeight: 44)
+                    }
+                    .buttonStyle(PressScaleStyle(scale: 0.94))
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
+            }
         }
     }
 
@@ -135,9 +180,10 @@ struct SupportSheet: View {
         sending = true
         error = nil
         defer { sending = false }
+        let topic = sentTopic ?? ""
         var context: [String: Any] = [
             "app": Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "",
-            "screen": topic
+            "screen": isHelpCenter ? "Help center" : topic
         ]
         if let hold = AccountModeration.shared.hold { context["hold"] = hold.rawValue }
         for (key, value) in details { context[key] = value }
@@ -192,6 +238,16 @@ struct GetHelpButton: View {
         }
         .sheet(isPresented: $show) { Group { SupportSheet(topic: topic) }.sheetSurface() }
     }
+}
+
+/// The help center's topics, in the order people look for them.
+enum HelpTopics {
+    static var safety: String { L("Safety & reports") }
+
+    static var all: [String] { [
+        L("Account & login"), L("Profile & photos"), L("Matches & chats"), L("Sessions"),
+        L("drafft tempo & billing"), safety, L("Something doesn't work"), L("Something else")
+    ] }
 }
 
 /// A support topic, for `.sheet(item:)`.

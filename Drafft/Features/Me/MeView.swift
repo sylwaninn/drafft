@@ -10,7 +10,7 @@ struct MeView: View {
 
     enum MeSheet: String, Identifiable {
         case edit, preview, filters, email, phone, password, export, delete, paywall, notifications, language
-        case blocked, safety, help, legal, subscription
+        case blocked, safety, help, legal, consent, subscription
         var id: String { rawValue }
     }
 
@@ -66,15 +66,15 @@ struct MeView: View {
                             value: app.dataExportRequestedAt == nil ? L("Sent to you by email") : L("Requested, check your inbox")) { sheet = .export }
                         separator
                         // drafft can't work without the gender: withdrawing the consent is deleting the account.
-                        row(L("Sensitive data consent"), icon: "shield-check",
-                            value: L("Withdrawing it means deleting your account.")) { sheet = .delete }
+                        row(L("Sensitive data consent"), icon: "lock-keyhole-minimalistic",
+                            value: L("Withdrawing it means deleting your account.")) { sheet = .consent }
                     }
                     group(L("Help")) {
                         row(L("Safety tips"), icon: "shield-check", value: L("Meeting someone for the first time")) { sheet = .safety }
                         separator
                         row(L("Help center"), icon: "question-circle", value: nil) { sheet = .help }
                         separator
-                        row(L("Terms & privacy policy"), icon: "document-text", value: nil) { sheet = .legal }
+                        row(L("Legal information"), icon: "document-text", value: nil) { sheet = .legal }
                     }
                     VStack(spacing: 0) {
                         Button { confirmLogout = true } label: {
@@ -144,8 +144,9 @@ struct MeView: View {
                     case .subscription: SubscriptionSheet()
                     case .blocked: BlockedPeopleSheet()
                     case .safety: SafetyTipsSheet()
-                    case .help: SupportSheet(topic: L("General question"))
+                    case .help: SupportSheet()
                     case .legal: LegalDocsListSheet()
+                    case .consent: DeleteAccountSheet(withdrawsConsent: true)
                     }
                 }
                 .sheetSurface()
