@@ -40047,7 +40047,7 @@
         }
       }
     },
-    "Take a break from discovery: you disappear, your chats stay open." : {
+    "Hide from Discover for a while. Your chats stay open." : {
       "localizations" : {
         "fr" : {
           "stringUnit" : {
@@ -40083,12 +40083,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verdwijn even uit Ontdekken. Je chats blijven open."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hide from Discover for a while. Your chats stay open."
           }
         }
       }
@@ -44881,48 +44875,42 @@
         }
       }
     },
-    "Undo swipes, see who liked you, unlimited likes." : {
+    "Undo your last swipe, see who likes you, unlimited likes." : {
       "localizations" : {
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Swipes zurücknehmen, sehen, wer dich likt, unbegrenzt liken."
+            "value" : "Annule ton dernier swipe, vois qui te like, likes illimités."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deshaz swipes, mira a quién le gustas, likes ilimitados."
+            "value" : "Deshaz tu último swipe, mira a quién le gustas, likes ilimitados."
           }
         },
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annule tes swipes, vois qui te like, likes illimités."
+            "value" : "Letzten Swipe zurücknehmen, sehen, wer dich likt, unbegrenzt liken."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Annulla gli swipe, scopri a chi piaci, like illimitati."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Swipes terugdraaien, zien wie je liket, onbeperkt liken."
+            "value" : "Annulla l'ultimo swipe, scopri a chi piaci, like illimitati."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anula swipes, vê quem gosta de ti, likes ilimitados."
+            "value" : "Anula o último swipe, vê quem gosta de ti, likes ilimitados."
           }
         },
-        "en" : {
+        "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Undo swipes, see who likes you, unlimited likes."
+            "value" : "Laatste swipe terugdraaien, zien wie je liket, onbeperkt liken."
           }
         }
       }

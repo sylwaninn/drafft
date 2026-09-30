@@ -26,7 +26,7 @@ struct MeView: View {
                         toggleRow(L("Pause my profile"), icon: "pause.fill",
                                   detail: app.profilePaused
                                       ? L("Hidden from Discover and likes. Your chats and sessions carry on.")
-                                      : L("Take a break from discovery: you disappear, your chats stay open."),
+                                      : L("Hide from Discover for a while. Your chats stay open."),
                                   isOn: $app.profilePaused)
                     }
                     group(L("Preferences")) {
@@ -289,7 +289,7 @@ struct MeView: View {
                     Text(branded: L("Get drafft tempo"), font: .headline, brandWeight: .heavy, tierColor: DS.Palette.tierOnAccent)
                         .foregroundStyle(DS.Palette.onLime)
                     // White on the accent only in semibold or bolder, at full strength.
-                    Text("Undo swipes, see who liked you, unlimited likes.")
+                    Text("Undo your last swipe, see who likes you, unlimited likes.")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(DS.Palette.onLime)
                 }

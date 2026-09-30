@@ -71,7 +71,8 @@ final class AppModel {
     /// Verified at sign-up, can be replaced (after verifying the new one), never removed. Read from
     /// the account (Supabase Auth keeps the verified number), nil until then.
     var phoneNumber: String?
-    /// Paused: hidden from everyone, and discovery waits (no like, pass, undo or boost) until it's
+    /// Paused: hidden from Discover and from others' Likes (current matches still see the person),
+    /// and discovery waits (no like, pass, undo or boost) until it's
     /// resumed; Discover shows a lock over the deck (`pausedLock`). Chats, sessions, reports and the
     /// profile keep working with current matches.
     var profilePaused = false { didSet { pauseChanged(from: oldValue) } }
