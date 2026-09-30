@@ -20,8 +20,8 @@ SAFE = 100                      # 50 px at 1x
 INK, MUTE, MUTE_N = "#0E0F0C", "#55595E", "#B8BCC2"
 NB = " "
 
-# Taglines from WORDING.md §7.2 (1: "Meet me on the start line.", 2: "Turn your matches into sessions.",
-# 4: "Dating, with a start time."), adapted to each language.
+# Lines from WORDING.md §7.2, adapted to each language, for the other variants: T1 is n°9 "Meet me on the
+# start line." (the former primary line), T2 n°2 "Turn your matches into sessions.", T4 n°4 "Dating, with a start time."
 T1 = {"en": "Meet me on the start line.", "fr": "Rendez-vous au départ.", "es": "Nos vemos en la salida.",
       "de": "Wir sehen uns am Start.", "it": "Ci vediamo alla partenza.", "pt": "Encontramo-nos na partida.",
       "nl": "Zie je bij de start."}
@@ -31,7 +31,7 @@ T2 = {"en": "Turn your matches into sessions.", "fr": "Transforme tes matchs en 
 T4 = {"en": "Dating, with a start time.", "fr": "Des rencontres avec une heure de départ.", "es": "Citas con hora de salida.",
       "de": "Dating mit Startzeit.", "it": "Appuntamenti con un orario di partenza.", "pt": "Encontros com hora de partida.",
       "nl": "Daten met een starttijd."}
-# The banner's own line (validated 2026-09-30): says "dating" and "sport" at a glance, neutral wording.
+# WORDING.md §7.2 n°1, the primary line (2026-09-30): says "dating" and "sport" at a glance, neutral wording.
 T0 = {"en": "Meet singles who train.", "fr": "Rencontre des célibataires qui s'entraînent.", "es": "Conoce a gente soltera que entrena.",
       "de": "Triff Singles, die trainieren.", "it": "Incontra single che si allenano.", "pt": "Conhece pessoas solteiras que treinam.",
       "nl": "Ontmoet singles die trainen."}

@@ -145,7 +145,8 @@ Chaque règle ci-dessous corrige quelque chose qui a été montré et refusé.
 - La 1 accroche avec un visage et le concret (« Samedi, 9:00. ») ; la 2 montre le mécanisme (proposer une
   séance avec des créneaux). Aucune app de rencontre sportive ne montre une proposition avec des horaires :
   c'est ce qui distingue drafft.
-- Ne pas répéter le sous-titre du store (« Rendez-vous au départ ») en 1ʳᵉ capture : il est déjà affiché à côté.
+- Ne pas répéter le sous-titre du store (« Célibataires qui s'entraînent », WORDING §7.4) en 1ʳᵉ capture : il est
+  déjà affiché à côté.
 - Pas de capture sur les filtres ni sur la vérification : tous les concurrents y consacrent des captures, sans
   que ça les distingue.
 
