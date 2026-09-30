@@ -274,7 +274,7 @@ Full store texts: `docs/wording/store.md`.
 | Paywall headline | Take it back. | Train at your tempo. |
 | Session idea | Bouldering, then a beer? | Bouldering, then a smoothie? |
 | FR greeting | Content de te revoir | Te revoilà. |
-| Delete | We're sorry to see you go. | Your call. Here's what deleting removes. |
+| Delete | We're sorry to see you go. / Your call. Here's what deleting removes. | Here's what deleting removes. / « Voici ce que la suppression efface. » |
 
 ## 9. Screenshot and marketing content
 
@@ -346,3 +346,6 @@ Run on every text before you validate it.
 - 2026-09-30: Pack names in the stores keep their capitals, as in App Store Connect and Google Play ("5 Boosts",
   "3 Super Likes"). Running copy stays lowercase (like, super like, boost). The earlier rule "lowercase, also in
   store product names" is withdrawn.
+- 2026-09-30: The delete page no longer opens on "Your call." / « À toi de voir. »: it read as curt, even
+  resentful. It states the fact instead: "Here's what deleting removes." / « Voici ce que la
+  suppression efface. »
