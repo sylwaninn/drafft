@@ -213,12 +213,12 @@ struct MeView: View {
                 }
                 .buttonStyle(PressScaleStyle())
                 .accessibilityLabel("Preview my profile")
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("\(app.me.name), \(app.me.age)")
-                        .font(.display(26, relativeTo: .title))
-                        .foregroundStyle(.white)
-                    // White discs, ink glyphs: a grey disc disappeared into the night card.
-                    SportBadgeStack(sports: app.me.sports.map(\.sport), fill: .white, glyph: DS.Palette.night)
+                VStack(alignment: .leading, spacing: DS.Space.sm) {
+                    // Same line as your profile page: display name, the age set apart without a comma.
+                    NameAgeLine(profile: app.me, nameSize: 32, nameColor: .white, ageColor: .white.opacity(0.8))
+                        .accessibilityAddTraits(.isHeader)
+                    // Named chips on one line: what fits, then "+X".
+                    SportChipsLine(sports: app.me.sports.map(\.sport))
                         .padding(.top, 2)
                     if app.profilePaused {
                         Label("Paused", image: "pause")

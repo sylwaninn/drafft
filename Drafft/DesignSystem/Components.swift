@@ -401,49 +401,96 @@ struct SportsLine: View {
     }
 }
 
-// MARK: - Sport badges
+// MARK: - Sports on one line
 
-/// Sports as a stack of round badges, like overlapping avatars: each sport's symbol on a solid
-/// disc, ringed in the surface colour so neighbours stay distinct. Beyond `limit`, the last disc
-/// says "+X". Names are read by VoiceOver.
-struct SportBadgeStack: View {
+/// Sports as named chips on a single line, never two: as many as fit in order, then "+X" for the
+/// rest. When not even one chip and its "+X" fit, the shortest name leads instead, cut short if it
+/// still doesn't fit (the one place a sport name is truncated).
+struct SportChipsLine: View {
     let sports: [Sport]
-    var size: CGFloat = 36
-    var limit = 4
-    /// The block the stack sits on: the ring that separates the discs.
-    var surface: Color = DS.Palette.night
-    /// Solid (never translucent, or overlaps would show): the card's white-14 % wash, flattened.
-    var fill: Color = Color(light: 0x303230, dark: 0x41443D)
-    var glyph: Color = .white
 
     var body: some View {
-        let overflow = sports.count > limit
-        let shown = overflow ? Array(sports.prefix(limit - 1)) : sports
-        HStack(spacing: -size * 0.18) {
-            ForEach(shown) { sport in
-                disc {
-                    // Fitted in a box inside the ring, so wide symbols (bike, sailboat) keep a margin.
-                    Image(sport.symbol).resizable().scaledToFit().fontWeight(.bold)
-                        .frame(width: size * 0.5, height: size * 0.5)
-                }
-            }
-            if overflow {
-                disc {
-                    Text(verbatim: "+\(sports.count - shown.count)")
-                        .font(.system(size: size * 0.36, weight: .heavy).monospacedDigit())
-                }
+        SingleLineChips(spacing: DS.Space.xs + 2) {
+            ForEach(sports) { SportChip(sport: $0, onDark: true).lineLimit(1) }
+            // One candidate "+X" per possible count; the layout shows the one it needs.
+            ForEach(1..<max(sports.count, 1), id: \.self) { hidden in
+                Text(verbatim: "+\(hidden)")
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, DS.Space.md)
+                    .padding(.vertical, DS.Space.sm)
+                    .background(.white.opacity(0.16), in: .capsule)
+                    .fixedSize()
+                    .layoutValue(key: HiddenCount.self, value: hidden)
             }
         }
         .accessibilityElement()
         .accessibilityLabel(sports.map(\.name).joined(separator: ", "))
     }
+}
 
-    private func disc<C: View>(@ViewBuilder _ content: () -> C) -> some View {
-        content()
-            .foregroundStyle(glyph)
-            .frame(width: size, height: size)
-            .background(fill, in: .circle)
-            .overlay(Circle().strokeBorder(surface, lineWidth: 3))
+private struct HiddenCount: LayoutValueKey {
+    static let defaultValue: Int? = nil
+}
+
+/// One row: the longest prefix of the items that fits with its "+X" badge; otherwise the narrowest
+/// item alone, squeezed to the room its badge leaves. Unused subviews are parked out of sight.
+private struct SingleLineChips: Layout {
+    var spacing: CGFloat
+
+    private struct Plan { var frames: [Int: CGRect] = [:]; var size: CGSize = .zero }
+
+    private func plan(width: CGFloat, subviews: Subviews) -> Plan {
+        let items = subviews.indices.filter { subviews[$0][HiddenCount.self] == nil }
+        let badges = Dictionary(uniqueKeysWithValues: subviews.indices.compactMap { i in
+            subviews[i][HiddenCount.self].map { ($0, i) }
+        })
+        let ideal = { (i: Int) in subviews[i].sizeThatFits(.unspecified) }
+
+        func row(_ entries: [(Int, CGFloat?)]) -> Plan {
+            var p = Plan(), x: CGFloat = 0
+            let height = entries.map { ideal($0.0).height }.max() ?? 0
+            for (i, forced) in entries {
+                let w = forced ?? ideal(i).width
+                let h = subviews[i].sizeThatFits(ProposedViewSize(width: w, height: nil)).height
+                p.frames[i] = CGRect(x: x, y: (height - h) / 2, width: w, height: h)
+                x += w + spacing
+            }
+            p.size = CGSize(width: max(0, x - spacing), height: height)
+            return p
+        }
+
+        guard !items.isEmpty else { return Plan() }
+        for shown in stride(from: items.count, through: 1, by: -1) {
+            let hidden = items.count - shown
+            var entries: [(Int, CGFloat?)] = items.prefix(shown).map { ($0, nil) }
+            if hidden > 0, let b = badges[hidden] { entries.append((b, nil)) }
+            let total = entries.reduce(0) { $0 + ideal($1.0).width } + spacing * CGFloat(entries.count - 1)
+            if total <= width { return row(entries) }
+        }
+        // Not even one chip with its badge: the shortest sport leads, cut to the room left.
+        let lead = items.min { ideal($0).width < ideal($1).width } ?? items[0]
+        let badge = items.count > 1 ? badges[items.count - 1] : nil
+        let room = width - (badge.map { ideal($0).width + spacing } ?? 0)
+        var entries: [(Int, CGFloat?)] = [(lead, max(0, min(ideal(lead).width, room)))]
+        if let badge { entries.append((badge, nil)) }
+        return row(entries)
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let p = plan(width: proposal.width ?? .infinity, subviews: subviews)
+        return CGSize(width: proposal.width ?? p.size.width, height: p.size.height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let p = plan(width: bounds.width, subviews: subviews)
+        for i in subviews.indices {
+            if let f = p.frames[i] {
+                subviews[i].place(at: CGPoint(x: bounds.minX + f.minX, y: bounds.minY + f.minY), proposal: ProposedViewSize(f.size))
+            } else {
+                subviews[i].place(at: CGPoint(x: -10_000, y: -10_000), proposal: .zero)
+            }
+        }
     }
 }
 
