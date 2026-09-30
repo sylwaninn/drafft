@@ -89,6 +89,9 @@ struct PromptPickerSheet: View {
         .onAppear { selection = current }
     }
 
+    /// In the list a question trails off, inviting the answer; on the profile it stands alone.
+    private func listText(_ q: String) -> String { "\(ProfilePrompt.text(for: q))…" }
+
     private func row(_ q: String) -> some View {
         let isSelected = q == selection
         return HStack(alignment: .firstTextBaseline, spacing: DS.Space.md) {
@@ -96,8 +99,8 @@ struct PromptPickerSheet: View {
             // changes the row's height (a question that needs two lines in bold has two lines
             // unselected too). Never truncated.
             ZStack(alignment: .topLeading) {
-                Text(ProfilePrompt.text(for: q)).font(.body.weight(.bold)).hidden()
-                Text(ProfilePrompt.text(for: q)).font(.body.weight(.medium))
+                Text(listText(q)).font(.body.weight(.bold)).hidden()
+                Text(listText(q)).font(.body.weight(.medium))
             }
             .foregroundStyle(DS.Palette.ink)
             .multilineTextAlignment(.leading)

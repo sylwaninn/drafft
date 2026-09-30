@@ -11,7 +11,7 @@ struct LifestylePicker: View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             group(L("Early bird or night owl?"), ["Very early bird", "Early bird", "Night owl"], \.chronotype)
             group(L("How you eat"), ["Omnivore", "Flexitarian", "Vegetarian", "Vegan", "Pescatarian"], \.diet)
-            group(L("Drinking"), ["Never", "Rarely", "Socially", "Post-race only"], \.drinks)
+            group(L("Drinking"), ["Never", "Rarely", "Socially", "Post-race only", "Apéro is sacred"], \.drinks)
             group(L("Smoking"), ["Never", "Sometimes", "Yes"], \.smokes)
         }
     }

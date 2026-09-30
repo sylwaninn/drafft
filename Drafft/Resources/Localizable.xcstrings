@@ -3489,7 +3489,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un peu plus profond"
+            "value" : "Plus perso"
           }
         },
         "it" : {
@@ -3741,7 +3741,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un premier rendez-vous qui n'est pas un dîner"
+            "value" : "Pour un premier date, oublie le resto, on va"
           }
         },
         "it" : {
@@ -3781,7 +3781,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un objectif qui me fait un peu peur"
+            "value" : "Un objectif qui me fait un peu peur, c'est"
           }
         },
         "it" : {
@@ -4079,7 +4079,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une stat qui fait bizarrement ma fierté"
+            "value" : "Une stat inutile qui fait ma fierté, c'est"
           }
         },
         "it" : {
@@ -5424,7 +5424,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Après une séance, tu me trouveras"
+            "value" : "Après la séance, tu me trouveras"
           }
         },
         "it" : {
@@ -10896,7 +10896,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sortir avec moi"
+            "value" : "Côté cœur"
           }
         },
         "it" : {
@@ -14128,7 +14128,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alcool"
+            "value" : "Un verre ?"
           }
         },
         "it" : {
@@ -14168,7 +14168,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne boit qu'après une course"
+            "value" : "Trinque aux belles séances"
           }
         },
         "it" : {
@@ -14248,7 +14248,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boit en soirée"
+            "value" : "Boit entre potes"
           }
         },
         "it" : {
@@ -14368,7 +14368,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lève-tôt ou couche-tard ?"
+            "value" : "Réveil à l'aube ou grasse mat' ?"
           }
         },
         "it" : {
@@ -17865,7 +17865,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag chez un binôme de sport"
+            "value" : "Mon green flag à l'entraînement, c'est quand tu"
           }
         },
         "it" : {
@@ -19101,7 +19101,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton alimentation"
+            "value" : "Dans ton assiette"
           }
         },
         "it" : {
@@ -19267,7 +19267,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je me sens le plus moi-même quand"
+            "value" : "Je me sens vraiment moi quand"
           }
         },
         "it" : {
@@ -19467,7 +19467,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je suis intarissable sur"
+            "value" : "Je peux parler des heures de"
           }
         },
         "it" : {
@@ -19507,7 +19507,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je lâcherais tout pour regarder"
+            "value" : "Je lâche tout pour regarder"
           }
         },
         "it" : {
@@ -19547,7 +19547,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "On sera au même rythme si"
+            "value" : "On est sur la même longueur d'onde si"
           }
         },
         "it" : {
@@ -19713,7 +19713,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je n'ai jamais eu autant de courbatures que le jour où j'ai"
+            "value" : "Mes pires courbatures, c'était le lendemain de"
           }
         },
         "it" : {
@@ -19879,7 +19879,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si j'étais un parfum de gel énergétique, je serais"
+            "value" : "Si j'étais un gel énergétique, je serais au goût"
           }
         },
         "it" : {
@@ -21001,7 +21001,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour le plaisir"
+            "value" : "Pour rire"
           }
         },
         "it" : {
@@ -21161,7 +21161,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chanson de karaoké, sans hésiter"
+            "value" : "Au karaoké, je prends le micro pour"
           }
         },
         "it" : {
@@ -24873,7 +24873,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mon esprit de compétition, sur 10"
+            "value" : "Ma mauvaise foi quand je perds, sur 10"
           }
         },
         "it" : {
@@ -24959,7 +24959,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mon talent caché auquel personne ne croit"
+            "value" : "Mon talent caché que personne ne croit, c'est"
           }
         },
         "it" : {
@@ -24999,7 +24999,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ma séance idéale du dimanche"
+            "value" : "Mon dimanche sportif idéal, c'est"
           }
         },
         "it" : {
@@ -25039,7 +25039,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ma façon d'encourager quelqu'un"
+            "value" : "Pour t'encourager, je suis du genre à"
           }
         },
         "it" : {
@@ -25125,7 +25125,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mon avis le plus controversé"
+            "value" : "Mon avis qui fait débat au vestiaire, c'est que"
           }
         },
         "it" : {
@@ -25165,7 +25165,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ma peur la plus irrationnelle"
+            "value" : "Ma peur la plus irrationnelle, c'est"
           }
         },
         "it" : {
@@ -25245,7 +25245,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ma playlist pour le dernier kilomètre"
+            "value" : "Le son qui me fait tout donner à la fin, c'est"
           }
         },
         "it" : {
@@ -25285,7 +25285,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mon rituel d'avant-course, c'est"
+            "value" : "Avant une compét, je ne peux pas m'empêcher de"
           }
         },
         "it" : {
@@ -28227,7 +28227,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En mouvement"
+            "value" : "Côté sport"
           }
         },
         "it" : {
@@ -31877,7 +31877,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seulement après une course"
+            "value" : "Pour fêter une belle séance"
           }
         },
         "it" : {
@@ -33290,7 +33290,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Red flag : tu fais l'impasse sur"
+            "value" : "Petit red flag si tu zappes"
           }
         },
         "it" : {
@@ -34450,7 +34450,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jour de repos ? Voilà ce que ça veut vraiment dire"
+            "value" : "Mon jour de repos, en vrai, ça ressemble à"
           }
         },
         "it" : {
@@ -38108,7 +38108,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En soirée"
+            "value" : "Entre potes"
           }
         },
         "it" : {
@@ -38228,7 +38228,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un objectif en dehors du sport"
+            "value" : "En dehors du sport, je m'entraîne à"
           }
         },
         "it" : {
@@ -38394,7 +38394,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parfois"
+            "value" : "De temps en temps"
           }
         },
         "it" : {
@@ -41248,7 +41248,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le meilleur conseil qu'un coach m'ait donné"
+            "value" : "Le meilleur conseil qu'on m'ait donné, c'est"
           }
         },
         "it" : {
@@ -41368,7 +41368,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La blessure la plus bête que j'aie jamais eue"
+            "value" : "Ma blessure la plus bête, je me la suis faite en"
           }
         },
         "it" : {
@@ -41448,7 +41448,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La personne qui m'a donné le goût du sport"
+            "value" : "Si je fais du sport aujourd'hui, c'est grâce à"
           }
         },
         "it" : {
@@ -41488,7 +41488,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'équipement que je sauverais d'un incendie"
+            "value" : "Le matos que je sauve en premier en cas d'incendie, c'est"
           }
         },
         "it" : {
@@ -41614,7 +41614,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le snack qui alimente toute ma personnalité"
+            "value" : "Le snack qui résume toute ma personnalité, c'est"
           }
         },
         "it" : {
@@ -41654,7 +41654,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le sport où je suis secrètement une catastrophe"
+            "value" : "Le sport où je fais vraiment pitié, c'est"
           }
         },
         "it" : {
@@ -41734,7 +41734,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Propose-moi ça et c'est oui"
+            "value" : "Pour me faire craquer, propose-moi"
           }
         },
         "it" : {
@@ -41780,7 +41780,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le pire footing de ma vie, c'était quand"
+            "value" : "Ma pire séance de tous les temps, c'est quand"
           }
         },
         "it" : {
@@ -44068,7 +44068,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deux vérités et un mensonge sur mon entraînement"
+            "value" : "Deux vérités et un mensonge sur moi"
           }
         },
         "it" : {
@@ -45058,7 +45058,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avis impopulaire sur les étirements"
+            "value" : "Les étirements, pour moi, c'est"
           }
         },
         "it" : {
@@ -45944,7 +45944,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Très lève-tôt"
+            "value" : "Debout avant le soleil"
           }
         },
         "it" : {
@@ -47064,7 +47064,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "On s'entendra bien si"
+            "value" : "On va bien s'entendre si"
           }
         },
         "it" : {
@@ -47636,7 +47636,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce qui me fait tenir les jours difficiles"
+            "value" : "Les jours sans, ce qui me fait avancer, c'est"
           }
         },
         "it" : {
@@ -49799,7 +49799,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne sors pas avec moi si"
+            "value" : "Fuis tant qu'il est encore temps si"
           }
         },
         "it" : {
@@ -56797,6 +56797,92 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "mijn gender"
+          }
+        }
+      }
+    },
+    "Apéro is sacred" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'apéro, c'est sacré"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feierabendbier ist heilig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El aperitivo es sagrado"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'aperitivo è sacro"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De borrel is heilig"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O happy hour é sagrado"
+          }
+        }
+      }
+    },
+    "Drinks: apéro is sacred" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'apéro, c'est sacré"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feierabendbier ist heilig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El aperitivo es sagrado"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'aperitivo è sacro"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De borrel is heilig"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O happy hour é sagrado"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apéro is sacred"
           }
         }
       }
