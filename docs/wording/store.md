@@ -49,7 +49,7 @@ Les profils commencent par ta façon de t'entraîner. Quand c'est réciproque, p
 
 ### 1.4 Description (4 000 caractères max)
 
-**EN** (2748 / 4000)
+**EN** (2750 / 4000)
 
 ```text
 drafft is a dating app for people whose week is built around training. Profiles lead with how you move: your sports and how often you go. When you like each other, the next step is simple. Propose a session.
@@ -103,7 +103,7 @@ Privacy policy: https://getdrafft.com/privacy
 drafft is for people 18 and over.
 ```
 
-**FR** (3203 / 4000)
+**FR** (3205 / 4000)
 
 ```text
 drafft est une appli de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
@@ -215,7 +215,7 @@ Un souci ? Dis-le-nous dans Toi, puis Aide.
 Même corps que l'App Store ; seul le paragraphe d'abonnement change (facturation Google Play, pas de
 délai de 24 h imposé par Google).
 
-**EN** (2750 / 4000)
+**EN** (2752 / 4000)
 
 ```text
 drafft is a dating app for people whose week is built around training. Profiles lead with how you move: your sports and how often you go. When you like each other, the next step is simple. Propose a session.
@@ -269,7 +269,7 @@ Privacy policy: https://getdrafft.com/privacy
 drafft is for people 18 and over.
 ```
 
-**FR** (3200 / 4000)
+**FR** (3202 / 4000)
 
 ```text
 drafft est une appli de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
