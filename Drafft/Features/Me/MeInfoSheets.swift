@@ -287,7 +287,7 @@ struct LegalDocsListSheet: View {
                         if index > 0 { RowSeparator() }
                         Button {
                             Haptics.tap()
-                            openURL(doc.url, prefersInApp: true)
+                            openURL(doc.url(), prefersInApp: true)
                         } label: {
                             HStack(spacing: DS.Space.md) {
                                 RowBadge(symbol: icon(doc))

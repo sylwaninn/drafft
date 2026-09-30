@@ -593,7 +593,7 @@ struct OnboardingView: View {
         var s = AttributedString(L("I'm 18 or older and I accept the \(terms), the \(privacy) and the \(community)."))
         for doc in LegalDoc.allCases {
             guard let r = s.range(of: doc.title) else { continue }
-            s[r].link = doc.url
+            s[r].link = doc.url()
             s[r].underlineStyle = .single
             s[r].font = .subheadline.weight(.semibold)
         }
