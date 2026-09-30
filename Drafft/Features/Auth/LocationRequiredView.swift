@@ -137,7 +137,8 @@ final class LocationWindow {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             window.alpha = 1
             window.isHidden = false
-            window.makeKey()
+            // Under a hold, its screen (above) keeps the keyboard focus.
+            if AccountModeration.shared.hold == nil { window.makeKey() }
         } else if let window, !window.isHidden {
             // Fades out, then back to the app, where the person was.
             UIView.animate(withDuration: 0.3) { window.alpha = 0 }
@@ -145,7 +146,7 @@ final class LocationWindow {
                 try? await Task.sleep(for: .milliseconds(300))
                 guard !Task.isCancelled else { return }
                 window.isHidden = true
-                TopOverlayWindow.appWindow?.makeKey()
+                if AccountModeration.shared.hold == nil { TopOverlayWindow.appWindow?.makeKey() }
             }
         }
     }

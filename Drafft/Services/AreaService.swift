@@ -176,6 +176,8 @@ final class LocationGate: NSObject, CLLocationManagerDelegate {
     /// Location Services turned off for the whole phone (the permission then reads as denied).
     private(set) var servicesOff = false
     private let manager = CLLocationManager()
+    /// The latest Location Services read: an older one finishing late never overwrites it.
+    @ObservationIgnored private var servicesRead = 0
 
     override private init() {
         status = manager.authorizationStatus
@@ -201,9 +203,14 @@ final class LocationGate: NSObject, CLLocationManagerDelegate {
 
     /// Off the main thread: Apple warns the check can block it.
     private func readServices() {
+        servicesRead += 1
+        let read = servicesRead
         Task.detached(priority: .userInitiated) {
             let on = CLLocationManager.locationServicesEnabled()
-            await MainActor.run { LocationGate.shared.servicesOff = !on }
+            await MainActor.run {
+                let gate = LocationGate.shared
+                if read == gate.servicesRead { gate.servicesOff = !on }
+            }
         }
     }
 
