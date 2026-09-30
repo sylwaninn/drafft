@@ -138,6 +138,8 @@ struct PaywallView: View {
                     }
 
                     plans
+
+                    finePrint
                 }
                 .padding(.horizontal, DS.Space.xl)
                 .padding(.top, DS.Space.xxxl)
@@ -287,6 +289,23 @@ struct PaywallView: View {
                     .transition(.opacity)
             }
 
+            if let notice {
+                Label(notice, image: "info-circle")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .transition(.opacity)
+            }
+        }
+        .padding(.horizontal, DS.Space.xl)
+        .padding(.top, DS.Space.md)
+        .padding(.bottom, DS.Space.sm)
+    }
+
+    /// Restore, the two documents and the store's terms: the end of the page, not the pinned bar.
+    /// They stay out of the bar so a scrolling page never runs under a tall footer.
+    private var finePrint: some View {
+        VStack(spacing: DS.Space.xs) {
             // One row while it fits; otherwise restore on its own line above the two documents.
             let restoreLink = Button(action: restore) {
                 Text("Restore purchases")
@@ -315,14 +334,6 @@ struct PaywallView: View {
             .font(.footnote.weight(.semibold))
             .foregroundStyle(.white.opacity(0.7))
 
-            if let notice {
-                Label(notice, image: "info-circle")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .transition(.opacity)
-            }
-
             // 0.6 at least: 0.45 white on night fell under 4.5:1.
             // App Store terms for auto-renewable subscriptions.
             Text("Payment is charged to your Apple Account. The subscription renews automatically at the same price unless you cancel it at least 24 hours before the end of the period. Manage or cancel it in your App Store settings.")
@@ -330,9 +341,7 @@ struct PaywallView: View {
                 .foregroundStyle(.white.opacity(0.6))
                 .multilineTextAlignment(.center)
         }
-        .padding(.horizontal, DS.Space.xl)
-        .padding(.top, DS.Space.md)
-        .padding(.bottom, DS.Space.sm)
+        .frame(maxWidth: .infinity)
     }
 
     private func say(_ text: String) {
