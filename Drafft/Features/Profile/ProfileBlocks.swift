@@ -255,7 +255,7 @@ struct VitalsStrip: View {
         }
         if let p = profile.pronouns, !p.isEmpty { out.append(.init(symbol: "user-rounded", text: p)) }
         if let v = profile.vitals {
-            if !v.diet.isEmpty { out.append(.init(symbol: "chef-hat", text: Vitals.label(for: v.diet))) }
+            if !v.diet.isEmpty { out.append(.init(symbol: "chef-hat", text: Vitals.label(for: v.diet, gender: profile.gender))) }
             if !v.drinks.isEmpty { out.append(.init(symbol: "wineglass", text: Vitals.label(for: v.drinks))) }
             if !v.smokes.isEmpty {
                 out.append(.init(symbol: "forbidden-circle", text: v.smokes == "Never" ? L("Doesn't smoke") : Vitals.label(for: v.smokes)))
