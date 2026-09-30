@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="3300" height="2200">
+ <g id="Notes">
+  <text style="stroke:none;fill:black;font-family:sans-serif;font-size:13;" transform="matrix(1 0 0 1 263 1933)">Template v.3.0</text>
+  <text id="template-version" style="stroke:none;fill:black;font-family:sans-serif;font-size:13;" transform="matrix(1 0 0 1 3036 1933)">Template v.3.0</text>
+ </g>
+ <g id="Guides">
+  <line id="Baseline-S" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="696" y2="696"/>
+  <line id="Capline-S" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="625.541" y2="625.541"/>
+  <line id="Baseline-M" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1126" y2="1126"/>
+  <line id="Capline-M" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1055.54" y2="1055.54"/>
+  <line id="Baseline-L" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1556" y2="1556"/>
+  <line id="Capline-L" style="fill:none;stroke:#27AAE1;opacity:1;stroke-width:0.5;" x1="263" x2="3036" y1="1485.54" y2="1485.54"/>
+  <line id="left-margin-Regular-M" style="fill:none;stroke:#00AEEF;stroke-width:0.5;opacity:1.0;" x1="1391.0" x2="1391.0" y1="1030.79" y2="1150.12"/>
+  <line id="right-margin-Regular-M" style="fill:none;stroke:#00AEEF;stroke-width:0.5;opacity:1.0;" x1="1497.500" x2="1497.500" y1="1030.79" y2="1150.12"/>
+ </g>
+ <g id="Symbols">
+  <g id="Regular-M" transform="matrix(1 0 0 1 1391.0 1126)">
+   <path d="M57,-62.75 Q57,-78.445 61.025,-82.475 Q65.055,-86.5 80.75,-86.5 Q96.445,-86.5 100.475,-82.475 Q104.5,-78.445 104.5,-62.75 Q104.5,-47.055 100.475,-43.025 Q96.445,-39 80.75,-39 Q65.055,-39 61.025,-43.025 Q57,-47.055 57,-62.75 Z M2,-62.75 Q2,-78.445 6.025,-82.475 Q10.055,-86.5 25.75,-86.5 Q41.445,-86.5 45.475,-82.475 Q49.5,-78.445 49.5,-62.75 Q49.5,-47.055 45.475,-43.025 Q41.445,-39 25.75,-39 Q10.055,-39 6.025,-43.025 Q2,-47.055 2,-62.75 Z M2,-7.75 Q2,-23.445 6.025,-27.475 Q10.055,-31.5 25.75,-31.5 Q41.445,-31.5 45.475,-27.475 Q49.5,-23.445 49.5,-7.75 Q49.5,7.945 45.475,11.975 Q41.445,16 25.75,16 Q10.055,16 6.025,11.975 Q2,7.945 2,-7.75 Z M57,-7.75 Q57,-23.445 61.025,-27.475 Q65.055,-31.5 80.75,-31.5 Q96.445,-31.5 100.475,-27.475 Q104.5,-23.445 104.5,-7.75 Q104.5,7.945 100.475,11.975 Q96.445,16 80.75,16 Q65.055,16 61.025,11.975 Q57,7.945 57,-7.75 Z M64.5,-7.75 Q64.5,4.84 66.33,6.67 Q68.16,8.5 80.75,8.5 Q93.34,8.5 95.17,6.67 Q97,4.84 97,-7.75 Q97,-20.34 95.17,-22.17 Q93.34,-24 80.75,-24 Q68.16,-24 66.33,-22.17 Q64.5,-20.34 64.5,-7.75 Z M9.5,-7.75 Q9.5,4.84 11.33,6.67 Q13.16,8.5 25.75,8.5 Q38.34,8.5 40.17,6.67 Q42,4.84 42,-7.75 Q42,-20.34 40.17,-22.17 Q38.34,-24 25.75,-24 Q13.16,-24 11.33,-22.17 Q9.5,-20.34 9.5,-7.75 Z M64.5,-62.75 Q64.5,-50.16 66.33,-48.33 Q68.16,-46.5 80.75,-46.5 Q93.34,-46.5 95.17,-48.33 Q97,-50.16 97,-62.75 Q97,-75.34 95.17,-77.17 Q93.34,-79 80.75,-79 Q68.16,-79 66.33,-77.17 Q64.5,-75.34 64.5,-62.75 Z M9.5,-62.75 Q9.5,-50.16 11.33,-48.33 Q13.16,-46.5 25.75,-46.5 Q38.34,-46.5 40.17,-48.33 Q42,-50.16 42,-62.75 Q42,-75.34 40.17,-77.17 Q38.34,-79 25.75,-79 Q13.16,-79 11.33,-77.17 Q9.5,-75.34 9.5,-62.75 Z"/>
+  </g>
+ </g>
+</svg>
