@@ -267,8 +267,9 @@ struct SessionSafetySheet: View {
 
 // MARK: - Legal documents
 
+/// The three documents, each opened on getdrafft.com in the in-app browser, over this list.
 struct LegalDocsListSheet: View {
-    @State private var open: LegalDoc?
+    @Environment(\.openURL) private var openURL
 
     private func icon(_ doc: LegalDoc) -> String {
         switch doc {
@@ -286,7 +287,7 @@ struct LegalDocsListSheet: View {
                         if index > 0 { RowSeparator() }
                         Button {
                             Haptics.tap()
-                            open = doc
+                            openURL(doc.url(), prefersInApp: true)
                         } label: {
                             HStack(spacing: DS.Space.md) {
                                 RowBadge(symbol: icon(doc))
@@ -295,7 +296,7 @@ struct LegalDocsListSheet: View {
                                     .foregroundStyle(DS.Palette.ink)
                                     .fixedSize(horizontal: false, vertical: true)
                                 Spacer(minLength: DS.Space.sm)
-                                Image(systemName: "chevron.right")
+                                Image(systemName: "arrow.up.right")
                                     .font(.footnote.weight(.bold))
                                     .foregroundStyle(DS.Palette.mute)
                                     .accessibilityHidden(true)
@@ -309,7 +310,5 @@ struct LegalDocsListSheet: View {
                 }
             }
         }
-        // Over this list, so closing a document comes back here.
-        .sheet(item: $open) { item in Group { LegalDocSheet(doc: item) }.sheetSurface() }
     }
 }

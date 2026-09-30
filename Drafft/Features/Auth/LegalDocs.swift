@@ -1,9 +1,10 @@
-import SwiftUI
+import Foundation
 
-/// Legal documents shown before sign-up. Demo copy: placeholders until legal provides the texts.
-enum LegalDoc: String, CaseIterable, Identifiable {
+/// The legal documents. Their only text is the one published on getdrafft.com, opened in the
+/// in-app browser (`openURL(_:prefersInApp:)`): the app never keeps a copy that could say something
+/// else.
+enum LegalDoc: CaseIterable, Hashable {
     case terms, privacy, community
-    var id: Self { self }
 
     var title: String {
         switch self {
@@ -12,57 +13,29 @@ enum LegalDoc: String, CaseIterable, Identifiable {
         case .community: L("Community Guidelines")
         }
     }
-    var sections: [(String, String)] {
+
+    /// The page in `language`, the app's by default. The community guidelines are a section of the
+    /// terms.
+    func url(in language: AppLanguage = Localization.shared.language) -> URL {
         switch self {
-        case .terms: [
-            (L("Who can use drafft"), L("You must be 18 or older and use your real identity. One account per person.")),
-            (L("Your account"), L("You verify a phone number. Keep your login details private.")),
-            (L("Paid features"), L("drafft tempo renews until you cancel. Boosts and super likes are one-time purchases.")),
-            (L("Ending your account"), L("You can delete your account at any time from You › Delete account."))]
-        case .privacy: [
-            (L("What we collect"), L("Your profile, photos, voice intro, messages, your phone number and an approximate area.")),
-            (L("What we never show"), L("Your exact location and your phone number.")),
-            (L("Your rights"), L("Export or delete your data at any time from You › Privacy & data. Contact our data protection officer through support.")),
-            (L("How long we keep it"), L("Until you delete your account, then 30 days in backups."))]
-        case .community: [
-            (L("Be real"), L("Recent photos of you, your own voice, your real age.")),
-            (L("Be respectful"), L("No harassment, hate or sexual content without consent.")),
-            (L("Meet safely"), L("First sessions in public places. Tell a friend where you're going.")),
-            (L("Report"), L("Report anything that feels wrong. Reports are confidential."))]
+        case .terms: Self.page("terms", in: language)
+        case .privacy: Self.page("privacy", in: language)
+        case .community: Self.page("terms", section: "community", in: language)
         }
     }
-}
 
-struct LegalDocSheet: View {
-    let doc: LegalDoc
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: DS.Space.md) {
-                    ForEach(doc.sections, id: \.0) { title, body in
-                        VStack(alignment: .leading, spacing: DS.Space.xs) {
-                            Text(branded: title, font: .headline, brandWeight: .heavy).foregroundStyle(DS.Palette.ink)
-                            Text(branded: body, font: .body).foregroundStyle(DS.Palette.body)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .padding(DS.Space.lg)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
-                    }
-                }
-                .padding(DS.Space.lg)
-            }
-            .background(DS.Palette.canvasSoft)
-            .blurredNavigationEdge()
-            .navigationTitle(doc.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
-                }
-            }
-        }
+    /// getdrafft.com/<language>/<page>?lang=<code>#<section>, English at the root. The pages switch
+    /// to the browser's language unless `lang` names one, and the in-app browser reports the
+    /// phone's languages, not the app's: `lang` keeps the page in the app's language. Section
+    /// anchors are the same in every language.
+    private static func page(_ page: String, section: String? = nil, in language: AppLanguage) -> URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "getdrafft.com"
+        components.path = "\(language.sitePath)/\(page)"
+        components.queryItems = [URLQueryItem(name: "lang", value: language.rawValue)]
+        components.fragment = section
+        // An absolute path on a fixed host always makes a URL.
+        return components.url! // swiftlint:disable:this force_unwrapping
     }
 }

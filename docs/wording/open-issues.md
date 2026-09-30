@@ -6,8 +6,6 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 
 ## Bloquant avant publication
 
-- **Textes légaux** : la mention « Demo text… » est retirée, mais les résumés de CGU / confidentialité /
-  règles de communauté restent provisoires (et ont des masculins par défaut). À remplacer.
 - **Recherche de marque** « Meet me on the start line » / « Rendez-vous au départ » (INPI, EUIPO,
   classe 45) avant tout usage public.
 
