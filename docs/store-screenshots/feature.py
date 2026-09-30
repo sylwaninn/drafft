@@ -53,9 +53,9 @@ def raw(html, z=1):
     return dict(k="raw", html=html, z=z)
 
 
-def wm(x, y, size, color=INK, trail=True):
-    # trail=False: the word alone, without its two drafting copies.
-    return raw(f'<div class="wm{"" if trail else " plain"}" data-safe="wordmark" style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px;color:{color};z-index:6"><span>drafft</span></div>', 6)
+def wm(x, y, size, color=INK):
+    # The logo: the word alone, never a drafting trail (DESIGN.md).
+    return raw(f'<div class="wm" data-safe="wordmark" style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px;color:{color};z-index:6"><span>drafft</span></div>', 6)
 
 
 def photo(name, x, y, w, h, extra=""):
@@ -88,7 +88,7 @@ def variants(lang):
     icon = (C.ASSETS / "AppIcon.appiconset/icon.png").as_uri()
     return {
         # 1. The deck: the line on the left, the real Discover cards and the like on the right.
-        "01-deck": (PAGE, [wm(150, 250, 110, trail=False), tx(t0, 140, 420, 900, 132, mx=3),
+        "01-deck": (PAGE, [wm(150, 250, 110), tx(t0, 140, 420, 900, 132, mx=3),
                            el("card_thomas", 1330, 520, .36, -10, 2), el("card_maya", 1510, 480, .38, -2, 3),
                            el("card_lea", 1680, 520, .41, 7, 4), el("like", 1850, 780, 1.1, 0, 6)]),
         # 2. The times: three cards tumbling on graphite, the precise promise in white.
@@ -98,7 +98,7 @@ def variants(lang):
         # 3. The photo: a runner at sunset, full bleed, the name and line in white over a scrim.
         "03-photo": (NIGHT, [photo("sport_sunsetrun", 0, 0, FW, FH), raw('<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,12,.78) 0%,rgba(14,15,12,.35) 55%,rgba(14,15,12,0) 80%);z-index:1"></div>', 1),
                              wm(150, 280, 120, WHITE), tx(t1, 140, 460, 1000, 128, WHITE, mx=3), el("like", 1800, 760, 1.15, 0, 6)]),
-        # 4. The wordmark: the logo huge with its drafting trail, the line under it. Brand only.
+        # 4. The wordmark: the logo huge, the line under it. Brand only.
         "04-logo": (PAGE, [wm(560, 250, 330), tx(t1, 124, 690, 1800, 96, MUTE, align="center", mx=1)]),
         # 5. The icon and the voice: night, the app icon, the voice intro and the like burst.
         "05-voix": (NIGHT, [raw(f'<img data-safe="icon" src="{icon}" style="position:absolute;left:150px;top:190px;width:230px;height:230px;border-radius:52px;z-index:5;box-shadow:0 0 0 3px rgba(255,255,255,.14)">', 5),
@@ -152,7 +152,7 @@ def page(lang, bg, items):
         else:
             body += it["html"]
     return (f'<!doctype html><html lang="{lang}"><head><meta charset="utf-8"><style>{C.CSS}'
-            f'.wm.plain::before,.wm.plain::after{{display:none}} body{{width:{FW}px;height:{FH}px;background:{bg}}} .strip{{position:relative;width:{FW}px;height:{FH}px;overflow:hidden}} #chk{{display:none}}</style></head>'
+            f'body{{width:{FW}px;height:{FH}px;background:{bg}}} .strip{{position:relative;width:{FW}px;height:{FH}px;overflow:hidden}} #chk{{display:none}}</style></head>'
             f'<body><div class="strip">{body}</div>{CHECK}</body></html>')
 
 

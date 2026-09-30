@@ -26,7 +26,7 @@ def _b64(p):
     return base64.b64encode(pathlib.Path(p).read_bytes()).decode()
 
 
-# The app's display face, embedded (Inter Display Black / ExtraBold), and the wordmark with its drafting trail.
+# The app's display face, embedded (Inter Display Black / ExtraBold), and the wordmark: the word alone, never a trail.
 CSS = f"""
 @font-face {{ font-family: 'Inter Display'; font-weight: 900; src: url(data:font/ttf;base64,{_b64(FONTS / 'InterDisplay-Black.ttf')}) format('truetype'); }}
 @font-face {{ font-family: 'Inter Display'; font-weight: 800; src: url(data:font/ttf;base64,{_b64(FONTS / 'InterDisplay-ExtraBold.ttf')}) format('truetype'); }}
@@ -34,11 +34,7 @@ CSS = f"""
 * {{ box-sizing: border-box; margin: 0; }}
 .strip {{ position: relative; overflow: hidden; }}
 .h {{ font-family: var(--display); font-weight: 900; color: var(--ink); text-wrap: balance; hyphens: none; }}
-.wm {{ position: absolute; display: inline-block; font-family: var(--display); font-weight: 900; letter-spacing: -0.03em; line-height: 1; isolation: isolate; }}
-.wm::before, .wm::after {{ content: 'drafft'; position: absolute; top: 0; left: 0; z-index: -1; }}
-.wm::before {{ transform: translateX(-0.1em); opacity: .45; }}
-.wm::after {{ transform: translateX(-0.2em); opacity: .2; }}
-.wm > span {{ position: relative; z-index: 1; }}
+.wm {{ position: absolute; display: inline-block; font-family: var(--display); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }}
 """
 
 
