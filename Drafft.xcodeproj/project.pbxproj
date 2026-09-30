@@ -29,6 +29,8 @@
 		16C0E94BF47D0AF97815602C /* SessionCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515242759A13ABFD9CFAE2D1 /* SessionCalendar.swift */; };
 		182DF184BC06B5BA1B887D26 /* AppModel+LiveProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA16EF732FF9B143F4383CA /* AppModel+LiveProfile.swift */; };
 		1A04AB028A3B017A9ACE8511 /* ProgressiveBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58F62378D97439F0D9EE593 /* ProgressiveBlur.swift */; };
+		1A75A5551FB602F997DA59FB /* LegalDocTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A347A61C01CF94B9D3C8EF /* LegalDocTests.swift */; };
+		1B32B42C160243A6A6103432 /* LegalDocs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03909E50C5DF79B191416C61 /* LegalDocs.swift */; };
 		1BCE2690FD8C7D5C0EADD73B /* BoostChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CEE371669C1D97F8612AE26 /* BoostChip.swift */; };
 		1EED091FC5B9B261FBA8E2CF /* EmailAuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36927D19CDF512251256102E /* EmailAuthViews.swift */; };
 		2099EF8A6E549DCFF32C1384 /* Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B7994B758B22C3FF7E47C4 /* Tokens.swift */; };
@@ -90,6 +92,7 @@
 		8AFB996D3C93D1D599D85AEA /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FC074582CCD1BBDFC15863 /* OnboardingView.swift */; };
 		8E882C241C91A3610A47CA29 /* MediaUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E5BE12EEB2E9EAE1DF6B9AC /* MediaUploader.swift */; };
 		8FB00642DB9FF72E15D67B4C /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 227AF8DE6682A785901C630E /* Images.swift */; };
+		93DD5680F05D29D072360F41 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EBF74B57B3B01D28DE507C /* AppLanguage.swift */; };
 		94B7779B1B5BD49FC82D3C6A /* ProfileExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221DE3BB0D77782A2CD345C9 /* ProfileExtras.swift */; };
 		99C691649EAE7A5CC7AE1D12 /* ProposeSessionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DB10AEE733D7C75EBF6D9A /* ProposeSessionSheet.swift */; };
 		9A3AD786C2A53CE280EB3204 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B3DD68CFFAC7D2DAEC4F59 /* ReportSheet.swift */; };
@@ -314,6 +317,7 @@
 		E7668326DABD7A87D128AD91 /* DeviceIntegrity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIntegrity.swift; sourceTree = "<group>"; };
 		E8B7994B758B22C3FF7E47C4 /* Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokens.swift; sourceTree = "<group>"; };
 		E8F53A1076A536B1D57B80FA /* UserChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChannel.swift; sourceTree = "<group>"; };
+		E9A347A61C01CF94B9D3C8EF /* LegalDocTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalDocTests.swift; sourceTree = "<group>"; };
 		EADF8CD3ED305F11D85C9D67 /* InterDisplay-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterDisplay-Black.ttf"; sourceTree = "<group>"; };
 		EBC5879E137F89B2870864B1 /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
 		ED475785E5CCE3685F02ACA3 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -576,6 +580,7 @@
 			isa = PBXGroup;
 			children = (
 				C8BFD5C4513AC3B349C16170 /* ChatPayloadTests.swift */,
+				E9A347A61C01CF94B9D3C8EF /* LegalDocTests.swift */,
 				91B4E48FA486C42217EC37E8 /* LocalCacheTests.swift */,
 				66619074DF9EE0BEF48FC21C /* ProfileCardTests.swift */,
 				8C16EC9A69A56F78956310DC /* PushTokenRegistrationTests.swift */,
@@ -967,8 +972,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93DD5680F05D29D072360F41 /* AppLanguage.swift in Sources */,
 				0EDAAAEC5D28CFE51DD4429A /* ChatPayload.swift in Sources */,
 				5B7D9CF6D91562FE5C8D6424 /* ChatPayloadTests.swift in Sources */,
+				1A75A5551FB602F997DA59FB /* LegalDocTests.swift in Sources */,
+				1B32B42C160243A6A6103432 /* LegalDocs.swift in Sources */,
 				E9F3314392698E1333323A7E /* LocalCache.swift in Sources */,
 				12233512058A64F8B7C9CEFC /* LocalCacheTests.swift in Sources */,
 				B40A55B2AFCD3CE5E8D965C4 /* ProfileCard.swift in Sources */,
