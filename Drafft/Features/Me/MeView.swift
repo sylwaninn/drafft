@@ -418,15 +418,20 @@ struct MeView: View {
 /// paused it, and what it means in one line. The switch in Discovery is the way back.
 private struct PausedStrip: View {
     var body: some View {
-        HStack(spacing: DS.Space.sm) {
+        // On the title's baseline: the icon stays by the title when a translation wraps.
+        HStack(alignment: .firstTextBaseline, spacing: DS.Space.sm) {
             Image(systemName: "pause.fill")
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(DS.Palette.onPaused)
                 .accessibilityHidden(true)
-            Text(line)
-                .font(.subheadline)
-                .foregroundStyle(DS.Palette.onPaused)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Profile paused")
+                    .font(.subheadline.weight(.bold))
+                Text("No one sees you in Discover.")
+                    .font(.footnote)
+            }
+            .foregroundStyle(DS.Palette.onPaused)
+            .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, DS.Space.xl)
@@ -435,12 +440,5 @@ private struct PausedStrip: View {
         // Square at the top: it continues the card rather than sitting behind it.
         .background(DS.Palette.paused, in: .rect(bottomLeadingRadius: DS.Radius.xl, bottomTrailingRadius: DS.Radius.xl))
         .accessibilityElement(children: .combine)
-    }
-
-    /// The state in bold, then what it means, flowing as one line.
-    private var line: AttributedString {
-        var state = AttributedString(L("Profile paused"))
-        state.inlinePresentationIntent = .stronglyEmphasized
-        return state + AttributedString(" " + L("No one sees you in Discover."))
     }
 }
