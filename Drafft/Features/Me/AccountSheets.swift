@@ -433,7 +433,12 @@ struct ExportDataSheet: View {
 // MARK: - Delete
 
 struct DeleteAccountSheet: View {
+    /// Opened from the sensitive data consent: drafft can't work without the gender, so withdrawing
+    /// the consent is deleting the account. The page says so, and offers no pause (it keeps the data)
+    /// and no reasons to pick (the reason is known).
+    var withdrawsConsent = false
     @Environment(AppModel.self) private var app
+    @Environment(\.openURL) private var openURL
     @Environment(\.dismiss) private var dismiss
     @State private var reason: String?
     @State private var understood = false
@@ -449,7 +454,8 @@ struct DeleteAccountSheet: View {
     private var reasons: [String] { [L("I met someone"), L("I need a break"), L("Not enough people nearby"), L("Something else")] }
 
     var body: some View {
-        AccountSheet(title: L("Delete account"), actionTitle: L("Delete my account"), actionIcon: "trash-bin-minimalistic",
+        AccountSheet(title: withdrawsConsent ? L("Sensitive data consent") : L("Delete account"),
+                     actionTitle: L("Delete my account"), actionIcon: "trash-bin-minimalistic",
                      destructive: true, enabled: understood, loading: loading,
                      error: failure) {
             loading = true
@@ -470,14 +476,18 @@ struct DeleteAccountSheet: View {
                 }
             }
         } content: {
-            SheetBlock {
-                Text("We're sorry to see you go.")
-                    .font(.display(26, relativeTo: .title2))
-                    .foregroundStyle(DS.Palette.ink)
-                Text("Deleting removes your profile, photos, matches and messages for good. Your matches won't be able to reach you.")
-                    .font(.subheadline)
-                    .foregroundStyle(DS.Palette.body)
-                    .fixedSize(horizontal: false, vertical: true)
+            if withdrawsConsent {
+                consentBlock
+            } else {
+                SheetBlock {
+                    Text("Here's what deleting removes.")
+                        .font(.display(26, relativeTo: .title2))
+                        .foregroundStyle(DS.Palette.ink)
+                    Text("Deleting removes your profile, photos, matches and messages for good. Your matches won't be able to reach you.")
+                        .font(.subheadline)
+                        .foregroundStyle(DS.Palette.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
 
             // Billing belongs to the App Store: deleting the account leaves a renewing subscription on.
@@ -496,45 +506,9 @@ struct DeleteAccountSheet: View {
                 }
             }
 
-            SheetBlock(title: L("Just need a break?")) {
-                Text("Pausing hides you from Discover and keeps your matches and chats.")
-                    .font(.subheadline)
-                    .foregroundStyle(DS.Palette.body)
-                Button {
-                    Haptics.success()
-                    app.profilePaused = true
-                    dismiss()
-                } label: {
-                    Label(app.profilePaused ? "Your profile is paused" : "Pause my profile instead", image: "pause")
-                }
-                .buttonStyle(.drafftSecondary)
-                .disabled(app.profilePaused)
-            }
-
-            SheetBlock(title: L("Why are you leaving?")) {
-                FlowLayout(spacing: DS.Space.sm) {
-                    ForEach(reasons, id: \.self) { r in
-                        let on = reason == r
-                        Button {
-                            Haptics.select()
-                            withAnimation(Motion.snappy) { reason = on ? nil : r }
-                        } label: {
-                            Text(r)
-                                .font(.footnote.weight(.semibold))
-                                .lineLimit(1)
-                                .fixedSize()
-                                .padding(.horizontal, DS.Space.md)
-                                .frame(minHeight: 36)
-                                .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
-                                .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvasSoft), in: .capsule)
-                                .frame(minHeight: 44)
-                        }
-                        .buttonStyle(PressScaleStyle(scale: 0.94))
-                        .accessibilityAddTraits(on ? .isSelected : [])
-                    }
-                }
-                Text(branded: L("Optional. It helps us make drafft better."), font: .footnote)
-                    .foregroundStyle(DS.Palette.mute)
+            if !withdrawsConsent {
+                pauseBlock
+                reasonsBlock
             }
 
             SheetBlock {
@@ -556,6 +530,74 @@ struct DeleteAccountSheet: View {
         .onChange(of: managingSubscription) { _, open in
             guard !open else { return }
             Task { await app.refreshSubscription { sub in withAnimation(Motion.snappy) { app.subscription = sub } } }
+        }
+    }
+
+    private var reasonsBlock: some View {
+        SheetBlock(title: L("Why are you leaving?")) {
+            FlowLayout(spacing: DS.Space.sm) {
+                ForEach(reasons, id: \.self) { r in
+                    let on = reason == r
+                    Button {
+                        Haptics.select()
+                        withAnimation(Motion.snappy) { reason = on ? nil : r }
+                    } label: {
+                        Text(r)
+                            .font(.footnote.weight(.semibold))
+                            .lineLimit(1)
+                            .fixedSize()
+                            .padding(.horizontal, DS.Space.md)
+                            .frame(minHeight: 36)
+                            .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
+                            .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvasSoft), in: .capsule)
+                            .frame(minHeight: 44)
+                    }
+                    .buttonStyle(PressScaleStyle(scale: 0.94))
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
+            }
+            Text(branded: L("Optional. It helps us make drafft better."), font: .footnote)
+                .foregroundStyle(DS.Palette.mute)
+        }
+    }
+
+    private var consentBlock: some View {
+        SheetBlock {
+            Text("Withdrawing your consent means deleting your account.")
+                .font(.display(26, relativeTo: .title2))
+                .foregroundStyle(DS.Palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Group {
+                Text(branded: L("drafft needs your gender and the genders you want to see to suggest anyone."), font: .subheadline)
+                Text("Deleting removes them with your profile, photos, matches and messages, for good.")
+                    .font(.subheadline)
+            }
+            .foregroundStyle(DS.Palette.body)
+            .fixedSize(horizontal: false, vertical: true)
+            Button {
+                Haptics.tap()
+                openURL(LegalDoc.sensitiveData(), prefersInApp: true)
+            } label: {
+                Label("How drafft uses this data", image: "arrow-right-up")
+            }
+            .buttonStyle(.drafftTertiary)
+        }
+    }
+
+    private var pauseBlock: some View {
+        SheetBlock(title: L("Just need a break?")) {
+            Text("Pausing hides you from Discover and keeps your matches and chats.")
+                .font(.subheadline)
+                .foregroundStyle(DS.Palette.body)
+            Button {
+                Haptics.success()
+                app.profilePaused = true
+                dismiss()
+            } label: {
+                Label(app.profilePaused ? "Your profile is paused" : "Pause my profile instead", image: "pause")
+            }
+            .buttonStyle(.drafftSecondary)
+            .disabled(app.profilePaused)
         }
     }
 }
