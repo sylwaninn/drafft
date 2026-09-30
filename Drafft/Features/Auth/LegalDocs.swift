@@ -4,13 +4,14 @@ import Foundation
 /// in-app browser (`openURL(_:prefersInApp:)`): the app never keeps a copy that could say something
 /// else.
 enum LegalDoc: CaseIterable, Hashable {
-    case terms, privacy, community
+    case terms, privacy, community, notice
 
     var title: String {
         switch self {
         case .terms: L("Terms of Use")
         case .privacy: L("Privacy Policy")
         case .community: L("Community Guidelines")
+        case .notice: L("Legal Notice")
         }
     }
 
@@ -21,8 +22,13 @@ enum LegalDoc: CaseIterable, Hashable {
         case .terms: Self.page("terms", in: language)
         case .privacy: Self.page("privacy", in: language)
         case .community: Self.page("terms", section: "community", in: language)
+        case .notice: Self.page("legal", in: language)
         }
     }
+
+    /// The documents someone accepts to use drafft, named in the sign-up consent. The legal notice
+    /// only says who publishes the app.
+    static let accepted: [LegalDoc] = [.terms, .privacy, .community]
 
     /// The privacy policy's section on sensitive data, linked from the consent to it.
     static func sensitiveData(in language: AppLanguage = Localization.shared.language) -> URL {
