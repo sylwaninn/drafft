@@ -13,13 +13,13 @@ struct PaywallView: View {
 
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     /// Nothing chosen on arrival: the person picks a plan.
     @State private var plan: Plan?
     @State private var purchasing = false
     @State private var restoring = false
     /// Outcome of a purchase or restore that didn't unlock anything, said plainly.
     @State private var notice: String?
-    @State private var legal: LegalDoc?
     @State private var receipt: PurchaseReceipt?
     private var store: Store { .shared }
 
@@ -85,7 +85,7 @@ struct PaywallView: View {
     }
 
     private var perks: [(icon: String, title: String, detail: String)] { [
-        ("arrow.uturn.backward", L("Undo any swipe"), L("Swiped too fast? Bring them back.")),
+        ("arrow.uturn.backward", L("Undo your last swipe"), L("Swiped too fast? Bring them back.")),
         ("heart.text.square", L("See who liked you"), L("Match instantly with people already into you.")),
         ("infinity", L("Unlimited likes"), L("No daily cap, like everyone you'd train with.")),
         ("bolt.fill", L("Weekly boost"), L("One free boost every week: 30 minutes at the top of decks near you."))
@@ -162,7 +162,6 @@ struct PaywallView: View {
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled(purchasing || receipt != nil)
         .task { await store.load() }
-        .sheet(item: $legal) { item in Group { LegalDocSheet(doc: item) }.sheetSurface() }
         // Over the paywall; closing it closes both, then the unlocked action runs.
         // design-lint: allow sheet-surface - PurchaseConfirmation sets its raised surface itself
         .sheet(item: $receipt, onDismiss: {
@@ -298,11 +297,11 @@ struct PaywallView: View {
             }
             .disabled(restoring || purchasing || !store.isLinked)
             .accessibilityLabel(restoring ? "Restoring purchases" : "Restore purchases")
-            let termsLink = Button { legal = .terms } label: {
+            let termsLink = Button { openURL(LegalDoc.terms.url(), prefersInApp: true) } label: {
                 Text("Terms").frame(minHeight: 44).contentShape(.rect)
             }
             .accessibilityLabel(LegalDoc.terms.title)
-            let privacyLink = Button { legal = .privacy } label: {
+            let privacyLink = Button { openURL(LegalDoc.privacy.url(), prefersInApp: true) } label: {
                 Text("Privacy").frame(minHeight: 44).contentShape(.rect)
             }
             .accessibilityLabel(LegalDoc.privacy.title)
@@ -413,10 +412,9 @@ struct SubscriptionSheet: View {
     @State private var managing = false
     @State private var restoring = false
     @State private var restoreResult: String?
-    @State private var legal: LegalDoc?
 
     private var perks: [(icon: String, title: String)] { [
-        ("arrow.uturn.backward", L("Undo any swipe")),
+        ("arrow.uturn.backward", L("Undo your last swipe")),
         ("heart.text.square", L("See who liked you")),
         ("infinity", L("Unlimited likes")),
         ("bolt.fill", L("One free boost every week"))
@@ -447,9 +445,8 @@ struct SubscriptionSheet: View {
             .blurredNavigationEdge()
             .bottomBar { footer }
             .manageSubscriptionsSheet(isPresented: $managing)
-            .sheet(item: $legal) { item in Group { LegalDocSheet(doc: item) }.sheetSurface() }
-            // Back from Apple's sheet: read what the App Store now says (cancelled, plan change).
-            .onChange(of: managing) { _, open in if !open { Task { await refresh() } } }
+            // Back from Apple's sheet: read what the App Store now says (cancelled, another length).
+            .onChange(of: managing) { _, open in if !open { Task { await app.refreshSubscription(apply: apply) } } }
         }
         .presentationDragIndicator(.visible)
     }
@@ -550,10 +547,10 @@ struct SubscriptionSheet: View {
             }
             .disabled(restoring)
             .accessibilityLabel(restoring ? "Restoring purchases" : "Restore purchases")
-            let termsLink = Button("Terms") { legal = .terms }
+            let termsLink = Button("Terms") { openURL(LegalDoc.terms.url(), prefersInApp: true) }
                 .frame(minHeight: 44)
                 .accessibilityLabel(LegalDoc.terms.title)
-            let privacyLink = Button("Privacy") { legal = .privacy }
+            let privacyLink = Button("Privacy") { openURL(LegalDoc.privacy.url(), prefersInApp: true) }
                 .frame(minHeight: 44)
                 .accessibilityLabel(LegalDoc.privacy.title)
             ViewThatFits(in: .horizontal) {
@@ -603,7 +600,7 @@ struct SubscriptionSheet: View {
             defer { restoring = false }
             do {
                 let info = try await Store.shared.restore()
-                apply(info)
+                apply(Store.shared.subscription(from: info))
                 await app.loadWallet()
                 Haptics.success()
                 withAnimation(Motion.snappy) { restoreResult = L("Your subscription is up to date.") }
@@ -614,15 +611,9 @@ struct SubscriptionSheet: View {
         }
     }
 
-    private func refresh() async {
-        if Store.shared.reportsLinkedAccount, let info = try? await Purchases.shared.customerInfo() { apply(info) }
-        await app.loadWallet()
-    }
-
-    /// What the App Store reports. Expired closes the page, since the drafft tempo row only
-    /// shows while subscribed.
-    private func apply(_ info: CustomerInfo) {
-        let sub = Store.shared.subscription(from: info)
+    /// What the App Store reports (nil: not active). Expired closes the page, since the drafft
+    /// tempo row only shows while subscribed.
+    private func apply(_ sub: TempoSubscription?) {
         if sub == nil {
             dismiss()
             Task {

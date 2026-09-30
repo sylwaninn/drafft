@@ -71,9 +71,10 @@ final class AppModel {
     /// Verified at sign-up, can be replaced (after verifying the new one), never removed. Read from
     /// the account (Supabase Auth keeps the verified number), nil until then.
     var phoneNumber: String?
-    /// Paused: hidden from everyone, and discovery waits (no like, pass, undo or boost) until it's
-    /// resumed; Discover shows a lock over the deck (`pausedLock`). Chats, sessions, reports and the
-    /// profile keep working with current matches.
+    /// Paused: hidden from Discover and from others' Likes (current matches still see the person),
+    /// and discovery waits (no like, pass, undo or boost) until it's resumed; Discover shows a lock
+    /// over the deck (`pausedLock`). Chats, sessions, reports and the profile keep working with
+    /// current matches.
     var profilePaused = false { didSet { pauseChanged(from: oldValue) } }
     /// Set while applying the server's own state, so it isn't sent back.
     @ObservationIgnored var pauseFromServer = false
@@ -86,6 +87,14 @@ final class AppModel {
     var blockedCount: Int { blocked.count }
     /// Data export: requested here, sent by email as a download link (server side).
     var dataExportRequestedAt: Date?
+    /// Whether this account's consent to the current terms and to the use of its sensitive data is
+    /// on record. `.required`, from a fresh read only: `TermsConsentView` asks at each open until
+    /// it's accepted, after the location gate. `.unknown` until a read says (AppModel+AccountSync).
+    var termsConsent: TermsConsent.Gate = .unknown
+    /// The account read failed while the consent was unknown: read again after a pause, longer each
+    /// time (`refreshAccount`).
+    @ObservationIgnored var accountRetry: Task<Void, Never>?
+    @ObservationIgnored var accountReadFailures = 0
 
     /// 0…1, with the next thing worth adding.
     var profileCompletion: (value: Double, next: String?) {

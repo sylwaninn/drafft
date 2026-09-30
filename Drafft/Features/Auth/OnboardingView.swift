@@ -9,9 +9,12 @@ struct OnboardingView: View {
     @State private var step = 0
     @State private var forward = true
     @State private var birthday: Date?
-    @State private var acceptedTerms = false
+    @State private var consent = ConsentDraft()
+    /// The terms version the server recorded with the consent this sign-up (`accept_terms`).
+    @State private var recordedTerms: String?
+    @State private var recordingConsent = false
+    @State private var consentError: String?
     @State private var language: AppLanguage = .deviceDefault
-    @State private var legalDoc: LegalDoc?
     @State private var identity: String?
     @State private var interestedIn: Set<String> = []
     @State private var locator = AreaLocator()
@@ -169,10 +172,13 @@ struct OnboardingView: View {
                 PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell.fill")
             } else {
                 Button(action: advance) {
-                    if finishing { ProgressView().tint(DS.Palette.onLime) }
-                    else { Text(step == steps.count - 1 ? "Start swiping" : "Continue") }
+                    if finishing || recordingConsent {
+                        ProgressView().tint(DS.Palette.onLime)
+                    } else {
+                        Text(step == steps.count - 1 ? "Start swiping" : "Continue")
+                    }
                 }
-                .disabled(!canContinue || finishing)
+                .disabled(!canContinue || finishing || recordingConsent)
             }
         }
     }
@@ -193,9 +199,10 @@ struct OnboardingView: View {
 
     private var blockedReason: (text: String, error: Bool)? {
         if let finishError, step == steps.count - 1 { return (finishError, true) }
+        if let consentError, current == .rules { return (consentError, true) }
         switch current {
         case .language: return nil
-        case .rules: return acceptedTerms ? nil : (L("Accept the rules and terms to continue."), false)
+        case .rules: return complete(.rules) ? nil : (L("Accept the rules and terms to continue."), false)
         case .phone:
             // Sending or checking: the spinner says it, no reason needed.
             if phone.busy || phone.primaryEnabled { return nil }
@@ -255,7 +262,8 @@ struct OnboardingView: View {
     private func complete(_ s: Step, resuming: Bool = false) -> Bool {
         switch s {
         case .language: true
-        case .rules: acceptedTerms
+        // Once the server holds the consent for these terms, the boxes no longer matter.
+        case .rules: consent.isComplete || TermsConsent.isCurrent(recordedTerms)
         case .phone: phone.stage == .verified
         case .name: !name.trimmingCharacters(in: .whitespaces).isEmpty
         case .birthday: birthday != nil && isAdult
@@ -290,7 +298,7 @@ struct OnboardingView: View {
         p.name = name
         p.language = language.rawValue
         p.birthday = birthday
-        p.acceptedTerms = acceptedTerms
+        p.termsVersion = recordedTerms
         p.verifiedPhone = phone.stage == .verified ? phone.displayNumber : nil
         p.identity = identity
         p.interestedIn = Array(interestedIn)
@@ -312,7 +320,9 @@ struct OnboardingView: View {
         name = p.name
         if let l = p.language.flatMap(AppLanguage.init(rawValue:)) { language = l; app.language = l }
         birthday = p.birthday
-        acceptedTerms = p.acceptedTerms
+        // Ticked again only if the server recorded them for the terms shown now.
+        recordedTerms = p.termsVersion
+        consent = .restored(recordedVersion: p.termsVersion)
         if let number = p.verifiedPhone { phone.restoreVerified(number) }
         identity = p.identity
         interestedIn = Set(p.interestedIn)
@@ -338,9 +348,31 @@ struct OnboardingView: View {
     }
 
     private func advance() {
+        if current == .rules, !TermsConsent.isCurrent(recordedTerms) { recordConsent(); return }
         guard step < steps.count - 1 else { finish(); return }
         if steps[step + 1].chapter != current.chapter { Haptics.success() } else { Haptics.tap() }
         go(to: step + 1)
+    }
+
+    /// Both consents go to the server before anything personal is asked; the step moves on once
+    /// they're recorded, or says why not.
+    private func recordConsent() {
+        consentError = nil
+        recordingConsent = true
+        Task {
+            defer { recordingConsent = false }
+            do {
+                try await TermsConsent.accept()
+                recordedTerms = TermsConsent.version
+                advance()
+            } catch {
+                Haptics.warning()
+                switch TermsConsent.failure(for: error) {
+                case .signOut: await app.endSession()
+                case .message(let text): consentError = text
+                }
+            }
+        }
     }
 
     /// The new profile holds only what the person answered: nothing from the demo profile.
@@ -380,6 +412,16 @@ struct OnboardingView: View {
             // The profile goes to the server first; without a session it fails and says so.
             do {
                 try await ProfileSync.finish(signUp)
+            } catch ProfileSync.SyncError.refused("terms_required") {
+                // The server has no consent on record (the one noted on this phone was lost there):
+                // back to the rules step, unticked, to record it again.
+                TermsConsent.log.error("complete_onboarding: terms_required although the sign-up recorded them")
+                Haptics.warning()
+                recordedTerms = nil
+                consent = ConsentDraft()
+                consentError = ServerMessage.text(forCode: "terms_required")
+                go(to: Step.rules.rawValue)
+                return
             } catch {
                 Haptics.warning()
                 finishError = (error as? LocalizedError)?.errorDescription
@@ -457,7 +499,7 @@ struct OnboardingView: View {
         }
     }
 
-    /// Community rules, then the required consent (unchecked by default), before anything
+    /// Community rules, then the two required consents (unchecked by default), before anything
     /// personal is asked.
     private var rulesStep: some View {
         page {
@@ -471,11 +513,8 @@ struct OnboardingView: View {
             .padding(DS.Space.xl)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
-            consent
-                .padding(.vertical, DS.Space.sm)
-                .padding(.horizontal, DS.Space.lg)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+            ConsentChecks(draft: $consent)
+                .onChange(of: consent) { consentError = nil }
         }
     }
 
@@ -563,51 +602,9 @@ struct OnboardingView: View {
 
     static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now)! }
 
-    /// Required consent, unchecked by default. The checkbox toggles; the document names in the
-    /// sentence are links that open each document.
-    private var consent: some View {
-        HStack(alignment: .top, spacing: DS.Space.sm) {
-            Button {
-                Haptics.select()
-                acceptedTerms.toggle()
-            } label: {
-                DrafftCheckbox(isOn: acceptedTerms)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("I'm 18 or older and I accept the Terms of Use, the Privacy Policy and the Community Guidelines")
-            .accessibilityAddTraits(acceptedTerms ? .isSelected : [])
-
-            Text(consentText)
-                .font(.subheadline)
-                .foregroundStyle(DS.Palette.ink)
-                .tint(DS.Palette.accentInk)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.vertical, 11) // Level with the box on top, the same room under the last line.
-                .environment(\.openURL, OpenURLAction { url in
-                    legalDoc = LegalDoc(rawValue: url.lastPathComponent)
-                    return .handled
-                })
-        }
-        .padding(.leading, -DS.Space.sm)
-        .sheet(item: $legalDoc) { item in Group { LegalDocSheet(doc: item) }.sheetSurface() }
-    }
-
-    private var consentText: AttributedString {
-        // One sentence for translators; the document names in it become the links.
-        let terms = LegalDoc.terms.title, privacy = LegalDoc.privacy.title, community = LegalDoc.community.title
-        var s = AttributedString(L("I'm 18 or older and I accept the \(terms), the \(privacy) and the \(community)."))
-        for doc in LegalDoc.allCases {
-            guard let r = s.range(of: doc.title) else { continue }
-            s[r].link = URL(string: "drafft://legal/\(doc.rawValue)")
-            s[r].underlineStyle = .single
-            s[r].font = .subheadline.weight(.semibold)
-        }
-        return s
-    }
-
     private var genderStep: some View {
         page {
-            stepTitle(L("Which describes you best?"), L("You can change it anytime in You."))
+            stepTitle(L("Which describes you best?"), L("You can't change it later. If it's ever wrong, write to the help center in You."))
             choiceRows(["Woman", "Man", "Non-binary"], isOn: { identity == $0 }) { o in
                 identity = identity == o ? nil : o
             }
@@ -719,11 +716,11 @@ struct OnboardingView: View {
         }
     }
 
-    /// How location works, plainly: when it updates, how it's blurred, what others see.
+    /// How location works, plainly: when it's read, how it's blurred, what others see.
     private var locationFacts: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
-            fact("arrow.triangle.2.circlepath", L("Updates as you move"),
-                 L("Each time you open drafft, your area follows you: home, work, a weekend away."))
+            fact("location", L("Read once, not tracked"),
+                 L("Your area comes from where you are right now. drafft doesn't follow your moves or track you in the background."))
             fact("circle.dotted.circle", L("Blurred before it leaves your phone"),
                  L("Your position is rounded to about 1 km. Your exact spot is never sent or stored."))
             fact("eye", L("What others see"),

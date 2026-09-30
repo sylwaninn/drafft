@@ -120,6 +120,9 @@ enum ProfileSync {
         let hold: AccountHold?
         let onboarded: Bool
         let notifications: NotificationSettings?
+        /// Whether the consent is on record for the current terms (`TermsConsent.Gate`): only a
+        /// fresh read may say `.required`.
+        let consent: TermsConsent.Gate
     }
 
     /// The row as the server sends it; the local cache stores these bytes as they are.
@@ -167,12 +170,17 @@ enum ProfileSync {
         struct MediaRow: Decodable { let id: String; let key: String; let kind: String; let status: String; let thumbhash: String? }
     }
 
-    private static let accountColumns = [
-        "name", "birthdate", "pronouns", "gender", "neighborhood", "bio", "goal", "favorite_spot",
-        "drinks", "smokes", "diet", "chronotype", "icebreaker", "voice_intro_key", "voice_duration",
-        "paused", "moderation", "onboarded_at", NotificationSettings.columns,
-        "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status,thumbhash)"
-    ].joined(separator: ",")
+    /// Filled by `accept_terms` (read by `TermsConsent.Columns`); drafft-backend #48 adds them.
+    private static let consentColumns = ["terms_version", "terms_accepted_at", "sensitive_consent_at"]
+
+    private static func accountColumns(withConsent: Bool) -> String {
+        ([
+            "name", "birthdate", "pronouns", "gender", "neighborhood", "bio", "goal", "favorite_spot",
+            "drinks", "smokes", "diet", "chronotype", "icebreaker", "voice_intro_key", "voice_duration",
+            "paused", "moderation", "onboarded_at", NotificationSettings.columns,
+            "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status,thumbhash)"
+        ] + (withConsent ? consentColumns : [])).joined(separator: ",")
+    }
 
     /// The account as saved on the server (a new device, a reinstall, another device's changes), in
     /// one request with its sports, prompts and media embedded. Photos are the approved and pending
@@ -180,9 +188,20 @@ enum ProfileSync {
     /// local cache: they hold keys only, never a link, so a cached copy never carries an expired one.
     static func loadAccount() async throws -> (account: Account, data: Data)? {
         guard let id = await Backend.shared.userID else { return nil }
-        let data = try await Backend.shared.select(
-            "profiles?id=eq.\(id)&select=\(accountColumns)"
-                + "&profile_sports.order=position&profile_prompts.order=position&profile_media.order=position")
+        func read(withConsent: Bool) async throws -> Data {
+            try await Backend.shared.select(
+                "profiles?id=eq.\(id)&select=\(accountColumns(withConsent: withConsent))"
+                    + "&profile_sports.order=position&profile_prompts.order=position&profile_media.order=position")
+        }
+        let data: Data
+        do {
+            data = try await read(withConsent: true)
+        } catch Backend.BackendError.http(400, let message) where consentColumns.contains(where: { message.contains($0) }) {
+            // A backend from before the consent columns (42703, the column doesn't exist): the
+            // account is read without them, and the consent stays unknown until it has them.
+            TermsConsent.log.error("The profile has no consent columns (drafft-backend #48 not deployed): \(message, privacy: .public)")
+            data = try await read(withConsent: false)
+        }
         let keys = mediaKeys(in: data)
         let signed = await MediaURL.signed(keys)
         // A backend from before signed links: the public base URL + key.
@@ -239,7 +258,8 @@ enum ProfileSync {
         )
         return Account(
             profile: profile, paused: row.paused, hold: row.moderation, onboarded: row.onboardedAt != nil,
-            notifications: try? JSONDecoder().decode([NotificationSettings].self, from: data).first
+            notifications: try? JSONDecoder().decode([NotificationSettings].self, from: data).first,
+            consent: TermsConsent.gate(fromProfileRow: data)
         )
     }
 

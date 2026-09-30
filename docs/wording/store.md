@@ -10,7 +10,7 @@ Principes appliqués :
 - On ne décrit que ce que l'app fait aujourd'hui (voir la liste des fonctions en fin de fichier). Pas de
   chiffres d'audience, de notes, d'avis, de presse ni de témoignages.
 - drafft toujours en minuscules, drafft tempo jamais « Premium » ni « Plus », like, super like et boost en
-  minuscules. Tutoiement en FR. Pas de « ! », pas d'emoji, pas de « plan » : pour l'abonnement, on parle
+  minuscules (sauf les noms des packs dans les stores : « 5 Boosts », « 3 Super Likes »). Tutoiement en FR. Pas de « ! », pas d'emoji, pas de « plan » : pour l'abonnement, on parle
   de durée (1, 6 ou 12 mois).
 - Pas de clichés de la catégorie (« perfect match », « swipe less… », « sweat », « 100 % sportifs »).
 
@@ -49,7 +49,7 @@ Rencontre des célibataires qui s'entraînent. Les profils commencent par les sp
 
 ### 1.4 Description (4 000 caractères max)
 
-**EN** (2688 / 4000)
+**EN** (2750 / 4000)
 
 ```text
 drafft is a dating app for people whose week is built around training. Profiles lead with how you move: your sports and how often you go. When you like each other, the next step is simple. Propose a session.
@@ -97,13 +97,13 @@ Boosts and super likes are also sold in packs. They never expire.
 About drafft tempo
 drafft tempo is an auto-renewing subscription, available for 1, 6 or 12 months. Payment is charged to your Apple Account when you confirm the purchase. It renews automatically at the same price unless you cancel it at least 24 hours before the end of the current period. Manage or cancel it in your App Store account settings. Deleting drafft doesn't cancel it.
 
-Terms of use: [URL]
-Privacy policy: [URL]
+Terms of use: https://getdrafft.com/terms
+Privacy policy: https://getdrafft.com/privacy
 
 drafft is for people 18 and over.
 ```
 
-**FR** (3162 / 4000)
+**FR** (3205 / 4000)
 
 ```text
 drafft est une appli de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
@@ -151,8 +151,8 @@ Les boosts et les super likes existent aussi en packs. Ils n'expirent jamais.
 À propos de drafft tempo
 drafft tempo est un abonnement à renouvellement automatique, d'une durée de 1, 6 ou 12 mois. Le paiement est débité sur ton compte Apple à la confirmation de l'achat. L'abonnement se renouvelle automatiquement au même prix, sauf si tu le résilies au moins 24 heures avant la fin de la période en cours. Gère-le ou résilie-le dans les réglages de ton compte App Store. Supprimer drafft ne le résilie pas.
 
-Conditions d'utilisation : [URL]
-Politique de confidentialité : [URL]
+Conditions d'utilisation : https://getdrafft.com/fr/terms
+Politique de confidentialité : https://getdrafft.com/fr/privacy
 
 drafft est réservé aux personnes de 18 ans et plus.
 ```
@@ -215,7 +215,7 @@ Un souci ? Dis-le-nous dans Toi, puis Aide.
 Même corps que l'App Store ; seul le paragraphe d'abonnement change (facturation Google Play, pas de
 délai de 24 h imposé par Google).
 
-**EN** (2690 / 4000)
+**EN** (2752 / 4000)
 
 ```text
 drafft is a dating app for people whose week is built around training. Profiles lead with how you move: your sports and how often you go. When you like each other, the next step is simple. Propose a session.
@@ -263,13 +263,13 @@ Boosts and super likes are also sold in packs. They never expire.
 About drafft tempo
 drafft tempo is an auto-renewing subscription, available for 1, 6 or 12 months. Payment is charged to your Google Play account when you confirm the purchase. It renews automatically at the same price unless you cancel it before the end of the current period. Manage or cancel it in Google Play, under Payments and subscriptions. Deleting drafft doesn't cancel it.
 
-Terms of use: [URL]
-Privacy policy: [URL]
+Terms of use: https://getdrafft.com/terms
+Privacy policy: https://getdrafft.com/privacy
 
 drafft is for people 18 and over.
 ```
 
-**FR** (3159 / 4000)
+**FR** (3202 / 4000)
 
 ```text
 drafft est une appli de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
@@ -317,8 +317,8 @@ Les boosts et les super likes existent aussi en packs. Ils n'expirent jamais.
 À propos de drafft tempo
 drafft tempo est un abonnement à renouvellement automatique, d'une durée de 1, 6 ou 12 mois. Le paiement est débité sur ton compte Google Play à la confirmation de l'achat. L'abonnement se renouvelle automatiquement au même prix, sauf si tu le résilies avant la fin de la période en cours. Gère-le ou résilie-le dans Google Play, rubrique Paiements et abonnements. Supprimer drafft ne le résilie pas.
 
-Conditions d'utilisation : [URL]
-Politique de confidentialité : [URL]
+Conditions d'utilisation : https://getdrafft.com/fr/terms
+Politique de confidentialité : https://getdrafft.com/fr/privacy
 
 drafft est réservé aux personnes de 18 ans et plus.
 ```
@@ -385,8 +385,13 @@ Pas de champ « niveau » dans l'app (la carte affiche les sports sans niveau) :
       partout (store compris). Trancher : « drafft: Sports Dating » ou « drafft: sports dating ».
 - [ ] **Espace insécable** dans le nom FR (« drafft : rencontre sportive ») : vérifier qu'App Store
       Connect et la Play Console l'acceptent et l'affichent bien.
-- [ ] **Liens** CGU et politique de confidentialité (remplacer `[URL]`), et EULA pour l'abonnement
-      (Apple : lien dans la description ou EULA personnalisé dans App Store Connect).
+- [x] **Liens** CGU et politique de confidentialité : getdrafft.com/terms et /privacy (EN), /fr/terms et
+      /fr/privacy (FR), même adresse avec le préfixe de langue pour les autres fiches (/es, /de, /it, /pt,
+      /nl). Les CGU tiennent lieu d'EULA (section « App store terms », `#app-stores`) : le lien dans la
+      description répond à la règle Apple 3.1.2. Dans App Store Connect, l'URL de la politique de
+      confidentialité est https://getdrafft.com/privacy.
+- [ ] **EULA dans App Store Connect** : garder le contrat standard d'Apple (les CGU restent liées dans
+      la description) ou y coller les CGU comme EULA personnalisé. À trancher.
 - [ ] **Prix et durées :** 1, 6 et 12 mois conformes aux produits ; aucun prix dans le texte (les stores
       les affichent).
 - [ ] **Google Play :** confirmer qu'une version Android existe (ou est prévue) avant de publier la

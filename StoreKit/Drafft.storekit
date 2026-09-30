@@ -11,17 +11,17 @@
       "localizations" : [
         {
           "description" : "30 minutes first in decks near you",
-          "displayName" : "1 boost",
+          "displayName" : "1 Boost",
           "locale" : "en_US"
         },
         {
           "description" : "En tête près de chez toi pendant 30 minutes",
-          "displayName" : "1 boost",
+          "displayName" : "1 Boost",
           "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.boost.1",
-      "referenceName" : "1 boost",
+      "referenceName" : "1 Boost",
       "type" : "Consumable"
     },
     {
@@ -31,17 +31,17 @@
       "localizations" : [
         {
           "description" : "30 minutes first in decks near you, 5 times",
-          "displayName" : "5 boosts",
+          "displayName" : "5 Boosts",
           "locale" : "en_US"
         },
         {
           "description" : "5 fois 30 minutes en tête près de chez toi",
-          "displayName" : "5 boosts",
+          "displayName" : "5 Boosts",
           "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.boost.5",
-      "referenceName" : "5 boosts",
+      "referenceName" : "5 Boosts",
       "type" : "Consumable"
     },
     {
@@ -51,17 +51,17 @@
       "localizations" : [
         {
           "description" : "30 minutes first in decks near you, 10 times",
-          "displayName" : "10 boosts",
+          "displayName" : "10 Boosts",
           "locale" : "en_US"
         },
         {
           "description" : "10 fois 30 minutes en tête près de chez toi",
-          "displayName" : "10 boosts",
+          "displayName" : "10 Boosts",
           "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.boost.10",
-      "referenceName" : "10 boosts",
+      "referenceName" : "10 Boosts",
       "type" : "Consumable"
     },
     {
@@ -71,17 +71,17 @@
       "localizations" : [
         {
           "description" : "Top of their deck, with a red heart",
-          "displayName" : "3 super likes",
+          "displayName" : "3 Super Likes",
           "locale" : "en_US"
         },
         {
           "description" : "En tête de sa pile, avec un cœur rouge",
-          "displayName" : "3 super likes",
+          "displayName" : "3 Super Likes",
           "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.superlike.3",
-      "referenceName" : "3 super likes",
+      "referenceName" : "3 Super Likes",
       "type" : "Consumable"
     },
     {
@@ -91,17 +91,17 @@
       "localizations" : [
         {
           "description" : "Top of their deck, with a red heart",
-          "displayName" : "15 super likes",
+          "displayName" : "15 Super Likes",
           "locale" : "en_US"
         },
         {
           "description" : "En tête de sa pile, avec un cœur rouge",
-          "displayName" : "15 super likes",
+          "displayName" : "15 Super Likes",
           "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.superlike.15",
-      "referenceName" : "15 super likes",
+      "referenceName" : "15 Super Likes",
       "type" : "Consumable"
     },
     {
@@ -111,17 +111,17 @@
       "localizations" : [
         {
           "description" : "Top of their deck, with a red heart",
-          "displayName" : "30 super likes",
+          "displayName" : "30 Super Likes",
           "locale" : "en_US"
         },
         {
           "description" : "En tête de sa pile, avec un cœur rouge",
-          "displayName" : "30 super likes",
+          "displayName" : "30 Super Likes",
           "locale" : "fr_FR"
         }
       ],
       "productID" : "so.drafft.app.superlike.30",
-      "referenceName" : "30 super likes",
+      "referenceName" : "30 Super Likes",
       "type" : "Consumable"
     }
   ],

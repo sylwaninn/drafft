@@ -6,8 +6,6 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 
 ## Bloquant avant publication
 
-- **Textes légaux** : la mention « Demo text… » est retirée, mais les résumés de CGU / confidentialité /
-  règles de communauté restent provisoires (et ont des masculins par défaut). À remplacer.
 - **Recherche de marque** « Meet me on the start line » / « Rendez-vous au départ » (INPI, EUIPO,
   classe 45) : seulement si la phrase sert en campagne. Depuis le 30/09/2026, la phrase principale est
   « Meet singles who train » / « Rencontre des célibataires qui s'entraînent » (WORDING §7.2).
@@ -41,6 +39,6 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 
 - Ordre : `scripts/stream-push.ts` (modèle Stream), puis les fonctions, puis une resynchronisation des
   utilisateurs Stream (langue).
-- Noms des achats intégrés : reporter les nouveaux noms (« 1 boost », « 3 super likes ») dans App Store
-  Connect via `scripts/app-store-products.ts`.
+- Noms des achats intégrés : les noms des packs gardent leurs majuscules (« 1 Boost », « 3 Super Likes »), comme dans
+  App Store Connect et Google Play. Rien à reporter.
 - Fiches stores : `docs/wording/store.md`, checklist « à valider » en fin de fichier.

@@ -25,8 +25,8 @@ struct MeView: View {
                         separator
                         toggleRow(L("Pause my profile"), icon: "pause.fill",
                                   detail: app.profilePaused
-                                      ? L("Hidden from everyone. Your chats and sessions carry on.")
-                                      : L("Take a break from discovery: you disappear, your chats stay open."),
+                                      ? L("Hidden from Discover and likes. Your chats and sessions carry on.")
+                                      : L("Hide from Discover for a while. Your chats stay open."),
                                   isOn: $app.profilePaused)
                     }
                     group(L("Preferences")) {
@@ -55,6 +55,10 @@ struct MeView: View {
                         separator
                         row(L("Export my data"), icon: "square.and.arrow.down.fill",
                             value: app.dataExportRequestedAt == nil ? L("Sent to you by email") : L("Requested, check your inbox")) { sheet = .export }
+                        separator
+                        // drafft can't work without the gender: withdrawing the consent is deleting the account.
+                        row(L("Sensitive data consent"), icon: "checkmark.shield.fill",
+                            value: L("Withdrawing it means deleting your account.")) { sheet = .delete }
                     }
                     group(L("Help")) {
                         row(L("Safety tips"), icon: "shield.lefthalf.filled", value: L("Meeting someone for the first time")) { sheet = .safety }
@@ -289,7 +293,7 @@ struct MeView: View {
                     Text(branded: L("Get drafft tempo"), font: .headline, brandWeight: .heavy, tierColor: DS.Palette.tierOnAccent)
                         .foregroundStyle(DS.Palette.onLime)
                     // White on the accent only in semibold or bolder, at full strength.
-                    Text("Undo swipes, see who liked you, unlimited likes.")
+                    Text("Undo your last swipe, see who likes you, unlimited likes.")
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(DS.Palette.onLime)
                 }
