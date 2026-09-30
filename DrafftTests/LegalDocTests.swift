@@ -97,6 +97,14 @@ final class LegalDocTests: XCTestCase {
         }
     }
 
+    func testSensitiveDataSectionOfThePrivacyPolicy() {
+        XCTAssertEqual(LegalDoc.sensitiveData(in: .en).absoluteString, "https://getdrafft.com/privacy?lang=en#sensitive-data")
+        XCTAssertEqual(LegalDoc.sensitiveData(in: .nl).absoluteString, "https://getdrafft.com/nl/privacy?lang=nl#sensitive-data")
+        for language in AppLanguage.allCases {
+            XCTAssertEqual(LegalDoc.sensitiveData(in: language).path, LegalDoc.privacy.url(in: language).path)
+        }
+    }
+
     func testFollowsTheAppLanguageByDefault() {
         Localization.shared.language = .de
         XCTAssertEqual(LegalDoc.terms.url().absoluteString, "https://getdrafft.com/de/terms?lang=de")
