@@ -8781,42 +8781,42 @@
         }
       }
     },
-    "Checking your first photo…" : {
+    "Checking your photos…" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein erstes Foto wird geprüft…"
+            "value" : "Deine Fotos werden geprüft…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprobando tu primera foto…"
+            "value" : "Comprobando tus fotos…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérification de ta première photo…"
+            "value" : "Vérification de tes photos…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Controllo della tua prima foto…"
+            "value" : "Controllo delle tue foto…"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je eerste foto wordt gecontroleerd…"
+            "value" : "Je foto's worden gecontroleerd…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A verificar a tua primeira foto…"
+            "value" : "A verificar as tuas fotos…"
           }
         }
       }
@@ -12441,6 +12441,46 @@
         }
       }
     },
+    "Our team is checking your first photo. Put another one first, or wait." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unser Team prüft dein erstes Foto. Setz ein anderes an den Anfang oder warte."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuestro equipo está revisando tu primera foto. Pon otra primero o espera."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notre équipe vérifie ta première photo. Mets-en une autre en premier, ou patiente."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il nostro team sta controllando la tua prima foto. Metti un'altra per prima o aspetta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ons team bekijkt je eerste foto. Zet een andere vooraan of wacht."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A nossa equipa está a verificar a tua primeira foto. Põe outra primeiro ou espera."
+          }
+        }
+      }
+    },
     "Pick 1 to 3 times that haven't passed." : {
       "localizations" : {
         "de" : {
@@ -13713,6 +13753,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A conversa termina para os dois e não voltam a ver-se em Descobrir."
+          }
+        }
+      }
+    },
+    "Your first photo wasn't approved. Put another one first." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein erstes Foto wurde nicht freigegeben. Setz ein anderes an den Anfang."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primera foto no se ha aprobado. Pon otra primero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta première photo n'a pas été acceptée. Mets-en une autre en premier."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua prima foto non è stata approvata. Metti un'altra per prima."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je eerste foto is niet goedgekeurd. Zet een andere vooraan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua primeira foto não foi aprovada. Põe outra primeiro."
           }
         }
       }
