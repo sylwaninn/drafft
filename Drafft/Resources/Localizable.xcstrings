@@ -3477,13 +3477,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etwas tiefer"
+            "value" : "Persönlicher"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo más profundo"
+            "value" : "Más personal"
           }
         },
         "fr" : {
@@ -3495,19 +3495,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un po' più a fondo"
+            "value" : "Più personale"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iets dieper"
+            "value" : "Persoonlijker"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais a fundo"
+            "value" : "Mais pessoal"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More personal"
           }
         }
       }
@@ -3729,13 +3735,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein erstes Date, das kein Abendessen ist"
+            "value" : "Beim ersten Date vergiss das Restaurant, wir gehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una primera cita que no sea una cena"
+            "value" : "En una primera cita, olvídate del restaurante, vamos a"
           }
         },
         "fr" : {
@@ -3747,19 +3753,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un primo appuntamento che non sia una cena"
+            "value" : "Al primo appuntamento scordati il ristorante, andiamo a"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Een eerste date die geen etentje is"
+            "value" : "Voor een eerste date, vergeet het restaurant, we gaan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um primeiro encontro que não seja um jantar"
+            "value" : "No primeiro encontro, esquece o restaurante, vamos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For a first date, forget dinner, we're going"
           }
         }
       }
@@ -3769,13 +3781,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Ziel, das mir ein bisschen Angst macht"
+            "value" : "Ein Ziel, das mir ein bisschen Angst macht:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un objetivo que me da un poco de miedo"
+            "value" : "Un objetivo que me da un poco de miedo es"
           }
         },
         "fr" : {
@@ -3787,19 +3799,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un obiettivo che mi fa un po' paura"
+            "value" : "Un obiettivo che mi fa un po' paura è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Een doel waar ik een beetje bang van word"
+            "value" : "Een doel waar ik een beetje bang voor ben is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um objetivo que me assusta um pouco"
+            "value" : "Um objetivo que me assusta um pouco é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A goal that scares me a little is"
           }
         }
       }
@@ -4067,13 +4085,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Statistik, auf die ich seltsam stolz bin"
+            "value" : "Eine nutzlose Statistik, auf die ich stolz bin:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una estadística de la que presumo sin motivo"
+            "value" : "Una estadística inútil de la que presumo es"
           }
         },
         "fr" : {
@@ -4085,19 +4103,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un dato che mi riempie stranamente di orgoglio"
+            "value" : "Una statistica inutile di cui vado fiero è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Een getal waar ik stiekem trots op ben"
+            "value" : "Een nutteloze stat waar ik trots op ben is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma estatística de que me orgulho, sem saber porquê"
+            "value" : "Uma estatística inútil de que me orgulho é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A useless stat I'm proud of is"
           }
         }
       }
@@ -5418,7 +5442,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Después de entrenar me encontrarás"
+            "value" : "Después de entrenar, me encontrarás"
           }
         },
         "fr" : {
@@ -5430,19 +5454,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dopo un allenamento mi trovi"
+            "value" : "Dopo l'allenamento mi trovi"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Na een training vind je me"
+            "value" : "Na de training vind je me"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Depois de um treino, encontras-me"
+            "value" : "Depois do treino, vais encontrar-me"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After a workout, you'll find me"
           }
         }
       }
@@ -10884,13 +10914,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Date mit mir"
+            "value" : "Herzenssachen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salir conmigo"
+            "value" : "Lo del corazón"
           }
         },
         "fr" : {
@@ -10902,19 +10932,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uscire con me"
+            "value" : "Lato cuore"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daten met mij"
+            "value" : "Hartzaken"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sair comigo"
+            "value" : "Lado coração"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heart side"
           }
         }
       }
@@ -14116,13 +14152,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alkohol"
+            "value" : "Ein Drink?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alcohol"
+            "value" : "¿Una copa?"
           }
         },
         "fr" : {
@@ -14134,19 +14170,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alcol"
+            "value" : "Un drink?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alcohol"
+            "value" : "Een drankje?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Álcool"
+            "value" : "Um copo?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A drink?"
           }
         }
       }
@@ -14156,13 +14198,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trinkt nur nach Wettkämpfen"
+            "value" : "Stößt auf gute Trainings an"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bebe solo después de competir"
+            "value" : "Brinda por los buenos entrenos"
           }
         },
         "fr" : {
@@ -14174,19 +14216,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beve solo dopo le gare"
+            "value" : "Brinda ai bei allenamenti"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drinkt alleen na een wedstrijd"
+            "value" : "Proost op goede trainingen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Só bebe depois das provas"
+            "value" : "Brinda aos bons treinos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toasts good workouts"
           }
         }
       }
@@ -14236,13 +14284,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trinkt gesellig"
+            "value" : "Trinkt mit Freunden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bebe en compañía"
+            "value" : "Bebe con amigos"
           }
         },
         "fr" : {
@@ -14254,19 +14302,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beve in compagnia"
+            "value" : "Beve con gli amici"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Drinkt in gezelschap"
+            "value" : "Drinkt met vrienden"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bebe socialmente"
+            "value" : "Bebe com amigos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drinks with friends"
           }
         }
       }
@@ -14356,13 +14410,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Morgenmensch oder Nachteule?"
+            "value" : "Früh raus oder ausschlafen?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Madrugar o trasnochar?"
+            "value" : "¿Madrugar o dormir hasta tarde?"
           }
         },
         "fr" : {
@@ -14374,19 +14428,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Allodola o gufo?"
+            "value" : "Sveglia all'alba o dormita?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vroege vogel of nachtuil?"
+            "value" : "Vroeg op of uitslapen?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Da manhã ou da noite?"
+            "value" : "Acordar cedo ou dormir até tarde?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up at dawn or lie-in?"
           }
         }
       }
@@ -17853,13 +17913,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green Flag beim gemeinsamen Training"
+            "value" : "Mein Green Flag beim Training: wenn du"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag al entrenar con alguien"
+            "value" : "Mi green flag entrenando es cuando"
           }
         },
         "fr" : {
@@ -17871,19 +17931,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag quando ci si allena insieme"
+            "value" : "Il mio green flag in allenamento è quando"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag bij een trainingsmaatje"
+            "value" : "Mijn green flag bij het trainen is als je"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Green flag em quem treina comigo"
+            "value" : "A minha green flag no treino é quando"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My training green flag is when you"
           }
         }
       }
@@ -19089,13 +19155,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ernährung"
+            "value" : "Auf deinem Teller"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alimentación"
+            "value" : "En tu plato"
           }
         },
         "fr" : {
@@ -19107,19 +19173,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come mangi"
+            "value" : "Nel tuo piatto"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wat je eet"
+            "value" : "Op je bord"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alimentação"
+            "value" : "No teu prato"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On your plate"
           }
         }
       }
@@ -19273,7 +19345,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi sento davvero io quando"
+            "value" : "Mi sento davvero me stesso quando"
           }
         },
         "nl" : {
@@ -19286,6 +19358,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sinto-me mais eu quando"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I feel most like me when"
           }
         }
       }
@@ -19461,7 +19539,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nunca me cansaré de hablar de"
+            "value" : "Podría hablar horas de"
           }
         },
         "fr" : {
@@ -19473,19 +19551,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non smetterò mai di parlare di"
+            "value" : "Potrei parlare per ore di"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ik kan eindeloos praten over"
+            "value" : "Ik kan urenlang praten over"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nunca me canso de falar de"
+            "value" : "Podia falar horas sobre"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I could talk for hours about"
           }
         }
       }
@@ -19495,13 +19579,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich lasse alles stehen und liegen für"
+            "value" : "Ich lasse alles stehen für"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo dejaría todo por ver"
+            "value" : "Lo dejo todo para ver"
           }
         },
         "fr" : {
@@ -19513,19 +19597,19 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mollerei tutto per guardare"
+            "value" : "Mollo tutto per guardare"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ik laat alles vallen om te kijken naar"
+            "value" : "Ik laat alles vallen voor"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Largava tudo para ver"
+            "value" : "Largo tudo para ver"
           }
         }
       }
@@ -19535,13 +19619,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir haben das gleiche Tempo, wenn"
+            "value" : "Wir sind auf einer Wellenlänge, wenn"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iremos al mismo ritmo si"
+            "value" : "Estamos en la misma onda si"
           }
         },
         "fr" : {
@@ -19553,25 +19637,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Andremo allo stesso ritmo se"
+            "value" : "Siamo sulla stessa lunghezza d'onda se"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We lopen in hetzelfde tempo als"
+            "value" : "We zitten op één lijn als"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vamos ao mesmo ritmo se"
+            "value" : "Estamos na mesma onda se"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "We're on the same pace if"
+            "value" : "We're on the same wavelength if"
           }
         }
       }
@@ -19701,13 +19785,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So viel Muskelkater wie an dem Tag, als ich"
+            "value" : "Den schlimmsten Muskelkater hatte ich nach"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nunca he tenido tantas agujetas como el día que"
+            "value" : "Mis peores agujetas fueron al día siguiente de"
           }
         },
         "fr" : {
@@ -19719,19 +19803,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mai avuto dolori muscolari come il giorno in cui"
+            "value" : "I miei peggiori dolori muscolari sono arrivati dopo"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ik heb nooit zoveel spierpijn gehad als de dag dat ik"
+            "value" : "Mijn ergste spierpijn had ik de dag na"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nunca tive tantas dores como no dia em que"
+            "value" : "As minhas piores dores musculares foram no dia a seguir a"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My worst muscle soreness came the day after"
           }
         }
       }
@@ -19867,13 +19957,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wäre ich eine Energiegel-Sorte, wäre ich"
+            "value" : "Wäre ich ein Energiegel, hätte ich die Sorte"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si fuera un sabor de gel energético, sería"
+            "value" : "Si fuera un gel energético, sería de sabor"
           }
         },
         "fr" : {
@@ -19885,19 +19975,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se fossi un gel energetico, avrei il gusto di"
+            "value" : "Se fossi un gel energetico, sarei al gusto"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Als ik een energiegel was, zou ik smaken naar"
+            "value" : "Als ik een energiegel was, had ik de smaak"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se eu fosse um sabor de gel energético, seria"
+            "value" : "Se eu fosse um gel energético, seria de sabor"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If I were an energy gel, my flavour would be"
           }
         }
       }
@@ -20989,13 +21085,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nur zum Spaß"
+            "value" : "Zum Lachen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo por diversión"
+            "value" : "Para reír"
           }
         },
         "fr" : {
@@ -21007,19 +21103,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo per divertimento"
+            "value" : "Per ridere"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gewoon voor de lol"
+            "value" : "Om te lachen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Só por diversão"
+            "value" : "Para rir"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For laughs"
           }
         }
       }
@@ -21149,13 +21251,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Karaoke-Song, ohne zu zögern"
+            "value" : "Beim Karaoke schnapp ich mir das Mikro für"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi canción de karaoke, sin dudarlo"
+            "value" : "En el karaoke, pillo el micro para"
           }
         },
         "fr" : {
@@ -21167,19 +21269,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Canzone al karaoke, senza esitare"
+            "value" : "Al karaoke prendo il microfono per"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Karaokenummer, zonder twijfel"
+            "value" : "Bij karaoke pak ik de microfoon voor"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Música de karaoke, sem hesitar"
+            "value" : "No karaoke, agarro o microfone para"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At karaoke, I grab the mic for"
           }
         }
       }
@@ -24861,13 +24969,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mein Ehrgeiz, von 1 bis 10"
+            "value" : "Wie schlecht ich verlieren kann, von 1 bis 10"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi vena competitiva, del 1 al 10"
+            "value" : "Lo mal que llevo perder, del 1 al 10"
           }
         },
         "fr" : {
@@ -24879,19 +24987,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il mio spirito competitivo, da 1 a 10"
+            "value" : "Quanto odio perdere, da 1 a 10"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn competitiedrang, van 1 tot 10"
+            "value" : "Hoe slecht ik tegen mijn verlies kan, op 10"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O meu lado competitivo, de 1 a 10"
+            "value" : "Quão mal lido com perder, de 1 a 10"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How sore a loser I am, out of 10"
           }
         }
       }
@@ -24947,13 +25061,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mein verstecktes Talent, das mir keiner glaubt"
+            "value" : "Mein verstecktes Talent, das mir keiner glaubt:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi talento oculto que nadie se cree"
+            "value" : "Mi talento oculto que nadie se cree es"
           }
         },
         "fr" : {
@@ -24965,19 +25079,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il mio talento nascosto a cui nessuno crede"
+            "value" : "Il mio talento nascosto a cui nessuno crede è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn verborgen talent dat niemand gelooft"
+            "value" : "Mijn verborgen talent dat niemand gelooft is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O meu talento escondido em que ninguém acredita"
+            "value" : "O meu talento escondido em que ninguém acredita é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My hidden talent nobody believes is"
           }
         }
       }
@@ -24987,13 +25107,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine ideale Sonntagssession"
+            "value" : "Mein perfekter Sport-Sonntag ist"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi sesión ideal de domingo"
+            "value" : "Mi domingo deportivo ideal es"
           }
         },
         "fr" : {
@@ -25005,19 +25125,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La mia sessione ideale della domenica"
+            "value" : "La mia domenica sportiva ideale è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn ideale zondagsessie"
+            "value" : "Mijn ideale sportzondag is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A minha sessão de domingo ideal"
+            "value" : "O meu domingo desportivo ideal é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My ideal Sunday workout is"
           }
         }
       }
@@ -25027,13 +25153,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So feuere ich jemanden an"
+            "value" : "Um dich anzufeuern, bin ich der Typ, der"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi forma de animar a alguien"
+            "value" : "Para animarte, soy de los que"
           }
         },
         "fr" : {
@@ -25045,25 +25171,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il mio modo di fare il tifo per qualcuno"
+            "value" : "Per fare il tifo per te, sono il tipo che"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zo moedig ik iemand aan"
+            "value" : "Om je aan te moedigen ben ik het type dat"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A minha forma de apoiar alguém"
+            "value" : "Para te apoiar, sou do género de"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "How I cheer someone on"
+            "value" : "To cheer you on, I'm the type to"
           }
         }
       }
@@ -25113,13 +25239,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine umstrittenste Meinung"
+            "value" : "Meine umstrittenste Meinung in der Umkleide:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi opinión más polémica"
+            "value" : "Mi opinión más polémica en el vestuario es que"
           }
         },
         "fr" : {
@@ -25131,19 +25257,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La mia opinione più controversa"
+            "value" : "La mia opinione più discussa negli spogliatoi è che"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn meest controversiële mening"
+            "value" : "Mijn meest omstreden mening in de kleedkamer is dat"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A minha opinião mais polémica"
+            "value" : "A minha opinião mais polémica no balneário é que"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My most debated locker-room take is that"
           }
         }
       }
@@ -25153,13 +25285,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine irrationalste Angst"
+            "value" : "Meine irrationalste Angst ist"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi miedo más irracional"
+            "value" : "Mi miedo más irracional es"
           }
         },
         "fr" : {
@@ -25171,19 +25303,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La mia paura più irrazionale"
+            "value" : "La mia paura più irrazionale è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn meest irrationele angst"
+            "value" : "Mijn meest irrationele angst is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O meu medo mais irracional"
+            "value" : "O meu medo mais irracional é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My most irrational fear is"
           }
         }
       }
@@ -25233,13 +25371,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine Playlist für den letzten Kilometer"
+            "value" : "Der Song, der mich am Ende alles geben lässt:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi playlist para el último kilómetro"
+            "value" : "La canción que me hace darlo todo al final es"
           }
         },
         "fr" : {
@@ -25251,19 +25389,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La mia playlist per l'ultimo chilometro"
+            "value" : "La canzone che mi fa dare tutto alla fine è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn playlist voor de laatste kilometer"
+            "value" : "Het nummer waarop ik aan het eind alles geef is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A minha playlist para o último quilómetro"
+            "value" : "A música que me faz dar tudo no fim é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The song that makes me give it all at the end is"
           }
         }
       }
@@ -25273,13 +25417,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu meinem Ritual vor dem Rennen gehört"
+            "value" : "Vor einem Wettkampf muss ich einfach"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mi ritual antes de competir incluye"
+            "value" : "Antes de una competición, no puedo evitar"
           }
         },
         "fr" : {
@@ -25291,19 +25435,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il mio rituale pre-gara prevede"
+            "value" : "Prima di una gara non posso fare a meno di"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn ritueel voor een wedstrijd bestaat uit"
+            "value" : "Voor een wedstrijd kan ik het niet laten om"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O meu ritual antes das provas inclui"
+            "value" : "Antes de uma prova, não resisto a"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before a race, I can't help but"
           }
         }
       }
@@ -28215,13 +28365,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In Bewegung"
+            "value" : "Sport"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En movimiento"
+            "value" : "Lo deportivo"
           }
         },
         "fr" : {
@@ -28233,19 +28383,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In movimento"
+            "value" : "Lato sport"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Onderweg"
+            "value" : "Sportief"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Em movimento"
+            "value" : "Lado desporto"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sport side"
           }
         }
       }
@@ -31865,13 +32021,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nur nach Wettkämpfen"
+            "value" : "Auf ein gutes Training"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo después de competir"
+            "value" : "Para celebrar un buen entreno"
           }
         },
         "fr" : {
@@ -31883,19 +32039,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo dopo le gare"
+            "value" : "Per festeggiare un bell'allenamento"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alleen na een wedstrijd"
+            "value" : "Om een goede training te vieren"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Só depois das provas"
+            "value" : "Para celebrar um bom treino"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To toast a good workout"
           }
         }
       }
@@ -34438,13 +34600,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruhetag? Das heißt bei mir eigentlich"
+            "value" : "Mein Ruhetag sieht ehrlich gesagt so aus:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Día de descanso? Esto es lo que significa de verdad"
+            "value" : "Mi día de descanso, en realidad, es"
           }
         },
         "fr" : {
@@ -34456,19 +34618,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Giorno di riposo? Ecco cosa significa davvero"
+            "value" : "Il mio giorno di riposo, in realtà, è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rustdag? Dit is wat dat echt betekent"
+            "value" : "Mijn rustdag ziet er eerlijk gezegd uit als"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dia de descanso? Eis o que isso quer dizer mesmo"
+            "value" : "O meu dia de descanso, na verdade, é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My rest day honestly looks like"
           }
         }
       }
@@ -38096,13 +38264,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gesellig"
+            "value" : "Mit Freunden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En ocasiones sociales"
+            "value" : "Con amigos"
           }
         },
         "fr" : {
@@ -38114,19 +38282,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In compagnia"
+            "value" : "Con gli amici"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In gezelschap"
+            "value" : "Met vrienden"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Socialmente"
+            "value" : "Com amigos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With friends"
           }
         }
       }
@@ -38216,13 +38390,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etwas, wofür ich außerhalb des Sports trainiere"
+            "value" : "Außerhalb vom Sport trainiere ich,"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo para lo que entreno fuera del deporte"
+            "value" : "Fuera del deporte, me entreno para"
           }
         },
         "fr" : {
@@ -38234,19 +38408,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qualcosa per cui mi alleno fuori dallo sport"
+            "value" : "Fuori dallo sport, mi alleno a"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iets waarvoor ik train buiten de sport"
+            "value" : "Buiten de sport train ik om"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo para que estou a treinar fora do desporto"
+            "value" : "Fora do desporto, ando a treinar para"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outside of sport, I'm training to"
           }
         }
       }
@@ -38382,13 +38562,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Manchmal"
+            "value" : "Ab und zu"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A veces"
+            "value" : "De vez en cuando"
           }
         },
         "fr" : {
@@ -38400,19 +38580,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A volte"
+            "value" : "Ogni tanto"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soms"
+            "value" : "Af en toe"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Às vezes"
+            "value" : "De vez em quando"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now and then"
           }
         }
       }
@@ -41236,13 +41422,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der beste Rat, den mir ein Coach je gegeben hat"
+            "value" : "Der beste Rat, den ich je bekommen habe:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El mejor consejo que me ha dado un entrenador"
+            "value" : "El mejor consejo que me han dado es"
           }
         },
         "fr" : {
@@ -41254,19 +41440,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il miglior consiglio che mi abbia mai dato un allenatore"
+            "value" : "Il miglior consiglio che mi abbiano dato è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het beste advies dat een coach me ooit gaf"
+            "value" : "Het beste advies dat ik ooit kreeg is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O melhor conselho que um treinador me deu"
+            "value" : "O melhor conselho que já me deram é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The best advice I've ever been given is"
           }
         }
       }
@@ -41356,13 +41548,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine dümmste Verletzung aller Zeiten"
+            "value" : "Meine dümmste Verletzung habe ich mir geholt beim"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La lesión más tonta que he tenido"
+            "value" : "Mi lesión más tonta me la hice"
           }
         },
         "fr" : {
@@ -41374,19 +41566,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'infortunio più stupido che abbia mai avuto"
+            "value" : "Il mio infortunio più stupido me lo sono fatto"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De stomste blessure die ik ooit had"
+            "value" : "Mijn domste blessure liep ik op tijdens"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A lesão mais parva que já tive"
+            "value" : "A minha lesão mais parva foi a"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I got my dumbest injury ever while"
           }
         }
       }
@@ -41436,13 +41634,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Person, die mich zum Sport gebracht hat"
+            "value" : "Dass ich heute Sport mache, verdanke ich"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La persona que me metió en el deporte"
+            "value" : "Si hago deporte hoy, es gracias a"
           }
         },
         "fr" : {
@@ -41454,19 +41652,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La persona che mi ha fatto scoprire lo sport"
+            "value" : "Se oggi faccio sport, è grazie a"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De persoon door wie ik ben gaan sporten"
+            "value" : "Dat ik nu sport, heb ik te danken aan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A pessoa que me fez começar no desporto"
+            "value" : "Se hoje faço desporto, é graças a"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If I do sport today, it's thanks to"
           }
         }
       }
@@ -41476,13 +41680,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Ausrüstungsteil, das ich aus einem Feuer retten würde"
+            "value" : "Bei einem Brand rette ich zuerst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El material que salvaría de un incendio"
+            "value" : "El material que salvaría primero de un incendio es"
           }
         },
         "fr" : {
@@ -41494,19 +41698,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L'attrezzatura che salverei da un incendio"
+            "value" : "L'attrezzatura che salverei per prima da un incendio è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Het sportspul dat ik uit een brand zou redden"
+            "value" : "De spullen die ik als eerste red bij brand zijn"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O equipamento que salvava de um incêndio"
+            "value" : "O equipamento que salvava primeiro num incêndio é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The gear I'd save first in a fire is"
           }
         }
       }
@@ -41602,13 +41812,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Snack, der meine ganze Persönlichkeit antreibt"
+            "value" : "Der Snack, der meine ganze Persönlichkeit zusammenfasst:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El snack que alimenta toda mi personalidad"
+            "value" : "El snack que resume toda mi personalidad es"
           }
         },
         "fr" : {
@@ -41620,19 +41830,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo snack che alimenta tutta la mia personalità"
+            "value" : "Lo snack che riassume tutta la mia personalità è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De snack waar mijn hele persoonlijkheid op draait"
+            "value" : "De snack die mijn hele persoonlijkheid samenvat is"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O snack que alimenta toda a minha personalidade"
+            "value" : "O snack que resume toda a minha personalidade é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The snack that sums up my whole personality is"
           }
         }
       }
@@ -41722,13 +41938,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schlag mir das vor und ich bin dabei"
+            "value" : "Um mich rumzukriegen, schlag vor:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Proponme esto y me apunto"
+            "value" : "Para conquistarme, proponme"
           }
         },
         "fr" : {
@@ -41740,25 +41956,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Proponimi questo e ci sto"
+            "value" : "Per conquistarmi, proponimi"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stel dit voor en ik ben erbij"
+            "value" : "Wil je me voor je winnen, stel dan voor:"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Propõe-me isto e eu alinho"
+            "value" : "Para me conquistares, propõe"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Propose this and I'm in"
+            "value" : "To win me over, suggest"
           }
         }
       }
@@ -41768,13 +41984,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der schlimmste Lauf meines Lebens war, als"
+            "value" : "Mein schlimmstes Training aller Zeiten war, als"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La peor carrera de mi vida fue cuando"
+            "value" : "Mi peor entreno de la historia fue cuando"
           }
         },
         "fr" : {
@@ -41786,19 +42002,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La corsa peggiore della mia vita è stata quando"
+            "value" : "Il mio peggior allenamento di sempre è stato quando"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De slechtste run van mijn leven was toen"
+            "value" : "Mijn slechtste training ooit was toen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A pior corrida da minha vida foi quando"
+            "value" : "O meu pior treino de sempre foi quando"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My worst workout ever was when"
           }
         }
       }
@@ -43164,7 +43386,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Juntos por fin podríamos"
+            "value" : "Juntos podríamos por fin"
           }
         },
         "fr" : {
@@ -43188,7 +43410,13 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Juntos podíamos finalmente"
+            "value" : "Juntos, podíamos finalmente"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Together, we could finally"
           }
         }
       }
@@ -44056,13 +44284,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zwei Wahrheiten und eine Lüge über mein Training"
+            "value" : "Zwei Wahrheiten und eine Lüge über mich"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dos verdades y una mentira sobre mis entrenos"
+            "value" : "Dos verdades y una mentira sobre mí"
           }
         },
         "fr" : {
@@ -44074,25 +44302,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Due verità e una bugia sul mio allenamento"
+            "value" : "Due verità e una bugia su di me"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Twee waarheden en een leugen over mijn training"
+            "value" : "Twee waarheden en een leugen over mij"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Duas verdades e uma mentira sobre os meus treinos"
+            "value" : "Duas verdades e uma mentira sobre mim"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Two truths and a lie about my training"
+            "value" : "Two truths and a lie about me"
           }
         }
       }
@@ -45046,13 +45274,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unpopuläre Meinung übers Dehnen"
+            "value" : "Dehnen ist für mich"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opinión impopular sobre los estiramientos"
+            "value" : "Estirar, para mí, es"
           }
         },
         "fr" : {
@@ -45064,19 +45292,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opinione impopolare sullo stretching"
+            "value" : "Lo stretching, per me, è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impopulaire mening over stretchen"
+            "value" : "Stretchen is voor mij"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opinião impopular sobre alongamentos"
+            "value" : "Alongar, para mim, é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stretching, to me, is"
           }
         }
       }
@@ -45932,13 +46166,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Absoluter Morgenmensch"
+            "value" : "Vor der Sonne wach"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muy de madrugar"
+            "value" : "En pie antes que el sol"
           }
         },
         "fr" : {
@@ -45950,19 +46184,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sveglia all'alba"
+            "value" : "In piedi prima del sole"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Echte vroege vogel"
+            "value" : "Op voor de zon"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muito da manhã"
+            "value" : "De pé antes do sol"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up before the sun"
           }
         }
       }
@@ -47624,13 +47864,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was mich an harten Tagen antreibt"
+            "value" : "An schlechten Tagen hält mich am Laufen:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que me hace seguir los días duros"
+            "value" : "Los días malos, lo que me hace seguir es"
           }
         },
         "fr" : {
@@ -47642,19 +47882,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cosa mi fa andare avanti nei giorni difficili"
+            "value" : "Nei giorni no, quello che mi fa andare avanti è"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wat me op zware dagen gaande houdt"
+            "value" : "Op mindere dagen houdt dit me op de been:"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que me faz continuar nos dias difíceis"
+            "value" : "Nos dias maus, o que me faz continuar é"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On off days, what keeps me going is"
           }
         }
       }
@@ -49787,13 +50033,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geh nicht mit mir aus, wenn"
+            "value" : "Lauf, solange du noch kannst, wenn"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No deberías salir conmigo si"
+            "value" : "Huye mientras puedas si"
           }
         },
         "fr" : {
@@ -49805,19 +50051,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non dovresti uscire con me se"
+            "value" : "Scappa finché sei in tempo se"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ga niet met me uit als"
+            "value" : "Ren nu het nog kan als"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deves sair comigo se"
+            "value" : "Foge enquanto podes se"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run while you still can if"
           }
         }
       }
@@ -56883,6 +57135,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apéro is sacred"
+          }
+        }
+      }
+    },
+    "Meat lover" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viandard.e"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fleischliebhaber:in"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnívore"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnivorə"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vleesliefhebber"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnívore"
+          }
+        }
+      }
+    },
+    "Meat lover (woman)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viandarde"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meat lover"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fleischliebhaberin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnívora"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnivora"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vleesliefhebber"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnívora"
+          }
+        }
+      }
+    },
+    "Meat lover (man)" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viandard"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meat lover"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fleischliebhaber"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnívoro"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnivoro"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vleesliefhebber"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnívoro"
           }
         }
       }
