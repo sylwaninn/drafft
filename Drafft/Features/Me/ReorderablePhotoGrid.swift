@@ -46,7 +46,8 @@ struct ReorderablePhotoGrid<AddButton: View>: View {
             }
         }
         .frame(height: gridHeight)
-        .onChange(of: PhotoModeration.shared.removeRequest) { _, path in
+        // Also one asked while no grid was on screen (from the banner or a push).
+        .onChange(of: PhotoModeration.shared.removeRequest, initial: true) { _, path in
             guard let path, let i = photos.firstIndex(of: path) else { return }
             PhotoModeration.shared.removeRequest = nil
             onRemove(i)
@@ -129,7 +130,7 @@ struct ReorderablePhotoGrid<AddButton: View>: View {
             // Dimmed while it's not live on the profile: being checked (with a small loader), refused
             // (red chip, a tap explains why) or in review. Accepted: nothing.
             .overlay {
-                if let state = PhotoModeration.shared.states[name],
+                if let state = PhotoModeration.shared.state(of: name),
                    state.isWorking || state == .refused || state == .inReview {
                     Color.black.opacity(0.38)
                         .clipShape(.rect(cornerRadius: DS.Radius.lg))
@@ -138,7 +139,7 @@ struct ReorderablePhotoGrid<AddButton: View>: View {
                 }
             }
             .overlay(alignment: .bottomLeading) {
-                if let state = PhotoModeration.shared.states[name], dragging == nil {
+                if let state = PhotoModeration.shared.state(of: name), dragging == nil {
                     switch state {
                     case .uploading, .checking:
                         ProgressView()
@@ -170,11 +171,11 @@ struct ReorderablePhotoGrid<AddButton: View>: View {
                 }
             }
             .onTapGesture {
-                if PhotoModeration.shared.states[name] == .refused {
+                if PhotoModeration.shared.state(of: name) == .refused {
                     PhotoRefusalPresenter.show(.init(path: name))
                 }
             }
-            .animation(Motion.snappy, value: PhotoModeration.shared.states[name])
+            .animation(Motion.snappy, value: PhotoModeration.shared.state(of: name))
             .overlay(alignment: .topTrailing) {
                 if (photos.count > 1 || canRemoveLast) && dragging == nil {
                     Button {

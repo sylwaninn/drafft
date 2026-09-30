@@ -16,6 +16,12 @@ struct EditProfileView: View {
     @State private var saving = false
     @State private var saveError: String?
     @State private var pickingPrompt: Int?
+    /// Face check on the first photo: nil while checking.
+    @State private var mainFace: FaceCheck.Result?
+    /// Photos picked in this editor and not saved yet: drafts on the server, deleted if the person leaves
+    /// without saving them (`PhotoModeration.discard`).
+    @State private var picked: [String] = []
+    @State private var confirmBack = false
     @FocusState private var focus: Field?
 
     @State private var original: Profile
@@ -46,7 +52,15 @@ struct EditProfileView: View {
 
     private var canSave: Bool {
         hasChanges && !draft.name.trimmingCharacters(in: .whitespaces).isEmpty && !draft.sports.isEmpty && (draft.icebreaker.isComplete || draft.icebreaker.isBlank)
+            && (!photosChanged || photosCheck == .ready)
     }
+
+    /// The photos as sign-up asks for them (`PhotoSetCheck`). Only changed photos hold the save back: a
+    /// portrait the team refuses later never keeps someone from fixing their bio.
+    private var photosCheck: PhotoSetCheck { .of(allPhotos, face: mainFace) }
+    private var photosChanged: Bool { allPhotos != original.allPhotos }
+    /// Photos moderation refused, still on the grid: said on the Photos row.
+    private var refusedPhotos: Int { allPhotos.filter { PhotoModeration.shared.state(of: $0) == .refused }.count }
 
     /// Pages follow the profile as others read it: who you are and what you're after, then how
     /// you move, then what you say in your own words.
@@ -106,6 +120,7 @@ struct EditProfileView: View {
         case .identity: draft.name.trimmingCharacters(in: .whitespaces).isEmpty
         case .bio: draft.bio.count > 200
         case .sports: draft.sports.isEmpty
+        case .photos: photosCheck.needsAction
         case .prompts: !draft.icebreaker.isComplete && !draft.icebreaker.isBlank
         default: false
         }
@@ -153,8 +168,8 @@ struct EditProfileView: View {
                            message: L("What you changed since your last save will be lost."),
                            cancelTitle: L("Keep editing"),
                            actions: [ConfirmAction(title: L("Discard changes"), kind: .destructive) { dismiss() }])
+            // No save here: each page saves its own changes, and leaving one unsaved asks first.
             .blurredNavigationEdge()
-            .bottomBar { footer }
             .sheet(item: Binding(get: { pickingPrompt.map(PromptSlot.init) }, set: { pickingPrompt = $0?.id })) { slot in
                 Group {
                     PromptPickerSheet(current: prompts.indices.contains(slot.id) ? prompts[slot.id].question : nil,
@@ -175,6 +190,15 @@ struct EditProfileView: View {
             }
         }
         .interactiveDismissDisabled(hasChanges || saving)
+        .task(id: draft.portrait) {
+            mainFace = nil
+            let face = await PhotoSetCheck.face(of: draft.portrait)
+            // The first photo changed meanwhile: its own check answers.
+            guard !Task.isCancelled else { return }
+            mainFace = face
+        }
+        // Closed without saving them (discarded, or swiped down once nothing else changed): they go.
+        .onDisappear { PhotoModeration.shared.discard(picked) }
         .onChange(of: draft) { saveError = nil }
     }
 
@@ -205,7 +229,9 @@ struct EditProfileView: View {
                             }
                         }
                         Spacer(minLength: DS.Space.sm)
-                        if needsAttention(page) {
+                        if page == .photos && refusedPhotos > 0 {
+                            RefusedCountChip(count: refusedPhotos)
+                        } else if needsAttention(page) {
                             Image("danger-circle")
                                 .foregroundStyle(DS.Palette.negative)
                                 .accessibilityLabel("Needs attention")
@@ -233,7 +259,12 @@ struct EditProfileView: View {
             VStack(spacing: DS.Space.md) {
                 switch page {
                 case .photos:
-                    block(L("Photos"), icon: page.icon, note: L("Hold a photo, then drag to reorder")) { photosGrid }
+                    block(L("Photos"), icon: page.icon, note: L("Hold a photo, then drag to reorder")) {
+                        VStack(alignment: .leading, spacing: DS.Space.sm) {
+                            photosGrid
+                            PhotoSetHint(check: photosCheck)
+                        }
+                    }
                 case .bio:
                     block(L("Your bio"), icon: page.icon, note: L("Optional")) { bioSection }
                 case .identity:
@@ -260,6 +291,8 @@ struct EditProfileView: View {
         .background(DS.Palette.canvasSoft)
         .navigationTitle(page.title)
         .navigationBarTitleDisplayMode(.inline)
+        .unsavedBackGuard(hasChanges, photos: page == .photos && photosChanged, isPresented: $confirmBack,
+                          discard: revertChanges)
         // Every page keeps its validate button in view, disabled until there's something valid to save.
         .blurredNavigationEdge()
         .bottomBar { footer }
@@ -299,17 +332,36 @@ struct EditProfileView: View {
 
     private func removePhoto(at i: Int) {
         var list = allPhotos
-        list.remove(at: i)
+        let removed = list.remove(at: i)
+        // A photo picked here and taken off again: a draft nobody will save.
+        if picked.contains(removed) {
+            picked.removeAll { $0 == removed }
+            PhotoModeration.shared.discard([removed])
+        }
         withAnimation(Motion.snappy) { setPhotos(list) }
+    }
+
+    /// Everything as it was at the last save (photos added since deleted); back to the list.
+    private func revertChanges() {
+        PhotoModeration.shared.discard(picked)
+        picked = []
+        draft = original
+        vitals = original.vitals ?? .blank
+        prompts = original.prompts
+        voice = nil
+        saveError = nil
+        path.removeAll()
     }
 
     private func addPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
         guard let data = try? await item.loadTransferable(type: Data.self) else { return }
         guard let path = await PhotoCompressor.savePicked(data) else { return }
+        picked.append(path)
         withAnimation(Motion.snappy) { setPhotos(allPhotos + [path]) }
         Haptics.success()
-        // Sent to the backend: compressed, uploaded, then judged by moderation (the tile shows it).
+        // Sent to the backend as a draft: compressed, uploaded, then judged by moderation (the tile shows
+        // it). On the profile only once saved.
         PhotoModeration.shared.submit(path)
     }
 
@@ -504,10 +556,12 @@ struct EditProfileView: View {
             .disabled((!canSave && !saved) || saving)
             .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
             .padding(.leading, 12)
-            Text(footerHint)
-                .font(.footnote)
-                .foregroundStyle(saveError != nil || (hasChanges && !canSave) ? DS.Palette.negative : DS.Palette.body)
-                .contentTransition(.opacity)
+            if let footerHint {
+                Text(footerHint)
+                    .font(.footnote)
+                    .foregroundStyle(saveError != nil || (hasChanges && !canSave) ? DS.Palette.negative : DS.Palette.body)
+                    .contentTransition(.opacity)
+            }
         }
         .padding(.horizontal, DS.Space.xl)
         .padding(.top, DS.Space.md)
@@ -515,17 +569,20 @@ struct EditProfileView: View {
         .animation(Motion.snappy, value: canSave)
     }
 
-    private var footerHint: String {
+    /// Nil while a photo is being checked: its tile's loader says it.
+    private var footerHint: String? {
         if let saveError { return saveError }
         if saved { return L("Your profile is up to date.") }
         if !hasChanges { return L("Make a change to save it.") }
+        if photosChanged && photosCheck == .checking { return nil }
+        if photosChanged, let reason = photosCheck.reason { return reason }
         if draft.sports.isEmpty { return L("Add at least one sport.") }
         if draft.name.trimmingCharacters(in: .whitespaces).isEmpty { return L("Add your first name.") }
         if !draft.icebreaker.isComplete && !draft.icebreaker.isBlank { return L("Finish your interactive prompt.") }
         return L("Saves everything you've changed.")
     }
 
-    /// Saves the whole draft. From a sub-page it returns to the list; from the list it closes the editor.
+    /// Saves the whole draft, then returns to the list.
     private func save() {
         guard canSave, !saving else { return }
         focus = nil
@@ -547,17 +604,14 @@ struct EditProfileView: View {
             }
             Haptics.success()
             app.me = result
+            // Saved: on the profile now, no longer drafts to delete.
+            picked.removeAll { result.allPhotos.contains($0) }
             withAnimation(Motion.bouncy) { saved = true }
-            let fromSubPage = !path.isEmpty
             try? await Task.sleep(for: .milliseconds(150))
-            if fromSubPage {
-                original = result
-                draft = result
-                voice = nil
-                withAnimation(Motion.snappy) { saved = false; path.removeAll() }
-            } else {
-                dismiss()
-            }
+            original = result
+            draft = result
+            voice = nil
+            withAnimation(Motion.snappy) { saved = false; path.removeAll() }
         }
     }
 
