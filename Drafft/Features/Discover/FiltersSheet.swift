@@ -14,31 +14,31 @@ struct FiltersSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DS.Space.md) {
-                    block("Distance", icon: "location.fill",
+                    block("Distance", icon: "map-point",
                           value: draft.distanceLabel) {
                         DistanceSlider(value: $draft.maxDistanceKm)
                     }
 
-                    block("Age", icon: "person.fill",
+                    block("Age", icon: "user-rounded",
                           value: "\(draft.ages.lowerBound)–\(draft.ages.upperBound)\(draft.ages.upperBound == DiscoverFilters.ageBounds.upperBound ? "+" : "")") {
                         RangeSlider(range: $draft.ages, bounds: DiscoverFilters.ageBounds)
                     }
 
-                    block("Show me", icon: "eye.fill") {
+                    block("Show me", icon: "eye") {
                         chips(DiscoverFilters.Audience.allCases.map { (audienceTitle($0), nil) },
                               isOn: { $0 == audienceTitle(draft.audience) }) { label in
                             draft.audience = DiscoverFilters.Audience.allCases.first { audienceTitle($0) == label } ?? .everyone
                         }
                     }
 
-                    block("Sports", icon: "figure.run", value: draft.sports.isEmpty ? L("Any") : L("\(draft.sports.count) selected")) {
+                    block("Sports", icon: "running", value: draft.sports.isEmpty ? L("Any") : L("\(draft.sports.count) selected")) {
                         SportPicker(selected: Sport.allCases.filter(draft.sports.contains),
                                     chipBackground: DS.Palette.canvasSoft, collapsedCount: 16) { s in
                             if draft.sports.contains(s) { draft.sports.remove(s) } else { draft.sports.insert(s) }
                         }
                     }
 
-                    block("In common", icon: "person.2.fill") {
+                    block("In common", icon: "link-circle") {
                         Toggle(isOn: $draft.sharedSportsOnly) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Only people who do one of my sports")
@@ -60,7 +60,7 @@ struct FiltersSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
             .blurredNavigationEdge()
@@ -103,7 +103,7 @@ struct FiltersSheet: View {
             // Title and value share the line while both fit; a long translation puts the value under it.
             AdaptiveRow {
                 HStack(spacing: DS.Space.sm) {
-                    Image(systemName: icon)
+                    Image(icon)
                         .font(.footnote.weight(.bold))
                         .foregroundStyle(DS.Palette.ink)
                     Text(title)
@@ -147,7 +147,7 @@ struct FiltersSheet: View {
                 } label: {
                     HStack(spacing: 6) {
                         if let icon = option.icon {
-                            Image(systemName: icon).font(.footnote.weight(.bold))
+                            Image(icon).font(.footnote.weight(.bold))
                         }
                         Text(option.label).font(.footnote.weight(.semibold))
                     }
@@ -281,7 +281,7 @@ struct DistanceSlider: View {
             HStack {
                 Text("1 km")
                 Spacer()
-                Image(systemName: "infinity").accessibilityLabel("No limit")
+                Image("infinite").accessibilityLabel("No limit")
             }
             .font(.caption.weight(.semibold))
             .foregroundStyle(DS.Palette.mute)
