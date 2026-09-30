@@ -28,10 +28,25 @@ enum LocationPrivacy {
     }
 }
 
-/// Resolved on the device until the server does it. The server will do a
-/// point-in-polygon test against official boundaries (IGN / INSEE / OpenStreetMap); here the
-/// arrondissements of Paris, Lyon and Marseille are approximated by their centres, and any other
-/// place falls back to the city name from the system geocoder, never the street.
+/// The server's answer (`area_at`): the commune or arrondissement the blurred position falls in,
+/// from official boundaries, so every app shows the same name without a geocoder. Offline, outside
+/// France, or before the areas are loaded, the server has none: resolved on the device instead.
+struct ServerAreaResolver: AreaResolving {
+    private let fallback = OnDeviceAreaResolver()
+
+    func area(for blurred: CLLocationCoordinate2D) async -> Area? {
+        if let data = try? await Backend.shared.rpc("area_at", ["p_lat": blurred.latitude, "p_lng": blurred.longitude]),
+           let found = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: Any],
+           let name = found["name"] as? String, let city = found["city"] as? String {
+            return Area(name: name, city: city)
+        }
+        return await fallback.area(for: blurred)
+    }
+}
+
+/// Resolved on the device, when the server has no answer: the arrondissements of Paris, Lyon and
+/// Marseille are approximated by their centres, and any other place falls back to the city name
+/// from the system geocoder, never the street.
 struct OnDeviceAreaResolver: AreaResolving {
     private struct City { let name: String; let radiusKm: Double; let centres: [CLLocationCoordinate2D] }
 
@@ -107,7 +122,7 @@ final class AreaLocator: NSObject, CLLocationManagerDelegate {
     }()
     private let server: AreaResolving
 
-    init(server: AreaResolving = OnDeviceAreaResolver()) {
+    init(server: AreaResolving = ServerAreaResolver()) {
         self.server = server
         super.init()
     }
