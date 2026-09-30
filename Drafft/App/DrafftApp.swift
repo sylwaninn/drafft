@@ -347,7 +347,7 @@ struct MainTabs: View {
         .animation(Motion.bouncy, value: app.boostBanner)
         .animation(Motion.bouncy, value: app.notice)
         .fullScreenCover(item: $app.matchScreen) { p in
-            MatchView(profile: p, me: app.me) {
+            MatchView(profile: p, me: app.publicMe) {
                 app.openChat(person: p.id)
             } onClose: {
                 app.matchScreen = nil

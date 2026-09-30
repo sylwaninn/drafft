@@ -114,8 +114,19 @@ enum ProfileSync {
     /// profile (with its sports, prompts and photos), the pause, a moderation hold, whether sign-up
     /// is finished, and the notification settings. One read, shared by every screen that needs it
     /// (instead of one read per piece); it's also what the local cache keeps.
+    /// One of the account's photos as the server has it: its link (as the grids show it), its id and
+    /// moderation's word (`approved`, `pending`, `rejected`).
+    struct OwnPhoto: Sendable {
+        let link: String
+        let id: String
+        let status: String
+    }
+
     struct Account: Sendable {
+        /// Every photo the person has, refused ones included: they stay on the person's own grid (to
+        /// ask for a second look), and only approved ones show as the profile (`PhotoModeration`).
         let profile: Profile
+        let photos: [OwnPhoto]
         let paused: Bool
         let hold: AccountHold?
         let onboarded: Bool
@@ -211,10 +222,10 @@ enum ProfileSync {
         return (account, data)
     }
 
-    /// The media keys a row shows (photos not refused, the voice intro), to sign in one request.
+    /// The media keys a row shows (every photo, the voice intro), to sign in one request.
     private static func mediaKeys(in data: Data) -> [String] {
         guard let row = (try? JSONDecoder().decode([AccountRow].self, from: data))?.first else { return [] }
-        return (row.media ?? []).filter { $0.kind == "photo" && $0.status != "rejected" }.map(\.key)
+        return (row.media ?? []).filter { $0.kind == "photo" }.map(\.key)
             + [row.voiceIntroKey].compactMap { $0 }
     }
 
@@ -226,8 +237,10 @@ enum ProfileSync {
         func link(_ key: String) -> String? { signed[key] ?? base.map { $0.appendingPathComponent(key).absoluteString } }
         // Each photo's blurred preview, shown while it loads.
         for m in row.media ?? [] { MediaPreviews.register(m.thumbhash, key: m.key) }
-        let photos = (row.media ?? []).filter { $0.kind == "photo" && $0.status != "rejected" }.map(\.key)
-            .compactMap(link)
+        let own = (row.media ?? []).filter { $0.kind == "photo" }.compactMap { m in
+            link(m.key).map { OwnPhoto(link: $0, id: m.id, status: m.status) }
+        }
+        let photos = own.map(\.link)
         let age = row.birthdate.flatMap(Self.day.date(from:)).map {
             Calendar.current.dateComponents([.year], from: $0, to: .now).year ?? 18
         } ?? 18
@@ -257,7 +270,7 @@ enum ProfileSync {
             promptsOverride: (row.prompts ?? []).map { ProfilePrompt(question: $0.question, answer: $0.answer) }
         )
         return Account(
-            profile: profile, paused: row.paused, hold: row.moderation, onboarded: row.onboardedAt != nil,
+            profile: profile, photos: own, paused: row.paused, hold: row.moderation, onboarded: row.onboardedAt != nil,
             notifications: try? JSONDecoder().decode([NotificationSettings].self, from: data).first,
             consent: TermsConsent.gate(fromProfileRow: data)
         )
