@@ -75,7 +75,8 @@ final class PhotoModeration {
             }
             switch photo.status {
             case "approved":
-                serverIDs[photo.link] = nil
+                // Its id stays known: a later refusal (the team, a second look) must still reach it.
+                serverIDs[photo.link] = photo.id
                 states[photo.link] = nil
             case "rejected":
                 serverIDs[photo.link] = photo.id
@@ -130,7 +131,8 @@ final class PhotoModeration {
     /// Clears a failed attempt and sends the photo again.
     func retry(_ path: String) {
         states[path] = nil
-        submit(path)
+        // Already on the server (only its verdict couldn't be read): read it again, never a second upload.
+        if mediaIDs[path] != nil { ensureChecked(path) } else { submit(path) }
     }
 
     /// The failure reason for a photo, in plain words when we know the cause.
@@ -204,33 +206,36 @@ final class PhotoModeration {
     /// its banner, with the second look offered by its explanation. A photo this device doesn't
     /// know (added from another phone) is left alone.
     func apply(mediaID: String, status: String) {
-        guard let path = path(of: mediaID) else { return }
-        switch status {
-        case "approved": settle(path, .approved)
-        case "rejected": settle(path, .refused)
-        // Back to pending: a second look was asked (here or on another device).
-        case "pending" where states[path] == .refused: settle(path, .inReview)
-        default: break
+        // The same photo can be known by its local path and by its server link: both follow.
+        for path in paths(of: mediaID) {
+            switch status {
+            case "approved": settle(path, .approved)
+            case "rejected": settle(path, .refused, announce: path == paths(of: mediaID).first)
+            // Back to pending: a second look was asked (here or on another device).
+            case "pending" where states[path] == .refused: settle(path, .inReview)
+            default: break
+            }
         }
     }
 
-    /// The photo a server id belongs to: picked on this device, or read back from the server.
-    private func path(of mediaID: String) -> String? {
-        mediaIDs.first(where: { $0.value == mediaID })?.key ?? serverIDs.first(where: { $0.value == mediaID })?.key
+    /// Every path a server id is known by: picked on this device, and read back from the server.
+    private func paths(of mediaID: String) -> [String] {
+        mediaIDs.filter { $0.value == mediaID }.map(\.key) + serverIDs.filter { $0.value == mediaID }.map(\.key)
     }
 
     /// Sets a photo's verdict; announces a refusal once, when it becomes one.
-    private func settle(_ path: String, _ state: State) {
+    private func settle(_ path: String, _ state: State, announce: Bool = true) {
         let was = states[path]
         states[path] = state
-        if state == .refused && was != .refused { announceRefusal(path) }
+        if state == .refused && was != .refused && announce { announceRefusal(path) }
     }
 
     /// From the push: shows the explanation for that photo, once the app is on screen (a tap on a
     /// push can launch it: its window takes a moment to exist).
     func openRefusal(mediaID: String) {
-        guard let path = path(of: mediaID) else { return }
-        states[path] = .refused
+        let paths = paths(of: mediaID)
+        guard let path = paths.first else { return }
+        paths.forEach { states[$0] = .refused }
         refusalBanner = nil
         Task {
             for _ in 0..<30 {
