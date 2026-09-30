@@ -104,9 +104,9 @@ These stay in English on purpose, and it's documented. They're one Stream messag
 
 | Location | Current text | New text | Rationale |
 |---|---|---|---|
-| boost.1/5/10 names | 1 Boost · 5 Boosts · 10 Boosts | 1 boost · 5 boosts · 10 boosts | Lexicon: lowercase, including store names |
+| boost.1/5/10 names | 1 Boost · 5 Boosts · 10 Boosts | unchanged | Pack names keep their capitals in the stores (WORDING 4, 2026-09-30) |
 | boost description | 30 minutes at the top of decks nearby | 30 minutes up front for people near you | "decks" jargon removed (39 characters ≤ 45) |
-| superlike.3/15/30 names | 3 Super Likes … | 3 super likes · 15 super likes · 30 super likes | Lexicon |
+| superlike.3/15/30 names | 3 Super Likes … | unchanged | Pack names keep their capitals in the stores (WORDING 4, 2026-09-30) |
 | tempo, descriptions | unchanged | unchanged | Already compliant |
 
 ## 8. Test and verification
@@ -133,7 +133,7 @@ These stay in English on purpose, and it's documented. They're one Stream messag
 - **F5. Useful time in session pushes.** "Proposed a session: Padel session" doesn't give the time. Adding the times (e.g. "Léa proposed 2 times. Pick one.", the WORDING example) needs the recipient's time zone (it lives in `private.devices`, and the reminders read it through the SQL queue): that's a data change, not a copy change. When untitled, the proposal body repeats "session" ("Proposed a session: Padel session").
 - **F6. Emails have no preheader.** Inbox previews show "drafft {title} {body}". Adding one is a small change to `layout()`, not made here.
 - **F7. The support reply subject** `Re: {topic} [{reference}]` isn't localized (mail convention, left as is; excluded from the FR check).
-- **F8. IAP en-US only, create-only script.** The new names and descriptions only apply to products that don't exist yet. Live products and the 6 other locales have to be edited in App Store Connect. Also align `StoreKit/Drafft.storekit` (app side) with "1 boost", "3 super likes" and "30 minutes up front for people near you".
+- **F8. IAP en-US only, create-only script.** The new names and descriptions only apply to products that don't exist yet. Live products and the 6 other locales have to be edited in App Store Connect. Also align `StoreKit/Drafft.storekit` (app side) with "1 Boost", "3 Super Likes" (done, capitalized like the stores) and "30 minutes up front for people near you".
 - **F9. Server error sentences** (`phone_code.ts:81` "Phone sign-in isn't available.", `private.fail` messages): developer strings the app doesn't show (it shows its own mapping). Not touched.
 - **F10. Unused `config.toml` templates** ("Your code is {{ .Code }}"): the hooks replace them. Not touched.
 - **F11. JS vs Python regexes.** `\b` and `\w` are ASCII in JS and Unicode in Python. The backend test can be very slightly stricter than `i18n_lint.py` next to an accented letter. No false positives today.

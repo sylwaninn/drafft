@@ -10,7 +10,7 @@ Principes appliqués :
 - On ne décrit que ce que l'app fait aujourd'hui (voir la liste des fonctions en fin de fichier). Pas de
   chiffres d'audience, de notes, d'avis, de presse ni de témoignages.
 - drafft toujours en minuscules, drafft tempo jamais « Premium » ni « Plus », like, super like et boost en
-  minuscules. Tutoiement en FR. Pas de « ! », pas d'emoji, pas de « plan » : pour l'abonnement, on parle
+  minuscules (sauf les noms des packs dans les stores : « 5 Boosts », « 3 Super Likes »). Tutoiement en FR. Pas de « ! », pas d'emoji, pas de « plan » : pour l'abonnement, on parle
   de durée (1, 6 ou 12 mois).
 - Pas de clichés de la catégorie (« perfect match », « swipe less… », « sweat », « 100 % sportifs »).
 
