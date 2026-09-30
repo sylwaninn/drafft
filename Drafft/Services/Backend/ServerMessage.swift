@@ -3,20 +3,10 @@ import Foundation
 /// What people read when the server turns something down. Database functions put a stable code in
 /// `hint` (`private.fail`), Edge Functions in `code`; the known ones get their own words, anything
 /// else (a constraint without a hint, an unexpected reply) a generic line, never the raw reply.
+/// Foundation only, so the words are unit-tested; reading the code out of an error is in
+/// ServerMessage+Error.swift.
 enum ServerMessage {
     static var generic: String { L("Something went wrong. Try again in a moment.") }
-
-    /// The server's code for a refusal, if it gave one.
-    static func code(of error: Error) -> String? {
-        switch error {
-        case Backend.BackendError.http(_, let message) where isCode(message): message
-        case MediaUploadError.rejected(let code): code
-        default: nil
-        }
-    }
-
-    /// The words for a refusal the app knows, or nil (not a refusal, or a code it doesn't know).
-    static func text(for error: Error) -> String? { code(of: error).flatMap(text(forCode:)) }
 
     /// A code is one word (`media_limit`); anything with a space is a sentence from the server.
     static func isCode(_ message: String) -> Bool { !message.isEmpty && !message.contains(" ") }
@@ -33,7 +23,8 @@ enum ServerMessage {
         case "birthdate_locked": L("Your birthday can't be changed.")
         case "email_unconfirmed": L("Confirm your email first.")
         case "phone_required": L("Verify your phone number first.")
-        // accept_terms, and complete_onboarding without it
+        // complete_onboarding without accept_terms, and accept_terms without the consent (the app
+        // always sends it, so only another client gets sensitive_consent_required)
         case "terms_required": L("Accept the terms and give your consent to continue.")
         case "sensitive_consent_required": L("drafft needs your consent to use your gender. Tick it to continue.")
         // Photos and videos (add_profile_media, request_media_review, media-upload-url)
