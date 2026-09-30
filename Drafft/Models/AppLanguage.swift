@@ -20,6 +20,20 @@ enum AppLanguage: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// The language's folder on getdrafft.com, English at the root. No default case: a new
+    /// language needs its pages on the site before the app links to them.
+    var sitePath: String {
+        switch self {
+        case .en: ""
+        case .fr: "/fr"
+        case .es: "/es"
+        case .de: "/de"
+        case .it: "/it"
+        case .pt: "/pt"
+        case .nl: "/nl"
+        }
+    }
+
     /// Portuguese is European Portuguese (see NotificationText).
     var locale: Locale { Locale(identifier: self == .pt ? "pt_PT" : rawValue) }
 
