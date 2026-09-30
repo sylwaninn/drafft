@@ -24,6 +24,11 @@ enum LegalDoc: CaseIterable, Hashable {
         }
     }
 
+    /// The privacy policy's section on sensitive data, linked from the consent to it.
+    static func sensitiveData(in language: AppLanguage = Localization.shared.language) -> URL {
+        page("privacy", section: "sensitive-data", in: language)
+    }
+
     /// getdrafft.com/<language>/<page>?lang=<code>#<section>, English at the root. The pages switch
     /// to the browser's language unless `lang` names one, and the in-app browser reports the
     /// phone's languages, not the app's: `lang` keeps the page in the app's language. Section

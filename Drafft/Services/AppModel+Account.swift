@@ -153,8 +153,9 @@ extension AppModel {
         }
     }
 
-    /// The saved session is no good any more: dropped from this iPhone, with the same message.
-    private func endSession() async {
+    /// The saved session is no good any more (the server refused it, or it has no profile behind
+    /// it): dropped from this iPhone, with the same message.
+    func endSession() async {
         await Backend.shared.signOut()
         if !leavingOnPurpose { sessionEndedNotice = true }
     }
@@ -218,6 +219,7 @@ extension AppModel {
         SessionStore.shared.reset()
         blocked = []
         dataExportRequestedAt = nil
+        termsConsent = .unknown
         filters = DiscoverFilters()
         clearWallet()
         me = Self.nobody

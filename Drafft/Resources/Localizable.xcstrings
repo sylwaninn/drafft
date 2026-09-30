@@ -19182,46 +19182,6 @@
         }
       }
     },
-    "I'm 18 or older and I accept the Terms of Use, the Privacy Policy and the Community Guidelines" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ich bin mindestens 18 und akzeptiere die Nutzungsbedingungen, die Datenschutzerklärung und die Community-Richtlinien"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tengo 18 años o más y acepto las Condiciones de uso, la Política de privacidad y las Normas de la comunidad"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "J'ai 18 ans ou plus et j'accepte les Conditions d'utilisation, la Politique de confidentialité et les Règles de la communauté"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ho almeno 18 anni e accetto i Termini d'uso, l'Informativa sulla privacy e le Linee guida della community"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ik ben 18 jaar of ouder en ik accepteer de Gebruiksvoorwaarden, het Privacybeleid en de Communityrichtlijnen"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tenho 18 anos ou mais e aceito os Termos de Utilização, a Política de Privacidade e as Diretrizes da Comunidade"
-          }
-        }
-      }
-    },
     "I'm looking for someone who" : {
       "localizations" : {
         "de" : {
@@ -55977,6 +55937,558 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O suporte não pode receber mensagens por esta via neste momento. Tenta mais tarde."
+          }
+        }
+      }
+    },
+    "Accept and continue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept and continue"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accepter et continuer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceptar y continuar"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akzeptieren und weiter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accetta e continua"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceitar e continuar"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accepteren en doorgaan"
+          }
+        }
+      }
+    },
+    "Accept the terms and give your consent to continue." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept the terms and give your consent to continue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accepte les conditions et donne ton accord pour continuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acepta las condiciones y da tu consentimiento para continuar."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akzeptiere die AGB und gib deine Einwilligung, um fortzufahren."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accetta i termini e dai il tuo consenso per continuare."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceita os termos e dá o teu consentimento para continuar."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accepteer de voorwaarden en geef je toestemming om verder te gaan."
+          }
+        }
+      }
+    },
+    "Before you carry on." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before you carry on."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avant de continuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de seguir."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bevor es weitergeht."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prima di continuare."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de continuares."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voordat je verdergaat."
+          }
+        }
+      }
+    },
+    "drafft needs your consent to use your gender. Tick it to continue." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft needs your consent to use your gender. Tick it to continue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft a besoin de ton accord pour utiliser ton genre. Coche la case pour continuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft necesita tu consentimiento para usar tu género. Marca la casilla para continuar."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft braucht deine Einwilligung, um dein Geschlecht zu nutzen. Hak das Kästchen ab, um fortzufahren."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ha bisogno del tuo consenso per usare il tuo genere. Spunta la casella per continuare."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft precisa do teu consentimento para usar o teu género. Marca a opção para continuar."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft heeft je toestemming nodig om je gender te gebruiken. Vink het aan om verder te gaan."
+          }
+        }
+      }
+    },
+    "drafft now keeps a record of your consent. Tick both to keep using the app." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft now keeps a record of your consent. Tick both to keep using the app."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft enregistre désormais ton accord. Coche les deux cases pour continuer à utiliser l'appli."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ahora guarda constancia de tu consentimiento. Marca las dos casillas para seguir usando la app."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft speichert jetzt deine Einwilligung. Hak beide Kästchen ab, um die App weiter zu nutzen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ora registra il tuo consenso. Spunta entrambe le caselle per continuare a usare l'app."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft passa a guardar o registo do teu consentimento. Marca as duas opções para continuares a usar a app."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft legt je toestemming nu vast. Vink beide aan om de app te blijven gebruiken."
+          }
+        }
+      }
+    },
+    "I agree that drafft uses my %@: my gender, the genders I want to see and my lifestyle, if I fill it in." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I agree that drafft uses my %@: my gender, the genders I want to see and my lifestyle, if I fill it in."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J'accepte que drafft utilise mes %@ : mon genre, les genres que je veux voir et mon mode de vie, si je le renseigne."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acepto que drafft use mis %@: mi género, los géneros que quiero ver y mi estilo de vida, si lo indico."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich bin einverstanden, dass drafft meine %@ nutzt: mein Geschlecht, die Geschlechter, die ich sehen möchte, und meinen Lebensstil, falls ich ihn angebe."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accetto che drafft usi i miei %@: il mio genere, i generi che voglio vedere e il mio stile di vita, se lo indico."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceito que o drafft use os meus %@: o meu género, os géneros que quero ver e o meu estilo de vida, se o indicar."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ik ga ermee akkoord dat drafft mijn %@ gebruikt: mijn gender, de genders die ik wil zien en mijn levensstijl, als ik die invul."
+          }
+        }
+      }
+    },
+    "sensitive data" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sensitive data"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "données sensibles"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "datos sensibles"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sensiblen Daten"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dati sensibili"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dados sensíveis"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gevoelige gegevens"
+          }
+        }
+      }
+    },
+    "Sensitive data consent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sensitive data consent"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accord pour les données sensibles"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consentimiento de datos sensibles"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einwilligung für sensible Daten"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consenso ai dati sensibili"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consentimento de dados sensíveis"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toestemming gevoelige gegevens"
+          }
+        }
+      }
+    },
+    "Withdrawing it means deleting your account." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Withdrawing it means deleting your account."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le retirer, c'est supprimer ton compte."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirarlo supone eliminar tu cuenta."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widerrufen geht nur, indem du dein Konto löschst."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revocarlo significa eliminare il tuo account."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirá-lo implica eliminar a tua conta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intrekken betekent je account verwijderen."
+          }
+        }
+      }
+    },
+    "Your consent couldn't be saved. Check your connection and try again." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your consent couldn't be saved. Check your connection and try again."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton accord n'a pas pu être enregistré. Vérifie ta connexion et réessaie."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido guardar tu consentimiento. Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Einwilligung konnte nicht gespeichert werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile salvare il tuo consenso. Controlla la connessione e riprova."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível guardar o teu consentimento. Verifica a ligação e tenta de novo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je toestemming kon niet worden opgeslagen. Controleer je verbinding en probeer het opnieuw."
+          }
+        }
+      }
+    },
+    "This can reveal your sexual orientation, health or beliefs, so drafft asks first." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This can reveal your sexual orientation, health or beliefs, so drafft asks first."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ces informations peuvent révéler ton orientation sexuelle, ta santé ou tes convictions, alors drafft te demande d'abord ton accord."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pueden revelar tu orientación sexual, tu salud o tus convicciones, por eso drafft te lo pregunta antes."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie können deine sexuelle Orientierung, deine Gesundheit oder deine Überzeugungen offenlegen, deshalb fragt drafft vorher."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Possono rivelare il tuo orientamento sessuale, la tua salute o le tue convinzioni, per questo drafft te lo chiede prima."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podem revelar a tua orientação sexual, a tua saúde ou as tuas convicções, por isso o drafft pergunta-te primeiro."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ze kunnen je seksuele oriëntatie, je gezondheid of je overtuigingen onthullen, daarom vraagt drafft het eerst."
+          }
+        }
+      }
+    },
+    "drafft has newer terms. Update the app to continue." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft has newer terms. Update the app to continue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft a de nouvelles conditions d'utilisation. Mets l'app à jour pour continuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tiene nuevas condiciones de uso. Actualiza la app para continuar."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft hat neue Nutzungsbedingungen. Aktualisiere die App, um weiterzumachen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ha nuovi termini d'uso. Aggiorna l'app per continuare."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft tem novos termos de utilização. Atualiza a app para continuar."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft heeft nieuwe gebruiksvoorwaarden. Werk de app bij om verder te gaan."
           }
         }
       }

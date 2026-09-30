@@ -9,7 +9,11 @@ struct OnboardingView: View {
     @State private var step = 0
     @State private var forward = true
     @State private var birthday: Date?
-    @State private var acceptedTerms = false
+    @State private var consent = ConsentDraft()
+    /// The terms version the server recorded with the consent this sign-up (`accept_terms`).
+    @State private var recordedTerms: String?
+    @State private var recordingConsent = false
+    @State private var consentError: String?
     @State private var language: AppLanguage = .deviceDefault
     @State private var identity: String?
     @State private var interestedIn: Set<String> = []
@@ -168,10 +172,13 @@ struct OnboardingView: View {
                 PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell.fill")
             } else {
                 Button(action: advance) {
-                    if finishing { ProgressView().tint(DS.Palette.onLime) }
-                    else { Text(step == steps.count - 1 ? "Start swiping" : "Continue") }
+                    if finishing || recordingConsent {
+                        ProgressView().tint(DS.Palette.onLime)
+                    } else {
+                        Text(step == steps.count - 1 ? "Start swiping" : "Continue")
+                    }
                 }
-                .disabled(!canContinue || finishing)
+                .disabled(!canContinue || finishing || recordingConsent)
             }
         }
     }
@@ -192,9 +199,10 @@ struct OnboardingView: View {
 
     private var blockedReason: (text: String, error: Bool)? {
         if let finishError, step == steps.count - 1 { return (finishError, true) }
+        if let consentError, current == .rules { return (consentError, true) }
         switch current {
         case .language: return nil
-        case .rules: return acceptedTerms ? nil : (L("Accept the rules and terms to continue."), false)
+        case .rules: return complete(.rules) ? nil : (L("Accept the rules and terms to continue."), false)
         case .phone:
             // Sending or checking: the spinner says it, no reason needed.
             if phone.busy || phone.primaryEnabled { return nil }
@@ -254,7 +262,8 @@ struct OnboardingView: View {
     private func complete(_ s: Step, resuming: Bool = false) -> Bool {
         switch s {
         case .language: true
-        case .rules: acceptedTerms
+        // Once the server holds the consent for these terms, the boxes no longer matter.
+        case .rules: consent.isComplete || TermsConsent.isCurrent(recordedTerms)
         case .phone: phone.stage == .verified
         case .name: !name.trimmingCharacters(in: .whitespaces).isEmpty
         case .birthday: birthday != nil && isAdult
@@ -289,7 +298,7 @@ struct OnboardingView: View {
         p.name = name
         p.language = language.rawValue
         p.birthday = birthday
-        p.acceptedTerms = acceptedTerms
+        p.termsVersion = recordedTerms
         p.verifiedPhone = phone.stage == .verified ? phone.displayNumber : nil
         p.identity = identity
         p.interestedIn = Array(interestedIn)
@@ -311,7 +320,9 @@ struct OnboardingView: View {
         name = p.name
         if let l = p.language.flatMap(AppLanguage.init(rawValue:)) { language = l; app.language = l }
         birthday = p.birthday
-        acceptedTerms = p.acceptedTerms
+        // Ticked again only if the server recorded them for the terms shown now.
+        recordedTerms = p.termsVersion
+        consent = .restored(recordedVersion: p.termsVersion)
         if let number = p.verifiedPhone { phone.restoreVerified(number) }
         identity = p.identity
         interestedIn = Set(p.interestedIn)
@@ -337,9 +348,31 @@ struct OnboardingView: View {
     }
 
     private func advance() {
+        if current == .rules, !TermsConsent.isCurrent(recordedTerms) { recordConsent(); return }
         guard step < steps.count - 1 else { finish(); return }
         if steps[step + 1].chapter != current.chapter { Haptics.success() } else { Haptics.tap() }
         go(to: step + 1)
+    }
+
+    /// Both consents go to the server before anything personal is asked; the step moves on once
+    /// they're recorded, or says why not.
+    private func recordConsent() {
+        consentError = nil
+        recordingConsent = true
+        Task {
+            defer { recordingConsent = false }
+            do {
+                try await TermsConsent.accept()
+                recordedTerms = TermsConsent.version
+                advance()
+            } catch {
+                Haptics.warning()
+                switch TermsConsent.failure(for: error) {
+                case .signOut: await app.endSession()
+                case .message(let text): consentError = text
+                }
+            }
+        }
     }
 
     /// The new profile holds only what the person answered: nothing from the demo profile.
@@ -379,6 +412,16 @@ struct OnboardingView: View {
             // The profile goes to the server first; without a session it fails and says so.
             do {
                 try await ProfileSync.finish(signUp)
+            } catch ProfileSync.SyncError.refused("terms_required") {
+                // The server has no consent on record (the one noted on this phone was lost there):
+                // back to the rules step, unticked, to record it again.
+                TermsConsent.log.error("complete_onboarding: terms_required although the sign-up recorded them")
+                Haptics.warning()
+                recordedTerms = nil
+                consent = ConsentDraft()
+                consentError = ServerMessage.text(forCode: "terms_required")
+                go(to: Step.rules.rawValue)
+                return
             } catch {
                 Haptics.warning()
                 finishError = (error as? LocalizedError)?.errorDescription
@@ -456,7 +499,7 @@ struct OnboardingView: View {
         }
     }
 
-    /// Community rules, then the required consent (unchecked by default), before anything
+    /// Community rules, then the two required consents (unchecked by default), before anything
     /// personal is asked.
     private var rulesStep: some View {
         page {
@@ -470,11 +513,8 @@ struct OnboardingView: View {
             .padding(DS.Space.xl)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
-            consent
-                .padding(.vertical, DS.Space.sm)
-                .padding(.horizontal, DS.Space.lg)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+            ConsentChecks(draft: $consent)
+                .onChange(of: consent) { consentError = nil }
         }
     }
 
@@ -561,44 +601,6 @@ struct OnboardingView: View {
     }
 
     static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now)! }
-
-    /// Required consent, unchecked by default. The checkbox toggles; the document names in the
-    /// sentence are links that open each document on getdrafft.com, in the in-app browser.
-    private var consent: some View {
-        HStack(alignment: .top, spacing: DS.Space.sm) {
-            Button {
-                Haptics.select()
-                acceptedTerms.toggle()
-            } label: {
-                DrafftCheckbox(isOn: acceptedTerms)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("I'm 18 or older and I accept the Terms of Use, the Privacy Policy and the Community Guidelines")
-            .accessibilityAddTraits(acceptedTerms ? .isSelected : [])
-
-            Text(consentText)
-                .font(.subheadline)
-                .foregroundStyle(DS.Palette.ink)
-                .tint(DS.Palette.accentInk)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.vertical, 11) // Level with the box on top, the same room under the last line.
-                .environment(\.openURL, OpenURLAction { url in .systemAction(url, prefersInApp: true) })
-        }
-        .padding(.leading, -DS.Space.sm)
-    }
-
-    private var consentText: AttributedString {
-        // One sentence for translators; the document names in it become the links.
-        let terms = LegalDoc.terms.title, privacy = LegalDoc.privacy.title, community = LegalDoc.community.title
-        var s = AttributedString(L("I'm 18 or older and I accept the \(terms), the \(privacy) and the \(community)."))
-        for doc in LegalDoc.allCases {
-            guard let r = s.range(of: doc.title) else { assertionFailure("The consent lost its link to \(doc.title)"); continue }
-            s[r].link = doc.url()
-            s[r].underlineStyle = .single
-            s[r].font = .subheadline.weight(.semibold)
-        }
-        return s
-    }
 
     private var genderStep: some View {
         page {
