@@ -1,0 +1,668 @@
+diff --git a/Drafft/App/DrafftApp.swift b/Drafft/App/DrafftApp.swift
+index adb7c1d..34d49b1 100644
+--- a/Drafft/App/DrafftApp.swift
++++ b/Drafft/App/DrafftApp.swift
+@@ -101,6 +101,9 @@ struct RootView: View {
+             .onChange(of: app.phase) { _, phase in if phase == .welcome { moderation.clear() } }
+             .task(id: "\(app.phase == .welcome)\(app.sessionID)") {
+                 guard app.phase != .welcome else { return }
++                #if STORE_SHOTS
++                if StoreShots.on { return }
++                #endif
+                 // Signed in or launched: the iPhone's DeviceCheck token, for ban evasion (server side),
+                 // and this opening, for the team's safety checks.
+                 Task { await DeviceIntegrity.report() }
+@@ -131,7 +134,12 @@ struct RootView: View {
+             }
+             // A session that ends on its own (revoked, expired, account deleted elsewhere): back to
+             // the welcome screen, which says why.
+-            .task { await app.watchSession() }
++            .task {
++                #if STORE_SHOTS
++                if StoreShots.on { return }
++                #endif
++                await app.watchSession()
++            }
+             .drafftConfirm(isPresented: Binding(get: { app.sessionEndedNotice }, set: { app.sessionEndedNotice = $0 }),
+                            icon: "person.crop.circle.badge.exclamationmark",
+                            title: L("You've been logged out"),
+@@ -191,6 +199,14 @@ struct RootView: View {
+         }
+         // Signed in on this device before: straight in.
+         .task {
++            #if STORE_SHOTS
++            if StoreShots.on {
++                StoreShots.seed(app)
++                sessionChecked = true
++                await StoreShots.stage(app)
++                return
++            }
++            #endif
+             await app.restoreSession()
+             sessionChecked = true
+         }
+diff --git a/Drafft/App/StoreShots.swift b/Drafft/App/StoreShots.swift
+new file mode 100644
+index 0000000..30f5343
+--- /dev/null
++++ b/Drafft/App/StoreShots.swift
+@@ -0,0 +1,287 @@
++#if STORE_SHOTS
++import SwiftUI
++
++/// Store screenshot harness (scratch build only, never committed): fills the real screens with the
++/// fictional people of docs/wording/screenshots.md, offline. STORE_SCENE picks the screen, STORE_LANG
++/// the language.
++enum StoreShots {
++    static let env = ProcessInfo.processInfo.environment
++    static let on = env["STORE_SCENE"] != nil
++    static let scene = env["STORE_SCENE"] ?? ""
++    static let lang = env["STORE_LANG"] ?? "en"
++    static let fr = lang == "fr"
++    /// Text shown in the exported pieces, in the capture's language (English when missing).
++    static func tr(_ m: [String: String]) -> String { m[lang] ?? m["en"]! }
++    static let openDetail = Notification.Name("storeShots.openDetail")
++    static let openPropose = Notification.Name("storeShots.openPropose")
++    static let openFilters = Notification.Name("storeShots.openFilters")
++
++    static func t(_ en: String, _ fr: String) -> String { Self.fr ? fr : en }
++
++    static let meID = UUID(uuidString: "00000000-0000-4000-8000-000000000001")!
++    static let mayaMatch = UUID(uuidString: "00000000-0000-4000-8000-0000000000a1")!
++    static let camilleMatch = UUID(uuidString: "00000000-0000-4000-8000-0000000000a2")!
++    static let sofiaMatch = UUID(uuidString: "00000000-0000-4000-8000-0000000000a3")!
++    static let mayaSession = UUID(uuidString: "00000000-0000-4000-8000-0000000000b1")!
++    static let camilleSession = UUID(uuidString: "00000000-0000-4000-8000-0000000000b2")!
++    static let inesSession = UUID(uuidString: "00000000-0000-4000-8000-0000000000b3")!
++
++    /// Next given weekday (1 Sunday ... 7 Saturday) at hour:minute, at least tomorrow.
++    static func next(_ weekday: Int, _ hour: Int, _ minute: Int = 0, weeks: Int = 0) -> Date {
++        let cal = Calendar(identifier: .gregorian)
++        var d = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: .now))!
++        while cal.component(.weekday, from: d) != weekday { d = cal.date(byAdding: .day, value: 1, to: d)! }
++        d = cal.date(byAdding: .day, value: 7 * weeks, to: d)!
++        return cal.date(bySettingHour: hour, minute: minute, second: 0, of: d)!
++    }
++
++    // MARK: People
++
++    static var noah: Profile {
++        Profile(id: meID.uuidString.lowercased(), name: "Noah", age: 30, gender: .men, neighborhood: "Paris 11", distanceKm: 0,
++                portrait: "pack_man_3", photos: ["sport_hike", "sport_trail"],
++                sports: [SportEntry(sport: .trail, perWeek: 2), SportEntry(sport: .hiking, perWeek: 1), SportEntry(sport: .running, perWeek: 1)],
++                voiceIntro: nil, voiceDuration: 0,
++                icebreaker: .joke(setup: t("Why did the hiker bring a ladder?", "Pourquoi le randonneur a pris une échelle ?"),
++                                  punchline: t("To reach new heights. I'm sorry.", "Pour prendre de la hauteur. Pardon.")),
++                favoriteSpot: "",
++                bio: t("New to trail, already excellent at the picnic part. Looking for someone to teach me downhills without laughing too much.",
++                       "Nouveau en trail, déjà excellent sur la partie pique-nique. Je cherche quelqu'un pour m'apprendre les descentes sans trop rire."),
++                goal: "", vitalsOverride: Vitals(drinks: "", smokes: "", diet: "", chronotype: "Early bird"), promptsOverride: [])
++    }
++
++    static var ines: Profile {
++        Profile(id: "00000000-0000-4000-8000-000000000011", name: tr(["en": "Emily", "fr": "Léa", "es": "Lucía", "de": "Lena", "it": "Giulia", "pt": "Beatriz", "nl": "Sanne"]), age: 27, gender: .women,
++                neighborhood: tr(["en": "Islington", "fr": "Paris 18", "es": "Malasaña", "de": "Prenzlauer Berg", "it": "Brera", "pt": "Príncipe Real", "nl": "De Pijp"]), distanceKm: 3,
++                portrait: "pack_woman_1", photos: ["sport_boulder", "sport_yogasunset"],
++                sports: [SportEntry(sport: .bouldering, perWeek: 3), SportEntry(sport: .yoga, perWeek: 1)],
++                voiceIntro: nil, voiceDuration: 0,
++                icebreaker: .twoTruths(statements: [
++                    tr(["en": "I've climbed in 6 countries", "fr": "J'ai grimpé dans 6 pays", "es": "He escalado en 6 países", "de": "Ich bin in 6 Ländern geklettert",
++                        "it": "Ho arrampicato in 6 paesi", "pt": "Já escalei em 6 países", "nl": "Ik heb in 6 landen geklommen"]),
++                    tr(["en": "I own 4 chalk bags", "fr": "J'ai 4 sacs à pof", "es": "Tengo 4 bolsas de magnesio", "de": "Ich habe 4 Chalkbags",
++                        "it": "Ho 4 sacchetti di magnesite", "pt": "Tenho 4 sacos de magnésio", "nl": "Ik heb 4 pofzakjes"]),
++                    tr(["en": "I've never fallen off a V2", "fr": "Je ne suis jamais tombée d'un bloc facile", "es": "Nunca me he caído de un bloque fácil",
++                        "de": "Ich bin noch nie von einem leichten Boulder gefallen", "it": "Non sono mai caduta da un blocco facile",
++                        "pt": "Nunca caí de um bloco fácil", "nl": "Ik ben nog nooit van een makkelijk blok gevallen"])], lieIndex: 2),
++                favoriteSpot: "",
++                bio: t("Bouldering three nights a week, still scared of the top-out. Will trade beta for pastries.",
++                       "Du bloc trois soirs par semaine, toujours pas sereine en haut du mur. J'échange des méthodes contre des viennoiseries."),
++                goal: "", vitalsOverride: Vitals(drinks: "", smokes: "", diet: "", chronotype: "Night owl"),
++                promptsOverride: [ProfilePrompt(question: "A stat I'm weirdly proud of",
++                                                answer: tr(["en": "412 days without skipping a warm-up. My knees say thanks.",
++                                                            "fr": "412 jours sans sauter un échauffement. Mes genoux me remercient.",
++                                                            "es": "412 días sin saltarme un calentamiento. Mis rodillas lo agradecen.",
++                                                            "de": "412 Tage ohne ausgelassenes Aufwärmen. Meine Knie sagen danke.",
++                                                            "it": "412 giorni senza saltare un riscaldamento. Le mie ginocchia ringraziano.",
++                                                            "pt": "412 dias sem saltar um aquecimento. Os meus joelhos agradecem.",
++                                                            "nl": "412 dagen zonder warming-up over te slaan. Mijn knieën zeggen dankjewel."]))])
++    }
++
++    static var maya: Profile {
++        Profile(id: "00000000-0000-4000-8000-000000000012", name: "Maya", age: 28, gender: .women,
++                neighborhood: tr(["en": "Hackney", "fr": "Paris 12", "es": "Lavapiés", "de": "Kreuzberg", "it": "Navigli", "pt": "Alfama", "nl": "Oost"]), distanceKm: 2,
++                portrait: "pack_woman_3", photos: ["sport_trail", "sport_sunsetrun"],
++                sports: [SportEntry(sport: .running, perWeek: 4), SportEntry(sport: .trail, perWeek: 1)],
++                voiceIntro: "/store-voice-intro.m4a", voiceDuration: 14,
++                icebreaker: .hotTake(t("The long run is a social event.", "La sortie longue, c'est un événement social.")),
++                favoriteSpot: "",
++                bio: t("Marathon in April, so my Sundays belong to the long run. Company welcome, conversation mandatory until km 25.",
++                       "Marathon en avril, donc mes dimanches appartiennent à la sortie longue. Compagnie bienvenue, conversation obligatoire jusqu'au 25e km."),
++                goal: "", vitalsOverride: Vitals(drinks: "", smokes: "", diet: "", chronotype: "Early bird"),
++                promptsOverride: [ProfilePrompt(question: "My playlist for the last kilometre",
++                                                answer: tr(["en": "Whatever is playing. At that point I'm not choosing anything.",
++                                                            "fr": "Ce qui passe. À ce stade, je ne choisis plus rien.",
++                                                            "es": "Lo que suene. A esas alturas ya no elijo nada.",
++                                                            "de": "Was gerade läuft. An dem Punkt wähle ich nichts mehr aus.",
++                                                            "it": "Quello che passa. A quel punto non scelgo più niente.",
++                                                            "pt": "O que estiver a tocar. Nessa altura já não escolho nada.",
++                                                            "nl": "Wat er maar speelt. Op dat punt kies ik niks meer."]))])
++    }
++
++    static var camille: Profile {
++        Profile(id: "00000000-0000-4000-8000-000000000013", name: t("Chloe", "Camille"), age: 31, gender: .women, neighborhood: "Paris 11", distanceKm: 1,
++                portrait: "pack_woman_2", photos: ["sport_barbell"],
++                sports: [SportEntry(sport: .strength, perWeek: 3), SportEntry(sport: .running, perWeek: 1)],
++                voiceIntro: nil, voiceDuration: 0, icebreaker: Icebreaker.Kind.hotTake.blank, favoriteSpot: "",
++                bio: t("Engineer by day, deadlifts by 7pm. I'll spot you if you tell me when my form slips.",
++                       "Ingénieure le jour, soulevé de terre à 19 h. Je te pare si tu me dis quand ma technique part en vrille."),
++                goal: "", vitalsOverride: .blank,
++                promptsOverride: [ProfilePrompt(question: "Green flag in a training partner",
++                                                answer: t("Racks their plates. That's the whole list.", "Range ses disques. C'est toute la liste."))])
++    }
++
++    static var sofia: Profile {
++        Profile(id: "00000000-0000-4000-8000-000000000014", name: "Sofia", age: 35, gender: .women, neighborhood: "Paris 15", distanceKm: 5,
++                portrait: "pack_woman_4", photos: ["sport_swim"],
++                sports: [SportEntry(sport: .swimming, perWeek: 3), SportEntry(sport: .cycling, perWeek: 1)],
++                voiceIntro: nil, voiceDuration: 0,
++                icebreaker: .hotTake(t("Pool water is warmer than people claim.", "L'eau de la piscine est moins froide qu'on le dit.")),
++                favoriteSpot: "",
++                bio: t("Pool at 7, office at 9, very pleased with myself by 9:05.",
++                       "Piscine à 7 h, bureau à 9 h, très fière de moi à 9 h 05."),
++                goal: "", vitalsOverride: .blank, promptsOverride: [])
++    }
++
++    static var karim: Profile {
++        Profile(id: "00000000-0000-4000-8000-000000000015", name: tr(["en": "Daniel", "fr": "Julien", "es": "Javier", "de": "Lukas", "it": "Luca", "pt": "Miguel", "nl": "Bram"]), age: 38, gender: .men,
++                neighborhood: tr(["en": "Brixton", "fr": "Paris 10", "es": "Retiro", "de": "Friedrichshain", "it": "Città Studi", "pt": "Belém", "nl": "West"]), distanceKm: 4,
++                portrait: "pack_man_4", photos: [],
++                sports: [SportEntry(sport: .mountainBiking, perWeek: 2), SportEntry(sport: .trail, perWeek: 1)],
++                voiceIntro: nil, voiceDuration: 0, icebreaker: Icebreaker.Kind.hotTake.blank, favoriteSpot: "",
++                bio: t("Fifteen years on the bike, three weeks in running shoes. Humble on foot, less so on climbs.",
++                       "Quinze ans de vélo, trois semaines en baskets de running. Humble à pied, beaucoup moins en côte."),
++                goal: "", vitalsOverride: .blank,
++                promptsOverride: [ProfilePrompt(question: "Something I'm training for outside of sport",
++                                                answer: t("Making a decent sourdough. Currently losing.", "Réussir un pain au levain correct. Pour l'instant, je perds."))])
++    }
++
++    static var thomas: Profile {
++        Profile(id: "00000000-0000-4000-8000-000000000017", name: tr(["en": "Jack", "fr": "Thomas", "es": "Pablo", "de": "Jonas", "it": "Marco", "pt": "Tiago", "nl": "Daan"]), age: 32, gender: .men,
++                neighborhood: tr(["en": "Camden", "fr": "Paris 17", "es": "Chamberí", "de": "Mitte", "it": "Isola", "pt": "Campo de Ourique", "nl": "Jordaan"]), distanceKm: 3,
++                portrait: "pack_man_3", photos: [],
++                sports: [SportEntry(sport: .hiking, perWeek: 2), SportEntry(sport: .trail, perWeek: 1)],
++                voiceIntro: nil, voiceDuration: 0, icebreaker: Icebreaker.Kind.hotTake.blank, favoriteSpot: "",
++                bio: "", goal: "", vitalsOverride: .blank, promptsOverride: [])
++    }
++
++    static var malik: Profile {
++        Profile(id: "00000000-0000-4000-8000-000000000016", name: tr(["en": "Ryan", "fr": "Antoine", "es": "Álvaro", "de": "Felix", "it": "Matteo", "pt": "Duarte", "nl": "Thijs"]), age: 31, gender: .men,
++                neighborhood: tr(["en": "Shoreditch", "fr": "Paris 11", "es": "Arganzuela", "de": "Neukölln", "it": "Porta Romana", "pt": "Arroios", "nl": "Noord"]), distanceKm: 2,
++                portrait: "hero_2", photos: [],
++                sports: [SportEntry(sport: .hyrox, perWeek: 3), SportEntry(sport: .running, perWeek: 1)],
++                voiceIntro: nil, voiceDuration: 0, icebreaker: Icebreaker.Kind.hotTake.blank, favoriteSpot: "",
++                bio: t("Sled pushes on Saturday, long run on Sunday.", "Traîneau le samedi, sortie longue le dimanche."),
++                goal: "", vitalsOverride: Vitals(drinks: "Post-race only", smokes: "Never", diet: "Flexitarian", chronotype: "Early bird"),
++                promptsOverride: [])
++    }
++
++    // MARK: Chats
++
++    static func mayaMessages(_ card: SessionProposal) -> [Message] {
++        let base = Calendar.current.date(bySettingHour: 8, minute: 24, second: 0, of: .now)!
++        let lines: [(Bool, String, String)] = [
++            (true, "Your bio says conversation is mandatory until km 25. What happens at 26?", "Ta bio dit conversation obligatoire jusqu'au 25e km. Et au 26e ?"),
++            (false, "Silence. And a gel. Mostly the gel.", "Silence. Et un gel. Surtout le gel."),
++            (true, "Fair. I can do 10 km, tops. Can I have the chatty part?", "Logique. Je tiens 10 km, grand max. Je peux avoir la partie bavarde ?"),
++            (false, "Deal. Easy loop in Vincennes on Saturday? Actually easy, I promise.", "Deal. Boucle tranquille à Vincennes samedi ? Vraiment tranquille, promis."),
++            (true, "Everyone says that.", "C'est ce que tout le monde dit."),
++            (false, "I'll prove it.", "Je vais te le prouver.")
++        ]
++        var out = lines.enumerated().map { i, l in
++            Message(id: "maya-\(i)", .text(t(l.1, l.2)), fromMe: l.0, date: base.addingTimeInterval(Double(i) * 70))
++        }
++        out.append(Message(id: "maya-card", .session(card), fromMe: false, date: base.addingTimeInterval(8 * 60)))
++        return out
++    }
++
++    static func camilleMessages(_ card: SessionProposal) -> [Message] {
++        let base = Date.now.addingTimeInterval(-26 * 3600)
++        let lines: [(Bool, String, String)] = [
++            (true, "Green flag noted. I rack my plates. In order.", "Green flag noté. Je range mes disques. Dans l'ordre."),
++            (false, "Bold claim. Push day Thursday? You spot, I pretend not to mind.", "Audacieux. Haut du corps jeudi ? Tu me pares, je fais semblant que ça ne me vexe pas.")
++        ]
++        var out = lines.enumerated().map { i, l in
++            Message(id: "camille-\(i)", .text(t(l.1, l.2)), fromMe: l.0, date: base.addingTimeInterval(Double(i) * 90))
++        }
++        out.append(Message(id: "camille-card", .session(card), fromMe: false, date: base.addingTimeInterval(5 * 60)))
++        out.append(Message(id: "camille-end", .text(t("See you Thursday.", "À jeudi.")), fromMe: true, date: base.addingTimeInterval(9 * 60)))
++        return out
++    }
++
++    // MARK: Seed
++
++    @MainActor
++    static func seed(_ app: AppModel) {
++        app.language = AppLanguage(rawValue: lang) ?? .en
++        let me = noah, maya = maya, camille = camille, sofia = sofia, ines = ines
++        app.me = me
++        app.profileLoad = .loaded
++        app.email = "noah@example.com"
++        app.premiumUntil = scene == "likes" ? .now.addingTimeInterval(86400 * 30) : nil
++        app.likesLeft = 20
++        app.superLikes = 1
++        app.boosts = 1
++
++        // Sessions: Maya's invite (pending, 2 times), Camille's (accepted), one with Inès further out.
++        let sat = next(7, 9), sun = next(1, 9, 30), thu = next(5, 19)
++        let mayaRow = SessionRecord(id: mayaSession, matchID: mayaMatch, proposerID: UUID(uuidString: maya.id)!, sportID: Sport.running.rawValue,
++                                    options: [sat, sun], title: t("Easy 10k, talking allowed.", "10 km tranquilles, on a le droit de parler."),
++                                    status: .pending, updatedAt: .now, partner: .init(id: UUID(uuidString: maya.id)!, name: maya.name, photo: maya.portrait))
++        let camilleRow = SessionRecord(id: camilleSession, matchID: camilleMatch, proposerID: UUID(uuidString: camille.id)!, sportID: Sport.strength.rawValue,
++                                       options: [thu], chosenAt: thu, title: t("Push day, then smoothies?", "Haut du corps, puis smoothies ?"),
++                                       status: .accepted, updatedAt: .now, partner: .init(id: UUID(uuidString: camille.id)!, name: camille.name, photo: camille.portrait))
++        let sofiaDate = next(1, 8, weeks: 1)
++        let sofiaRow = SessionRecord(id: inesSession, matchID: sofiaMatch, proposerID: meID, sportID: Sport.swimming.rawValue,
++                                     options: [sofiaDate], chosenAt: sofiaDate, title: t("Early lengths at the outdoor pool?", "Longueurs tôt à la piscine découverte ?"),
++                                     status: .accepted, updatedAt: .now, partner: .init(id: UUID(uuidString: sofia.id)!, name: sofia.name, photo: sofia.portrait))
++        SessionStore.shared.seedForStoreShots([mayaRow, camilleRow, sofiaRow], me: meID)
++
++        let mayaCard = SessionProposal(mayaRow)!, camilleCard = SessionProposal(camilleRow)!
++        app.matches = [Match(id: mayaMatch.uuidString.lowercased(), profile: maya, matchedAt: .now.addingTimeInterval(-86400)),
++                       Match(id: camilleMatch.uuidString.lowercased(), profile: camille, matchedAt: .now.addingTimeInterval(-3 * 86400)),
++                       Match(id: sofiaMatch.uuidString.lowercased(), profile: sofia, matchedAt: .now.addingTimeInterval(-5 * 86400))]
++        var sofiaConvo = Conversation(id: sofiaMatch.uuidString.lowercased(), profile: sofia,
++                                      messages: [Message(id: "sofia-0", .text(t("Lengths first, breakfast after. Deal?", "Longueurs d'abord, petit-déj après. Ça marche ?")),
++                                                         fromMe: false, date: .now.addingTimeInterval(-2 * 86400))],
++                                      matchedAt: .now.addingTimeInterval(-5 * 86400))
++        sofiaConvo.unread = 0
++        var mayaConvo = Conversation(id: mayaMatch.uuidString.lowercased(), profile: maya, messages: mayaMessages(mayaCard),
++                                     matchedAt: .now.addingTimeInterval(-86400))
++        mayaConvo.unread = scene == "chats" ? 1 : 0
++        mayaConvo.online = true
++        app.conversations = [mayaConvo,
++                             Conversation(id: camilleMatch.uuidString.lowercased(), profile: camille, messages: camilleMessages(camilleCard),
++                                          matchedAt: .now.addingTimeInterval(-3 * 86400)),
++                             sofiaConvo]
++
++        // Discover: Inès on top. The waiting cards behind are veiled.
++        app.queue = [ines, sofia, camille, maya]
++        var lea = ines
++        lea.portrait = "hero_1"
++        lea.sports = [SportEntry(sport: .tennis, perWeek: 3), SportEntry(sport: .yoga, perWeek: 1)]
++        // One profile alone on the deck (no waiting cards behind), for cutting out its card.
++        if let top = env["STORE_TOP"], !top.isEmpty {
++            let keys = ["lea": lea.id, "ines": ines.id, "maya": maya.id, "camille": camille.id, "sofia": sofia.id, "karim": karim.id, "malik": malik.id, "thomas": thomas.id]
++            app.queue = (top == "lea" ? [lea] : [ines, maya, camille, sofia, karim, malik, thomas]).filter { $0.id == keys[top] }
++        }
++        app.deckState = .loaded
++        app.likedMe = scene == "likes" ? [lea, sofia, camille, maya] : []
++
++        app.tab = switch scene {
++        case "sessions": .sessions
++        case "chats", "chat", "chat2", "propose": .chats
++        case "me": .me
++        case "likes": .likes
++        default: .discover
++        }
++        app.phase = .main
++    }
++
++    /// After the tabs are built: the scene's screen.
++    @MainActor
++    static func stage(_ app: AppModel) async {
++        try? await Task.sleep(for: .seconds(2.5))
++        switch scene {
++        case "match": app.matchScreen = maya
++        case "chat2":
++            app.openChat(camilleMatch.uuidString.lowercased())
++        case "chat", "propose":
++            app.openChat(mayaMatch.uuidString.lowercased())
++            if scene == "propose" {
++                try? await Task.sleep(for: .seconds(1.2))
++                NotificationCenter.default.post(name: openPropose, object: nil)
++            }
++        case "filters":
++            NotificationCenter.default.post(name: openFilters, object: nil)
++        case "detail", "detail2", "detail3":
++            NotificationCenter.default.post(name: openDetail, object: nil)
++        default: break
++        }
++    }
++
++    /// The proposal sheet, filled in as if Noah answered Maya with his own times.
++    static var proposalTimes: [Date] { [next(7, 9), next(1, 9, 30), next(3, 19)] }
++    static var proposalTitle: String { t("Easy loop, then croissants?", "Boucle tranquille, puis croissants ?") }
++}
++#endif
+diff --git a/Drafft/DesignSystem/FocusScrollView.swift b/Drafft/DesignSystem/FocusScrollView.swift
+index 9f345c2..acf2d20 100644
+--- a/Drafft/DesignSystem/FocusScrollView.swift
++++ b/Drafft/DesignSystem/FocusScrollView.swift
+@@ -67,6 +67,17 @@ struct FocusScrollView<Content: View>: View {
+                     .environment(\.focusScroller, FocusScroller(proxy: proxy))
+             }
+             .contentMargins(.bottom, DS.Space.xl, for: .scrollContent)
++            #if STORE_SHOTS
++            .scrollPosition($shotPos)
++            .task {
++                guard StoreShots.scene == "propose", let y = StoreShots.env["STORE_SCROLL"].flatMap(Double.init) else { return }
++                try? await Task.sleep(for: .seconds(1))
++                shotPos.scrollTo(y: y)
++            }
++            #endif
+         }
+     }
++    #if STORE_SHOTS
++    @State private var shotPos = ScrollPosition()
++    #endif
+ }
+diff --git a/Drafft/Features/Chat/ChatView.swift b/Drafft/Features/Chat/ChatView.swift
+index 7d0674c..8376ee8 100644
+--- a/Drafft/Features/Chat/ChatView.swift
++++ b/Drafft/Features/Chat/ChatView.swift
+@@ -355,6 +355,9 @@ struct ChatView: View {
+             .presentationBackground(.clear)
+         }
+         .task(id: focusSession) { await reveal(convo, with: reader) }
++        #if STORE_SHOTS
++        .onReceive(NotificationCenter.default.publisher(for: StoreShots.openPropose)) { _ in proposing = true }
++        #endif
+         }
+     }
+ 
+diff --git a/Drafft/Features/Discover/DiscoverView.swift b/Drafft/Features/Discover/DiscoverView.swift
+index 6c04ba8..0c118ea 100644
+--- a/Drafft/Features/Discover/DiscoverView.swift
++++ b/Drafft/Features/Discover/DiscoverView.swift
+@@ -108,6 +108,10 @@ struct DiscoverView: View {
+                 }
+                 .presentationBackground(.clear)
+             }
++            #if STORE_SHOTS
++            .onReceive(NotificationCenter.default.publisher(for: StoreShots.openDetail)) { _ in detail = app.deck.first }
++            .onReceive(NotificationCenter.default.publisher(for: StoreShots.openFilters)) { _ in showFilters = true }
++            #endif
+             .sheet(item: $detail) { p in
+                 Group {
+                     NavigationStack {
+diff --git a/Drafft/Features/Profile/ProfileDetailView.swift b/Drafft/Features/Profile/ProfileDetailView.swift
+index 2cdf652..87c202e 100644
+--- a/Drafft/Features/Profile/ProfileDetailView.swift
++++ b/Drafft/Features/Profile/ProfileDetailView.swift
+@@ -21,6 +21,9 @@ struct ProfileDetailView: View {
+     @State private var pendingLike: LikeTarget?
+     @State private var superLiking = false
+     @State private var showExtras = false
++    #if STORE_SHOTS
++    @State private var shotPos = ScrollPosition(idType: String.self)
++    #endif
+ 
+     /// Written prompts that have an answer: a skipped prompt never shows as an empty card.
+     private var prompts: [ProfilePrompt] {
+@@ -62,12 +65,14 @@ struct ProfileDetailView: View {
+                     if let p = prompts.first { promptCard(p) }
+ 
+                     SportsWeekBlock(profile: profile, me: mode == .me ? nil : app.me)
++                        .id("shot-sports")
+ 
+                     if profile.photos.count > 0 { photo(profile.photos[0]) }
+ 
+                     if prompts.count > 1 { promptCard(prompts[1]) }
+ 
+                     if profile.icebreaker.isComplete {
++                        Color.clear.frame(height: 1).id("shot-ice")
+                         IcebreakerCard(profile: profile, onSend: mode == .discover ? { opener in
+                             Task {
+                                 try? await Task.sleep(for: .milliseconds(150))
+@@ -116,6 +121,14 @@ struct ProfileDetailView: View {
+             }
+             .padding(.bottom, DS.Space.xxl)
+         }
++        #if STORE_SHOTS
++        .scrollPosition($shotPos)
++        .task {
++            guard let y = StoreShots.env["STORE_SCROLL"].flatMap(Double.init) else { return }
++            try? await Task.sleep(for: .seconds(1))
++            shotPos.scrollTo(y: y)
++        }
++        #endif
+         .background(DS.Palette.canvasSoft)
+         .ignoresSafeArea(edges: .top)
+         .scrollEdgeEffectHidden(true, for: .top)
+diff --git a/Drafft/Features/Profile/ProposeSessionSheet.swift b/Drafft/Features/Profile/ProposeSessionSheet.swift
+index defcb97..48bdfd3 100644
+--- a/Drafft/Features/Profile/ProposeSessionSheet.swift
++++ b/Drafft/Features/Profile/ProposeSessionSheet.swift
+@@ -53,6 +53,12 @@ struct ProposeSessionSheet: View {
+         }
+         // Nothing picked yet: no time card until the person adds one.
+         _options = State(initialValue: [])
++        #if STORE_SHOTS
++        if StoreShots.scene == "propose" {
++            _options = State(initialValue: StoreShots.proposalTimes)
++            _title = State(initialValue: StoreShots.proposalTitle)
++        }
++        #endif
+     }
+ 
+     // MARK: Derived
+diff --git a/Drafft/Models/AppLanguage.swift b/Drafft/Models/AppLanguage.swift
+index 64a4f7d..d3d09ea 100644
+--- a/Drafft/Models/AppLanguage.swift
++++ b/Drafft/Models/AppLanguage.swift
+@@ -40,7 +40,8 @@ final class Localization: @unchecked Sendable { // written on the main actor onl
+     static let shared = Localization()
+     /// The last one picked, kept on the phone so the first screen is already in it (the profile
+     /// has it too: NotificationService.applyServer).
+-    var language: AppLanguage = UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:))
++    var language: AppLanguage = ProcessInfo.processInfo.environment["STORE_LANG"].flatMap(AppLanguage.init(rawValue:))
++        ?? UserDefaults.standard.string(forKey: "appLanguage").flatMap(AppLanguage.init(rawValue:))
+         ?? .deviceDefault {
+         didSet { UserDefaults.standard.set(language.rawValue, forKey: "appLanguage") }
+     }
+diff --git a/Drafft/Services/AccountModeration.swift b/Drafft/Services/AccountModeration.swift
+index 64c34cc..04811f2 100644
+--- a/Drafft/Services/AccountModeration.swift
++++ b/Drafft/Services/AccountModeration.swift
+@@ -26,6 +26,9 @@ final class AccountModeration {
+     /// `AppModel.refreshAccount`, which applies it here). A failed read changes nothing (offline:
+     /// the last known state stays).
+     func load() async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard await Backend.shared.hasSession else { return }
+         await refresh?()
+     }
+diff --git a/Drafft/Services/AppModel+AccountSync.swift b/Drafft/Services/AppModel+AccountSync.swift
+index 8c28910..bbdfc83 100644
+--- a/Drafft/Services/AppModel+AccountSync.swift
++++ b/Drafft/Services/AppModel+AccountSync.swift
+@@ -16,6 +16,9 @@ extension AppModel {
+     /// what's on screen stays (offline: the last known state).
+     @discardableResult
+     func refreshAccount(force: Bool = false) async -> ProfileSync.Account? {
++        #if STORE_SHOTS
++        if StoreShots.on { return nil }
++        #endif
+         if let running = accountRefresh { return await running.value }
+         if !force, let last = lastAccountRead, last.at.timeIntervalSinceNow > -Self.freshFor { return last.account }
+         let session = sessionID
+diff --git a/Drafft/Services/AppModel+Discover.swift b/Drafft/Services/AppModel+Discover.swift
+index 28c6c12..0758f7f 100644
+--- a/Drafft/Services/AppModel+Discover.swift
++++ b/Drafft/Services/AppModel+Discover.swift
+@@ -30,6 +30,9 @@ extension AppModel {
+     /// Everything discovery shows, read again (entering the app, back at the front, the channel
+     /// rejoined): the deck, who liked you, the matches and the likes left.
+     func refreshDiscovery() {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard phase == .main else { return }
+         loadDeck(.refresh)
+         Task { await loadLikes() }
+@@ -52,6 +55,9 @@ extension AppModel {
+     /// Reads a batch. `.restart` drops the deck on screen first (new filters or preferences): a card
+     /// that doesn't fit them any more never shows. A `.refresh` while one runs waits for it.
+     func loadDeck(_ mode: DeckLoad) {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard phase == .main, !profilePaused else { return }
+         if mode == .refresh, discovery.load != nil { return }
+         discovery.load?.cancel()
+@@ -293,6 +299,9 @@ extension AppModel {
+ 
+     /// Likes left today, from the server (`likes_left`). Unchanged if it can't be read.
+     func loadLikesLeft() async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         struct Row: Decodable { let unlimited: Bool; let left: Int }
+         guard phase == .main,
+               let data = try? await Backend.shared.rpc("likes_left", [:]),
+diff --git a/Drafft/Services/AppModel+Matches.swift b/Drafft/Services/AppModel+Matches.swift
+index 90a0c40..ecf6f9d 100644
+--- a/Drafft/Services/AppModel+Matches.swift
++++ b/Drafft/Services/AppModel+Matches.swift
+@@ -16,6 +16,9 @@ extension AppModel {
+     /// again when Likes opens, on a `like` or `wallet` event (drafft tempo starting or ending) and on
+     /// each (re)connection. Unchanged if it can't be read.
+     func loadLikes() async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         let premium = isPremium
+         guard phase == .main, let data = try? await Backend.shared.rpc("liked_me", ["p_limit": Self.likesPage]),
+               isPremium == premium else { return }
+@@ -48,6 +51,9 @@ extension AppModel {
+     /// The current matches. The first read of a session only takes them in; a later one that finds a
+     /// new match (they liked you back) shows the banner. Unchanged if it can't be read.
+     func loadMatches() async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard phase == .main, let data = try? await Backend.shared.rpc("my_matches", [:]),
+               let rows = try? MatchRow.list(from: data) else { return }
+         applyMatches(rows, announce: discovery.matchesRead)
+diff --git a/Drafft/Services/AppModel+Wallet.swift b/Drafft/Services/AppModel+Wallet.swift
+index 69a4a4e..43dd9b9 100644
+--- a/Drafft/Services/AppModel+Wallet.swift
++++ b/Drafft/Services/AppModel+Wallet.swift
+@@ -29,6 +29,9 @@ extension AppModel {
+     /// credit (`PurchaseCredit`). A failed read changes nothing (offline: the last known balances
+     /// stay).
+     func loadWallet() async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard await Backend.shared.hasSession,
+               let data = try? await Backend.shared.select("wallets?select=boosts,super_likes,premium_until,boost_ends_at"),
+               let row = try? JSONDecoder().decode([WalletRow].self, from: data).first else { return }
+diff --git a/Drafft/Services/Chat/ChatService.swift b/Drafft/Services/Chat/ChatService.swift
+index f2812c1..29a6486 100644
+--- a/Drafft/Services/Chat/ChatService.swift
++++ b/Drafft/Services/Chat/ChatService.swift
+@@ -68,6 +68,9 @@ final class ChatService {
+     /// Signed in (launch, sign-in): connects once for the account, then keeps it up. Calling it again for
+     /// the same account only shows the chats again.
+     func start(_ app: AppModel) async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         self.app = app
+         guard let me = await Backend.shared.userID?.uuidString.lowercased() else { return }
+         if userID == me {
+@@ -216,6 +219,9 @@ final class ChatService {
+ 
+     /// Matches and sessions read again (Stream reconnected): the chats follow the matches.
+     func refresh() async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         await app?.loadMatches()
+         await SessionStore.shared.refresh()
+         publish()
+@@ -270,6 +276,9 @@ final class ChatService {
+ 
+     /// Scrolled to the top of a thread: the page before.
+     func loadOlder(_ matchID: String) {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard let chat = chats[matchID] else { return }
+         Task {
+             guard await !chat.state.hasLoadedAllOldestMessages else { return }
+@@ -402,6 +411,9 @@ final class ChatService {
+     }
+ 
+     func markRead(_ matchID: String) async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard let channel = channels[matchID], channel.unreadCount.messages > 0 || channel.isUnread else { return }
+         try? await chat(matchID)?.markRead()
+     }
+diff --git a/Drafft/Services/Sessions/SessionStore.swift b/Drafft/Services/Sessions/SessionStore.swift
+index 84ec311..0e7d96a 100644
+--- a/Drafft/Services/Sessions/SessionStore.swift
++++ b/Drafft/Services/Sessions/SessionStore.swift
+@@ -28,6 +28,13 @@ final class SessionStore {
+     /// The signed-in person (`proposer_id` tells whose invite a card is).
+     @ObservationIgnored private(set) var me: UUID?
+ 
++    #if STORE_SHOTS
++    func seedForStoreShots(_ rows: [SessionRecord], me: UUID) {
++        self.me = me
++        ledger.merge(rows)
++    }
++    #endif
++
+     // MARK: Reading
+ 
+     /// A session as it stands now (server row with the person's changes on their way).
+@@ -46,6 +53,9 @@ final class SessionStore {
+     /// Everything read again: the upcoming list, then the other sessions this phone shows, by id.
+     /// Only a successful read changes anything.
+     func refresh() async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard let me = await Backend.shared.userID else { return }
+         self.me = me
+         guard let data = try? await Backend.shared.rpc("upcoming_sessions", [:]),
+@@ -61,6 +71,9 @@ final class SessionStore {
+     /// Rows read by id (a chat card, a Realtime event). With `dropMissing`, an id the server no longer
+     /// returns is forgotten (its match and chat are gone).
+     func load(_ ids: Set<UUID>, dropMissing: Bool = false) async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard !ids.isEmpty else { return }
+         if me == nil { me = await Backend.shared.userID }
+         let list = ids.map { $0.uuidString.lowercased() }.sorted().joined(separator: ",")
+@@ -72,6 +85,9 @@ final class SessionStore {
+ 
+     /// A card on screen whose row isn't known yet: read once.
+     func need(_ id: UUID) {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard record(id) == nil, !requested.contains(id) else { return }
+         requested.insert(id)
+         Task { await load([id]) }
+diff --git a/Drafft/Services/UserChannel.swift b/Drafft/Services/UserChannel.swift
+index 157d18b..75dbf12 100644
+--- a/Drafft/Services/UserChannel.swift
++++ b/Drafft/Services/UserChannel.swift
+@@ -29,6 +29,9 @@ enum UserChannel {
+     /// replaced, after a pause that grows while it keeps failing. Ends when the task is cancelled
+     /// (sign-out).
+     static func watch(_ app: AppModel) async {
++        #if STORE_SHOTS
++        if StoreShots.on { return }
++        #endif
+         guard let id = await Backend.shared.userID else { return }
+         let topic = "user:\(id.uuidString.lowercased())"
+         var pause = Duration.seconds(2)

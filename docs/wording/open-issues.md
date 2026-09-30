@@ -7,7 +7,8 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 ## Bloquant avant publication
 
 - **Recherche de marque** « Meet me on the start line » / « Rendez-vous au départ » (INPI, EUIPO,
-  classe 45) avant tout usage public.
+  classe 45) : seulement si la phrase sert en campagne. Depuis le 30/09/2026, la phrase principale est
+  « Meet singles who train » / « Rencontre des célibataires qui s'entraînent » (WORDING §7.2).
 
 ## Décisions produit
 
