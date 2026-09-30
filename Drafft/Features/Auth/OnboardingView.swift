@@ -592,7 +592,7 @@ struct OnboardingView: View {
         let terms = LegalDoc.terms.title, privacy = LegalDoc.privacy.title, community = LegalDoc.community.title
         var s = AttributedString(L("I'm 18 or older and I accept the \(terms), the \(privacy) and the \(community)."))
         for doc in LegalDoc.allCases {
-            guard let r = s.range(of: doc.title) else { continue }
+            guard let r = s.range(of: doc.title) else { assertionFailure("The consent lost its link to \(doc.title)"); continue }
             s[r].link = doc.url()
             s[r].underlineStyle = .single
             s[r].font = .subheadline.weight(.semibold)
