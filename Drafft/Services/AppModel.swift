@@ -81,6 +81,10 @@ final class AppModel {
     var profilePaused = false { didSet { pauseChanged(from: oldValue) } }
     /// Set while applying the server's own state, so it isn't sent back.
     @ObservationIgnored var pauseFromServer = false
+    /// Flips of the switch on this iPhone, and those still being saved: a read of the server that
+    /// began before the latest flip was saved says the old state, and mustn't put it back on screen.
+    @ObservationIgnored var pauseEdits = 0
+    @ObservationIgnored var pauseSaves = 0
 
     var notifyMatches = true
     var notifyMessages = true

@@ -19,13 +19,15 @@ struct MeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DS.Space.md) {
-                    if app.profilePaused {
-                        PausedBanner()
-                            .transition(reduceMotion
-                                ? .opacity
-                                : .scale(scale: 0.96, anchor: .top).combined(with: .opacity))
+                    // While paused, a strip slides out from under the card: the card and what
+                    // it says about you, then that no one sees it for now.
+                    VStack(spacing: -DS.Radius.xl) {
+                        profileCard.zIndex(1)
+                        if app.profilePaused {
+                            PausedStrip()
+                                .transition(reduceMotion ? .opacity : .move(edge: .top))
+                        }
                     }
-                    profileCard
                     if !app.isPremium { plusCard }
                     group(L("Discovery")) {
                         row(L("Filters"), icon: "slider.horizontal.3", value: filtersSummary) { sheet = .filters }
@@ -34,7 +36,7 @@ struct MeView: View {
                                   detail: app.profilePaused
                                       ? L("Hidden from Discover and likes. Your chats and sessions carry on.")
                                       : L("Hide from Discover for a while. Your chats stay open."),
-                                  isOn: $app.profilePaused)
+                                  tint: DS.Palette.paused, isOn: $app.profilePaused)
                     }
                     group(L("Preferences")) {
                         row(L("Notifications"), icon: "bell.fill",
@@ -101,9 +103,9 @@ struct MeView: View {
                 }
                 .padding(.horizontal, DS.Space.lg)
                 .padding(.bottom, DS.Space.xxl)
-                // The banner comes and goes with the pause (this switch, its Resume button, the
-                // server): the blocks under it slide along instead of jumping.
-                .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: app.profilePaused)
+                // The strip comes and goes with the pause (the switch or the server): the blocks
+                // under it slide along, without a bounce (a spring overshooting read as a jolt).
+                .animation(reduceMotion ? .easeInOut(duration: 0.2) : .smooth(duration: 0.35), value: app.profilePaused)
             }
             .contentMargins(.top, DS.Space.xs, for: .scrollContent)
             .trackingScrollOffset($scrollOffset)
@@ -393,8 +395,9 @@ struct MeView: View {
         .accessibilityElement(children: .combine)
     }
 
-    private func toggleRow(_ title: String, icon name: String, detail: String? = nil, isOn: Binding<Bool>) -> some View {
-        Toggle(isOn: isOn.animation(Motion.snappy)) {
+    private func toggleRow(_ title: String, icon name: String, detail: String? = nil,
+                           tint: Color = DS.Palette.lime, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
             HStack(spacing: DS.Space.md) {
                 icon(name)
                 VStack(alignment: .leading, spacing: 1) {
@@ -407,51 +410,38 @@ struct MeView: View {
                 }
             }
         }
-        .tint(DS.Palette.lime)
+        .tint(tint)
         .padding(.vertical, DS.Space.md)
         .onChange(of: isOn.wrappedValue) { Haptics.select() }
     }
 }
 
-/// While the profile is paused, the first block of You says so, what it means, and resumes in one
-/// tap. The switch in Discovery stays the way to pause.
-private struct PausedBanner: View {
-    @Environment(AppModel.self) private var app
-
+/// While the profile is paused, the strip under the You card: the same colour as the switch that
+/// paused it, and what it means in one line. The switch in Discovery is the way back.
+private struct PausedStrip: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: DS.Space.lg) {
-            HStack(alignment: .top, spacing: DS.Space.md) {
-                Image(systemName: "pause.fill")
-                    .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(DS.Palette.ink)
-                    .frame(width: 44, height: 44)
-                    .background(DS.Palette.canvasSoft, in: .circle)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Your profile is paused")
-                        .font(.display(20, relativeTo: .title3))
-                        .foregroundStyle(DS.Palette.ink)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text("No one sees you in Discover while you're paused. Your chats and sessions carry on.")
-                        .font(.subheadline)
-                        .foregroundStyle(DS.Palette.body)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding(.top, 2)
-                Spacer(minLength: 0)
-            }
-            // Read as one statement: the title and what it means.
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isHeader)
-            Button {
-                Haptics.success()
-                app.profilePaused = false
-            } label: {
-                Text("Resume my profile")
-            }
-            .buttonStyle(.drafftPrimary)
+        HStack(spacing: DS.Space.sm) {
+            Image(systemName: "pause.fill")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(DS.Palette.onPaused)
+                .accessibilityHidden(true)
+            Text(line)
+                .font(.subheadline)
+                .foregroundStyle(DS.Palette.onPaused)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
         }
-        .padding(DS.Space.xl)
-        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
+        .padding(.horizontal, DS.Space.xl)
+        .padding(.top, DS.Radius.xl + DS.Space.md)
+        .padding(.bottom, DS.Space.md)
+        .background(DS.Palette.paused, in: .rect(cornerRadius: DS.Radius.xl))
+        .accessibilityElement(children: .combine)
+    }
+
+    /// The state in bold, then what it means, flowing as one line.
+    private var line: AttributedString {
+        var state = AttributedString(L("Profile paused"))
+        state.inlinePresentationIntent = .stronglyEmphasized
+        return state + AttributedString(" " + L("No one sees you in Discover."))
     }
 }

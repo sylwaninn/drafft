@@ -12281,6 +12281,46 @@
         }
       }
     },
+    "No one sees you in Discover." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niemand sieht dich unter Entdecken."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadie te ve en Descubrir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personne ne te voit dans Découvrir."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuno ti vede in Scopri."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niemand ziet je in Ontdekken."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguém te vê em Descobrir."
+          }
+        }
+      }
+    },
     "Not sent. Tap to try again." : {
       "localizations" : {
         "de" : {
@@ -12603,6 +12643,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escolhe «Durante a utilização da app»"
+          }
+        }
+      }
+    },
+    "Profile paused" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil pausiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil en pausa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil en pause"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profilo in pausa"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profiel gepauzeerd"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfil em pausa"
           }
         }
       }
@@ -26548,46 +26628,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You're all caught up."
-          }
-        }
-      }
-    },
-    "No one sees you in Discover while you're paused. Your chats and sessions carry on." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solange du pausierst, sieht dich niemand in Entdecken. Deine Chats und Sessions laufen weiter."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nadie te ve en Descubrir mientras estés en pausa. Tus chats y sesiones siguen."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Personne ne te voit dans Découvrir tant que tu es en pause. Tes discussions et tes séances continuent."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuno ti vede in Scopri finché sei in pausa. Le tue chat e sessioni continuano."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zolang je gepauzeerd bent, ziet niemand je in Ontdekken. Je chats en sessies gaan door."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguém te vê em Descobrir enquanto estiveres em pausa. As tuas conversas e sessões continuam."
           }
         }
       }

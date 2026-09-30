@@ -139,6 +139,9 @@ enum DS {
         static let positive = Color(hex: 0x2EAD4B)
         static let positiveDeep = Color(light: 0x054D28, dark: 0x7FD493)
         static let warning = Color(hex: 0xFFD11A)
+        /// A paused profile: the strip under the You card and the switch that pauses it.
+        static let paused = warning
+        static let onPaused = Color(hex: 0x0E0F0C)
         static let negative = Color(hex: 0xD03238)
         static let accentOrange = Color(hex: 0xFFC091)
         static let accentCyan = Color(hex: 0x38C8FF)
