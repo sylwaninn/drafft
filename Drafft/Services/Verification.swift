@@ -84,57 +84,6 @@ extension VerificationError {
 
 // MARK: - Phone
 
-/// A country at the phone step: every region Google's libphonenumber knows (PhoneNumberKit), searchable
-/// by name or dial code. Which lines get a code is the server's call (Twilio Lookup, mobile lines only).
-struct PhoneCountry: Hashable, Identifiable {
-    /// ISO 3166 region code ("FR").
-    let region: String
-    /// "+33"
-    let dial: String
-    /// A mobile number of the country, written the national way: the field's placeholder.
-    let example: String
-    var id: String { region }
-    /// The region's flag, from its two letters.
-    var flag: String {
-        String(String.UnicodeScalarView(region.unicodeScalars.compactMap { UnicodeScalar(127_397 + $0.value) }))
-    }
-    /// Country name in the app's language.
-    var name: String { Locale.app.localizedString(forRegionCode: region) ?? region }
-
-    /// Loads the metadata once (a few ms), on first use.
-    @MainActor static let phoneNumbers = PhoneNumberUtility()
-
-    @MainActor static let all: [PhoneCountry] = phoneNumbers.allCountries().compactMap { country($0) }
-
-    @MainActor static func country(_ region: String) -> PhoneCountry? {
-        guard region.count == 2, let code = phoneNumbers.countryCode(for: region) else { return nil }
-        let example = phoneNumbers.getFormattedExampleNumber(forCountry: region, ofType: .mobile, withFormat: .national)
-        return PhoneCountry(region: region, dial: "+\(code)", example: example ?? "")
-    }
-
-    /// The iPhone's region, else France.
-    @MainActor static var initial: PhoneCountry {
-        Locale.current.region.flatMap { country($0.identifier) } ?? country("FR") ?? all[0]
-    }
-
-    /// A number the phone step takes: valid for the country, and a mobile line (or one that may be, as
-    /// in the US). Digits only, typed the national way ("06 12…" or "6 12…").
-    @MainActor static func mobileNumber(_ national: String, in country: PhoneCountry) -> PhoneNumber? {
-        let digits = national.filter(\.isNumber)
-        guard !digits.isEmpty, let number = try? phoneNumbers.parse(digits, withRegion: country.region),
-              country.dial == "+\(number.countryCode)",
-              number.type == .mobile || number.type == .fixedOrMobile else { return nil }
-        return number
-    }
-
-    /// The account's number as Supabase Auth keeps it ("33612345678"), written the international way.
-    @MainActor static func display(_ stored: String) -> String {
-        let e164 = "+" + stored.filter(\.isNumber)
-        guard let number = try? phoneNumbers.parse(e164, ignoreType: true) else { return e164 }
-        return phoneNumbers.format(number, toType: .international)
-    }
-}
-
 /// Front-end state machine for phone verification: number, code, verified, or locked.
 @MainActor
 @Observable
@@ -143,7 +92,23 @@ final class PhoneVerificationModel {
 
     private(set) var stage: Stage = .enterNumber
     var country = PhoneCountry.initial { didSet { parse() } }
-    var number = "" { didSet { error = nil; parse() } }
+    /// What the field shows. Typed or pasted the international way, the country follows at once and
+    /// the field keeps the national part ("+33 6 12…" becomes France and "06 12…").
+    var number: String {
+        get { typed }
+        set {
+            error = nil
+            if let found = PhoneCountry.international(newValue, from: country) {
+                typed = found.national
+                if found.country != country { country = found.country } else { parse() }
+            } else {
+                typed = newValue
+                parse()
+            }
+        }
+    }
+    /// Set through `number` only: a didSet rewriting the field here recursed with @Observable.
+    private var typed = ""
     /// The typed number, once it's a mobile number of the country.
     private var parsed: PhoneNumber?
     /// Set through `enterCode(_:)` (digits only, max 6). No didSet rewriting itself here: with
@@ -178,7 +143,14 @@ final class PhoneVerificationModel {
         if code.count == 6 && wasShort && stage == .enterCode { Task { await verify() } }
     }
 
-    private func parse() { parsed = PhoneCountry.mobileNumber(number, in: country) }
+    private func parse() {
+        parsed = PhoneCountry.mobileNumber(number, in: country)
+        // A shared calling code: the complete number says which country it is (+1 787 is Puerto Rico).
+        if let parsed, let region = PhoneCountry.phoneNumbers.getRegionCode(of: parsed), region != country.region,
+           let exact = PhoneCountry.country(region) {
+            country = exact
+        }
+    }
 
     var e164: String {
         parsed.map { PhoneCountry.phoneNumbers.format($0, toType: .e164) } ?? country.dial + number.filter(\.isNumber)
