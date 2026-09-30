@@ -131,6 +131,7 @@ targets:
       - path: Drafft/Services/Sessions/SessionLedger.swift
       - path: Drafft/Services/Backend/ProfileCard.swift
       - path: Drafft/Services/Chat/ChatPayload.swift
+      - path: Drafft/Features/Me/SubscriptionNotice.swift
     dependencies:
       - package: GRDB
         product: GRDB

@@ -441,6 +441,11 @@ struct DeleteAccountSheet: View {
     @State private var failure: String?
     @State private var managingSubscription = false
 
+    private var showsSubscriptionNotice: Bool {
+        let renewal: SubscriptionNotice.Renewal = app.subscription.map { $0.willRenew ? .renews : .ends } ?? .unknown
+        return SubscriptionNotice.showsOnDelete(renewal, isPremium: app.isPremium)
+    }
+
     private var reasons: [String] { [L("I met someone"), L("I need a break"), L("Not enough people nearby"), L("Something else")] }
 
     var body: some View {
@@ -476,7 +481,8 @@ struct DeleteAccountSheet: View {
             }
 
             // Billing belongs to the App Store: deleting the account leaves a renewing subscription on.
-            if app.subscription?.willRenew == true {
+            // Also shown while the App Store's answer is unknown and the server says drafft tempo.
+            if showsSubscriptionNotice {
                 SheetBlock(title: L("Your subscription")) {
                     Text(branded: L("Deleting your account doesn't cancel drafft tempo. Cancel it in the App Store to stop it renewing."),
                          font: .subheadline)
