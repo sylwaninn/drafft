@@ -3,8 +3,10 @@ import SwiftUI
 /// The two required consents, unchecked until the person ticks them, each in its own white block:
 /// the terms (the documents named in the sentence are links), then the use of sensitive data (gender,
 /// the genders someone wants to see, lifestyle answers, which can reveal sexual orientation, health or
-/// beliefs), which the privacy policy bases on explicit consent. Links open getdrafft.com in the
-/// in-app browser. Sign-up and `TermsConsentView` share it.
+/// beliefs), which the privacy policy bases on explicit consent. That sentence stays plain; its link
+/// leads to the privacy policy's section on sensitive data, which says what they can reveal and how to
+/// withdraw the consent. Links open getdrafft.com in the in-app browser. Sign-up and
+/// `TermsConsentView` share it.
 struct ConsentChecks: View {
     @Binding var draft: ConsentDraft
 
@@ -14,8 +16,7 @@ struct ConsentChecks: View {
                 check(isOn: $draft.terms, sentence: termsText)
             }
             block {
-                check(isOn: $draft.sensitiveData, sentence: sensitiveText,
-                      detail: L("This can reveal your sexual orientation, health or beliefs, so drafft asks first."))
+                check(isOn: $draft.sensitiveData, sentence: sensitiveText)
             }
         }
         .environment(\.openURL, OpenURLAction { url in .systemAction(url, prefersInApp: true) })
@@ -30,7 +31,7 @@ struct ConsentChecks: View {
     }
 
     /// The checkbox toggles; the sentence next to it carries the links.
-    private func check(isOn: Binding<Bool>, sentence: AttributedString, detail: String? = nil) -> some View {
+    private func check(isOn: Binding<Bool>, sentence: AttributedString) -> some View {
         HStack(alignment: .top, spacing: DS.Space.sm) {
             Button {
                 Haptics.select()
@@ -42,19 +43,12 @@ struct ConsentChecks: View {
             .accessibilityLabel(String(sentence.characters))
             .accessibilityAddTraits(isOn.wrappedValue ? .isSelected : [])
 
-            VStack(alignment: .leading, spacing: DS.Space.xs) {
-                Text(sentence)
-                    .font(.subheadline)
-                    .foregroundStyle(DS.Palette.ink)
-                    .tint(DS.Palette.accentInk)
-                    .fixedSize(horizontal: false, vertical: true)
-                if let detail {
-                    Text(branded: detail, font: .footnote)
-                        .foregroundStyle(DS.Palette.body)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            .padding(.vertical, 11) // Level with the box on top, the same room under the last line.
+            Text(sentence)
+                .font(.subheadline)
+                .foregroundStyle(DS.Palette.ink)
+                .tint(DS.Palette.accentInk)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.vertical, 11) // Level with the box on top, the same room under the last line.
         }
         .padding(.leading, -DS.Space.sm)
     }
@@ -70,8 +64,8 @@ struct ConsentChecks: View {
     }
 
     private var sensitiveText: AttributedString {
-        let name = L("sensitive data")
-        let sentence = L("I agree that drafft uses my \(name): my gender, the genders I want to see and my lifestyle, if I fill it in.")
+        let name = L("my gender")
+        let sentence = L("I agree that drafft uses \(name), the genders I want to see and my lifestyle for my suggestions.")
         var s = AttributedString(sentence)
         link(name, to: LegalDoc.sensitiveData(), in: &s)
         // The brand, one weight up, as everywhere in running text.
