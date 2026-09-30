@@ -9,8 +9,7 @@ struct OnboardingView: View {
     @State private var step = 0
     @State private var forward = true
     @State private var birthday: Date?
-    @State private var acceptedTerms = false
-    @State private var acceptedSensitiveData = false
+    @State private var consent = ConsentDraft()
     /// The terms version the server recorded with the consent this sign-up (`accept_terms`).
     @State private var recordedTerms: String?
     @State private var recordingConsent = false
@@ -203,7 +202,7 @@ struct OnboardingView: View {
         if let consentError, current == .rules { return (consentError, true) }
         switch current {
         case .language: return nil
-        case .rules: return acceptedTerms && acceptedSensitiveData ? nil : (L("Accept the rules and terms to continue."), false)
+        case .rules: return complete(.rules) ? nil : (L("Accept the rules and terms to continue."), false)
         case .phone:
             // Sending or checking: the spinner says it, no reason needed.
             if phone.busy || phone.primaryEnabled { return nil }
@@ -263,7 +262,8 @@ struct OnboardingView: View {
     private func complete(_ s: Step, resuming: Bool = false) -> Bool {
         switch s {
         case .language: true
-        case .rules: acceptedTerms && acceptedSensitiveData
+        // Once the server holds the consent for these terms, the boxes no longer matter.
+        case .rules: consent.isComplete || TermsConsent.isCurrent(recordedTerms)
         case .phone: phone.stage == .verified
         case .name: !name.trimmingCharacters(in: .whitespaces).isEmpty
         case .birthday: birthday != nil && isAdult
@@ -298,7 +298,6 @@ struct OnboardingView: View {
         p.name = name
         p.language = language.rawValue
         p.birthday = birthday
-        p.acceptedTerms = acceptedTerms
         p.termsVersion = recordedTerms
         p.verifiedPhone = phone.stage == .verified ? phone.displayNumber : nil
         p.identity = identity
@@ -323,8 +322,7 @@ struct OnboardingView: View {
         birthday = p.birthday
         // Ticked again only if the server recorded them for the terms shown now.
         recordedTerms = p.termsVersion
-        acceptedTerms = p.acceptedTerms && p.termsVersion == TermsConsent.version
-        acceptedSensitiveData = acceptedTerms
+        consent = .restored(recordedVersion: p.termsVersion)
         if let number = p.verifiedPhone { phone.restoreVerified(number) }
         identity = p.identity
         interestedIn = Set(p.interestedIn)
@@ -350,7 +348,7 @@ struct OnboardingView: View {
     }
 
     private func advance() {
-        if current == .rules, recordedTerms != TermsConsent.version { recordConsent(); return }
+        if current == .rules, !TermsConsent.isCurrent(recordedTerms) { recordConsent(); return }
         guard step < steps.count - 1 else { finish(); return }
         if steps[step + 1].chapter != current.chapter { Haptics.success() } else { Haptics.tap() }
         go(to: step + 1)
@@ -367,8 +365,10 @@ struct OnboardingView: View {
                 try await TermsConsent.accept()
             } catch {
                 Haptics.warning()
-                consentError = ServerMessage.text(for: error)
-                    ?? L("Your consent couldn't be saved. Check your connection and try again.")
+                switch TermsConsent.failure(for: error) {
+                case .signOut: await app.endSession()
+                case .message(let text): consentError = text
+                }
                 return
             }
             recordedTerms = TermsConsent.version
@@ -413,6 +413,16 @@ struct OnboardingView: View {
             // The profile goes to the server first; without a session it fails and says so.
             do {
                 try await ProfileSync.finish(signUp)
+            } catch ProfileSync.SyncError.refused("terms_required") {
+                // The server has no consent on record (the one noted on this phone was lost there):
+                // back to the rules step, unticked, to record it again.
+                TermsConsent.log.error("complete_onboarding: terms_required although the sign-up recorded them")
+                Haptics.warning()
+                recordedTerms = nil
+                consent = ConsentDraft()
+                consentError = ServerMessage.text(forCode: "terms_required")
+                go(to: Step.rules.rawValue)
+                return
             } catch {
                 Haptics.warning()
                 finishError = (error as? LocalizedError)?.errorDescription
@@ -504,9 +514,8 @@ struct OnboardingView: View {
             .padding(DS.Space.xl)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
-            ConsentChecks(terms: $acceptedTerms, sensitiveData: $acceptedSensitiveData)
-                .onChange(of: acceptedTerms) { consentError = nil }
-                .onChange(of: acceptedSensitiveData) { consentError = nil }
+            ConsentChecks(draft: $consent)
+                .onChange(of: consent) { consentError = nil }
         }
     }
 

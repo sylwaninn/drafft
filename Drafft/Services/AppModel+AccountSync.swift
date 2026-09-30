@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 /// The account's own profile row, from one source: `refreshAccount` reads it in one request and
 /// applies it everywhere it shows (You, the pause, a moderation hold, notification settings), and
@@ -27,12 +28,13 @@ extension AppModel {
                 openLocalCache()?.save(data, as: .profile)
                 lastAccountRead = (.now, account)
                 apply(account)
-                // Only from the server: a cached copy may predate the consent or lack it.
-                termsConsentNeeded = account.termsNeeded
+                applyConsent(fromServer: account.consent)
                 return account
             } catch {
                 guard session == sessionID else { return nil }
+                Self.accountLog.error("The account couldn't be read: \(String(describing: error), privacy: .public)")
                 if profileLoad != .loaded { profileLoad = .failed }
+                retryWhileConsentUnknown()
                 return nil
             }
         }
@@ -47,7 +49,37 @@ extension AppModel {
         guard let entry = openLocalCache()?.entry(.profile),
               let account = ProfileSync.decodeAccount(entry.data, mediaBase: MediaURL.saved) else { return nil }
         apply(account)
+        // A cached "accepted" holds (the consent is only withdrawn by deleting the account); a
+        // cached "required" may be out of date: only the server's read asks.
+        if account.consent == .accepted, termsConsent == .unknown { termsConsent = .accepted }
         return account
+    }
+
+    private static let accountLog = Logger(subsystem: "so.drafft.app", category: "account")
+
+    /// The gate from a fresh read. A backend without the consent columns leaves it as it was
+    /// (ProfileSync logs that).
+    private func applyConsent(fromServer consent: TermsConsent.Gate) {
+        accountReadFailures = 0
+        accountRetry?.cancel()
+        accountRetry = nil
+        if consent != .unknown { termsConsent = consent }
+    }
+
+    /// While the consent is unknown, a failed read is tried again after 5 s, then 10, 20… up to 5
+    /// minutes, until one succeeds or the account changes: an account that never consented isn't
+    /// left unasked because the first read failed.
+    private func retryWhileConsentUnknown() {
+        guard termsConsent == .unknown, accountRetry == nil else { return }
+        let delay = min(300, 5 * pow(2, Double(min(accountReadFailures, 6))))
+        accountReadFailures += 1
+        let session = sessionID
+        accountRetry = Task { [self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled, session == sessionID else { return }
+            accountRetry = nil
+            await refreshAccount(force: true)
+        }
     }
 
     private func apply(_ account: ProfileSync.Account) {
@@ -72,6 +104,9 @@ extension AppModel {
     func eraseLocalCache() {
         accountRefresh?.cancel()
         accountRefresh = nil
+        accountRetry?.cancel()
+        accountRetry = nil
+        accountReadFailures = 0
         lastAccountRead = nil
         localCache = nil
         LocalCache.eraseAll()

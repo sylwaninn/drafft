@@ -56330,6 +56330,52 @@
           }
         }
       }
+    },
+    "drafft has newer terms. Update the app to continue." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft has newer terms. Update the app to continue."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft a de nouvelles conditions d'utilisation. Mets l'app à jour pour continuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft tiene nuevas condiciones de uso. Actualiza la app para continuar."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft hat neue Nutzungsbedingungen. Aktualisiere die App, um weiterzumachen."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ha nuovi termini d'uso. Aggiorna l'app per continuare."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O drafft tem novos termos de utilização. Atualiza a app para continuar."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft heeft nieuwe gebruiksvoorwaarden. Werk de app bij om verder te gaan."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

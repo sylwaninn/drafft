@@ -6,8 +6,9 @@ struct OnboardingProgress: Codable, Equatable {
     var name = ""
     var language: String?
     var birthday: Date?
-    var acceptedTerms = false
     /// The terms version recorded on the server with the consent (`TermsConsent`), nil until then.
+    /// It alone says the consent was given: progress saved before it (with an `acceptedTerms` flag,
+    /// now ignored) still decodes, and the rules step asks again.
     var termsVersion: String?
     var verifiedPhone: String?
     var identity: String?

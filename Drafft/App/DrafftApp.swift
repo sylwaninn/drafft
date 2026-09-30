@@ -307,8 +307,11 @@ struct MainTabs: View {
         .onChange(of: isActive) { _, active in if active { location.refresh() } }
         .onChange(of: scenePhase) { _, p in if p == .active && isActive { location.refresh() } }
         .fullScreenCover(isPresented: .constant(isActive && location.isBlocked)) { LocationRequiredView() }
-        // No record of the current terms and the consent to sensitive data: asked once, before the rest.
-        .fullScreenCover(isPresented: .constant(isActive && !location.isBlocked && app.termsConsentNeeded)) {
+        // A fresh read found no record of the current terms and the consent to sensitive data: asked
+        // at each open until accepted, after the location gate. Unknown (no read yet, offline) asks
+        // nothing: the read is retried until it says (refreshAccount), and a sign-up can't finish
+        // without the consent on the server (complete_onboarding).
+        .fullScreenCover(isPresented: .constant(isActive && !location.isBlocked && app.termsConsent == .required)) {
             TermsConsentView()
         }
         .overlay(alignment: .top) {

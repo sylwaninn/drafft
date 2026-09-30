@@ -2,19 +2,19 @@ import SwiftUI
 
 /// The two required consents, unchecked until the person ticks them, each in its own white block:
 /// the terms (the documents named in the sentence are links), then the use of sensitive data (gender,
-/// the genders someone wants to see, lifestyle answers), which the privacy policy bases on explicit
-/// consent. Links open getdrafft.com in the in-app browser. Sign-up and `TermsConsentView` share it.
+/// the genders someone wants to see, lifestyle answers, which can reveal sexual orientation, health or
+/// beliefs), which the privacy policy bases on explicit consent. Links open getdrafft.com in the
+/// in-app browser. Sign-up and `TermsConsentView` share it.
 struct ConsentChecks: View {
-    @Binding var terms: Bool
-    @Binding var sensitiveData: Bool
+    @Binding var draft: ConsentDraft
 
     var body: some View {
         VStack(spacing: DS.Space.md) {
             block {
-                check(isOn: $terms, sentence: termsText)
+                check(isOn: $draft.terms, sentence: termsText)
             }
             block {
-                check(isOn: $sensitiveData, sentence: sensitiveText,
+                check(isOn: $draft.sensitiveData, sentence: sensitiveText,
                       detail: L("This can reveal your sexual orientation, health or beliefs, so drafft asks first."))
             }
         }
@@ -79,8 +79,10 @@ struct ConsentChecks: View {
         return s
     }
 
+    /// The placeholders put the words in the sentence: a translation that drops one would leave the
+    /// consent required with no way to read what it's about.
     private func link(_ words: String, to url: URL, in s: inout AttributedString) {
-        guard let r = s.range(of: words) else { return }
+        guard let r = s.range(of: words) else { assertionFailure("The consent lost its link to \(words)"); return }
         s[r].link = url
         s[r].underlineStyle = .single
         s[r].font = .subheadline.weight(.semibold)

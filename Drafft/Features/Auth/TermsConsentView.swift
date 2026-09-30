@@ -1,13 +1,12 @@
 import SwiftUI
 
 /// An account that signed up before the consent was recorded on the server, or before the current
-/// terms, is asked once at its next open, over everything: the same two checks as sign-up, then
-/// `accept_terms`. No close button: the only other way out is deleting the account, since drafft
-/// can't work without the gender.
+/// terms, is asked at each open until it accepts, after the location gate (`MainTabs`): the same two
+/// checks as sign-up, then `accept_terms`. No close button: the only other way out is deleting the
+/// account, since drafft can't work without the gender.
 struct TermsConsentView: View {
     @Environment(AppModel.self) private var app
-    @State private var terms = false
-    @State private var sensitiveData = false
+    @State private var consent = ConsentDraft()
     @State private var saving = false
     @State private var failure: String?
     @State private var deleting = false
@@ -25,7 +24,7 @@ struct TermsConsentView: View {
                         .foregroundStyle(DS.Palette.body)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                ConsentChecks(terms: $terms, sensitiveData: $sensitiveData)
+                ConsentChecks(draft: $consent)
             }
             .padding(.horizontal, DS.Space.xl)
             .padding(.top, DS.Space.xxl)
@@ -43,7 +42,7 @@ struct TermsConsentView: View {
                 if saving { ProgressView().tint(DS.Palette.onLime) } else { Text("Accept and continue") }
             }
             .buttonStyle(.drafftPrimary)
-            .disabled(!(terms && sensitiveData) || saving)
+            .disabled(!consent.isComplete || saving)
             if let failure {
                 Text(failure)
                     .font(.footnote.weight(.medium))
@@ -69,12 +68,12 @@ struct TermsConsentView: View {
             do {
                 try await TermsConsent.accept()
                 Haptics.success()
-                app.termsConsentNeeded = false
+                app.termsConsent = .accepted
             } catch {
                 Haptics.warning()
-                withAnimation(Motion.snappy) {
-                    failure = ServerMessage.text(for: error)
-                        ?? L("Your consent couldn't be saved. Check your connection and try again.")
+                switch TermsConsent.failure(for: error) {
+                case .signOut: await app.endSession()
+                case .message(let text): withAnimation(Motion.snappy) { failure = text }
                 }
             }
         }
