@@ -6,6 +6,7 @@ struct MeView: View {
     @State private var sheet: MeSheet?
     @State private var confirmLogout = false
     @State private var scrollOffset: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     enum MeSheet: String, Identifiable {
         case edit, preview, filters, email, phone, password, export, delete, paywall, notifications, language
@@ -18,16 +19,23 @@ struct MeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DS.Space.md) {
-                    profileCard
+                    // While paused, a strip slides out from under the card: the card and what
+                    // it says about you, then that no one sees it for now.
+                    VStack(spacing: -DS.Radius.xl) {
+                        profileCard.zIndex(1)
+                        if app.profilePaused {
+                            PausedStrip()
+                                .transition(reduceMotion ? .opacity : .move(edge: .top))
+                        }
+                    }
                     if !app.isPremium { plusCard }
                     group(L("Discovery")) {
                         row(L("Filters"), icon: "tuning-2", value: filtersSummary) { sheet = .filters }
                         separator
                         toggleRow(L("Pause my profile"), icon: "pause",
-                                  detail: app.profilePaused
-                                      ? L("Hidden from Discover and likes. Your chats and sessions carry on.")
-                                      : L("Hide from Discover for a while. Your chats stay open."),
-                                  isOn: $app.profilePaused)
+                                  // One text, on or off: the strip under the card says it's on.
+                                  detail: L("Hides you from Discover and likes. Your chats and sessions carry on."),
+                                  tint: DS.Palette.paused, isOn: $app.profilePaused)
                     }
                     group(L("Preferences")) {
                         row(L("Notifications"), icon: "bell",
@@ -95,6 +103,9 @@ struct MeView: View {
                 }
                 .padding(.horizontal, DS.Space.lg)
                 .padding(.bottom, DS.Space.xxl)
+                // The strip comes and goes with the pause (the switch or the server): the blocks
+                // under it slide along, without a bounce (a spring overshooting read as a jolt).
+                .animation(reduceMotion ? .easeInOut(duration: 0.2) : .smooth(duration: 0.35), value: app.profilePaused)
             }
             .contentMargins(.top, DS.Space.xs, for: .scrollContent)
             .trackingScrollOffset($scrollOffset)
@@ -220,14 +231,6 @@ struct MeView: View {
                     // Named chips on one line: what fits, then "+X".
                     SportChipsLine(sports: app.me.sports.map(\.sport))
                         .padding(.top, 2)
-                    if app.profilePaused {
-                        Label("Paused", image: "pause")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(DS.Palette.night)
-                            .padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(.white, in: .capsule)
-                            .transition(.scale.combined(with: .opacity))
-                    }
                 }
                 Spacer(minLength: 0)
             }
@@ -276,7 +279,6 @@ struct MeView: View {
         }
         .padding(DS.Space.xl)
         .nightBlock()
-        .animation(Motion.snappy, value: app.profilePaused)
     }
 
     private var plusCard: some View {
@@ -393,8 +395,9 @@ struct MeView: View {
         .accessibilityElement(children: .combine)
     }
 
-    private func toggleRow(_ title: String, icon name: String, detail: String? = nil, isOn: Binding<Bool>) -> some View {
-        Toggle(isOn: isOn.animation(Motion.snappy)) {
+    private func toggleRow(_ title: String, icon name: String, detail: String? = nil,
+                           tint: Color = DS.Palette.lime, isOn: Binding<Bool>) -> some View {
+        Toggle(isOn: isOn) {
             HStack(spacing: DS.Space.md) {
                 icon(name)
                 VStack(alignment: .leading, spacing: 1) {
@@ -402,13 +405,41 @@ struct MeView: View {
                     if let detail {
                         Text(detail).font(.footnote).foregroundStyle(DS.Palette.body)
                             .fixedSize(horizontal: false, vertical: true)
-                            .contentTransition(.opacity)
                     }
                 }
             }
         }
-        .tint(DS.Palette.lime)
+        .tint(tint)
         .padding(.vertical, DS.Space.md)
         .onChange(of: isOn.wrappedValue) { Haptics.select() }
+    }
+}
+
+/// While the profile is paused, the strip under the You card: the same colour as the switch that
+/// paused it, and what it means in one line. The switch in Discovery is the way back.
+private struct PausedStrip: View {
+    var body: some View {
+        // On the title's baseline: the icon stays by the title when a translation wraps.
+        HStack(alignment: .firstTextBaseline, spacing: DS.Space.sm) {
+            Image("pause")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(DS.Palette.onPaused)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Profile paused")
+                    .font(.subheadline.weight(.bold))
+                Text("No one sees you in Discover.")
+                    .font(.footnote)
+            }
+            .foregroundStyle(DS.Palette.onPaused)
+            .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, DS.Space.xl)
+        .padding(.top, DS.Radius.xl + DS.Space.md)
+        .padding(.bottom, DS.Space.md)
+        // Square at the top: it continues the card rather than sitting behind it.
+        .background(DS.Palette.paused, in: .rect(bottomLeadingRadius: DS.Radius.xl, bottomTrailingRadius: DS.Radius.xl))
+        .accessibilityElement(children: .combine)
     }
 }

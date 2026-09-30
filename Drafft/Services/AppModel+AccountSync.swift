@@ -20,6 +20,7 @@ extension AppModel {
         if let running = accountRefresh { return await running.value }
         if !force, let last = lastAccountRead, last.at.timeIntervalSinceNow > -Self.freshFor { return last.account }
         let session = sessionID
+        let pauseEdits = pauseEdits
         let task = Task { [self] () -> ProfileSync.Account? in
             do {
                 guard let (account, data) = try await ProfileSync.loadAccount() else { throw Backend.BackendError.signedOut }
@@ -27,7 +28,7 @@ extension AppModel {
                 guard session == sessionID else { return nil }
                 openLocalCache()?.save(data, as: .profile)
                 lastAccountRead = (.now, account)
-                apply(account)
+                apply(account, pauseReadAt: pauseEdits)
                 applyConsent(fromServer: account.consent)
                 return account
             } catch {
@@ -82,12 +83,12 @@ extension AppModel {
         }
     }
 
-    private func apply(_ account: ProfileSync.Account) {
+    private func apply(_ account: ProfileSync.Account, pauseReadAt: Int? = nil) {
         // Before the profile: a refused or pending photo must never show as the profile, not even for a frame.
         PhotoModeration.shared.track(account.photos)
         me = account.profile
         profileLoad = .loaded
-        applyServerPause(account.paused)
+        applyServerPause(account.paused, readAt: pauseReadAt)
         AccountModeration.shared.apply(account.hold)
         if let settings = account.notifications { NotificationService.shared.applyServer(settings) }
     }
