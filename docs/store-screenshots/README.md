@@ -69,7 +69,7 @@ netteté. Dix versions sont prêtes, chacune dans les 7 langues, avec un slogan 
 
 | Version | Idée | Slogan |
 |---|---|---|
-| `01-deck` | Slogan à gauche, vraies cartes Découvrir et like à droite | Rendez-vous au départ. |
+| **`01-deck` (retenue)** | Logo sans sillage et slogan à gauche, vraies cartes Découvrir et like à droite | Rencontre des célibataires qui s'entraînent. |
 | `02-creneaux` | Trois cartes de créneaux sur graphite | Des rencontres avec une heure de départ. |
 | `03-photo` | Coureur au coucher du soleil en plein cadre, texte blanc sur voile | Rendez-vous au départ. |
 | `04-logo` | Le logo en très grand avec son sillage | Rendez-vous au départ. |
@@ -86,7 +86,13 @@ Règles de Google Play, vérifiées à chaque rendu :
 - aucun élément de l'app n'est coupé par un bord ;
 - texte court, sans prix, classement ni « nouveau ».
 
-Une fois la version choisie, l'écrire dans `CHOSEN` (`feature.py`) : `run.sh feature` ne produit plus qu'elle.
+La version retenue est dans `CHOSEN` (`feature.py`) : `run.sh feature` ne produit qu'elle, sous le nom
+`feature-graphic.png`. Pour revoir les dix : `python3 feature.py WORK OUT 01-deck 02-creneaux …`.
+
+Son slogan est écrit pour la bannière : « Rendez-vous au départ » sonnait étrange et ne disait pas qu'il s'agit de
+rencontres sportives. Formulation neutre dans les langues qui marquent le genre (« gente soltera »,
+« pessoas solteiras »). Écartés : « le premier rendez-vous est une séance » (territoire de bpm), « et plus si
+affinités » (double sens), « tout commence par… » (Tinder), « célibataire et sportif » (masculin par défaut).
 
 Source : [Google Play, Add preview assets](https://support.google.com/googleplay/android-developer/answer/9866151).
 
@@ -182,7 +188,6 @@ Chaque règle ci-dessous corrige quelque chose qui a été montré et refusé.
 - Vérifier les droits des photos plein cadre `hero_1` (tennis) et `hero_2` (Hyrox) de l'app.
 - Les dates (sam. 3 oct.) sont calculées au moment de la capture : lancer `run.sh` juste avant la sortie.
 - Tester la 1ʳᵉ capture avec Product Page Optimization.
-- Choisir la version de l'image de présentation Google Play et l'écrire dans `CHOSEN` (`feature.py`).
 
 ## Historique
 

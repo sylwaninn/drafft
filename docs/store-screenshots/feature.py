@@ -31,6 +31,10 @@ T2 = {"en": "Turn your matches into sessions.", "fr": "Transforme tes matchs en 
 T4 = {"en": "Dating, with a start time.", "fr": "Des rencontres avec une heure de départ.", "es": "Citas con hora de salida.",
       "de": "Dating mit Startzeit.", "it": "Appuntamenti con un orario di partenza.", "pt": "Encontros com hora de partida.",
       "nl": "Daten met een starttijd."}
+# The banner's own line (validated 2026-09-30): says "dating" and "sport" at a glance, neutral wording.
+T0 = {"en": "Meet singles who train.", "fr": "Rencontre des célibataires qui s'entraînent.", "es": "Conoce a gente soltera que entrena.",
+      "de": "Triff Singles, die trainieren.", "it": "Incontra single che si allenano.", "pt": "Conhece pessoas solteiras que treinam.",
+      "nl": "Ontmoet singles die trainen."}
 DAY = {"en": "Saturday", "fr": "Samedi", "es": "Sábado", "de": "Samstag", "it": "Sabato", "pt": "Sábado", "nl": "Zaterdag"}
 
 PAGE, NIGHT, WHITE, GRAPHITE = C.PAGE, C.NIGHT, C.WHITE, C.GRAPHITE
@@ -49,8 +53,9 @@ def raw(html, z=1):
     return dict(k="raw", html=html, z=z)
 
 
-def wm(x, y, size, color=INK):
-    return raw(f'<div class="wm" data-safe="wordmark" style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px;color:{color};z-index:6"><span>drafft</span></div>', 6)
+def wm(x, y, size, color=INK, trail=True):
+    # trail=False: the word alone, without its two drafting copies.
+    return raw(f'<div class="wm{"" if trail else " plain"}" data-safe="wordmark" style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px;color:{color};z-index:6"><span>drafft</span></div>', 6)
 
 
 def photo(name, x, y, w, h, extra=""):
@@ -71,7 +76,7 @@ def burst(cx, cy, k=1.0):
 
 
 # The variant picked for the store (its name, e.g. "07-ticket"). None: render all ten to choose.
-CHOSEN = None
+CHOSEN = "01-deck"
 
 TR = (60, -28)
 LIT = dict(tc="brightness(0) invert(1)", tk=.5)
@@ -79,11 +84,11 @@ LIT = dict(tc="brightness(0) invert(1)", tk=.5)
 
 def variants(lang):
     fr = lang == "fr"
-    t1, t2, t4, day, hour = T1[lang], T2[lang], T4[lang], DAY[lang], C.HOUR[lang]
+    t0, t1, t2, t4, day, hour = T0[lang], T1[lang], T2[lang], T4[lang], DAY[lang], C.HOUR[lang]
     icon = (C.ASSETS / "AppIcon.appiconset/icon.png").as_uri()
     return {
         # 1. The deck: the line on the left, the real Discover cards and the like on the right.
-        "01-deck": (PAGE, [wm(150, 250, 110), tx(t1, 140, 420, 900, 132, mx=3),
+        "01-deck": (PAGE, [wm(150, 250, 110, trail=False), tx(t0, 140, 420, 900, 132, mx=3),
                            el("card_thomas", 1330, 520, .36, -10, 2), el("card_maya", 1510, 480, .38, -2, 3),
                            el("card_lea", 1680, 520, .41, 7, 4), el("like", 1850, 780, 1.1, 0, 6)]),
         # 2. The times: three cards tumbling on graphite, the precise promise in white.
@@ -147,7 +152,7 @@ def page(lang, bg, items):
         else:
             body += it["html"]
     return (f'<!doctype html><html lang="{lang}"><head><meta charset="utf-8"><style>{C.CSS}'
-            f'body{{width:{FW}px;height:{FH}px;background:{bg}}} .strip{{position:relative;width:{FW}px;height:{FH}px;overflow:hidden}} #chk{{display:none}}</style></head>'
+            f'.wm.plain::before,.wm.plain::after{{display:none}} body{{width:{FW}px;height:{FH}px;background:{bg}}} .strip{{position:relative;width:{FW}px;height:{FH}px;overflow:hidden}} #chk{{display:none}}</style></head>'
             f'<body><div class="strip">{body}</div>{CHECK}</body></html>')
 
 
@@ -163,7 +168,8 @@ def build(work, out, name, lang):
     C.chrome([f"--window-size={FW},{FH}", "--force-device-scale-factor=1", f"--screenshot={png}", html.as_uri()])
     dst = out / "google-play/feature-graphic" / C.LOCALE[lang]
     dst.mkdir(parents=True, exist_ok=True)
-    Image.open(png).convert("RGB").resize((1024, 500), Image.LANCZOS).save(dst / f"{name}.png", optimize=True)
+    # The chosen one is the store file; the others keep their names, to compare.
+    Image.open(png).convert("RGB").resize((1024, 500), Image.LANCZOS).save(dst / ("feature-graphic.png" if name == CHOSEN else f"{name}.png"), optimize=True)
     return bad
 
 
