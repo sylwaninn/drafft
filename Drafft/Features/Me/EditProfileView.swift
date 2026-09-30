@@ -127,15 +127,7 @@ struct EditProfileView: View {
     }
 
     private var lifestyleSummary: String {
-        let drinks = switch vitals.drinks {
-        case "": ""
-        case "Never": L("No alcohol")
-        case "Rarely": L("Drinks rarely")
-        case "Socially": L("Drinks socially")
-        case "Post-race only": L("Drinks post-race only")
-        default: vitals.drinks
-        }
-        let parts = [Vitals.label(for: vitals.chronotype), Vitals.label(for: vitals.diet), drinks].filter { !$0.isEmpty }
+        let parts = [Vitals.label(for: vitals.chronotype), Vitals.label(for: vitals.diet), vitals.drinksSummary].filter { !$0.isEmpty }
         return parts.isEmpty ? L("Not filled in") : parts.joined(separator: ", ")
     }
 

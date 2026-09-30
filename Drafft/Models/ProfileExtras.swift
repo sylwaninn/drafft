@@ -21,23 +21,29 @@ struct Vitals: Hashable {
 
     /// Lifestyle answers are saved as their English option ("Early bird", "Never"…), which stays
     /// their identity; this is the text to show. Anything else (free text) is shown as is.
-    static func label(for value: String) -> String {
-        switch value {
-        case "Very early bird": L("Very early bird")
-        case "Early bird": L("Early bird")
-        case "Night owl": L("Night owl")
-        case "Omnivore": L("Omnivore")
-        case "Flexitarian": L("Flexitarian")
-        case "Vegetarian": L("Vegetarian")
-        case "Vegan": L("Vegan")
-        case "Pescatarian": L("Pescatarian")
-        case "Never": L("Never")
-        case "Rarely": L("Rarely")
-        case "Socially": L("Socially")
-        case "Post-race only": L("Post-race only")
-        case "Sometimes": L("Sometimes")
-        case "Yes": L("Yes")
-        default: value
+    static func label(for value: String) -> String { labels[value] ?? value }
+
+    private static var labels: [String: String] {
+        [
+            "Very early bird": L("Very early bird"), "Early bird": L("Early bird"), "Night owl": L("Night owl"),
+            "Omnivore": L("Omnivore"), "Flexitarian": L("Flexitarian"), "Vegetarian": L("Vegetarian"),
+            "Vegan": L("Vegan"), "Pescatarian": L("Pescatarian"),
+            "Never": L("Never"), "Rarely": L("Rarely"), "Socially": L("Socially"),
+            "Post-race only": L("Post-race only"), "Apéro is sacred": L("Apéro is sacred"),
+            "Sometimes": L("Sometimes"), "Yes": L("Yes")
+        ]
+    }
+
+    /// The drinking answer as a short phrase for summaries ("Drinks socially"); empty if unanswered.
+    var drinksSummary: String {
+        switch drinks {
+        case "": ""
+        case "Never": L("No alcohol")
+        case "Rarely": L("Drinks rarely")
+        case "Socially": L("Drinks socially")
+        case "Post-race only": L("Drinks post-race only")
+        case "Apéro is sacred": L("Drinks: apéro is sacred")
+        default: drinks
         }
     }
 }
