@@ -217,7 +217,23 @@ struct MainTabs: View {
 
     /// Line icon when the tab is idle, its Solar bold twin ("<name>-bold") when it's the current one.
     private func tabLabel(_ title: String, _ symbol: String, _ tab: AppModel.Tab) -> some View {
-        Label(title, image: app.tab == tab ? "\(symbol)-bold" : symbol)
+        Label {
+            Text(title)
+        } icon: {
+            Image(uiImage: Self.tabIcon(app.tab == tab ? "\(symbol)-bold" : symbol))
+        }
+    }
+
+    /// The system tab bar ignores `frame`, so the icon is resized itself (template, tinted by the bar).
+    private static let tabIconSize: CGFloat = 27
+    private static func tabIcon(_ name: String) -> UIImage {
+        guard let src = UIImage(named: name) else { return UIImage() }
+        let box = CGSize(width: tabIconSize, height: tabIconSize)
+        let k = min(box.width / src.size.width, box.height / src.size.height)
+        let fit = CGSize(width: src.size.width * k, height: src.size.height * k)
+        return UIGraphicsImageRenderer(size: box).image { _ in
+            src.draw(in: CGRect(x: (box.width - fit.width) / 2, y: (box.height - fit.height) / 2, width: fit.width, height: fit.height))
+        }.withRenderingMode(.alwaysTemplate)
     }
 
     /// Opens each tab once while nobody sees it (under the splash on a signed-in launch, under the
