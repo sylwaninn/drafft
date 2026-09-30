@@ -363,16 +363,15 @@ struct OnboardingView: View {
             defer { recordingConsent = false }
             do {
                 try await TermsConsent.accept()
+                recordedTerms = TermsConsent.version
+                advance()
             } catch {
                 Haptics.warning()
                 switch TermsConsent.failure(for: error) {
                 case .signOut: await app.endSession()
                 case .message(let text): consentError = text
                 }
-                return
             }
-            recordedTerms = TermsConsent.version
-            advance()
         }
     }
 
