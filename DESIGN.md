@@ -761,7 +761,7 @@ One job per colour, everywhere:
 - No location pin icon next to the neighborhood on the deck card or the profile detail; the place name stands on its own.
 - Sport names are never truncated with an ellipsis. Show as many as fit, then "+X" (`SportsLine`, `SportChipsPreview`).
 - Interface copy is never cut with "…" in any of the 7 languages. In order: wrap (buttons take up to 2 centred lines), reflow (`AdaptiveRow`: a trailing value moves under its label; `ViewThatFits`: a pill switches to its short wording or its icon, a link row stacks), then scale (never below 0.9). Only excerpts of people's content (message previews, bios, pitches) end with "…".
-- On your profile card (You tab), sports show as a stack of overlapping round badges (`SportBadgeStack`: sport symbol on a solid disc, ringed in the card colour, "+X" as the last disc beyond four).
+- On your profile card (You tab), your name and age read as on your profile page (`NameAgeLine`: display name, the age apart without a comma, lighter), and your sports show as named chips under them on **one line, never two** (`SportChipsLine`): as many as fit, then "+X"; when not even one chip and its "+X" fit, the shortest sport leads and only its name is cut short. Never icon-only discs.
 - No training days or moments of the day on profiles. A profile shows sports and how often ("3× a week"); a session invite carries an exact date and time ("Tue 30 Sep, 18:30").
 
 ### The drafting motif
