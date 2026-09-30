@@ -104,11 +104,15 @@ struct OneTimeCodeEntry<Accessory: View>: View {
             accessory
 
             Button(action: onResend) {
+                // The seconds change in place, nothing rolls or fades each tick; only the switch to
+                // "Resend code" cross-fades.
                 Text(resendIn > 0 ? "Resend code in 0:\(String(format: "%02d", resendIn))" : "Resend code")
                     .font(.subheadline.weight(.semibold))
                     .monospacedDigit()
                     .foregroundStyle(resendIn > 0 ? DS.Palette.body : DS.Palette.accentInk)
-                    .rollingDigits(wording: resendIn > 0, countsDown: true)
+                    .contentTransition(.identity)
+                    .id(resendIn > 0)
+                    .transition(.opacity)
                     .frame(minHeight: 44)
                     .contentShape(.rect)
             }
