@@ -26552,6 +26552,46 @@
         }
       }
     },
+    "No one sees you in Discover while you're paused. Your chats and sessions carry on." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solange du pausierst, sieht dich niemand in Entdecken. Deine Chats und Sessions laufen weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nadie te ve en Descubrir mientras estés en pausa. Tus chats y sesiones siguen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personne ne te voit dans Découvrir tant que tu es en pause. Tes discussions et tes séances continuent."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuno ti vede in Scopri finché sei in pausa. Le tue chat e sessioni continuano."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zolang je gepauzeerd bent, ziet niemand je in Ontdekken. Je chats en sessies gaan door."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguém te vê em Descobrir enquanto estiveres em pausa. As tuas conversas e sessões continuam."
+          }
+        }
+      }
+    },
     "No pitch yet" : {
       "localizations" : {
         "de" : {
@@ -29928,46 +29968,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pausar mensagem de voz"
-          }
-        }
-      }
-    },
-    "Paused" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pausiert"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En pausa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En pause"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In pausa"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gepauzeerd"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Em pausa"
           }
         }
       }

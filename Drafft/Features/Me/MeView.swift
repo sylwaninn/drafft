@@ -6,6 +6,7 @@ struct MeView: View {
     @State private var sheet: MeSheet?
     @State private var confirmLogout = false
     @State private var scrollOffset: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     enum MeSheet: String, Identifiable {
         case edit, preview, filters, email, phone, password, export, delete, paywall, notifications, language
@@ -18,6 +19,12 @@ struct MeView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DS.Space.md) {
+                    if app.profilePaused {
+                        PausedBanner()
+                            .transition(reduceMotion
+                                ? .opacity
+                                : .scale(scale: 0.96, anchor: .top).combined(with: .opacity))
+                    }
                     profileCard
                     if !app.isPremium { plusCard }
                     group(L("Discovery")) {
@@ -94,6 +101,9 @@ struct MeView: View {
                 }
                 .padding(.horizontal, DS.Space.lg)
                 .padding(.bottom, DS.Space.xxl)
+                // The banner comes and goes with the pause (this switch, its Resume button, the
+                // server): the blocks under it slide along instead of jumping.
+                .animation(reduceMotion ? .easeInOut(duration: 0.2) : Motion.bouncy, value: app.profilePaused)
             }
             .contentMargins(.top, DS.Space.xs, for: .scrollContent)
             .trackingScrollOffset($scrollOffset)
@@ -219,14 +229,6 @@ struct MeView: View {
                     // White discs, ink glyphs: a grey disc disappeared into the night card.
                     SportBadgeStack(sports: app.me.sports.map(\.sport), fill: .white, glyph: DS.Palette.night)
                         .padding(.top, 2)
-                    if app.profilePaused {
-                        Label("Paused", systemImage: "pause.fill")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(DS.Palette.night)
-                            .padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(.white, in: .capsule)
-                            .transition(.scale.combined(with: .opacity))
-                    }
                 }
                 Spacer(minLength: 0)
             }
@@ -275,7 +277,6 @@ struct MeView: View {
         }
         .padding(DS.Space.xl)
         .nightBlock()
-        .animation(Motion.snappy, value: app.profilePaused)
     }
 
     private var plusCard: some View {
@@ -409,5 +410,48 @@ struct MeView: View {
         .tint(DS.Palette.lime)
         .padding(.vertical, DS.Space.md)
         .onChange(of: isOn.wrappedValue) { Haptics.select() }
+    }
+}
+
+/// While the profile is paused, the first block of You says so, what it means, and resumes in one
+/// tap. The switch in Discovery stays the way to pause.
+private struct PausedBanner: View {
+    @Environment(AppModel.self) private var app
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DS.Space.lg) {
+            HStack(alignment: .top, spacing: DS.Space.md) {
+                Image(systemName: "pause.fill")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(DS.Palette.ink)
+                    .frame(width: 44, height: 44)
+                    .background(DS.Palette.canvasSoft, in: .circle)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Your profile is paused")
+                        .font(.display(20, relativeTo: .title3))
+                        .foregroundStyle(DS.Palette.ink)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("No one sees you in Discover while you're paused. Your chats and sessions carry on.")
+                        .font(.subheadline)
+                        .foregroundStyle(DS.Palette.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, 2)
+                Spacer(minLength: 0)
+            }
+            // Read as one statement: the title and what it means.
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
+            Button {
+                Haptics.success()
+                app.profilePaused = false
+            } label: {
+                Text("Resume my profile")
+            }
+            .buttonStyle(.drafftPrimary)
+        }
+        .padding(DS.Space.xl)
+        .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
     }
 }
