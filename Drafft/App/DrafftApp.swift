@@ -124,6 +124,8 @@ struct RootView: View {
                 guard app.phase != .welcome else { return }
                 // The account row (hold, pause, settings, language, card), changed while away.
                 Task { await moderation.load() }
+                // Photo verdicts given while away (a missed live event): read again, never assumed.
+                PhotoModeration.shared.recheck()
                 Task { await AppOpens.report() }
                 // Credited while away (a purchase on another device, the weekly boost).
                 Task { await app.loadWallet() }

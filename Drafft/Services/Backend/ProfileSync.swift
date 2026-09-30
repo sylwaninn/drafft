@@ -13,11 +13,14 @@ enum ProfileSync {
         case refused(String)
         /// The profile on the server wasn't read in this session: saving could overwrite it.
         case notLoaded
+        /// A photo of the draft is no longer on the server (removed from another screen or device).
+        case photoGone
 
         var errorDescription: String? {
             switch self {
             case .photoUpload: L("A photo couldn't be sent. Tap it to see why, then try again.")
             case .notLoaded: L("Your profile hasn't loaded, so nothing was saved. Close and try again.")
+            case .photoGone: L("A photo is no longer there, so nothing was saved. Close and try again.")
             case .refused(let code): Self.message(for: code)
             }
         }
@@ -70,7 +73,7 @@ enum ProfileSync {
         async let profile: Void = updateProfile(fields)
         async let sports: Void = setSports(s.sports)
         async let prompts: Void = setPrompts(s.prompts)
-        async let photos: Void = syncPhotos(s.photos)
+        async let photos: Void = syncPhotos(s.photos, previous: [])
         async let area: Void = setLocation(location)
         _ = try await (profile, sports, prompts, photos, area)
         do { _ = try await Backend.shared.rpc("complete_onboarding", [:]) } catch { throw refused(error) }
@@ -98,7 +101,7 @@ enum ProfileSync {
         async let profile: Void = updateProfile(fields)
         async let sports: Void = sportsChanged ? setSports(p.sports) : ()
         async let prompts: Void = promptsChanged ? setPrompts(p.prompts) : ()
-        async let photos: Void = photosChanged ? syncPhotos(p.allPhotos, loadedFirst: true) : ()
+        async let photos: Void = photosChanged ? syncPhotos(p.allPhotos, previous: previous.allPhotos, loadedFirst: true) : ()
         _ = try await (profile, sports, prompts, photos)
     }
 
@@ -120,6 +123,8 @@ enum ProfileSync {
         let link: String
         let id: String
         let status: String
+        /// The server found no face on it (the portrait needs one). False when it did, or never checked.
+        var faceless = false
     }
 
     struct Account: Sendable {
@@ -178,7 +183,12 @@ enum ProfileSync {
             enum CodingKeys: String, CodingKey { case sportID = "sport_id", perWeek = "per_week" }
         }
         struct PromptRow: Decodable { let question: String; let answer: String }
-        struct MediaRow: Decodable { let id: String; let key: String; let kind: String; let status: String; let thumbhash: String? }
+        struct MediaRow: Decodable {
+            let id: String; let key: String; let kind: String; let status: String; let thumbhash: String?
+            // Three states in the column: a face, none, never checked (null).
+            // swiftlint:disable:next discouraged_optional_boolean
+            let face: Bool?
+        }
     }
 
     /// Filled by `accept_terms` (read by `TermsConsent.Columns`); drafft-backend #48 adds them.
@@ -189,7 +199,7 @@ enum ProfileSync {
             "name", "birthdate", "pronouns", "gender", "neighborhood", "bio", "goal", "favorite_spot",
             "drinks", "smokes", "diet", "chronotype", "icebreaker", "voice_intro_key", "voice_duration",
             "paused", "moderation", "onboarded_at", NotificationSettings.columns,
-            "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status,thumbhash)"
+            "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status,thumbhash,face)"
         ] + (withConsent ? consentColumns : [])).joined(separator: ",")
     }
 
@@ -202,7 +212,9 @@ enum ProfileSync {
         func read(withConsent: Bool) async throws -> Data {
             try await Backend.shared.select(
                 "profiles?id=eq.\(id)&select=\(accountColumns(withConsent: withConsent))"
-                    + "&profile_sports.order=position&profile_prompts.order=position&profile_media.order=position")
+                    + "&profile_sports.order=position&profile_prompts.order=position&profile_media.order=position"
+                    // Drafts (picked, never saved) are never the profile, even the person's own.
+                    + "&profile_media.published_at=not.is.null")
         }
         let data: Data
         do {
@@ -238,7 +250,7 @@ enum ProfileSync {
         // Each photo's blurred preview, shown while it loads.
         for m in row.media ?? [] { MediaPreviews.register(m.thumbhash, key: m.key) }
         let own = (row.media ?? []).filter { $0.kind == "photo" }.compactMap { m in
-            link(m.key).map { OwnPhoto(link: $0, id: m.id, status: m.status) }
+            link(m.key).map { OwnPhoto(link: $0, id: m.id, status: m.status, faceless: m.face == false) }
         }
         let photos = own.map(\.link)
         let age = row.birthdate.flatMap(Self.day.date(from:)).map {
@@ -299,37 +311,57 @@ enum ProfileSync {
         do { _ = try await Backend.shared.rpc("set_prompts", ["p_prompts": Array(list)]) } catch { throw refused(error) }
     }
 
-    /// Waits for the picked photos to reach the server, drops the ones taken off the profile, and
-    /// puts the rest in the profile's order. Photos already on the server (URLs) keep their id.
-    /// From Edit profile (`loadedFirst`), only once the server's profile was read in this session:
-    /// otherwise the list could be another profile's, and every photo missing from it would go.
-    private static func syncPhotos(_ photos: [String], loadedFirst: Bool = false) async throws {
+    /// Waits for the picked photos to reach the server, then saves the profile's photos in one go
+    /// (`save_profile_media`): the list is published in its order, the photos of `previous` no longer in it
+    /// are deleted. Picked photos stay drafts, off the profile, until this runs. Photos already on the
+    /// server (links) keep their id. From Edit profile (`loadedFirst`), only once the server's profile was
+    /// read in this session: otherwise `previous` could be another profile's.
+    private static func syncPhotos(_ photos: [String], previous: [String], loadedFirst: Bool = false) async throws {
         if loadedFirst { try await requireLoaded() }
+        let photos = try await uploaded(photos)
+        guard let me = await Backend.shared.userID else { throw Backend.BackendError.signedOut }
+        let ids = try await mediaIDs(of: me)
+        var order: [String] = []
+        for path in photos {
+            // Gone meanwhile: nothing is saved rather than a profile without it.
+            guard let id = await ids(path) else { throw SyncError.photoGone }
+            order.append(id)
+        }
+        var removed: [String] = []
+        for path in previous where !path.isEmpty && !photos.contains(path) {
+            if let id = await ids(path), !order.contains(id) { removed.append(id) }
+        }
+        do {
+            _ = try await Backend.shared.rpc("save_profile_media", ["p_ids": order, "p_removed": removed])
+        } catch {
+            if ServerMessage.code(of: error) == "not_found" { throw SyncError.photoGone }
+            throw refused(error)
+        }
+    }
+
+    /// The photos once every picked one is on the server (registered, moderation may still run).
+    private static func uploaded(_ photos: [String]) async throws -> [String] {
         // Only picked files and server URLs: anything else isn't a photo of this account.
-        guard photos.allSatisfy({ $0.isEmpty || $0.hasPrefix("/") || $0.hasPrefix("http") }) else { throw SyncError.notLoaded }
+        let photos = photos.filter { !$0.isEmpty }
+        guard photos.allSatisfy({ $0.hasPrefix("/") || $0.hasPrefix("http") }) else { throw SyncError.notLoaded }
         for path in photos where path.hasPrefix("/") {
             guard await PhotoModeration.shared.waitForID(path) != nil else { throw SyncError.photoUpload }
         }
-        guard let me = await Backend.shared.userID else { return }
+        return photos
+    }
+
+    /// How to find a photo's server id: a link loaded from the server (signed: the key is its path) by
+    /// its key, a picked file by what its upload registered.
+    private static func mediaIDs(of me: UUID) async throws -> @Sendable (String) async -> String? {
         struct Media: Decodable { let id: String; let key: String }
         let onServer = try JSONDecoder().decode([Media].self, from: await Backend.shared.select(
             "profile_media?user_id=eq.\(me)&select=id,key&order=position"))
-        // Photos loaded from the server are URLs (signed: the key is their path): matched by their key.
-        let order = await photos.asyncCompactMap { path -> String? in
+        return { path in
             if path.hasPrefix("http") {
                 let key = URL(string: path).flatMap(MediaURL.key(of:))
                 return onServer.first { $0.key == key }?.id
             }
             return await PhotoModeration.shared.id(for: path)
-        }
-        // Photos taken off the profile: removed together rather than one after the other.
-        await withTaskGroup(of: Void.self) { group in
-            for m in onServer where !order.contains(m.id) {
-                group.addTask { _ = try? await Backend.shared.rpc("delete_media", ["p_id": m.id]) }
-            }
-        }
-        if order.count > 1 {
-            do { _ = try await Backend.shared.rpc("reorder_media", ["p_ids": order]) } catch { throw refused(error) }
         }
     }
 
