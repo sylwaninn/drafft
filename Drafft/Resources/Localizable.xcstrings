@@ -56525,98 +56525,6 @@
         }
       }
     },
-    "I agree that drafft uses my %@: my gender, the genders I want to see and my lifestyle, if I fill it in." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I agree that drafft uses my %@: my gender, the genders I want to see and my lifestyle, if I fill it in."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "J'accepte que drafft utilise mes %@ : mon genre, les genres que je veux voir et mon mode de vie, si je le renseigne."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acepto que drafft use mis %@: mi género, los géneros que quiero ver y mi estilo de vida, si lo indico."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ich bin einverstanden, dass drafft meine %@ nutzt: mein Geschlecht, die Geschlechter, die ich sehen möchte, und meinen Lebensstil, falls ich ihn angebe."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accetto che drafft usi i miei %@: il mio genere, i generi che voglio vedere e il mio stile di vita, se lo indico."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aceito que o drafft use os meus %@: o meu género, os géneros que quero ver e o meu estilo de vida, se o indicar."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ik ga ermee akkoord dat drafft mijn %@ gebruikt: mijn gender, de genders die ik wil zien en mijn levensstijl, als ik die invul."
-          }
-        }
-      }
-    },
-    "sensitive data" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sensitive data"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "données sensibles"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "datos sensibles"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "sensiblen Daten"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dati sensibili"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dados sensíveis"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "gevoelige gegevens"
-          }
-        }
-      }
-    },
     "Sensitive data consent" : {
       "localizations" : {
         "en" : {
@@ -56755,52 +56663,6 @@
         }
       }
     },
-    "This can reveal your sexual orientation, health or beliefs, so drafft asks first." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This can reveal your sexual orientation, health or beliefs, so drafft asks first."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ces informations peuvent révéler ton orientation sexuelle, ta santé ou tes convictions, alors drafft te demande d'abord ton accord."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pueden revelar tu orientación sexual, tu salud o tus convicciones, por eso drafft te lo pregunta antes."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sie können deine sexuelle Orientierung, deine Gesundheit oder deine Überzeugungen offenlegen, deshalb fragt drafft vorher."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Possono rivelare il tuo orientamento sessuale, la tua salute o le tue convinzioni, per questo drafft te lo chiede prima."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podem revelar a tua orientação sexual, a tua saúde ou as tuas convicções, por isso o drafft pergunta-te primeiro."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ze kunnen je seksuele oriëntatie, je gezondheid of je overtuigingen onthullen, daarom vraagt drafft het eerst."
-          }
-        }
-      }
-    },
     "drafft has newer terms. Update the app to continue." : {
       "localizations" : {
         "en" : {
@@ -56843,6 +56705,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "drafft heeft nieuwe gebruiksvoorwaarden. Werk de app bij om verder te gaan."
+          }
+        }
+      }
+    },
+    "I agree that drafft uses %@, the genders I want to see and my lifestyle for my suggestions." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I agree that drafft uses %@, the genders I want to see and my lifestyle for my suggestions."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J'accepte que drafft utilise %@, les genres que je veux voir et mon mode de vie pour mes suggestions."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acepto que drafft use %@, los géneros que quiero ver y mi estilo de vida para mis sugerencias."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich bin einverstanden, dass drafft %@, die Geschlechter, die ich sehen möchte, und meinen Lebensstil für meine Vorschläge nutzt."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accetto che drafft usi %@, i generi che voglio vedere e il mio stile di vita per i miei suggerimenti."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceito que o drafft use %@, os géneros que quero ver e o meu estilo de vida para as minhas sugestões."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ik ga ermee akkoord dat drafft %@, de genders die ik wil zien en mijn levensstijl gebruikt voor mijn suggesties."
+          }
+        }
+      }
+    },
+    "my gender" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "my gender"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mon genre"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mi género"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mein Geschlecht"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "il mio genere"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "o meu género"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mijn gender"
           }
         }
       }
