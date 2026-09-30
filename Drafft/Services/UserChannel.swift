@@ -154,6 +154,8 @@ enum UserChannel {
     /// reconnecting) ends this one. False if it never joined.
     private static func stayJoined(_ channel: RealtimeChannelV2, client: SupabaseClient) async -> Bool {
         guard (try? await channel.subscribeWithError()) != nil else { return false }
+        // Joined (again): photo verdicts given while it was down are read, not waited for.
+        await PhotoModeration.shared.recheck()
         var downSince: ContinuousClock.Instant?
         while !Task.isCancelled {
             try? await Task.sleep(for: .seconds(5))

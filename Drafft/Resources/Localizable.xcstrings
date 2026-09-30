@@ -2295,6 +2295,46 @@
         }
       }
     },
+    "%lld refused" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld abgelehnt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld rechazadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld refusées"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld rifiutate"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld afgewezen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld recusadas"
+          }
+        }
+      }
+    },
     "%lld selected" : {
       "localizations" : {
         "de" : {
@@ -2979,6 +3019,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 foto"
+          }
+        }
+      }
+    },
+    "1 refused" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 abgelehnt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 rechazada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 refusée"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 rifiutata"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 afgewezen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 recusada"
           }
         }
       }
@@ -3852,6 +3932,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A photo didn't send. Tap it to see why, then try again."
+          }
+        }
+      }
+    },
+    "A photo is no longer there, so nothing was saved. Close and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Foto ist nicht mehr da, deshalb wurde nichts gespeichert. Schließ es und versuch es noch mal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una foto ya no está, así que no se ha guardado nada. Cierra y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une photo n'existe plus, rien n'a donc été enregistré. Ferme et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una foto non c'è più, quindi non è stato salvato nulla. Chiudi e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een foto is er niet meer, dus er is niets opgeslagen. Sluit en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma foto já não existe, por isso nada foi guardado. Fecha e tenta de novo."
           }
         }
       }
@@ -8781,46 +8901,6 @@
         }
       }
     },
-    "Checking your photos…" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Fotos werden geprüft…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comprobando tus fotos…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérification de tes photos…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Controllo delle tue foto…"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je foto's worden gecontroleerd…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A verificar as tuas fotos…"
-          }
-        }
-      }
-    },
     "Choose a new password" : {
       "localizations" : {
         "fr" : {
@@ -11451,6 +11531,46 @@
         }
       }
     },
+    "Discard your photo changes?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderungen an den Fotos verwerfen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Descartar los cambios en las fotos?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler les modifications de tes photos ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scartare le modifiche alle foto?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wijzigingen aan je foto's weggooien?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descartar as alterações às fotos?"
+          }
+        }
+      }
+    },
     "Discover" : {
       "localizations" : {
         "de" : {
@@ -12511,6 +12631,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A nossa equipa está a verificar a tua primeira foto. Põe outra primeiro ou espera."
+          }
+        }
+      }
+    },
+    "Photos you added will be deleted, and the others go back as they were." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neu hinzugefügte Fotos werden gelöscht, die anderen bleiben, wie sie waren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se borrarán las fotos que has añadido y las demás volverán a estar como antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les photos ajoutées seront supprimées, les autres reviennent comme avant."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le foto aggiunte verranno eliminate, le altre torneranno com'erano."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toegevoegde foto's worden verwijderd, de andere blijven zoals ze waren."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As fotos que adicionaste serão apagadas e as outras voltam a ficar como estavam."
           }
         }
       }

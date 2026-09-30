@@ -129,6 +129,7 @@
 		B21DEAAA5406DF283D2B525F /* MessageFocus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9682A8E9B13A319B10CDCADB /* MessageFocus.swift */; };
 		B251E66921995B1CE29C7C53 /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D35255B81DD7E52CB124EF /* ImageStore.swift */; };
 		B26B61EF256F5CA97419108A /* SessionTimeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A8F866D02AAE8740CEFE48 /* SessionTimeSheet.swift */; };
+		B2709B111AC8C141A33CE4E4 /* PhotoSetCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F906299EA84B6144185C453 /* PhotoSetCheck.swift */; };
 		B40A55B2AFCD3CE5E8D965C4 /* ProfileCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A15292CC3CE557E9DC0DF04 /* ProfileCard.swift */; };
 		B52C8A9F07D65F9FB576AD3A /* IcebreakerEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14AA0694FAB995C135E6D8D5 /* IcebreakerEditor.swift */; };
 		B5CE10765D46A3DD981DE098 /* Waveform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B237AB9F45D61FBDAE676C92 /* Waveform.swift */; };
@@ -270,6 +271,7 @@
 		6B04556EED9E0F2FC80E0E44 /* ReorderablePhotoGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReorderablePhotoGrid.swift; sourceTree = "<group>"; };
 		6BF28E8A53A216214D1998B8 /* ProfileBlocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileBlocks.swift; sourceTree = "<group>"; };
 		6CEE371669C1D97F8612AE26 /* BoostChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoostChip.swift; sourceTree = "<group>"; };
+		6F906299EA84B6144185C453 /* PhotoSetCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSetCheck.swift; sourceTree = "<group>"; };
 		6FBBCC05A119ED5E476C1B58 /* Drafft.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Drafft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		703CA4C0C4072F8C5CEBF75D /* ConsentChecks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentChecks.swift; sourceTree = "<group>"; };
 		7186BB2F3676CD699A59C3F8 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
@@ -479,6 +481,7 @@
 				921C06C4EE632C3AC4E28583 /* NotificationsSettingsView.swift */,
 				8EACE86DA994D351B5917634 /* PaywallView.swift */,
 				2834BD053D417127E27144CC /* PhotoRefusal.swift */,
+				6F906299EA84B6144185C453 /* PhotoSetCheck.swift */,
 				214BEF0A582723680CE4ADD6 /* PromptPickerSheet.swift */,
 				3DB9384D6346E24AFACC38F3 /* PurchaseConfirmation.swift */,
 				7E2228E2F4C0DC86AC70681C /* PurchaseCreditBanner.swift */,
@@ -972,6 +975,7 @@
 				79DCA843E06D8835AD7B0734 /* PhotoCompressor.swift in Sources */,
 				7C84EDCEA76BE441AFD42E4C /* PhotoModeration.swift in Sources */,
 				BFDC5BD3E41A1197C4255063 /* PhotoRefusal.swift in Sources */,
+				B2709B111AC8C141A33CE4E4 /* PhotoSetCheck.swift in Sources */,
 				367F4FD5D2E6FECFB8DD7D2E /* ProfileBlocks.swift in Sources */,
 				B91FDE34DBD26B644E431B6E /* ProfileCard+App.swift in Sources */,
 				E71CCBD892E823BAF2858FB9 /* ProfileCard.swift in Sources */,

@@ -226,14 +226,7 @@ struct OnboardingView: View {
         case .sports: return sports.isEmpty ? (L("Pick at least one sport."), false) : nil
         case .rhythm: return nil
         case .photos:
-            switch photosCheck {
-            case .empty: return (L("Add at least one photo."), false)
-            case .checking: return (L("Checking your photos…"), false)
-            case .ready: return nil
-            case .firstInReview: return (L("Our team is checking your first photo. Put another one first, or wait."), false)
-            case .firstRefused, .noFace, .tooSmall: return (L("Put a clear photo of your face first."), true)
-            case .failed: return (L("A photo couldn't be sent. Tap it to see why, then try again."), true)
-            }
+            return photosCheck.reason.map { ($0, photosCheck.needsAction) }
         case .voice: return voice == nil ? (L("Record your intro, or skip it for now."), false) : nil
         case .prompts: return answeredPrompts.isEmpty ? (L("Answer a prompt, or skip it for now."), false) : nil
         case .icebreaker: return icebreaker.isComplete ? nil : (L("Finish your prompt, or skip it for now."), false)
@@ -812,10 +805,14 @@ struct OnboardingView: View {
                         }
                         .accessibilityLabel("Add photo")
                     },
-                    onRemove: { i in withAnimation(Motion.snappy) { _ = photos.remove(at: i) } },
+                    onRemove: { i in
+                        // A draft on the server until sign-up ends: taken off the grid, it goes.
+                        PhotoModeration.shared.discard([photos[i]])
+                        withAnimation(Motion.snappy) { _ = photos.remove(at: i) }
+                    },
                     canRemoveLast: true
                 )
-                mainFaceHint
+                PhotoSetHint(check: photosCheck)
             }
         }
         .task(id: photos.first ?? "") { await checkMainFace() }
@@ -823,56 +820,14 @@ struct OnboardingView: View {
         .task(id: photos) { photos.forEach(PhotoModeration.shared.ensureChecked) }
     }
 
-    /// Where the photos stand. The step goes on only once moderation has judged every photo and the
-    /// first one is approved with a face (checked here, then again on the server): a photo being checked,
-    /// refused or waiting for a person never opens a profile. Refused or waiting photos after the first
-    /// may stay (a second look can be asked from their tile): the server never shows them.
-    private enum PhotosCheck: Equatable { case empty, checking, ready, firstRefused, firstInReview, noFace, tooSmall, failed }
-
-    private var photosCheck: PhotosCheck {
-        guard let first = photos.first else { return .empty }
-        let moderation = PhotoModeration.shared
-        let states = photos.map { moderation.state(of: $0) }
-        if moderation.state(of: first) == .refused { return .firstRefused }
-        if mainFace == .noFace { return .noFace }
-        if mainFace == .tooSmall { return .tooSmall }
-        if states.contains(where: { if case .failed = $0 { true } else { false } }) { return .failed }
-        if mainFace == nil || states.contains(where: { $0?.isJudged != true }) { return .checking }
-        if moderation.state(of: first) == .inReview { return .firstInReview }
-        return .ready
-    }
-
-    /// The first photo must show a face and be approved: it's the one people see first.
-    @ViewBuilder
-    private var mainFaceHint: some View {
-        switch photosCheck {
-        case .empty:
-            hint(L("Your first photo needs to show your face clearly."))
-        case .checking:
-            HStack(spacing: DS.Space.xs) {
-                ProgressView().controlSize(.mini)
-                Text("Checking your photos…").font(.footnote).foregroundStyle(DS.Palette.body)
-            }
-        case .ready:
-            EmptyView() // all good: nothing to say
-        case .firstRefused:
-            hint(L("Your first photo wasn't approved. Put another one first."), error: true)
-        case .firstInReview:
-            hint(L("Our team is checking your first photo. Put another one first, or wait."))
-        case .noFace:
-            hint(L("We can't see a face on your first photo. Put a clear photo of you first."), error: true)
-        case .tooSmall:
-            hint(L("Your face is too small on your first photo. Use a closer one first."), error: true)
-        case .failed:
-            hint(L("A photo couldn't be sent. Tap it to see why, then try again."), error: true)
-        }
-    }
-
+    private var photosCheck: PhotoSetCheck { .of(photos, face: mainFace) }
 
     private func checkMainFace() async {
         mainFace = nil
-        guard let first = photos.first else { return }
-        mainFace = await FaceCheck.check(photo: first)
+        let face = await PhotoSetCheck.face(of: photos.first)
+        // The first photo changed meanwhile: its own check answers.
+        guard !Task.isCancelled else { return }
+        mainFace = face
     }
 
 
