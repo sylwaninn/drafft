@@ -488,11 +488,9 @@ struct DeleteAccountSheet: View {
                          font: .subheadline)
                         .foregroundStyle(DS.Palette.body)
                         .fixedSize(horizontal: false, vertical: true)
-                    Button {
+                    Button("Manage subscription") {
                         Haptics.tap()
                         managingSubscription = true
-                    } label: {
-                        Text("Manage subscription")
                     }
                     .buttonStyle(.drafftSecondary)
                 }
