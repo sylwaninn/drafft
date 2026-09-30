@@ -64,7 +64,7 @@ struct ConsentChecks: View {
         let terms = LegalDoc.terms.title, privacy = LegalDoc.privacy.title, community = LegalDoc.community.title
         var s = AttributedString(L("I'm 18 or older and I accept the \(terms), the \(privacy) and the \(community)."))
         for doc in LegalDoc.allCases {
-            link(doc.title, to: doc.url, in: &s)
+            link(doc.title, to: doc.url(), in: &s)
         }
         return s
     }
@@ -73,7 +73,7 @@ struct ConsentChecks: View {
         let name = L("sensitive data")
         let sentence = L("I agree that drafft uses my \(name): my gender, the genders I want to see and my lifestyle, if I fill it in.")
         var s = AttributedString(sentence)
-        link(name, to: LegalDoc.sensitiveData, in: &s)
+        link(name, to: LegalDoc.sensitiveData(), in: &s)
         // The brand, one weight up, as everywhere in running text.
         if let r = s.range(of: Brand.name) { s[r].font = .subheadline.weight(.semibold) }
         return s

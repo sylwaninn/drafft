@@ -297,11 +297,11 @@ struct PaywallView: View {
             }
             .disabled(restoring || purchasing || !store.isLinked)
             .accessibilityLabel(restoring ? "Restoring purchases" : "Restore purchases")
-            let termsLink = Button { openURL(LegalDoc.terms.url, prefersInApp: true) } label: {
+            let termsLink = Button { openURL(LegalDoc.terms.url(), prefersInApp: true) } label: {
                 Text("Terms").frame(minHeight: 44).contentShape(.rect)
             }
             .accessibilityLabel(LegalDoc.terms.title)
-            let privacyLink = Button { openURL(LegalDoc.privacy.url, prefersInApp: true) } label: {
+            let privacyLink = Button { openURL(LegalDoc.privacy.url(), prefersInApp: true) } label: {
                 Text("Privacy").frame(minHeight: 44).contentShape(.rect)
             }
             .accessibilityLabel(LegalDoc.privacy.title)
@@ -445,7 +445,7 @@ struct SubscriptionSheet: View {
             .blurredNavigationEdge()
             .bottomBar { footer }
             .manageSubscriptionsSheet(isPresented: $managing)
-                // Back from Apple's sheet: read what the App Store now says (cancelled, plan change).
+            // Back from Apple's sheet: read what the App Store now says (cancelled, plan change).
             .onChange(of: managing) { _, open in if !open { Task { await refresh() } } }
         }
         .presentationDragIndicator(.visible)
@@ -547,10 +547,10 @@ struct SubscriptionSheet: View {
             }
             .disabled(restoring)
             .accessibilityLabel(restoring ? "Restoring purchases" : "Restore purchases")
-            let termsLink = Button("Terms") { openURL(LegalDoc.terms.url, prefersInApp: true) }
+            let termsLink = Button("Terms") { openURL(LegalDoc.terms.url(), prefersInApp: true) }
                 .frame(minHeight: 44)
                 .accessibilityLabel(LegalDoc.terms.title)
-            let privacyLink = Button("Privacy") { openURL(LegalDoc.privacy.url, prefersInApp: true) }
+            let privacyLink = Button("Privacy") { openURL(LegalDoc.privacy.url(), prefersInApp: true) }
                 .frame(minHeight: 44)
                 .accessibilityLabel(LegalDoc.privacy.title)
             ViewThatFits(in: .horizontal) {
