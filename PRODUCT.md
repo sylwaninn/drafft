@@ -29,10 +29,10 @@ Used on the go: between sessions, after a workout, on transit. One-handed, often
 ## Capabilities and Constraints
 
 - Sign up / sign in: email + password credentials (Sign in with Apple and Google to come).
-- Profile: photos, sports with level, a voice intro, and an interactive icebreaker ("joke"/prompt) that the viewer can react to.
+- Profile: photos, sports with how often you do each, a voice intro, and an interactive icebreaker ("joke"/prompt) that the viewer can react to.
 - Discovery of profiles, matching, proposing a session.
 - Messaging: text, photo, video, voice message (no file attachments); must feel ultra-responsive (optimistic sends, instant feedback).
-- Accounts, profiles and moderation run on the backend; Discover and chats still show sample people until they're wired to it. No demo mode or test shortcut ships in the app.
+- Accounts, profiles, Discover, chats and moderation run on the backend. No demo mode or test shortcut ships in the app.
 - UI languages: English (source), French, Spanish, German, Italian, European Portuguese, Dutch. Picked in the app (sign-up, You › Language), not from the phone. Strings live in `Drafft/Resources/Localizable.xcstrings`; text built in code goes through `L("…")`.
 
 ## Brand Commitments
