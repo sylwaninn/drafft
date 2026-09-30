@@ -131,6 +131,7 @@ targets:
       - path: Drafft/Services/Sessions/SessionLedger.swift
       - path: Drafft/Services/Backend/ProfileCard.swift
       - path: Drafft/Services/Chat/ChatPayload.swift
+      - path: Drafft/Features/Me/SubscriptionNotice.swift
       - path: Drafft/Features/Auth/LegalDocs.swift
       - path: Drafft/Models/AppLanguage.swift
       - path: Drafft/Services/Backend/TermsConsent.swift

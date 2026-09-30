@@ -85,7 +85,7 @@ struct PaywallView: View {
     }
 
     private var perks: [(icon: String, title: String, detail: String)] { [
-        ("arrow.uturn.backward", L("Undo any swipe"), L("Swiped too fast? Bring them back.")),
+        ("arrow.uturn.backward", L("Undo your last swipe"), L("Swiped too fast? Bring them back.")),
         ("heart.text.square", L("See who liked you"), L("Match instantly with people already into you.")),
         ("infinity", L("Unlimited likes"), L("No daily cap, like everyone you'd train with.")),
         ("bolt.fill", L("Weekly boost"), L("One free boost every week: 30 minutes at the top of decks near you."))
@@ -414,7 +414,7 @@ struct SubscriptionSheet: View {
     @State private var restoreResult: String?
 
     private var perks: [(icon: String, title: String)] { [
-        ("arrow.uturn.backward", L("Undo any swipe")),
+        ("arrow.uturn.backward", L("Undo your last swipe")),
         ("heart.text.square", L("See who liked you")),
         ("infinity", L("Unlimited likes")),
         ("bolt.fill", L("One free boost every week"))
@@ -445,8 +445,8 @@ struct SubscriptionSheet: View {
             .blurredNavigationEdge()
             .bottomBar { footer }
             .manageSubscriptionsSheet(isPresented: $managing)
-            // Back from Apple's sheet: read what the App Store now says (cancelled, plan change).
-            .onChange(of: managing) { _, open in if !open { Task { await refresh() } } }
+            // Back from Apple's sheet: read what the App Store now says (cancelled, another length).
+            .onChange(of: managing) { _, open in if !open { Task { await app.refreshSubscription(apply: apply) } } }
         }
         .presentationDragIndicator(.visible)
     }
@@ -600,7 +600,7 @@ struct SubscriptionSheet: View {
             defer { restoring = false }
             do {
                 let info = try await Store.shared.restore()
-                apply(info)
+                apply(Store.shared.subscription(from: info))
                 await app.loadWallet()
                 Haptics.success()
                 withAnimation(Motion.snappy) { restoreResult = L("Your subscription is up to date.") }
@@ -611,15 +611,9 @@ struct SubscriptionSheet: View {
         }
     }
 
-    private func refresh() async {
-        if Store.shared.reportsLinkedAccount, let info = try? await Purchases.shared.customerInfo() { apply(info) }
-        await app.loadWallet()
-    }
-
-    /// What the App Store reports. Expired closes the page, since the drafft tempo row only
-    /// shows while subscribed.
-    private func apply(_ info: CustomerInfo) {
-        let sub = Store.shared.subscription(from: info)
+    /// What the App Store reports (nil: not active). Expired closes the page, since the drafft
+    /// tempo row only shows while subscribed.
+    private func apply(_ sub: TempoSubscription?) {
         if sub == nil {
             dismiss()
             Task {

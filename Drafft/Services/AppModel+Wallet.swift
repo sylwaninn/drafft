@@ -57,6 +57,17 @@ extension AppModel {
         if let end = Self.serverDate(row.boostEndsAt), end > (boostEndsAt ?? .distantPast) { boostEndsAt = end }
     }
 
+    /// Back from Apple's management sheet (drafft tempo's page, the delete sheet): drafft tempo as
+    /// the App Store now says it (cancelled, another length), then the wallet. `apply` gets the App
+    /// Store's answer (nil: not active). It isn't called when nothing could be read
+    /// (`Store.currentCustomerInfo` logs why): the last details stay.
+    func refreshSubscription(apply: (TempoSubscription?) -> Void) async {
+        if let info = await Store.shared.currentCustomerInfo() {
+            apply(Store.shared.subscription(from: info))
+        }
+        await loadWallet()
+    }
+
     /// Signed out or deleted: nothing of the account's wallet stays on screen.
     func clearWallet() {
         PurchaseCredit.shared.forget()
