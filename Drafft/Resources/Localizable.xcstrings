@@ -12877,52 +12877,6 @@
         }
       }
     },
-    "This can reveal your sexual orientation or your health, so drafft asks first." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This can reveal your sexual orientation or your health, so drafft asks first."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ces informations peuvent révéler ton orientation sexuelle ou ta santé, alors drafft te demande d'abord ton accord."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pueden revelar tu orientación sexual o tu salud, por eso drafft te lo pregunta antes."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sie können deine sexuelle Orientierung oder deine Gesundheit offenlegen, deshalb fragt drafft vorher."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Possono rivelare il tuo orientamento sessuale o la tua salute, per questo drafft te lo chiede prima."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Podem revelar a tua orientação sexual ou a tua saúde, por isso o drafft pergunta-te primeiro."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ze kunnen je seksuele oriëntatie of je gezondheid onthullen, daarom vraagt drafft het eerst."
-          }
-        }
-      }
-    },
     "This invite has already been answered." : {
       "localizations" : {
         "de" : {
@@ -56327,6 +56281,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O suporte não pode receber mensagens por esta via neste momento. Tenta mais tarde."
+          }
+        }
+      }
+    },
+    "This can reveal your sexual orientation, health or beliefs, so drafft asks first." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This can reveal your sexual orientation, health or beliefs, so drafft asks first."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ces informations peuvent révéler ton orientation sexuelle, ta santé ou tes convictions, alors drafft te demande d'abord ton accord."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pueden revelar tu orientación sexual, tu salud o tus convicciones, por eso drafft te lo pregunta antes."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie können deine sexuelle Orientierung, deine Gesundheit oder deine Überzeugungen offenlegen, deshalb fragt drafft vorher."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Possono rivelare il tuo orientamento sessuale, la tua salute o le tue convinzioni, per questo drafft te lo chiede prima."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podem revelar a tua orientação sexual, a tua saúde ou as tuas convicções, por isso o drafft pergunta-te primeiro."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ze kunnen je seksuele oriëntatie, je gezondheid of je overtuigingen onthullen, daarom vraagt drafft het eerst."
           }
         }
       }

@@ -15,7 +15,7 @@ struct ConsentChecks: View {
             }
             block {
                 check(isOn: $sensitiveData, sentence: sensitiveText,
-                      detail: L("This can reveal your sexual orientation or your health, so drafft asks first."))
+                      detail: L("This can reveal your sexual orientation, health or beliefs, so drafft asks first."))
             }
         }
         .environment(\.openURL, OpenURLAction { url in .systemAction(url, prefersInApp: true) })
