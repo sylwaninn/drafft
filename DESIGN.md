@@ -575,8 +575,16 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
 - Discover ignores the keyboard safe area (the deck keeps its size), and signing in puts the keyboard away before showing the next screen.
 - You has no title: only the blur under the status bar.
 
+### Icons
+- One icon family: **Solar, linear style** (solar-icons.vercel.app, 24 px grid, 1.5 px stroke, round caps). Every glyph in the app comes from it; no system symbols, no mix of families.
+- The current tab shows its **Solar bold** twin (`<name>-bold`: fire, heart, stopwatch-play, dialog-2, user-circle); idle tabs stay linear. No other filled glyphs.
+- When Solar has nothing for a **sport**, take **Material Symbols Light** (fonts.google.com/icons, weight 300, whose stroke matches Solar's), outline variant when there is one. Solar always comes first, even when Material has a closer picture.
+- When neither has it, draw it in the Solar grammar (24 grid, 1.5 stroke, round caps and joins, soft corners, open gaps) from Solar parts: padel, table tennis, badminton, pickleball, fencing, martial arts (belt), jump rope, tai chi, ultimate, spikeball, climbing (carabiner), bouldering, horse riding (horseshoe), calendar-check / -minus / -warning, user-warning.
+- Fixed meanings: Sessions = stopwatch-play, Running = sneaker (steps-outline), Trail = mountain (landscape-2-outline), Mobility = accessibility, "In common" filter = link-circle, like = heart, report or block = shield-warning, see who liked you = user-heart.
+- Icons are custom symbols in `Resources/Assets.xcassets/Icons` (`<name>.symbolset`, one Regular-M glyph generated from the SVG, strokes outlined), named after the Solar name: `Image("heart")`, `Label(title, image: "heart")`, and `.icon("heart")` for `Button`/`Menu`, which only take an `ImageResource`. They size with the font like SF Symbols. Never `Image(systemName:)`.
+
 ### Selection marks and banners
-- One selection mark everywhere: `CheckDisc` (lime disc, on-lime tick when on; a ring when off, lighter on night). Never a lime tick on a light fill, never an SF "checkmark.circle.fill" whose cut-out tick shows the background.
+- One selection mark everywhere: `CheckDisc` (lime disc, on-lime tick when on; a ring when off, lighter on night). Never a lime tick on a light fill, never a check-circle glyph whose tick cuts through to the background.
 - In-app banners (match, boost) use `BannerSurface`: solid night, a thin light rim and a layered shadow, so they detach from any page.
 - Never a gradient in a background or a surface fill. Solid colours only (gradients stay limited to legibility scrims over photos and to masks of the progressive blur).
 
