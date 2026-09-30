@@ -676,7 +676,7 @@ One job per colour, everywhere:
 - Billing belongs to the App Store (auto-renewable subscription). The app reads the state (`TempoSubscription`: plan, end of period, renews or not) and never cancels or changes a plan itself.
 - You shows the tier card (entry to the paywall) while not subscribed, and a "drafft tempo" row under Account only while subscribed ("Renews 24 Oct", or "Ends 24 Oct" once cancelled).
 - The row opens `SubscriptionSheet`: a night status block (lockup, Active/Ending pill, price, renewal or end date), what's included, the App Store billing terms (renews unless cancelled 24 h before the period ends; deleting the app doesn't cancel), "Open App Store subscriptions", Restore purchases, Terms, Privacy. The pinned action is "Manage subscription", which opens Apple's own sheet (`manageSubscriptionsSheet`).
-- The paywall carries the same auto-renewal terms under its button, plus Restore, Terms and Privacy.
+- The paywall carries the same auto-renewal terms, plus Restore, Terms and Privacy, at the end of the scrolling page under the plans (`finePrint`), never in the pinned bar: the bar keeps only the button, its hint and the notice, so it never runs over the plans.
 
 ### Notifications
 - Asked during sign-up, on its own optional step at the end of Profile ("Don't miss a match"), with what they'll get before the system prompt. Continue needs them on; Skip passes.
