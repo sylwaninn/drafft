@@ -445,7 +445,7 @@ struct SubscriptionSheet: View {
             .blurredNavigationEdge()
             .bottomBar { footer }
             .manageSubscriptionsSheet(isPresented: $managing)
-                // Back from Apple's sheet: read what the App Store now says (cancelled, plan change).
+            // Back from Apple's sheet: read what the App Store now says (cancelled, plan change).
             .onChange(of: managing) { _, open in if !open { Task { await refresh() } } }
         }
         .presentationDragIndicator(.visible)
