@@ -19,6 +19,8 @@ struct PhotoRefusalSheet: View {
             // Scrolls only if it's taller than the screen (large text, small phone): never cut.
             ScrollView { content }
                 .scrollBounceBehavior(.basedOnSize)
+                // Hosted outside the app's root: its environment doesn't reach here.
+                .noScrollIndicators()
                 .background(DS.Palette.sheetRaised)
         }
     }

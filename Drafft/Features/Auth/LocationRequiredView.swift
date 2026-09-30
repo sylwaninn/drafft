@@ -155,7 +155,8 @@ final class LocationWindow {
         AnyView(LocationRequiredView()
             // Its own window, outside the app's root: the app's language is set again here.
             .environment(\.locale, language)
-            .tint(DS.Palette.accentInk))
+            .tint(DS.Palette.accentInk)
+            .noScrollIndicators())
     }
 
     private func makeWindow() -> UIWindow? {

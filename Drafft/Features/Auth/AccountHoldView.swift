@@ -209,7 +209,7 @@ final class HoldWindow {
         let window = HoldUIWindow(windowScene: scene)
         window.windowLevel = .alert + 2
         window.backgroundColor = .clear
-        let host = HoldHostingController(rootView: AnyView(HoldLayer().environment(app)))
+        let host = HoldHostingController(rootView: AnyView(HoldLayer().environment(app).noScrollIndicators()))
         host.view.backgroundColor = .clear
         window.rootViewController = host
         self.window = window

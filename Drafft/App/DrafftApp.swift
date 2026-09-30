@@ -21,6 +21,8 @@ struct DrafftApp: App {
                 // The app's own language, not the phone's (Text, dates, numbers).
                 .environment(\.locale, app.language.locale)
                 .tint(DS.Palette.accentInk)
+                // No scroll bars on any page or sheet (see `noScrollIndicators`).
+                .noScrollIndicators()
                 // Never the default white behind transitions.
                 .background(DS.Palette.night.ignoresSafeArea())
         }
