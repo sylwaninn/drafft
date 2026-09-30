@@ -111,7 +111,7 @@ struct PurchaseConfirmation: View {
                 .padding(.leading, 18)
                 .accessibilityHidden(true)
         case .boosts:
-            Image(systemName: "bolt.fill")
+            Image("bolt")
                 .font(.system(size: 28, weight: .heavy))
                 .foregroundStyle(DS.Palette.onLime)
                 .frame(width: 72, height: 72)

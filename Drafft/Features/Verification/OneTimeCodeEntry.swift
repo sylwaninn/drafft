@@ -88,7 +88,7 @@ struct OneTimeCodeEntry<Accessory: View>: View {
                 .frame(minHeight: 18)
             } else if let error {
                 VStack(alignment: .leading, spacing: 0) {
-                    Label(error, systemImage: "exclamationmark.circle.fill")
+                    Label(error, image: "danger-circle")
                         .font(.footnote.weight(.medium))
                         .foregroundStyle(DS.Palette.negative)
                         .fixedSize(horizontal: false, vertical: true)
@@ -171,7 +171,7 @@ struct CodeVerifiedCard: View {
 
     var body: some View {
         HStack(spacing: DS.Space.md) {
-            Image(systemName: "checkmark")
+            Image("check")
                 .font(.body.weight(.heavy))
                 .foregroundStyle(DS.Palette.onLime)
                 .frame(width: 44, height: 44)
@@ -194,7 +194,7 @@ struct CodeLockedCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.sm) {
-            Label("Verification paused", systemImage: "lock.fill")
+            Label("Verification paused", image: "lock-keyhole-minimalistic")
                 .font(.headline)
                 .foregroundStyle(DS.Palette.negative)
             Text(message ?? L("Too many tries."))

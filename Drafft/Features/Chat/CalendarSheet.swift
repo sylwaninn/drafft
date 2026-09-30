@@ -60,7 +60,7 @@ struct CalendarButton: View {
         Group {
             if compact {
                 Button { open() } label: {
-                    Image(systemName: added ? "calendar.badge.checkmark" : "calendar.badge.plus")
+                    Image(added ? "calendar-check" : "calendar-add")
                         .font(.body.weight(.bold))
                         .foregroundStyle(added ? DS.Palette.accentOnNight : .white)
                         .contentTransition(.symbolEffect(.replace))
@@ -70,7 +70,7 @@ struct CalendarButton: View {
                 .buttonStyle(PressScaleStyle())
             } else if added {
                 Button { open() } label: {
-                    Label("In your calendar", systemImage: "calendar.badge.checkmark")
+                    Label("In your calendar", image: "calendar-check")
                         .font(.body.weight(.semibold))
                         .foregroundStyle(DS.Palette.accentOnNight)
                         .frame(maxWidth: .infinity, minHeight: 52)
@@ -79,7 +79,7 @@ struct CalendarButton: View {
                 .buttonStyle(PressScaleStyle(scale: 0.97))
             } else {
                 Button { open() } label: {
-                    Label("Add to calendar", systemImage: "calendar.badge.plus")
+                    Label("Add to calendar", image: "calendar-add")
                 }
                 .buttonStyle(.drafftPrimary)
                 .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))

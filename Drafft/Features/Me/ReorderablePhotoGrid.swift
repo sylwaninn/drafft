@@ -181,7 +181,7 @@ struct ReorderablePhotoGrid<AddButton: View>: View {
                         Haptics.tap()
                         onRemove(index)
                     } label: {
-                        Image(systemName: "xmark")
+                        Image("close")
                             .font(.caption.weight(.heavy))
                             .foregroundStyle(DS.Palette.ink)
                             .frame(width: 26, height: 26)
@@ -222,10 +222,10 @@ private struct ModerationBadge: View {
         // On a narrow tile a long translation leaves the symbol alone (VoiceOver still reads it).
         ViewThatFits(in: .horizontal) {
             HStack(spacing: 4) {
-                Image(systemName: symbol).font(.caption2.weight(.heavy))
+                Image(symbol).font(.caption2.weight(.heavy))
                 Text(label).font(.caption2.weight(.bold)).fixedSize()
             }
-            Image(systemName: symbol).font(.caption2.weight(.heavy))
+            Image(symbol).font(.caption2.weight(.heavy))
                 .accessibilityLabel(label)
         }
         .foregroundStyle(state == .refused ? .white : DS.Palette.ink)
@@ -237,9 +237,9 @@ private struct ModerationBadge: View {
 
     private var symbol: String {
         switch state {
-        case .refused: "nosign"
+        case .refused: "forbidden-circle"
         case .inReview: "hourglass"
-        default: "exclamationmark.triangle"
+        default: "danger-triangle"
         }
     }
 

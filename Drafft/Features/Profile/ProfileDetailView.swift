@@ -87,7 +87,7 @@ struct ProfileDetailView: View {
                     if mode == .discover || onBlocked != nil {
                         // Deliberately quiet: available, never inviting.
                         Button { showSafety = true } label: {
-                            Label("Report or block", systemImage: "shield.lefthalf.filled")
+                            Label("Report or block", image: "shield-warning")
                                 .font(.footnote.weight(.medium))
                                 .foregroundStyle(DS.Palette.body)
                                 .padding(.horizontal, DS.Space.lg)
@@ -127,7 +127,7 @@ struct ProfileDetailView: View {
         .toolbar {
             if mode != .me {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
         }
@@ -274,7 +274,7 @@ struct ProfileDetailView: View {
             Button {
                 onDecision?(false, nil)
             } label: {
-                Image(systemName: "xmark")
+                Image("close")
                     .font(.system(size: 26, weight: .heavy))
                     .foregroundStyle(DS.Palette.ink)
                     .frame(width: 68, height: 68)
@@ -289,7 +289,7 @@ struct ProfileDetailView: View {
             Button {
                 onDecision?(true, nil)
             } label: {
-                Image(systemName: "heart.fill")
+                Image("heart")
                     .font(.system(size: 28, weight: .heavy))
                     .foregroundStyle(DS.Palette.onLike)
                     .frame(width: 68, height: 68)

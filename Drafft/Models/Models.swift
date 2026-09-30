@@ -56,11 +56,11 @@ enum Icebreaker: Hashable {
         }
         var symbol: String {
             switch self {
-            case .twoTruths: "eyes"
-            case .joke: "theatermasks.fill"
-            case .hotTake: "flame.fill"
-            case .thisOrThat: "arrow.left.arrow.right"
-            case .guess: "questionmark.bubble.fill"
+            case .twoTruths: "incognito"
+            case .joke: "masks"
+            case .hotTake: "fire"
+            case .thisOrThat: "transfer-horizontal"
+            case .guess: "chat-round-question-mark"
             }
         }
         /// Starting content when switching to this kind in the editor.

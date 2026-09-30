@@ -103,11 +103,11 @@ struct Composer: View {
     private var attachMenu: some View {
         Menu {
             if CameraPicker.isAvailable {
-                Button("Take a photo or video", systemImage: "camera") { showCamera = true }
+                Button("Take a photo or video", image: .icon("camera")) { showCamera = true }
             }
-            Button("Choose from library", systemImage: "photo.on.rectangle.angled") { showPhotos = true }
+            Button("Choose from library", image: .icon("gallery")) { showPhotos = true }
         } label: {
-            Image(systemName: "plus")
+            Image("add")
                 .font(.system(size: 18, weight: .bold))
                 .foregroundStyle(DS.Palette.ink)
                 .frame(width: 44, height: 44)
@@ -137,7 +137,7 @@ struct Composer: View {
                     }
                     Spacer(minLength: 0)
                     Button(action: onCancelReply) {
-                        Image(systemName: "xmark.circle.fill")
+                        Image("close-circle")
                             .font(.body)
                             .symbolRenderingMode(.hierarchical)
                             .foregroundStyle(DS.Palette.mute)
@@ -180,7 +180,7 @@ struct Composer: View {
     private var trailingButton: some View {
         if !trimmed.isEmpty && !isRecording {
             Button(action: sendText) {
-                Image(systemName: "arrow.up")
+                Image("arrow-up")
                     .font(.system(size: 18, weight: .heavy))
                     .foregroundStyle(DS.Palette.onLime)
                     .frame(width: 44, height: 44)
@@ -194,7 +194,7 @@ struct Composer: View {
             Button {
                 finishRecording(cancel: false)
             } label: {
-                Image(systemName: "arrow.up")
+                Image("arrow-up")
                     .font(.system(size: 18, weight: .heavy))
                     .foregroundStyle(DS.Palette.onLime)
                     .frame(width: 44, height: 44)
@@ -220,7 +220,7 @@ struct Composer: View {
                     .offset(y: -104)
                     .transition(.scale(scale: 0.6, anchor: .bottom).combined(with: .opacity))
             }
-            Image(systemName: "mic.fill")
+            Image("microphone")
                 .font(.system(size: 18, weight: .bold))
                 .foregroundStyle(isRecording ? DS.Palette.onLime : DS.Palette.ink)
                 .frame(width: 44, height: 44)
@@ -279,10 +279,10 @@ struct Composer: View {
     /// mic climbs and the padlock closes at the top.
     private func lockRail(_ p: CGFloat) -> some View {
         VStack(spacing: 8) {
-            Image(systemName: p >= 1 ? "lock.fill" : "lock.open.fill")
+            Image(p >= 1 ? "lock-keyhole-minimalistic" : "lock-keyhole-minimalistic-unlocked")
                 .font(.system(size: 15, weight: .bold))
                 .contentTransition(.symbolEffect(.replace))
-            Image(systemName: "chevron.up")
+            Image("alt-arrow-up")
                 .font(.system(size: 11, weight: .heavy))
                 .symbolEffect(.bounce.up, options: .repeating, isActive: !reduceMotion)
                 .opacity(Double(1 - p))
@@ -301,7 +301,7 @@ struct Composer: View {
                 Button {
                     finishRecording(cancel: true)
                 } label: {
-                    Image(systemName: "trash")
+                    Image("trash-bin-minimalistic")
                         .font(.body.weight(.semibold))
                         .foregroundStyle(DS.Palette.negative)
                         .frame(width: 44, height: 44)
@@ -320,7 +320,7 @@ struct Composer: View {
             LiveWave(levels: recorder.levels)
                 .frame(height: 28)
             if !locked {
-                Label("Slide to cancel", systemImage: "chevron.left")
+                Label("Slide to cancel", image: "alt-arrow-left")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(DS.Palette.body)
                     .opacity(1 - Double(min(1, abs(dragX) / abs(cancelThreshold))))

@@ -12,31 +12,32 @@ struct NotificationsSettingsView: View {
                 VStack(spacing: DS.Space.md) {
                     statusBlock
                     group(L("Activity")) {
-                        toggle(L("New matches"), "heart.fill", $notifications.matches)
+                        toggle(L("New matches"), "heart", $notifications.matches)
                         divider
-                        toggle(L("Likes you"), "heart.circle.fill", $notifications.likes)
+                        toggle(L("Likes you"), "user-heart", $notifications.likes)
                         divider
-                        toggle(L("Messages"), "bubble.left.fill", $notifications.messages)
+                        toggle(L("Messages"), "chat-round-line", $notifications.messages)
                         divider
-                        toggle(L("Show message previews"), "text.bubble.fill", $notifications.messagePreviews,
+                        toggle(L("Show message previews"), "chat-square-line", $notifications.messagePreviews,
                                detail: L("Off: notifications only say who wrote, not what."))
                             .disabled(!notifications.messages)
                             .opacity(notifications.messages ? 1 : 0.45)
                         divider
-                        toggle(L("Reactions"), "face.smiling.inverse", $notifications.reactions,
+                        toggle(L("Reactions"), "smile-circle", $notifications.reactions,
                                detail: L("When someone reacts to one of your messages."))
                             .disabled(!notifications.messages)
                             .opacity(notifications.messages ? 1 : 0.45)
                     }
                     group(L("Sessions")) {
-                        toggle(L("The evening before"), "moon.fill", $notifications.sessionEvening, detail: L("At \(eveningTime), a reminder of tomorrow's session."))
+                        toggle(L("The evening before"), "moon", $notifications.sessionEvening,
+                               detail: L("At \(eveningTime), a reminder of tomorrow's session."))
                         divider
-                        toggle(L("An hour before"), "alarm.fill", $notifications.sessionHourBefore)
+                        toggle(L("An hour before"), "alarm", $notifications.sessionHourBefore)
                     }
                     // The weekly boost comes with drafft tempo: its notification only makes sense then.
                     if app.isPremium {
                         group(Brand.tierName) {
-                            toggle(L("Weekly boost"), "bolt.fill", $notifications.weeklyBoost,
+                            toggle(L("Weekly boost"), "bolt", $notifications.weeklyBoost,
                                    detail: L("When your free boost of the week is added."))
                         }
                     }
@@ -49,7 +50,7 @@ struct NotificationsSettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
         }
@@ -59,7 +60,7 @@ struct NotificationsSettingsView: View {
     private var statusBlock: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             HStack(spacing: DS.Space.md) {
-                Image(systemName: notifications.isAllowed ? "bell.badge.fill" : "bell.slash.fill")
+                Image(notifications.isAllowed ? "bell-ring" : "bell-off")
                     .font(.title3.weight(.bold))
                     .foregroundStyle(notifications.isAllowed ? DS.Palette.onAccentOnNight : .white)
                     .frame(width: 48, height: 48)
@@ -77,7 +78,7 @@ struct NotificationsSettingsView: View {
                 }
             }
             if notifications.permission != .allowed {
-                PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell.fill")
+                PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell")
                     .buttonStyle(.drafftPrimary)
             }
         }
@@ -114,7 +115,7 @@ struct NotificationsSettingsView: View {
     private func toggle(_ title: String, _ icon: String, _ isOn: Binding<Bool>, detail: String? = nil) -> some View {
         Toggle(isOn: isOn.animation(Motion.snappy)) {
             HStack(spacing: DS.Space.md) {
-                Image(systemName: icon)
+                Image(icon)
                     .font(.footnote.weight(.bold))
                     .foregroundStyle(DS.Palette.ink)
                     .frame(width: 32, height: 32)

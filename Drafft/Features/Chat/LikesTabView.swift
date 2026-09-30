@@ -128,7 +128,7 @@ struct LikesTabView: View {
                 }
             }
             .overlay {
-                Image(systemName: "lock.fill")
+                Image("lock-keyhole-minimalistic")
                     .font(.title3.weight(.bold))
                     .foregroundStyle(.white)
                     .frame(width: 48, height: 48)
@@ -136,7 +136,7 @@ struct LikesTabView: View {
             }
             .overlay(alignment: .topTrailing) {
                 if like.superLike {
-                    Image(systemName: "star.fill")
+                    Image("star")
                         .font(.footnote.weight(.bold))
                         .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 30, height: 30)

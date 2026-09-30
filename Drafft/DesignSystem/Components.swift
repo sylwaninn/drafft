@@ -117,7 +117,7 @@ struct SportChip: View {
 
     var body: some View {
         HStack(spacing: DS.Space.xs + 2) {
-            Image(systemName: sport.symbol)
+            Image(sport.symbol)
                 .font(.subheadline.weight(.semibold))
             Text(sport.name)
                 .font(.subheadline.weight(.semibold))
@@ -193,7 +193,7 @@ struct DrafftField: View {
                     Button {
                         revealed.toggle()
                     } label: {
-                        Image(systemName: revealed ? "eye.slash" : "eye")
+                        Image(revealed ? "eye-closed" : "eye")
                             .foregroundStyle(DS.Palette.body)
                             .frame(width: 44, height: 44)
                             .contentShape(.rect)
@@ -216,7 +216,7 @@ struct DrafftField: View {
             .onChange(of: focused) { _, on in if on { scroller?.reveal(anchor) } }
 
             if let error {
-                Label(error, systemImage: "exclamationmark.circle.fill")
+                Label(error, image: "danger-circle")
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(DS.Palette.negative)
                     .transition(.opacity.combined(with: .move(edge: .top)))
@@ -423,7 +423,7 @@ struct SportBadgeStack: View {
             ForEach(shown) { sport in
                 disc {
                     // Fitted in a box inside the ring, so wide symbols (bike, sailboat) keep a margin.
-                    Image(systemName: sport.symbol).resizable().scaledToFit().fontWeight(.bold)
+                    Image(sport.symbol).resizable().scaledToFit().fontWeight(.bold)
                         .frame(width: size * 0.5, height: size * 0.5)
                 }
             }
@@ -478,7 +478,7 @@ struct CheckDisc: View {
         ZStack {
             if isOn {
                 Circle().fill(onLimeFill ? onAccent : accent)
-                Image(systemName: "checkmark")
+                Image("check")
                     .font(.system(size: size * 0.46, weight: .heavy))
                     .foregroundStyle(onLimeFill ? accent : onAccent)
             } else {

@@ -35,16 +35,16 @@ struct AccountHoldView: View {
     private var points: [(icon: String, text: String)] {
         switch hold {
         case .review:
-            [("eye.slash.fill", L("Your profile is hidden while we check.")),
-             ("bubble.left.and.bubble.right.fill", L("Your matches and chats are kept.")),
-             ("lock.open.fill", L("The app opens again by itself once it's done."))]
+            [("eye-closed", L("Your profile is hidden while we check.")),
+             ("dialog-2", L("Your matches and chats are kept.")),
+             ("lock-keyhole-minimalistic-unlocked", L("The app opens again by itself once it's done."))]
         case .selfie:
-            [("person.crop.square.fill", L("Just your face, well lit, nothing covering it.")),
-             ("lock.fill", L("Only the drafft team sees it, never other members.")),
-             ("eye.slash.fill", L("Your profile is hidden until then."))]
+            [("face-scan-circle", L("Just your face, well lit, nothing covering it.")),
+             ("lock-keyhole-minimalistic", L("Only the drafft team sees it, never other members.")),
+             ("eye-closed", L("Your profile is hidden until then."))]
         case .banned:
-            [("eye.slash.fill", L("Your profile and chats are no longer visible.")),
-             ("person.crop.circle.badge.xmark", L("You can't create a new drafft account."))]
+            [("eye-closed", L("Your profile and chats are no longer visible.")),
+             ("user-cross-rounded", L("You can't create a new drafft account."))]
         }
     }
 
@@ -106,7 +106,7 @@ struct AccountHoldView: View {
         .fullScreenCover(isPresented: Binding(get: { takingSelfie && hold == .selfie }, set: { takingSelfie = $0 })) {
             SelfieCaptureView()
         }
-        .drafftConfirm(isPresented: $confirmingLogOut, icon: "rectangle.portrait.and.arrow.right",
+        .drafftConfirm(isPresented: $confirmingLogOut, icon: "logout-2",
                        title: L("Log out?"),
                        message: hold == .selfie ? L("Log back in any time to send your selfie.")
                            : L("Log back in any time to see where the check is."),
@@ -118,7 +118,7 @@ struct AccountHoldView: View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             ForEach(points, id: \.text) { point in
                 HStack(spacing: DS.Space.md) {
-                    Image(systemName: point.icon)
+                    Image(point.icon)
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(width: 36, height: 36)
@@ -141,16 +141,16 @@ struct AccountHoldView: View {
         VStack(spacing: DS.Space.xs) {
             switch hold {
             case .selfie:
-                Button { takingSelfie = true } label: { Label("Take my selfie", systemImage: "camera.fill") }
+                Button { takingSelfie = true } label: { Label("Take my selfie", image: "camera") }
                     .buttonStyle(.drafftPrimary)
                 logOutLink
             case .review:
-                Button { askingHelp = true } label: { Label("Get help", systemImage: "questionmark.bubble.fill") }
+                Button { askingHelp = true } label: { Label("Get help", image: "chat-round-question-mark") }
                     .buttonStyle(.drafftSecondary)
                 logOutLink
             case .banned:
                 Button { app.signOut() } label: {
-                    Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
+                    Label("Log out", image: "logout-2")
                 }
                 .buttonStyle(.drafftSecondary)
                 Button("A mistake? Contact us") { askingHelp = true }
@@ -177,8 +177,8 @@ struct AccountHoldView: View {
 
 private extension EmptyStateArt {
     static let holdReview = EmptyStateArt(symbol: "hourglass")
-    static let holdClosed = EmptyStateArt(symbol: "nosign")
-    static let holdSelfie = EmptyStateArt(symbol: "faceid")
+    static let holdClosed = EmptyStateArt(symbol: "forbidden-circle")
+    static let holdSelfie = EmptyStateArt(symbol: "face-scan-square")
 }
 
 extension View {

@@ -24,7 +24,7 @@ struct SessionCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             HStack(alignment: .center) {
-                Image(systemName: session.sport.symbol)
+                Image(session.sport.symbol)
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(DS.Palette.night)
                     .frame(width: 48, height: 48)
@@ -45,7 +45,7 @@ struct SessionCard: View {
                 // You teach when you sent an .iTeach invite, or received a .theyTeach one.
                 let youTeach = (d == .iTeach) == mine
                 Label(youTeach ? "Discovery: you show \(profileName) the ropes" : "Discovery: \(profileName) shows you the ropes",
-                      systemImage: "sparkles")
+                      image: "stars")
                     .font(.caption.weight(.bold))
                     .foregroundStyle(DS.Palette.onAccentOnNight)
                     .padding(.horizontal, 10)
@@ -84,7 +84,7 @@ struct SessionCard: View {
         .opacity(session.status == .countered || session.status == .cancelled ? 0.6 : 1)
         .accessibilityElement(children: .contain)
         .onAppear { if session.options.count == 1 { selected = session.options.first } }
-        .drafftConfirm(isPresented: $confirmCancel, icon: "calendar.badge.minus",
+        .drafftConfirm(isPresented: $confirmCancel, icon: "calendar-minus",
                        title: L("Cancel this session?"),
                        message: L("\(profileName) will be told it's off."),
                        cancelTitle: L("Keep it"),
@@ -125,7 +125,7 @@ struct SessionCard: View {
     private func timeRow(_ d: Date, state: RowState) -> some View {
         let on = state != .option
         return HStack(spacing: DS.Space.sm) {
-            Image(systemName: state == .agreed ? "checkmark" : "calendar")
+            Image(state == .agreed ? "check" : "calendar")
                 .font(.system(size: 12, weight: .bold))
                 .foregroundStyle(on ? DS.Palette.onAccentOnNight : .white)
                 .frame(width: 28, height: 28)
@@ -156,12 +156,12 @@ struct SessionCard: View {
         let (text, icon): (String, String) = switch session.status {
         // No name in the pill: a pill stays on one line, and names are never truncated.
         case .pending: (mine ? L("Waiting") : L("New invite"), "hourglass")
-        case .accepted: (L("Confirmed"), "checkmark")
-        case .declined: (L("Declined"), "xmark")
-        case .countered: (L("Other times suggested"), "arrow.uturn.backward")
-        case .cancelled: (L("Cancelled"), "calendar.badge.minus")
+        case .accepted: (L("Confirmed"), "check")
+        case .declined: (L("Declined"), "close")
+        case .countered: (L("Other times suggested"), "undo-left")
+        case .cancelled: (L("Cancelled"), "calendar-minus")
         }
-        Label(text, systemImage: icon)
+        Label(text, image: icon)
             .font(.caption.weight(.bold))
             .lineLimit(1)
             .fixedSize()
@@ -185,7 +185,7 @@ struct SessionCard: View {
                 .buttonStyle(.drafftPrimary)
                 .disabled(selected == nil || busy)
                 Button { onCounter() } label: {
-                    Label("Suggest other times", systemImage: "calendar")
+                    Label("Suggest other times", image: "calendar")
                 }
                 .buttonStyle(DrafftButtonStyle(kind: .dark))
                 .overlay(RoundedRectangle(cornerRadius: DS.Radius.xl).strokeBorder(.white.opacity(0.2)))
@@ -209,7 +209,7 @@ struct SessionCard: View {
             VStack(spacing: DS.Space.xs) {
                 CalendarButton(session: session, partner: profileName, chatID: chatID)
                 Button(action: onSafety) {
-                    Label("Meet safely", systemImage: "shield.lefthalf.filled")
+                    Label("Meet safely", image: "shield-check")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.white.opacity(0.75))
                         .lineLimit(2)

@@ -165,11 +165,11 @@ struct OnboardingView: View {
             } else if current == .area && area == nil {
                 Button(action: areaPrimary) {
                     if locator.state == .locating { ProgressView().tint(DS.Palette.onLime) }
-                    else { Label(locator.state == .denied ? "Open Settings" : "Allow location", systemImage: "location.fill") }
+                    else { Label(locator.state == .denied ? "Open Settings" : "Allow location", image: "map-point") }
                 }
                 .disabled(locator.state == .locating)
             } else if current == .notifications && notifications.permission != .allowed {
-                PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell.fill")
+                PermissionButton(permission: notifications, askTitle: "Turn on notifications", symbol: "bell")
             } else {
                 Button(action: advance) {
                     if finishing || recordingConsent {
@@ -472,7 +472,7 @@ struct OnboardingView: View {
         Group {
             if error {
                 Label { Text(branded: text, font: .footnote.weight(.medium)) } icon: {
-                    Image(systemName: "exclamationmark.circle.fill")
+                    Image("danger-circle")
                 }
                 .font(.footnote.weight(.medium))
                 .foregroundStyle(DS.Palette.negative)
@@ -507,10 +507,10 @@ struct OnboardingView: View {
         page {
             stepTitle(L("A few ground rules"), L("drafft works because everyone plays fair."))
             VStack(alignment: .leading, spacing: DS.Space.lg) {
-                fact("person.fill", L("Be yourself"), L("Your own photos, your real first name and your real age."))
-                fact("hand.raised.fill", L("Respect first"), L("Kind in chat, clear about what you want. No means no."))
-                fact("figure.run", L("Meet where others train"), L("First sessions happen in public places: a park, a club, a court."))
-                fact("flag.fill", L("Report anything off"), L("Two taps from any profile or chat. Every report is reviewed."))
+                fact("user-rounded", L("Be yourself"), L("Your own photos, your real first name and your real age."))
+                fact("user-block", L("Respect first"), L("Kind in chat, clear about what you want. No means no."))
+                fact("running", L("Meet where others train"), L("First sessions happen in public places: a park, a club, a court."))
+                fact("flag", L("Report anything off"), L("Two taps from any profile or chat. Every report is reviewed."))
             }
             .padding(DS.Space.xl)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -577,10 +577,10 @@ struct OnboardingView: View {
         page {
             stepTitle(L("Don't miss a match"), L("Get told when someone likes you back, writes to you, or a session is coming up."))
             VStack(alignment: .leading, spacing: DS.Space.md) {
-                ForEach([("heart.fill", L("New matches and likes")), ("bubble.left.fill", L("Messages, without the text unless you want it")),
-                         ("alarm.fill", L("Session reminders, the evening before and an hour before"))], id: \.1) { icon, text in
+                ForEach([("heart", L("New matches and likes")), ("chat-round-line", L("Messages, without the text unless you want it")),
+                         ("alarm", L("Session reminders, the evening before and an hour before"))], id: \.1) { icon, text in
                     HStack(spacing: DS.Space.md) {
-                        Image(systemName: icon)
+                        Image(icon)
                             .font(.footnote.weight(.bold))
                             .foregroundStyle(DS.Palette.ink)
                             .frame(width: 32, height: 32)
@@ -680,7 +680,7 @@ struct OnboardingView: View {
                             ProgressView().tint(DS.Palette.ink)
                             Text("Finding your area…").foregroundStyle(DS.Palette.body)
                         } else {
-                            Image(systemName: "location.slash.fill").foregroundStyle(DS.Palette.mute)
+                            Image("map-point-remove").foregroundStyle(DS.Palette.mute)
                             Text("Location not shared yet").foregroundStyle(DS.Palette.mute)
                         }
                     }
@@ -721,9 +721,9 @@ struct OnboardingView: View {
     /// How location works, plainly: when it's read, how it's blurred, what others see.
     private var locationFacts: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
-            fact("location", L("Read once, not tracked"),
+            fact("map-point", L("Read once, not tracked"),
                  L("Your area comes from where you are right now. drafft doesn't follow your moves or track you in the background."))
-            fact("circle.dotted.circle", L("Blurred before it leaves your phone"),
+            fact("radial-blur", L("Blurred before it leaves your phone"),
                  L("Your position is rounded to about 1 km. Your exact spot is never sent or stored."))
             fact("eye", L("What others see"),
                  L("Your area, like a district, and a distance rounded to the kilometre. Never your address."))
@@ -735,7 +735,7 @@ struct OnboardingView: View {
 
     private func fact(_ icon: String, _ title: String, _ text: String) -> some View {
         HStack(alignment: .top, spacing: DS.Space.md) {
-            Image(systemName: icon)
+            Image(icon)
                 .font(.footnote.weight(.bold))
                 .foregroundStyle(DS.Palette.ink)
                 .frame(width: 32, height: 32)
@@ -779,7 +779,7 @@ struct OnboardingView: View {
             VStack(spacing: DS.Space.sm) {
                 ForEach($sports) { $entry in
                     HStack {
-                        Label(entry.sport.name, systemImage: entry.sport.symbol)
+                        Label(entry.sport.name, image: entry.sport.symbol)
                             .font(.headline)
                             .foregroundStyle(DS.Palette.ink)
                         Spacer()
@@ -807,7 +807,7 @@ struct OnboardingView: View {
                                 .strokeBorder(DS.Palette.ink.opacity(0.25), style: .init(lineWidth: 1.5, dash: [6, 5]))
                                 .background(DS.Palette.canvas.opacity(0.6), in: .rect(cornerRadius: DS.Radius.lg))
                                 .overlay {
-                                    Image(systemName: "plus").font(.title2.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+                                    Image("add").font(.title2.weight(.semibold)).foregroundStyle(DS.Palette.ink)
                                 }
                         }
                         .accessibilityLabel("Add photo")
@@ -895,10 +895,10 @@ struct OnboardingView: View {
             VStack(alignment: .leading, spacing: DS.Space.md) {
                 label(L("Stuck? Talk about"))
                 // One symbol per idea (never the same one repeated down a list).
-                ForEach([("sun.max", L("What your perfect Sunday session looks like")),
-                         ("flag.checkered", L("The race you'd love to finish")),
-                         ("fork.knife", L("Your post-workout food ritual"))], id: \.1) { icon, text in
-                    Label(text, systemImage: icon).font(.subheadline).foregroundStyle(DS.Palette.body)
+                ForEach([("sun", L("What your perfect Sunday session looks like")),
+                         ("flag-2", L("The race you'd love to finish")),
+                         ("chef-hat", L("Your post-workout food ritual"))], id: \.1) { icon, text in
+                    Label(text, image: icon).font(.subheadline).foregroundStyle(DS.Palette.body)
                 }
             }
             .padding(DS.Space.xl)
@@ -952,7 +952,7 @@ struct OnboardingView: View {
                                     Text(prompt.questionText)
                                         .font(.subheadline.weight(.semibold))
                                         .multilineTextAlignment(.leading)
-                                    Image(systemName: "chevron.up.chevron.down").font(.caption2.weight(.bold))
+                                    Image("chevrons-up-down").font(.caption2.weight(.bold))
                                 }
                                 .foregroundStyle(DS.Palette.body)
                                 .frame(minHeight: 44)
@@ -965,7 +965,7 @@ struct OnboardingView: View {
                                 promptFocus = nil
                                 withAnimation(Motion.snappy) { prompts.removeAll { $0.id == prompt.id } }
                             } label: {
-                                Image(systemName: "trash")
+                                Image("trash-bin-minimalistic")
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(DS.Palette.body)
                                     .frame(width: 44, height: 44)
@@ -987,7 +987,7 @@ struct OnboardingView: View {
                                     Haptics.tap()
                                     promptFocus = nil
                                 } label: {
-                                    Image(systemName: "checkmark")
+                                    Image("check")
                                         .font(.body.weight(.heavy))
                                         .foregroundStyle(DS.Palette.onLime)
                                         .frame(width: 44, height: 44)
@@ -1010,7 +1010,7 @@ struct OnboardingView: View {
                         // The question is chosen in the picker; the card only appears once one is picked.
                         pickingPrompt = prompts.count
                     } label: {
-                        Label(prompts.isEmpty ? "Choose a prompt" : "Add another prompt", systemImage: "plus")
+                        Label(prompts.isEmpty ? "Choose a prompt" : "Add another prompt", image: "add")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(DS.Palette.accentInk)
                             .frame(maxWidth: .infinity, minHeight: 52)
@@ -1056,7 +1056,7 @@ struct FrequencyStepper: View {
                 .foregroundStyle(DS.Palette.ink)
                 .frame(minWidth: 84)
                 .rollingDigits(wording: value >= 7)
-            button("plus", enabled: value < 7) { value += 1 }
+            button("add", enabled: value < 7) { value += 1 }
         }
         .animation(Motion.snappy, value: value)
         .accessibilityElement()
@@ -1076,7 +1076,7 @@ struct FrequencyStepper: View {
             Haptics.select()
             action()
         } label: {
-            Image(systemName: symbol)
+            Image(symbol)
                 .font(.footnote.weight(.heavy))
                 .foregroundStyle(enabled ? DS.Palette.ink : DS.Palette.mute)
                 .frame(width: 36, height: 36)

@@ -93,7 +93,7 @@ struct MediaViewer: View {
             } else if case .photo(let link?, _) = item.kind, link.hasPrefix("http") {
                 RemotePhotoPage(link: link, zoomed: $zoomed) { chromeHidden.toggle() }
             } else {
-                Image(systemName: "photo").font(.largeTitle).foregroundStyle(.white.opacity(0.5))
+                Image("gallery").font(.largeTitle).foregroundStyle(.white.opacity(0.5))
             }
         case .video(let url):
             FreshVideo(url: url, playing: current == item.id)
@@ -105,7 +105,7 @@ struct MediaViewer: View {
     private var topBar: some View {
         HStack {
             Button { dismiss() } label: {
-                Image(systemName: "xmark")
+                Image("close")
                     .font(.body.weight(.bold))
                     .foregroundStyle(.white)
                     .frame(width: 44, height: 44)
@@ -124,7 +124,7 @@ struct MediaViewer: View {
             Spacer()
             if let shareable {
                 ShareLink(item: shareable, preview: SharePreview("Photo", image: shareable)) {
-                    Image(systemName: "square.and.arrow.up")
+                    Image("upload-minimalistic")
                         .font(.body.weight(.bold))
                         .foregroundStyle(.white)
                         .frame(width: 44, height: 44)
@@ -133,7 +133,7 @@ struct MediaViewer: View {
                 .accessibilityLabel("Share")
             } else if case .video(let url) = items.first(where: { $0.id == current })?.kind {
                 ShareLink(item: url) {
-                    Image(systemName: "square.and.arrow.up")
+                    Image("upload-minimalistic")
                         .font(.body.weight(.bold))
                         .foregroundStyle(.white)
                         .frame(width: 44, height: 44)

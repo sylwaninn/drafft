@@ -67,7 +67,7 @@ struct PromptCategory: Identifiable, Hashable {
 
 extension ProfilePrompt {
     static let library: [PromptCategory] = [
-        PromptCategory(id: "move", icon: "figure.run", questions: [
+        PromptCategory(id: "move", icon: "running", questions: [
             "My ideal Sunday session",
             "After a workout you'll find me",
             "A stat I'm weirdly proud of",
@@ -81,7 +81,7 @@ extension ProfilePrompt {
             "The piece of gear I'd save in a fire",
             "I've never been as sore as the day I"
         ]),
-        PromptCategory(id: "dating", icon: "heart.fill", questions: [
+        PromptCategory(id: "dating", icon: "heart", questions: [
             "We'll get along if",
             "The way to win me over",
             "I'll know it's a match if",
@@ -93,7 +93,7 @@ extension ProfilePrompt {
             "My love language is basically",
             "Together we could finally"
         ]),
-        PromptCategory(id: "fun", icon: "face.smiling.inverse", questions: [
+        PromptCategory(id: "fun", icon: "smile-circle", questions: [
             "My most irrational fear",
             "My most controversial opinion",
             "I will never shut up about",
@@ -105,7 +105,7 @@ extension ProfilePrompt {
             "Unpopular opinion about stretching",
             "Karaoke song, no hesitation"
         ]),
-        PromptCategory(id: "deep", icon: "sparkles", questions: [
+        PromptCategory(id: "deep", icon: "stars", questions: [
             "Something I'm training for outside of sport",
             "The best advice a coach ever gave me",
             "What keeps me going on hard days",

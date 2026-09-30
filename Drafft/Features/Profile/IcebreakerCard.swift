@@ -35,7 +35,7 @@ struct IcebreakerCard: View {
                     withAnimation(Motion.bouncy) { sent = true }
                     onSend?(opener)
                 } label: {
-                    Label(sent ? L("Done") : sendTitle, systemImage: sent ? "checkmark" : "heart.fill")
+                    Label(sent ? L("Done") : sendTitle, image: sent ? "check" : "heart")
                         .contentTransition(.symbolEffect(.replace))
                 }
                 .buttonStyle(DrafftButtonStyle(kind: .like))
@@ -70,7 +70,7 @@ struct IcebreakerCard: View {
     /// The kind's sign, oversized behind the top corner and cut by the block's edge: a faint
     /// accent tint on night, texture rather than a second title.
     private var backdrop: some View {
-        Image(systemName: icon)
+        Image(icon)
             .font(.system(size: 168, weight: .bold))
             .foregroundStyle(DS.Palette.accentOnNight.opacity(0.13))
             .rotationEffect(.degrees(-14))
@@ -175,7 +175,7 @@ struct IcebreakerCard: View {
                         .opacity(revealed ? 1 : 0.6)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     if !revealed {
-                        Label("Tap for the punchline", systemImage: "hand.tap.fill")
+                        Label("Tap for the punchline", image: "mask-happy")
                             .font(.subheadline.weight(.bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, DS.Space.md)
@@ -252,7 +252,7 @@ struct IcebreakerCard: View {
                     HStack {
                         Text(options[i]).font(.body.weight(.medium)).frame(maxWidth: .infinity, alignment: .leading)
                         if choice != nil && (right || picked) {
-                            Image(systemName: right ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            Image(right ? "check-circle" : "close-circle")
                                 .foregroundStyle(right ? DS.Palette.accentOnNight : .white.opacity(0.7))
                                 .transition(.scale.combined(with: .opacity))
                         }
@@ -281,8 +281,8 @@ struct IcebreakerCard: View {
                 .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: DS.Space.sm) {
-                voteButton("Agree", icon: "hand.thumbsup.fill", value: true)
-                voteButton("Disagree", icon: "hand.thumbsdown.fill", value: false)
+                voteButton("Agree", icon: "like", value: true)
+                voteButton("Disagree", icon: "dislike", value: false)
             }
         }
     }
@@ -293,7 +293,7 @@ struct IcebreakerCard: View {
             Haptics.select()
             take = value
         } label: {
-            Label(label, systemImage: icon)
+            Label(label, image: icon)
                 .font(.subheadline.weight(.bold))
                 .frame(maxWidth: .infinity, minHeight: 48)
                 .foregroundStyle(on ? DS.Palette.onAccentOnNight : .white)

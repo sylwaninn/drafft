@@ -73,7 +73,7 @@ struct PurchaseCreditBanner: View {
     private var badge: some View {
         Group {
             if state == .credited {
-                Image(systemName: "checkmark")
+                Image("check")
                     .font(.title3.weight(.heavy))
                     .foregroundStyle(DS.Palette.onAccentOnNight)
             } else {

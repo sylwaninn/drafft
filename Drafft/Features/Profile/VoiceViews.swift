@@ -81,7 +81,7 @@ struct VoicePlayer: View {
                 Haptics.tap()
                 audio.toggle(url)
             } label: {
-                Image(systemName: playing ? "pause.fill" : "play.fill")
+                Image(playing ? "pause" : "play")
                     .font(.system(size: 16, weight: .bold))
                     .contentTransition(.symbolEffect(.replace))
                     .foregroundStyle(buttonGlyph)
@@ -197,7 +197,7 @@ struct VoiceIntroRecorder: View {
             Button {
                 Task { await toggle() }
             } label: {
-                Image(systemName: recording ? "stop.fill" : "mic.fill")
+                Image(recording ? "stop" : "microphone")
                     .font(.system(size: 26, weight: .bold))
                     .contentTransition(.symbolEffect(.replace))
                     .foregroundStyle(recording ? DS.Palette.accentOnNight : DS.Palette.onLime)
@@ -235,14 +235,14 @@ struct VoiceIntroRecorder: View {
                 Button {
                     Task { await recordAgain() }
                 } label: {
-                    Label("Record again", systemImage: "arrow.counterclockwise")
+                    Label("Record again", image: "restart")
                 }
                 .buttonStyle(DrafftButtonStyle(kind: .secondary))
                 Button(role: .destructive) {
                     Haptics.tap()
                     discard()
                 } label: {
-                    Image(systemName: "trash")
+                    Image("trash-bin-minimalistic")
                         .font(.body.weight(.semibold))
                         .foregroundStyle(DS.Palette.negative)
                         .frame(width: 52, height: 52)

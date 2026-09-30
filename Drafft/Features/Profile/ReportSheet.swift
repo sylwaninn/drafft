@@ -17,7 +17,7 @@ struct ReportSheet: View {
     var body: some View {
         AccountSheet(title: L("Report or block"),
                      actionTitle: L("Report and block"),
-                     actionIcon: "flag.fill",
+                     actionIcon: "flag",
                      destructive: true,
                      enabled: reason != nil && !sending,
                      loading: sending,

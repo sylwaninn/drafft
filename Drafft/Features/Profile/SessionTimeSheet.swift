@@ -37,7 +37,7 @@ struct SessionTimeSheet: View {
                         .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
 
                     HStack {
-                        Label("Time", systemImage: "clock.fill")
+                        Label("Time", image: "clock-circle")
                             .font(.headline)
                             .foregroundStyle(DS.Palette.ink)
                         Spacer()
@@ -54,7 +54,7 @@ struct SessionTimeSheet: View {
                             onRemove()
                             dismiss()
                         } label: {
-                            Label("Remove this time", systemImage: "trash")
+                            Label("Remove this time", image: "trash-bin-minimalistic")
                                 .font(.body.weight(.semibold))
                                 .foregroundStyle(DS.Palette.negative)
                                 .frame(maxWidth: .infinity, minHeight: 52)
@@ -94,7 +94,7 @@ struct SessionTimeSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
         }

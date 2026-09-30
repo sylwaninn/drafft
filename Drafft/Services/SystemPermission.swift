@@ -40,7 +40,7 @@ struct PermissionButton<Permission: SystemPermission>: View {
                 Task { await permission.requestPermission() }
             }
         } label: {
-            Label(refused ? "Open Settings" : askTitle, systemImage: refused ? "gearshape.fill" : symbol)
+            Label(refused ? "Open Settings" : askTitle, image: refused ? "settings" : symbol)
         }
     }
 }
