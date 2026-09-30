@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 
 /// Shared chrome for account sheets: title, close on the right, content blocks,
 /// and a pinned primary action that stays visible (disabled until it can run; only a real error under it).
@@ -438,6 +439,12 @@ struct DeleteAccountSheet: View {
     @State private var understood = false
     @State private var loading = false
     @State private var failure: String?
+    @State private var managingSubscription = false
+
+    private var showsSubscriptionNotice: Bool {
+        let renewal: SubscriptionNotice.Renewal = app.subscription.map { $0.willRenew ? .renews : .ends } ?? .unknown
+        return SubscriptionNotice.showsOnDelete(renewal, isPremium: app.isPremium)
+    }
 
     private var reasons: [String] { [L("I met someone"), L("I need a break"), L("Not enough people nearby"), L("Something else")] }
 
@@ -471,6 +478,22 @@ struct DeleteAccountSheet: View {
                     .font(.subheadline)
                     .foregroundStyle(DS.Palette.body)
                     .fixedSize(horizontal: false, vertical: true)
+            }
+
+            // Billing belongs to the App Store: deleting the account leaves a renewing subscription on.
+            // Also shown while the App Store's answer is unknown and the server says drafft tempo.
+            if showsSubscriptionNotice {
+                SheetBlock(title: L("Your subscription")) {
+                    Text(branded: L("Deleting your account doesn't cancel drafft tempo. Cancel it in the App Store to stop it renewing."),
+                         font: .subheadline)
+                        .foregroundStyle(DS.Palette.body)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button("Manage subscription") {
+                        Haptics.tap()
+                        managingSubscription = true
+                    }
+                    .buttonStyle(.drafftSecondary)
+                }
             }
 
             SheetBlock(title: L("Just need a break?")) {
@@ -516,7 +539,7 @@ struct DeleteAccountSheet: View {
 
             SheetBlock {
                 Toggle(isOn: $understood.animation(Motion.snappy)) {
-                    Text("I understand my account and all my data will be permanently deleted.")
+                    Text("I understand my account will be deleted for good.")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(DS.Palette.ink)
                         .fixedSize(horizontal: false, vertical: true)
@@ -524,6 +547,15 @@ struct DeleteAccountSheet: View {
                 .tint(DS.Palette.negative)
                 .onChange(of: understood) { Haptics.select() }
             }
+        }
+        // On the sheet itself, not the subscription block: the refresh can take the block away
+        // while Apple's sheet is still up.
+        .manageSubscriptionsSheet(isPresented: $managingSubscription)
+        // Cancelling there makes no transaction, so RevenueCat's stream (DrafftApp) can lag behind:
+        // read the App Store again once Apple's sheet closes.
+        .onChange(of: managingSubscription) { _, open in
+            guard !open else { return }
+            Task { await app.refreshSubscription { sub in withAnimation(Motion.snappy) { app.subscription = sub } } }
         }
     }
 }
