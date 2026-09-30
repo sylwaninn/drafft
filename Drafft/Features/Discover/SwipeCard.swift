@@ -64,7 +64,7 @@ struct SwipeCard: View {
                 audio.toggle(url)
             } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: playing ? "pause.fill" : "waveform")
+                    Image(playing ? "pause" : "soundwave")
                         .symbolEffect(.variableColor.iterative, isActive: playing)
                         .contentTransition(.symbolEffect(.replace))
                     Text(playing ? audio.elapsed.clock : profile.voiceDuration.clock)

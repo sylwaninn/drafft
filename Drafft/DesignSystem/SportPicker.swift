@@ -28,7 +28,7 @@ struct SportPicker: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             HStack(spacing: DS.Space.sm) {
-                Image(systemName: "magnifyingglass").foregroundStyle(DS.Palette.body)
+                Image("magnifier").foregroundStyle(DS.Palette.body)
                 TextField("Search \(Sport.allCases.count) sports", text: $query)
                     .autocorrectionDisabled()
                     .submitLabel(.search)
@@ -36,7 +36,7 @@ struct SportPicker: View {
                     .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                 if !query.isEmpty {
                     Button { query = "" } label: {
-                        Image(systemName: "xmark.circle.fill")
+                        Image("close-circle")
                             .foregroundStyle(DS.Palette.mute)
                             .frame(width: 44, height: 44)
                             .contentShape(.rect)
@@ -84,7 +84,7 @@ struct SportPicker: View {
                         } label: {
                             HStack(spacing: DS.Space.xs + 2) {
                                 Text("All \(Sport.allCases.count) sports")
-                                Image(systemName: "chevron.down").font(.caption.weight(.bold))
+                                Image("alt-arrow-down").font(.caption.weight(.bold))
                             }
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(DS.Palette.accentInk)

@@ -42,10 +42,10 @@ struct EmptyStateArt {
     /// The sign's outline, drawn in the accent.
     let symbol: String
 
-    static let discover = EmptyStateArt(symbol: "flame")
+    static let discover = EmptyStateArt(symbol: "fire")
     static let likes = EmptyStateArt(symbol: "heart")
-    static let sessions = EmptyStateArt(symbol: "flag.2.crossed")
-    static let chats = EmptyStateArt(symbol: "bubble.left.and.bubble.right")
+    static let sessions = EmptyStateArt(symbol: "stopwatch-play")
+    static let chats = EmptyStateArt(symbol: "dialog-2")
 }
 
 /// The sign in reserve: a thin accent outline, nothing else around it.
@@ -59,7 +59,7 @@ struct EmptyStateIllustration: View {
     private let glyph: CGFloat = 54
 
     var body: some View {
-        Image(systemName: art.symbol)
+        Image(art.symbol)
             .font(.system(size: glyph, weight: .light))
             .foregroundStyle(tint)
             .frame(width: width, height: height)

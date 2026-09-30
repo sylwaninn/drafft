@@ -27,14 +27,14 @@ struct IcebreakerEditor: View {
                         Text(kind.title)
                         Text(kind.detail)
                     } icon: {
-                        Image(systemName: kind.symbol)
+                        Image(kind.symbol)
                     }
                     .tag(kind)
                 }
             }
         } label: {
             HStack(spacing: DS.Space.sm) {
-                Image(systemName: icebreaker.kind.symbol)
+                Image(icebreaker.kind.symbol)
                     .font(.body.weight(.semibold))
                     .foregroundStyle(DS.Palette.ink)
                     .frame(width: 24)
@@ -42,7 +42,7 @@ struct IcebreakerEditor: View {
                     .font(.body.weight(.semibold))
                     .foregroundStyle(DS.Palette.ink)
                 Spacer()
-                Image(systemName: "chevron.up.chevron.down")
+                Image("chevrons-up-down")
                     .font(.footnote.weight(.bold))
                     .foregroundStyle(DS.Palette.body)
             }
@@ -62,7 +62,7 @@ struct IcebreakerEditor: View {
     private var card: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             VStack(alignment: .leading, spacing: 4) {
-                Label(icebreaker.kind.title, systemImage: icebreaker.kind.symbol)
+                Label(icebreaker.kind.title, image: icebreaker.kind.symbol)
                     .font(.headline)
                     .foregroundStyle(DS.Palette.accentOnNight)
                 Text(icebreaker.kind.detail)

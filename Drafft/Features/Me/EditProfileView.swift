@@ -67,14 +67,14 @@ struct EditProfileView: View {
         }
         var icon: String {
             switch self {
-            case .photos: "photo.on.rectangle"
-            case .bio: "text.quote"
-            case .prompts: "quote.bubble.fill"
-            case .voice: "waveform"
-            case .sports: "figure.run"
-            case .goal: "flag.checkered"
-            case .identity: "person.text.rectangle"
-            case .lifestyle: "leaf.fill"
+            case .photos: "gallery-wide"
+            case .bio: "quote-circle"
+            case .prompts: "chat-round-quote"
+            case .voice: "soundwave"
+            case .sports: "running"
+            case .goal: "flag-2"
+            case .identity: "user-id"
+            case .lifestyle: "leaf"
             }
         }
     }
@@ -143,12 +143,12 @@ struct EditProfileView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") {
+                    Button("Close", image: .icon("close")) {
                         if hasChanges { confirmDiscard = true } else { dismiss() }
                     }
                 }
             }
-            .drafftConfirm(isPresented: $confirmDiscard, icon: "trash",
+            .drafftConfirm(isPresented: $confirmDiscard, icon: "trash-bin-minimalistic",
                            title: L("Discard your changes?"),
                            message: L("What you changed since your last save will be lost."),
                            cancelTitle: L("Keep editing"),
@@ -206,11 +206,11 @@ struct EditProfileView: View {
                         }
                         Spacer(minLength: DS.Space.sm)
                         if needsAttention(page) {
-                            Image(systemName: "exclamationmark.circle.fill")
+                            Image("danger-circle")
                                 .foregroundStyle(DS.Palette.negative)
                                 .accessibilityLabel("Needs attention")
                         }
-                        Image(systemName: "chevron.right")
+                        Image("alt-arrow-right")
                             .font(.footnote.weight(.bold))
                             .foregroundStyle(DS.Palette.mute)
                     }
@@ -245,7 +245,7 @@ struct EditProfileView: View {
                 case .voice:
                     block(L("Voice intro"), icon: page.icon) { VoiceIntroRecorder(result: $voice, framed: false) }
                 case .prompts:
-                    block(L("Interactive prompt"), icon: "hand.tap.fill", note: L("What you write is what they see")) {
+                    block(L("Interactive prompt"), icon: "mask-happy", note: L("What you write is what they see")) {
                         IcebreakerEditor(icebreaker: $draft.icebreaker)
                     }
                     block(L("Written prompts"), icon: page.icon, note: L("Up to 3")) { promptsSection }
@@ -280,7 +280,7 @@ struct EditProfileView: View {
                         .strokeBorder(DS.Palette.ink.opacity(0.2), style: .init(lineWidth: 1.5, dash: [6, 5]))
                         .background(DS.Palette.canvasSoft, in: .rect(cornerRadius: DS.Radius.lg))
                         .overlay {
-                            Image(systemName: "plus")
+                            Image("add")
                                 .font(.title3.weight(.bold))
                                 .foregroundStyle(DS.Palette.ink)
                         }
@@ -360,7 +360,7 @@ struct EditProfileView: View {
                                 let s = entry.sport
                                 withAnimation(Motion.snappy) { draft.sports.removeAll { $0.sport == s } }
                             } label: {
-                                Image(systemName: "trash")
+                                Image("trash-bin-minimalistic")
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(DS.Palette.body)
                                     .frame(width: 44, height: 44)
@@ -403,7 +403,7 @@ struct EditProfileView: View {
                                 Text(prompt.questionText)
                                     .font(.subheadline.weight(.semibold))
                                     .multilineTextAlignment(.leading)
-                                Image(systemName: "chevron.up.chevron.down").font(.caption2.weight(.bold))
+                                Image("chevrons-up-down").font(.caption2.weight(.bold))
                             }
                             .foregroundStyle(DS.Palette.body)
                             .frame(minHeight: 44)
@@ -415,7 +415,7 @@ struct EditProfileView: View {
                             focus = nil
                             withAnimation(Motion.snappy) { prompts.removeAll { $0.id == prompt.id } }
                         } label: {
-                            Image(systemName: "trash")
+                            Image("trash-bin-minimalistic")
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(DS.Palette.body)
                                 .frame(width: 44, height: 44)
@@ -444,7 +444,7 @@ struct EditProfileView: View {
                     // is only added once a question is chosen (closing adds nothing).
                     pickingPrompt = prompts.count
                 } label: {
-                    Label("Add a prompt", systemImage: "plus")
+                    Label("Add a prompt", image: "add")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(DS.Palette.accentInk)
                         .frame(maxWidth: .infinity, minHeight: 48)
@@ -496,7 +496,7 @@ struct EditProfileView: View {
                 if saving {
                     ProgressView().tint(DS.Palette.onLime)
                 } else {
-                    Label(saved ? "Saved" : "Save changes", systemImage: saved ? "checkmark" : "arrow.down.circle.fill")
+                    Label(saved ? "Saved" : "Save changes", image: saved ? "check" : "diskette")
                         .contentTransition(.symbolEffect(.replace))
                 }
             }
@@ -569,7 +569,7 @@ struct EditProfileView: View {
             // The note shares the title's line while both fit, under it otherwise.
             AdaptiveRow {
                 HStack(spacing: DS.Space.sm) {
-                    Image(systemName: icon)
+                    Image(icon)
                         .font(.footnote.weight(.bold))
                         .foregroundStyle(DS.Palette.ink)
                     Text(title)
@@ -664,7 +664,7 @@ private struct LockedField: View {
                 HStack(spacing: DS.Space.sm) {
                     Text(value).font(.body).foregroundStyle(DS.Palette.mute)
                     Spacer()
-                    Image(systemName: "lock.fill").font(.footnote.weight(.semibold)).foregroundStyle(DS.Palette.mute)
+                    Image("lock-keyhole-minimalistic").font(.footnote.weight(.semibold)).foregroundStyle(DS.Palette.mute)
                 }
                 .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
                 .padding(.vertical, 2)

@@ -39,7 +39,7 @@ struct BirthdateField: View {
             .onTapGesture { focused = true }
 
             if invalid {
-                Label("Check the date: this one doesn't exist.", systemImage: "exclamationmark.circle.fill")
+                Label("Check the date: this one doesn't exist.", image: "danger-circle")
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(DS.Palette.negative)
                     .transition(.opacity.combined(with: .move(edge: .top)))

@@ -15,7 +15,7 @@ struct SelfieCaptureView: View {
         VStack(spacing: DS.Space.lg) {
             HStack {
                 Button { dismiss() } label: {
-                    Image(systemName: "xmark")
+                    Image("close")
                         .font(.body.weight(.bold))
                         .foregroundStyle(.white)
                         .frame(width: 40, height: 40)
@@ -73,7 +73,7 @@ struct SelfieCaptureView: View {
     /// What to do now, in one raised block under the frame.
     private var hint: some View {
         HStack(spacing: DS.Space.md) {
-            Image(systemName: model.isCaptured ? "sun.max.fill" : "faceid")
+            Image(model.isCaptured ? "sun" : "face-scan-square")
                 .font(.system(size: 15, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: 36, height: 36)
@@ -101,7 +101,7 @@ struct SelfieCaptureView: View {
                     if model.isSending {
                         ProgressView().tint(DS.Palette.onAccentOnNight)
                     } else {
-                        Label("Send my selfie", systemImage: "paperplane.fill")
+                        Label("Send my selfie", image: "plain")
                     }
                 }
                 .buttonStyle(.drafftPrimary)
@@ -115,11 +115,11 @@ struct SelfieCaptureView: View {
                 Button {
                     if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
                 } label: {
-                    Label("Open Settings", systemImage: "gearshape.fill")
+                    Label("Open Settings", image: "settings")
                 }
                 .buttonStyle(.drafftPrimary)
             default:
-                Button { Task { await model.shoot() } } label: { Label("Take the selfie", systemImage: "camera.fill") }
+                Button { Task { await model.shoot() } } label: { Label("Take the selfie", image: "camera") }
                     .buttonStyle(.drafftPrimary)
                     .disabled(model.stage != .live || model.framing != .ready || model.shooting)
             }

@@ -62,7 +62,7 @@ struct VoiceBlock: View {
                     Haptics.tap()
                     audio.toggle(url)
                 } label: {
-                    Image(systemName: playing ? "pause.fill" : "play.fill")
+                    Image(playing ? "pause" : "play")
                         .font(.system(size: 24, weight: .black))
                         .contentTransition(.symbolEffect(.replace))
                         .foregroundStyle(DS.Palette.onAccentOnNight)
@@ -167,7 +167,7 @@ struct SportsWeekBlock: View {
                 ForEach(Array(profile.sports.enumerated()), id: \.element.id) { i, entry in
                     let both = shared(entry.sport)
                     HStack(spacing: DS.Space.md) {
-                        Image(systemName: entry.sport.symbol)
+                        Image(entry.sport.symbol)
                             .font(.system(size: 15, weight: .bold))
                             .foregroundStyle(DS.Palette.night)
                             .frame(width: 38, height: 38)
@@ -216,7 +216,7 @@ struct GoalBlock: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
-            DraftGlyph(symbol: "flag.checkered", size: 40, fill: AnyShapeStyle(DS.Palette.onLimeWash), glyph: DS.Palette.onLime)
+            DraftGlyph(symbol: "flag-2", size: 40, fill: AnyShapeStyle(DS.Palette.onLimeWash), glyph: DS.Palette.onLime)
             VStack(alignment: .leading, spacing: DS.Space.xs) {
                 Text("Training for")
                     .font(.subheadline.weight(.bold))
@@ -251,13 +251,15 @@ struct VitalsStrip: View {
             out.append(.init(symbol: nil, text: profile.neighborhood + (showDistance ? ", \(LocationPrivacy.rounded(km: profile.distanceKm))" : "")))
         }
         if let v = profile.vitals {
-            if !v.chronotype.isEmpty { out.append(.init(symbol: "sunrise.fill", text: Vitals.label(for: v.chronotype))) }
+            if !v.chronotype.isEmpty { out.append(.init(symbol: "sunrise", text: Vitals.label(for: v.chronotype))) }
         }
-        if let p = profile.pronouns, !p.isEmpty { out.append(.init(symbol: "person.fill", text: p)) }
+        if let p = profile.pronouns, !p.isEmpty { out.append(.init(symbol: "user-rounded", text: p)) }
         if let v = profile.vitals {
-            if !v.diet.isEmpty { out.append(.init(symbol: "fork.knife", text: Vitals.label(for: v.diet))) }
-            if !v.drinks.isEmpty { out.append(.init(symbol: "wineglass.fill", text: Vitals.label(for: v.drinks))) }
-            if !v.smokes.isEmpty { out.append(.init(symbol: "nosign", text: v.smokes == "Never" ? L("Doesn't smoke") : Vitals.label(for: v.smokes))) }
+            if !v.diet.isEmpty { out.append(.init(symbol: "chef-hat", text: Vitals.label(for: v.diet))) }
+            if !v.drinks.isEmpty { out.append(.init(symbol: "wineglass", text: Vitals.label(for: v.drinks))) }
+            if !v.smokes.isEmpty {
+                out.append(.init(symbol: "forbidden-circle", text: v.smokes == "Never" ? L("Doesn't smoke") : Vitals.label(for: v.smokes)))
+            }
         }
         return out
     }
@@ -267,7 +269,7 @@ struct VitalsStrip: View {
             ForEach(items, id: \.self) { item in
                 HStack(spacing: 6) {
                     if let symbol = item.symbol {
-                        Image(systemName: symbol)
+                        Image(symbol)
                             .font(.footnote.weight(.bold))
                             .foregroundStyle(item.lead ? DS.Palette.onLime : DS.Palette.ink)
                     }
@@ -330,7 +332,7 @@ struct LikeHeartButton: View {
             Haptics.thump()
             action()
         } label: {
-            Image(systemName: "heart.fill")
+            Image("heart")
                 .font(.system(size: size * 0.38, weight: .heavy))
                 .foregroundStyle(DS.Palette.onLike)
                 .frame(width: size, height: size)
@@ -353,7 +355,7 @@ struct LikablePhoto: View {
         Photo(name: name)
             .frame(height: height)
             .overlay {
-                Image(systemName: "heart.fill")
+                Image("heart")
                     .font(.system(size: 96, weight: .heavy))
                     .foregroundStyle(DS.Palette.like)
                     .shadow(color: .black.opacity(0.25), radius: 12, y: 4)

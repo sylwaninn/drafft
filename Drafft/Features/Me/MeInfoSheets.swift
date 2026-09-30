@@ -20,7 +20,7 @@ struct MeInfoSheet<Content: View>: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
             .blurredNavigationEdge()
@@ -33,7 +33,7 @@ struct MeInfoSheet<Content: View>: View {
 private struct RowBadge: View {
     let symbol: String
     var body: some View {
-        Image(systemName: symbol)
+        Image(symbol)
             .font(.system(size: 14, weight: .bold))
             .foregroundStyle(DS.Palette.ink)
             .frame(width: 36, height: 36)
@@ -60,7 +60,7 @@ struct BlockedPeopleSheet: View {
         MeInfoSheet(title: L("Blocked people")) {
             if blocked.isEmpty {
                 SheetBlock {
-                    RowBadge(symbol: "hand.raised.fill")
+                    RowBadge(symbol: "user-block")
                     Text("No one blocked.")
                         .font(.headline)
                         .foregroundStyle(DS.Palette.ink)
@@ -87,7 +87,7 @@ struct BlockedPeopleSheet: View {
             }
         }
         .drafftConfirm(isPresented: Binding(get: { pending != nil }, set: { if !$0 { pending = nil } }),
-                       icon: "hand.raised.slash.fill",
+                       icon: "user-check",
                        title: pending.map { L("Unblock \($0.name)?") } ?? L("Unblock?"),
                        message: L("You'll see each other in Discover again. Your old chat doesn't come back."),
                        actions: unblockActions)
@@ -146,21 +146,21 @@ enum SafetyTips {
 
     /// Before and during a first session.
     static var meeting: [Tip] { [
-        ("figure.run", L("Meet where people train"),
+        ("running", L("Meet where people train"),
          L("A busy track, park, gym or club session, with others around.")),
-        ("person.2.fill", L("Tell a friend"),
+        ("users-group-two-rounded", L("Tell a friend"),
          L("Share who you're meeting, where and when. Check in with them after.")),
-        ("bicycle", L("Get there on your own"),
+        ("bicycling", L("Get there on your own"),
          L("Make your own way there and back. Your address can wait.")),
-        ("map.fill", L("Stay on routes you know"),
+        ("map", L("Stay on routes you know"),
          L("For a run or a ride, pick a busy route in daylight and keep your phone charged.")),
-        ("bubble.left.and.bubble.right.fill", L("Keep the chat in drafft"),
+        ("dialog-2", L("Keep the chat in drafft"),
          L("Stay in the app until you know them. Never send money.")),
-        ("door.left.hand.open", L("Trust your gut"),
+        ("exit", L("Trust your gut"),
          L("You can end a session anytime, no explanation needed."))
     ] }
 
-    static var report: Tip { ("flag.fill", L("Report anything off"),
+    static var report: Tip { ("flag", L("Report anything off"),
                               L("Tap Report or block on their profile or in the chat. Reports are confidential.")) }
 }
 
@@ -214,7 +214,7 @@ struct SessionSafetySheet: View {
             ScrollView {
                 VStack(spacing: DS.Space.md) {
                     VStack(alignment: .leading, spacing: DS.Space.sm) {
-                        Label("Session confirmed", systemImage: "checkmark.circle.fill")
+                        Label("Session confirmed", image: "check-circle")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(DS.Palette.accentOnNight)
                         Text("\(session.sport.name) with \(partner)")
@@ -250,7 +250,7 @@ struct SessionSafetySheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
             .blurredNavigationEdge()
@@ -273,9 +273,9 @@ struct LegalDocsListSheet: View {
 
     private func icon(_ doc: LegalDoc) -> String {
         switch doc {
-        case .terms: "doc.text.fill"
-        case .privacy: "lock.fill"
-        case .community: "person.3.fill"
+        case .terms: "document-text"
+        case .privacy: "lock-keyhole-minimalistic"
+        case .community: "users-group-rounded"
         }
     }
 
@@ -296,7 +296,7 @@ struct LegalDocsListSheet: View {
                                     .foregroundStyle(DS.Palette.ink)
                                     .fixedSize(horizontal: false, vertical: true)
                                 Spacer(minLength: DS.Space.sm)
-                                Image(systemName: "arrow.up.right")
+                                Image("arrow-right-up")
                                     .font(.footnote.weight(.bold))
                                     .foregroundStyle(DS.Palette.mute)
                                     .accessibilityHidden(true)

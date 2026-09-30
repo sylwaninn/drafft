@@ -123,11 +123,11 @@ struct ProposeSessionSheet: View {
                         // Other times: the session stays as it is, only the times change.
                         fixedSession(counterTo)
                     } else {
-                        block("Sport", icon: "figure.run") { sportPicker }
-                        block("Pitch it", icon: "quote.bubble", trailing: "Optional") { titlePicker }
+                        block("Sport", icon: "running") { sportPicker }
+                        block("Pitch it", icon: "chat-round-quote", trailing: "Optional") { titlePicker }
                     }
                     block("When", icon: "calendar", trailing: "Up to \(maxOptions) times") { slotsEditor }
-                    block("Meet safely", icon: "shield.lefthalf.filled") { SafetyTipRows() }
+                    block("Meet safely", icon: "shield-check") { SafetyTipRows() }
                 }
                 .padding(.horizontal, DS.Space.lg)
                 .padding(.top, DS.Space.sm)
@@ -140,7 +140,7 @@ struct ProposeSessionSheet: View {
             .toolbar {
                 // Close sits on the right, like every other sheet in the app.
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
             .animation(Motion.select, value: sport)
@@ -214,7 +214,7 @@ struct ProposeSessionSheet: View {
         return Button { select(s, discovery: d) } label: {
             VStack(alignment: .leading, spacing: DS.Space.md) {
                 HStack(alignment: .top) {
-                    Image(systemName: s.symbol)
+                    Image(s.symbol)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
                         .frame(width: 40, height: 40)
@@ -248,7 +248,7 @@ struct ProposeSessionSheet: View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             // The sport as a small lime tag; the pitch gets the full width below it.
             HStack(spacing: 6) {
-                Image(systemName: original.sport.symbol)
+                Image(original.sport.symbol)
                     .font(.footnote.weight(.bold))
                 Text(original.discovery == nil ? original.sport.name : L("\(original.sport.name) discovery"))
                     .font(.footnote.weight(.bold))
@@ -355,7 +355,7 @@ struct ProposeSessionSheet: View {
     private var addCard: some View {
         Button { compose(nil) } label: {
             VStack(spacing: DS.Space.xs) {
-                Image(systemName: "plus")
+                Image("add")
                     .font(.title3.weight(.bold))
                 Text(options.isEmpty ? "Add a time" : "Add another")
                     .font(.caption.weight(.semibold))
@@ -404,7 +404,7 @@ struct ProposeSessionSheet: View {
                 .overlay(alignment: .topTrailing) {
                     if !title.isEmpty {
                         Button { withAnimation(Motion.snappy) { title = "" } } label: {
-                            Image(systemName: "xmark.circle.fill").foregroundStyle(DS.Palette.mute)
+                            Image("close-circle").foregroundStyle(DS.Palette.mute)
                                 .frame(width: 44, height: 44)
                                 .contentShape(.rect)
                         }
@@ -425,7 +425,7 @@ struct ProposeSessionSheet: View {
                     } label: {
                         // Icon sits on the first line's baseline, even when the idea wraps.
                         HStack(alignment: .firstTextBaseline, spacing: DS.Space.sm) {
-                            Image(systemName: on ? "checkmark" : "sparkles")
+                            Image(on ? "check" : "stars")
                                 .font(.footnote.weight(.bold))
                                 .frame(width: 16)
                                 .contentTransition(.symbolEffect(.replace))
@@ -453,7 +453,7 @@ struct ProposeSessionSheet: View {
     private var footer: some View {
         VStack(spacing: DS.Space.md) {
             HStack(spacing: DS.Space.sm) {
-                Image(systemName: sport.symbol)
+                Image(sport.symbol)
                     .font(.system(size: 15, weight: .bold))
                     .foregroundStyle(DS.Palette.onLime)
                     .frame(width: 40, height: 40)
@@ -483,9 +483,9 @@ struct ProposeSessionSheet: View {
 
             Button(action: send) {
                 if sending {
-                    Label("Sent", systemImage: "checkmark")
+                    Label("Sent", image: "check")
                 } else {
-                    Label(options.count > 1 ? L("\(sendTitle) (\(options.count) times)") : sendTitle, systemImage: "paperplane.fill")
+                    Label(options.count > 1 ? L("\(sendTitle) (\(options.count) times)") : sendTitle, image: "plain")
                 }
             }
             .buttonStyle(.drafftPrimary)
@@ -527,7 +527,7 @@ struct ProposeSessionSheet: View {
                                 @ViewBuilder _ content: () -> C) -> some View {
         VStack(alignment: .leading, spacing: DS.Space.md) {
             HStack(spacing: DS.Space.sm) {
-                Image(systemName: icon)
+                Image(icon)
                     .font(.footnote.weight(.bold))
                     .foregroundStyle(DS.Palette.ink)
                 Text(title)

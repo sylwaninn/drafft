@@ -308,5 +308,13 @@ extension View {
     func sheetSurface() -> some View {
         presentationBackground(DS.Palette.canvasSoft)
             .environment(\.isSheetSurface, true)
+            .noScrollIndicators()
+    }
+
+    /// No scroll bar anywhere, not even while scrolling (`.never`; `.hidden` still flashes them).
+    /// Set once at the app's root, again on sheets (belt and braces, and for sheets presented from
+    /// UIKit) and on each view hosted in its own window, which doesn't inherit the root's environment.
+    func noScrollIndicators() -> some View {
+        scrollIndicators(.never, axes: [.vertical, .horizontal])
     }
 }

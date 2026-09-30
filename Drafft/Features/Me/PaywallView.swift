@@ -85,10 +85,10 @@ struct PaywallView: View {
     }
 
     private var perks: [(icon: String, title: String, detail: String)] { [
-        ("arrow.uturn.backward", L("Undo your last swipe"), L("Swiped too fast? Bring them back.")),
-        ("heart.text.square", L("See who liked you"), L("Match instantly with people already into you.")),
-        ("infinity", L("Unlimited likes"), L("No daily cap, like everyone you'd train with.")),
-        ("bolt.fill", L("Weekly boost"), L("One free boost every week: 30 minutes at the top of decks near you."))
+        ("undo-left", L("Undo your last swipe"), L("Swiped too fast? Bring them back.")),
+        ("user-heart", L("See who liked you"), L("Match instantly with people already into you.")),
+        ("infinite", L("Unlimited likes"), L("No daily cap, like everyone you'd train with.")),
+        ("bolt", L("Weekly boost"), L("One free boost every week: 30 minutes at the top of decks near you."))
     ] }
 
     var body: some View {
@@ -123,7 +123,7 @@ struct PaywallView: View {
                     VStack(alignment: .leading, spacing: DS.Space.lg) {
                         ForEach(perks, id: \.title) { perk in
                             HStack(alignment: .top, spacing: DS.Space.md) {
-                                Image(systemName: perk.icon)
+                                Image(perk.icon)
                                     .font(.body.weight(.bold))
                                     .foregroundStyle(DS.Palette.onAccentOnNight)
                                     .frame(width: 40, height: 40)
@@ -143,14 +143,13 @@ struct PaywallView: View {
                 .padding(.top, DS.Space.xxxl)
                 .padding(.bottom, DS.Space.xl)
             }
-            .scrollIndicators(.hidden)
             .bottomBar { footer }
             .nightSurface()
 
             Button {
                 dismiss()
             } label: {
-                Image(systemName: "xmark")
+                Image("close")
                     .font(.body.weight(.bold))
                     .foregroundStyle(.white)
                     .frame(width: 44, height: 44)
@@ -317,7 +316,7 @@ struct PaywallView: View {
             .foregroundStyle(.white.opacity(0.7))
 
             if let notice {
-                Label(notice, systemImage: "info.circle.fill")
+                Label(notice, image: "info-circle")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.white)
                     .fixedSize(horizontal: false, vertical: true)
@@ -414,10 +413,10 @@ struct SubscriptionSheet: View {
     @State private var restoreResult: String?
 
     private var perks: [(icon: String, title: String)] { [
-        ("arrow.uturn.backward", L("Undo your last swipe")),
-        ("heart.text.square", L("See who liked you")),
-        ("infinity", L("Unlimited likes")),
-        ("bolt.fill", L("One free boost every week"))
+        ("undo-left", L("Undo your last swipe")),
+        ("user-heart", L("See who liked you")),
+        ("infinite", L("Unlimited likes")),
+        ("bolt", L("One free boost every week"))
     ] }
 
     var body: some View {
@@ -439,7 +438,7 @@ struct SubscriptionSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
             .blurredNavigationEdge()
@@ -507,7 +506,7 @@ struct SubscriptionSheet: View {
             VStack(alignment: .leading, spacing: DS.Space.md) {
                 ForEach(perks, id: \.title) { perk in
                     HStack(spacing: DS.Space.md) {
-                        Image(systemName: perk.icon)
+                        Image(perk.icon)
                             .font(.system(size: 13, weight: .bold))
                             .foregroundStyle(DS.Palette.ink)
                             .frame(width: 32, height: 32)
@@ -531,7 +530,7 @@ struct SubscriptionSheet: View {
             Button {
                 openURL(URL(string: "https://apps.apple.com/account/subscriptions")!)
             } label: {
-                Label("Open App Store subscriptions", systemImage: "arrow.up.right")
+                Label("Open App Store subscriptions", image: "arrow-right-up")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(DS.Palette.accentInk)
                     .frame(minHeight: 44)
@@ -564,7 +563,7 @@ struct SubscriptionSheet: View {
             .font(.footnote.weight(.semibold))
             .foregroundStyle(DS.Palette.body)
             if let restoreResult {
-                Label(restoreResult, systemImage: "checkmark.circle.fill")
+                Label(restoreResult, image: "check-circle")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(DS.Palette.positiveDeep)
                     .transition(.opacity)

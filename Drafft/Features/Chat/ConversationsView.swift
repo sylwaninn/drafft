@@ -66,7 +66,7 @@ struct ConversationsView: View {
                 Section {
                     if threads.isEmpty && query.isEmpty && !newMatches.isEmpty {
                         ContentUnavailableView("No chats yet",
-                                               systemImage: "bubble.left.and.bubble.right",
+                                               image: "dialog-2",
                                                description: Text("Say hi to a new match to start chatting."))
                             // Inside the white list card, never loose on the sage page.
                             .listRowBackground(Rectangle().fill(DS.Palette.canvas))
@@ -75,14 +75,14 @@ struct ConversationsView: View {
                         NavigationLink(value: c.id) { ConversationRow(convo: c) }
                             .listRowBackground(Rectangle().fill(DS.Palette.canvas))
                             .swipeActions(edge: .trailing) {
-                                Button(c.muted ? "Unmute" : "Mute", systemImage: c.muted ? "bell" : "bell.slash") {
+                                Button(c.muted ? "Unmute" : "Mute", image: .icon(c.muted ? "bell" : "bell-off")) {
                                     app.toggleMute(c.id)
                                 }
                                     // Stays dark in dark mode too, so the white label keeps its contrast.
                                     .tint(DS.Palette.nightRaised)
                             }
                             .swipeActions(edge: .leading) {
-                                Button(c.isUnread ? "Read" : "Unread", systemImage: c.isUnread ? "envelope.open" : "envelope.badge") {
+                                Button(c.isUnread ? "Read" : "Unread", image: .icon(c.isUnread ? "letter-opened" : "letter-unread")) {
                                     if c.isUnread { app.markRead(c.id) } else { app.markUnread(c.id) }
                                 }
                                 .tint(DS.Palette.night)
@@ -153,7 +153,7 @@ struct ConversationRow: View {
                         .foregroundStyle(DS.Palette.ink)
                         .fixedSize(horizontal: false, vertical: true)
                     if convo.muted {
-                        Image(systemName: "bell.slash")
+                        Image("bell-off")
                             .font(.footnote.weight(.semibold))
                             .foregroundStyle(DS.Palette.body)
                             .accessibilityHidden(true) // the row's value says it
@@ -208,7 +208,7 @@ struct ConversationRow: View {
     /// Grey "You: ", then the content icon, then the text: one Text so it wraps as a paragraph.
     private func preview(_ m: Message) -> Text {
         let author = Text(m.fromMe ? "You: " : "").foregroundStyle(DS.Palette.mute)
-        let icon = (m.previewIcon.map { Text("\(Image(systemName: $0)) ") } ?? Text("")).foregroundStyle(DS.Palette.body)
+        let icon = (m.previewIcon.map { Text("\(Image($0)) ") } ?? Text("")).foregroundStyle(DS.Palette.body)
         let text = Text(m.previewText).foregroundStyle(convo.isUnread ? DS.Palette.ink : DS.Palette.body)
         return Text("\(author)\(icon)\(text)")
     }
@@ -217,11 +217,11 @@ struct ConversationRow: View {
 extension Message {
     var previewIcon: String? {
         switch content {
-        case .photo, .photoReply: "photo"
-        case .video: "video.fill"
-        case .voice: "waveform"
-        case .file: "doc.fill"
-        case .session: "flag.2.crossed" // the Sessions tab icon
+        case .photo, .photoReply: "gallery"
+        case .video: "videocamera"
+        case .voice: "soundwave"
+        case .file: "file"
+        case .session: "stopwatch-play" // the Sessions tab icon
         default: nil
         }
     }

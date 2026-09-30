@@ -27,7 +27,7 @@ struct PromptPickerSheet: View {
                 VStack(alignment: .leading, spacing: DS.Space.md) {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: DS.Space.sm) {
-                            chip(L("All"), icon: "square.grid.2x2.fill", on: category == nil) { category = nil }
+                            chip(L("All"), icon: "widget", on: category == nil) { category = nil }
                             ForEach(ProfilePrompt.library) { c in
                                 chip(c.name, icon: c.icon, on: category == c.id) { category = c.id }
                             }
@@ -40,7 +40,7 @@ struct PromptPickerSheet: View {
                         let list = c.questions.filter(matches)
                         if !list.isEmpty {
                             VStack(alignment: .leading, spacing: 0) {
-                                Label(c.name, systemImage: c.icon)
+                                Label(c.name, image: c.icon)
                                     .font(.footnote.weight(.bold))
                                     .foregroundStyle(DS.Palette.ink)
                                     .padding(.vertical, DS.Space.md)
@@ -79,7 +79,7 @@ struct PromptPickerSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
+                    Button("Close", image: .icon("close")) { dismiss() }
                 }
             }
             .blurredNavigationEdge()
@@ -149,7 +149,7 @@ struct PromptPickerSheet: View {
             Haptics.select()
             action()
         } label: {
-            Label(title, systemImage: icon)
+            Label(title, image: icon)
                 .font(.footnote.weight(.semibold))
                 .lineLimit(1)
                 .fixedSize()

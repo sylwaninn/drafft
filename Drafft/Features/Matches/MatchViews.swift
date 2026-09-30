@@ -49,7 +49,7 @@ struct MatchView: View {
                     Button {
                         onChat()
                     } label: {
-                        Label("Say hi", systemImage: "bubble.left.fill")
+                        Label("Say hi", image: "chat-round-line")
                     }
                     .buttonStyle(.drafftPrimary)
                     Button("Keep swiping", action: onClose)
@@ -101,7 +101,7 @@ struct MatchView: View {
                 .offset(x: arrived ? 56 : 260, y: 24)
 
             // Liking stays green whatever the brand accent.
-            Image(systemName: "heart.fill")
+            Image("heart")
                 .font(.system(size: 28, weight: .heavy))
                 .foregroundStyle(DS.Palette.onLike)
                 .frame(width: 64, height: 64)
@@ -143,7 +143,7 @@ struct MatchBannerView: View {
                         .foregroundStyle(DS.Palette.accentOnNight)
                 }
                 Spacer(minLength: 0)
-                Image(systemName: "heart.fill")
+                Image("heart")
                     .foregroundStyle(DS.Palette.like)
                     .symbolEffect(.bounce, options: .repeat(2))
                     .accessibilityHidden(true)
@@ -180,7 +180,7 @@ struct BoostBannerView: View {
 
     var body: some View {
         HStack(spacing: DS.Space.md) {
-            Image(systemName: "bolt.fill")
+            Image("bolt")
                 .font(.title3.weight(.heavy))
                 .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 48, height: 48)
@@ -237,7 +237,7 @@ struct NoticeBannerView: View {
 
     var body: some View {
         HStack(spacing: DS.Space.md) {
-            Image(systemName: "exclamationmark")
+            Image("exclamation-mark")
                 .font(.title3.weight(.heavy))
                 .foregroundStyle(DS.Palette.onAccentOnNight)
                 .frame(width: 48, height: 48)

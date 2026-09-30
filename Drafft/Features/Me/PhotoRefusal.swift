@@ -19,6 +19,8 @@ struct PhotoRefusalSheet: View {
             // Scrolls only if it's taller than the screen (large text, small phone): never cut.
             ScrollView { content }
                 .scrollBounceBehavior(.basedOnSize)
+                // Hosted outside the app's root: its environment doesn't reach here.
+                .noScrollIndicators()
                 .background(DS.Palette.sheetRaised)
         }
     }
@@ -39,7 +41,7 @@ struct PhotoRefusalSheet: View {
                     RoundedRectangle(cornerRadius: DS.Radius.lg).fill(.black.opacity(0.25))
                 }
                 .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: sent ? "hourglass" : "nosign")
+                    Image(sent ? "hourglass" : "forbidden-circle")
                         .font(.footnote.weight(.heavy))
                         .foregroundStyle(.white)
                         .frame(width: 30, height: 30)
@@ -134,7 +136,7 @@ struct PhotoRefusalBanner: View {
                     .frame(width: 44, height: 56)
                     .clipShape(.rect(cornerRadius: DS.Radius.sm))
                     .overlay(alignment: .bottomTrailing) {
-                        Image(systemName: "nosign")
+                        Image("forbidden-circle")
                             .font(.caption2.weight(.heavy))
                             .foregroundStyle(.white)
                             .frame(width: 20, height: 20)

@@ -97,7 +97,7 @@ struct SuperLikeComposer: View {
                 HStack {
                     Spacer()
                     Button { cancel() } label: {
-                        Image(systemName: "xmark")
+                        Image("close")
                             .font(.body.weight(.bold))
                             .foregroundStyle(.white)
                             .frame(width: 44, height: 44)

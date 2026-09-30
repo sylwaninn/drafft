@@ -295,7 +295,7 @@ struct DiscoverView: View {
             } label: {
                 // The count lives inside the pill (never a badge hanging off its corner).
                 HStack(spacing: 6) {
-                    Image(systemName: "slider.horizontal.3")
+                    Image("tuning-2")
                         .font(.body.weight(.bold))
                         .foregroundStyle(DS.Palette.ink)
                     if app.filters.activeCount > 0 {
@@ -348,7 +348,7 @@ struct DiscoverView: View {
                     showPaywall = true
                 }
             } label: {
-                Image(systemName: "arrow.uturn.backward")
+                Image("undo-left")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(DS.Palette.ink)
                     .frame(width: 52, height: 52)
@@ -362,7 +362,7 @@ struct DiscoverView: View {
             Button {
                 if let p = app.topCard { commit(p, liked: false) }
             } label: {
-                Image(systemName: "xmark")
+                Image("close")
                     .font(.system(size: 28, weight: .heavy))
                     .foregroundStyle(DS.Palette.ink)
                     .frame(width: 72, height: 72)
@@ -376,7 +376,7 @@ struct DiscoverView: View {
             Button {
                 if let p = app.topCard { commit(p, liked: true) }
             } label: {
-                Image(systemName: "heart.fill")
+                Image("heart")
                     .font(.system(size: 30, weight: .heavy))
                     .foregroundStyle(DS.Palette.onLike)
                     .frame(width: 72, height: 72)
@@ -465,7 +465,7 @@ struct HeartBurst: View {
         ZStack {
             ForEach(0..<7, id: \.self) { i in
                 let angle = Angle.degrees(Double(i) / 7 * 360 - 90)
-                Image(systemName: "heart.fill")
+                Image("heart")
                     .font(.system(size: CGFloat(10 + (i % 3) * 3)))
                     .foregroundStyle(i.isMultiple(of: 2) ? DS.Palette.like : DS.Palette.likeActive)
                     .offset(x: fired ? cos(angle.radians) * 64 : 0, y: fired ? sin(angle.radians) * 64 : 0)

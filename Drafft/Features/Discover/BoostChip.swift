@@ -23,7 +23,7 @@ struct BoostChip: View {
                                 .stroke(DS.Palette.onLime, style: StrokeStyle(lineWidth: 2, lineCap: .round))
                                 .rotationEffect(.degrees(-90))
                         }
-                        Image(systemName: "bolt.fill")
+                        Image("bolt")
                             .font(.system(size: running ? 9 : 13, weight: .heavy))
                     }
                     .frame(width: 20, height: 20)

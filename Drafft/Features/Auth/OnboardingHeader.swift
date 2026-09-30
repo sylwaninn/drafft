@@ -18,14 +18,14 @@ struct OnboardingHeader: View {
             Button {
                 if step > 0 { back() } else { confirmLeave = true }
             } label: {
-                Image(systemName: "chevron.left").font(.body.weight(.semibold))
+                Image("alt-arrow-left").font(.body.weight(.semibold))
                     .frame(width: 44, height: 48, alignment: .leading)
                     .contentShape(.rect)
             }
             .buttonStyle(.plain)
             .foregroundStyle(DS.Palette.ink)
             .accessibilityLabel(step > 0 ? "Back" : "Leave sign-up")
-            .drafftConfirm(isPresented: $confirmLeave, icon: "arrow.uturn.backward",
+            .drafftConfirm(isPresented: $confirmLeave, icon: "undo-left",
                            title: L("Leave sign-up?"),
                            message: L("Your answers won't be kept. You'll start over next time."),
                            cancelTitle: L("Keep going"),

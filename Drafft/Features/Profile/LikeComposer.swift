@@ -63,7 +63,7 @@ struct LikeComposer: View {
                         let text = message.trimmingCharacters(in: .whitespacesAndNewlines)
                         close { onSend(text) }
                     } label: {
-                        Label(hasMessage ? "Send like with comment" : "Send like", systemImage: "heart.fill")
+                        Label(hasMessage ? "Send like with comment" : "Send like", image: "heart")
                             .contentTransition(.opacity)
                     }
                     .buttonStyle(DrafftButtonStyle(kind: .like))
@@ -85,7 +85,7 @@ struct LikeComposer: View {
                 HStack {
                     Spacer()
                     Button { cancel() } label: {
-                        Image(systemName: "xmark")
+                        Image("close")
                             .font(.body.weight(.bold))
                             .foregroundStyle(.white)
                             .frame(width: 44, height: 44)
