@@ -532,7 +532,11 @@ struct SubscriptionSheet: View {
 
     private func billing(_ sub: TempoSubscription) -> some View {
         SheetBlock(title: L("Billing")) {
-            Text(branded: L("Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change or cancel it, go to your App Store subscriptions. Deleting drafft doesn't cancel it."),
+            Text(branded: L("""
+                Your subscription is billed through your Apple Account and renews automatically unless you cancel it \
+                at least 24 hours before the end of the current period. To change or cancel it, go to your App Store \
+                subscriptions. Deleting drafft doesn't cancel it.
+                """),
                  font: .subheadline)
                 .foregroundStyle(DS.Palette.body)
                 .fixedSize(horizontal: false, vertical: true)
