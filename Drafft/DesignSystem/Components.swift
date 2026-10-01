@@ -242,13 +242,15 @@ struct Photo: View {
     let name: String
     var side: CGFloat?
     var blur: CGFloat = 0
+    /// Download order among photos waiting (the deck: the card in play first).
+    var priority: ImageRequest.Priority = .normal
 
     var body: some View {
         Color.clear
             .overlay {
                 if name.hasPrefix("http") || name.hasPrefix("/") {
                     // Blurred at decode time, never a live blur (locked likes).
-                    LoadedPhoto(name: name, blur: blur / max(side ?? 200, 1))
+                    LoadedPhoto(name: name, blur: blur / max(side ?? 200, 1), priority: priority)
                 } else if let img = blur > 0
                             ? ImageStore.blurred(name, fraction: blur / max(side ?? 200, 1))
                             : side == nil ? ImageStore.preparedFull(name) : ImageStore.image(name, side: side) {
@@ -259,37 +261,6 @@ struct Photo: View {
             }
             .clipped()
             .accessibilityHidden(true)
-    }
-}
-
-/// A photo on the server (`http…`) or picked on this phone (`/…`), through `Images`: decoded in the
-/// background at the frame's size, shared downloads, capped caches. A copy already in memory shows
-/// on the first frame; otherwise its ThumbHash preview (`MediaPreviews`), or a sage tile, stands in
-/// until it's there.
-private struct LoadedPhoto: View {
-    let name: String
-    /// Blur radius as a share of the photo's shorter side (0: sharp).
-    var blur: CGFloat = 0
-    @Environment(\.displayScale) private var scale
-    /// Decoded once per view (a few microseconds, then cached by key).
-    private var preview: UIImage? { MediaPreviews.image(for: name) }
-
-    var body: some View {
-        GeometryReader { geo in
-            LazyImage(request: Images.request(name, points: geo.size, scale: scale, blur: blur),
-                      transaction: Transaction(animation: .easeOut(duration: 0.2))) { state in
-                ZStack {
-                    Rectangle().fill(DS.Palette.canvasSoft)
-                    if state.image == nil, let preview {
-                        Image(uiImage: preview).resizable().interpolation(.medium).scaledToFill()
-                    }
-                    if let image = state.image {
-                        image.resizable().scaledToFill().transition(.opacity)
-                    }
-                }
-            }
-            .frame(width: geo.size.width, height: geo.size.height)
-        }
     }
 }
 

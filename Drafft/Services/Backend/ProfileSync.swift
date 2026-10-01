@@ -197,6 +197,7 @@ enum ProfileSync {
         struct PromptRow: Decodable { let question: String; let answer: String }
         struct MediaRow: Decodable {
             let id: String; let key: String; let kind: String; let status: String; let thumbhash: String?
+            let width: Int?; let height: Int?
             // Three states in the column: a face, none, never checked (null).
             // swiftlint:disable:next discouraged_optional_boolean
             let face: Bool?
@@ -211,7 +212,8 @@ enum ProfileSync {
             "name", "birthdate", "pronouns", "gender", "neighborhood", "bio", "goal", "favorite_spot",
             "drinks", "smokes", "diet", "chronotype", "icebreaker", "voice_intro_key", "voice_duration",
             "paused", "moderation", "onboarded_at", NotificationSettings.columns,
-            "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)", "profile_media(id,key,kind,status,thumbhash,face)"
+            "profile_sports(sport_id,per_week)", "profile_prompts(question,answer)",
+            "profile_media(id,key,kind,status,thumbhash,face,width,height)"
         ] + (withConsent ? consentColumns : [])).joined(separator: ",")
     }
 
@@ -260,7 +262,7 @@ enum ProfileSync {
         guard let row = (try? JSONDecoder().decode([AccountRow].self, from: data))?.first else { return nil }
         func link(_ key: String) -> String? { signed[key] ?? base.map { $0.appendingPathComponent(key).absoluteString } }
         // Each photo's blurred preview, shown while it loads.
-        for m in row.media ?? [] { MediaPreviews.register(m.thumbhash, key: m.key) }
+        for m in row.media ?? [] { MediaPreviews.register(m.thumbhash, key: m.key, width: m.width, height: m.height) }
         let own = (row.media ?? []).filter { $0.kind == "photo" }.compactMap { m in
             link(m.key).map { OwnPhoto(link: $0, id: m.id, status: m.status, faceless: m.face == false) }
         }

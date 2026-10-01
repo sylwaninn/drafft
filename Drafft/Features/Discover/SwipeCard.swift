@@ -1,3 +1,4 @@
+import Nuke
 import SwiftUI
 
 struct SwipeCard: View {
@@ -6,6 +7,8 @@ struct SwipeCard: View {
     /// -1 (pass) … 1 (like), drives the stamps.
     let progress: CGFloat
     let isTop: Bool
+    /// Download order of its photo: the card in play first, then the ones behind it.
+    var photoPriority: ImageRequest.Priority = .normal
     let onOpen: () -> Void
 
     @State private var audio = AudioPlayback.shared
@@ -14,7 +17,7 @@ struct SwipeCard: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Photo(name: profile.portrait)
+            Photo(name: profile.portrait, priority: photoPriority)
 
             // Scrims so the identity (top) and sports (bottom) stay readable on any photo.
             // design-lint: allow gradient - photo scrims for the identity and sports

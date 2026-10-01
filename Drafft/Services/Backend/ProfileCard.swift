@@ -66,6 +66,9 @@ struct ProfileCard: Decodable, Sendable, Equatable {
         let url: String?
         /// Blurred preview shown while the photo loads (`MediaPreviews`).
         var thumbhash: String?
+        /// Size in pixels (nil for older rows): picks the copy to download (`Renditions`).
+        var width: Int?
+        var height: Int?
     }
 
     struct SportRow: Decodable, Sendable, Equatable {

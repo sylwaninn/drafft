@@ -3,7 +3,9 @@ import SwiftUI
 
 /// Discover on the server (docs/matching.md in drafft-backend):
 ///
-/// - **Batches** from `discover`, 20 at a time, asked again when 5 cards are left. Each batch is the
+/// - **Batches** from `discover`: the cards still to swipe and 20 new ones (the server ranks from the top,
+///   so it sends both), asked again early enough to arrive before the end at the pace the person swipes
+///   (`DeckPace`, at least 10 cards ahead). Each batch is the
 ///   server's fresh order: the cards on screen stay in place if the server still has them, and any
 ///   card it no longer returns (paused, blocked, swiped on another device, no longer eligible) goes.
 ///   The deck is also read again at the front, when the account's channel (re)joins, when the
@@ -17,9 +19,10 @@ import SwiftUI
 ///   reason in the person's language. A like the server turns down as `not_eligible` (or a card gone,
 ///   or already swiped elsewhere) just stays gone, without a message.
 extension AppModel {
-    /// Cards per batch, and how few left asks for the next one.
-    static let deckBatch = 20
-    static let deckLowWater = 5
+    /// New cards per read.
+    static let deckBatch = DeckPace.batch
+    /// The most `discover` returns at once.
+    private static let deckMaxRead = 50
     /// Cards on screen (the stack shows 4) that a fresh batch doesn't reorder.
     private static let deckKeep = 4
 
@@ -50,10 +53,12 @@ extension AppModel {
     }
 
     /// Reads a batch. `.restart` drops the deck on screen first (new filters or preferences): a card
-    /// that doesn't fit them any more never shows. A `.refresh` while one runs waits for it.
-    func loadDeck(_ mode: DeckLoad) {
+    /// that doesn't fit them any more never shows. A `.refresh` while one runs waits for it. Any read
+    /// but one asked by a swipe may find new people again (`DiscoveryState.exhausted`).
+    func loadDeck(_ mode: DeckLoad, afterSwipe: Bool = false) {
         guard phase == .main, !profilePaused else { return }
         if mode == .refresh, discovery.load != nil { return }
+        if !afterSwipe { discovery.exhausted = false }
         discovery.load?.cancel()
         discovery.generation += 1
         let generation = discovery.generation
@@ -66,9 +71,14 @@ extension AppModel {
         // flashing the spinner would replay its entrance for nothing.
         if queue.isEmpty, mode == .restart || deckState != .loaded { deckState = .loading }
         let filters = filters
+        // The server sends its fresh order from the top, the cards still here included, and may send the
+        // swipes not yet on the server (left out): ask for all of those plus a batch of new ones (50 at most).
+        let limit = min(Self.deckMaxRead, queue.count + discovery.pendingSwipes + Self.deckBatch)
         discovery.load = Task { [self] in
-            let outcome = await fetchDeck(filters)
+            let started = ContinuousClock.now
+            let outcome = await fetchDeck(filters, limit: limit)
             guard generation == discovery.generation else { return }
+            if case .cards = outcome { discovery.pace.read(took: Self.seconds(ContinuousClock.now - started)) }
             discovery.load = nil
             apply(outcome, filters: filters)
         }
@@ -81,10 +91,10 @@ extension AppModel {
     }
 
     /// One `discover` call; with no location on file, the location is sent first and it's asked again once.
-    private func fetchDeck(_ filters: DiscoverFilters) async -> DeckOutcome {
+    private func fetchDeck(_ filters: DiscoverFilters, limit: Int) async -> DeckOutcome {
         for attempt in 0..<2 {
             do {
-                return .cards(try await Backend.shared.rpc("discover", ["p_filters": filters.serverFilters, "p_limit": Self.deckBatch]))
+                return .cards(try await Backend.shared.rpc("discover", ["p_filters": filters.serverFilters, "p_limit": limit]))
             } catch {
                 guard let code = ServerMessage.code(of: error) else { return .failed(error) }
                 if code == "location_required", attempt == 0, await LocationOnce.send() { continue }
@@ -101,6 +111,9 @@ extension AppModel {
             let hidden = discovery.swiped.union(blocked.map(\.id)).union(matches.map(\.profile.id))
             let fresh = cards.filter { !hidden.contains($0.id) }
             let byID = Dictionary(fresh.map { ($0.id, $0.profile(mediaBase: MediaURL.saved)) }) { a, _ in a }
+            let held = Set(queue.map(\.id))
+            // Fewer new people than a batch: the pool is running out, swipes stop asking until something else does.
+            discovery.exhausted = fresh.filter { !held.contains($0.id) }.count < Self.deckBatch
             let order = DeckMerge.merge(current: queue.map(\.id), fresh: fresh.map(\.id), keep: Self.deckKeep,
                                         exclude: hidden)
             // The fresh copy of each card (new links, a changed profile), in the merged order.
@@ -158,12 +171,16 @@ extension AppModel {
             likesLeft = max(0, left - 1)
         }
         saveDeck(filters)
-        if queue.count <= Self.deckLowWater { loadDeck(.refresh) }
+        discovery.pace.swiped(at: Self.seconds(ContinuousClock.now - Self.clockStart))
+        // Not when the last read had nothing new to add: no read per swipe at the end of a small pool.
+        if queue.count <= discovery.pace.lowWater, !discovery.exhausted { loadDeck(.refresh, afterSwipe: true) }
         // The last card went while the next batch is on its way: that's loading, not "no one new".
         if queue.isEmpty, discovery.load != nil { deckState = .loading }
 
         let target = profile.id
+        discovery.pendingSwipes += 1
         enqueue { [self] in
+            defer { discovery.pendingSwipes = max(0, discovery.pendingSwipes - 1) }
             do {
                 let data = try await Backend.shared.rpc("swipe", Self.swipeBody(target, liked: liked, superLike: superLike, opener: opener))
                 struct Result: Decodable { let matched: Bool; let matchId: String? }
@@ -176,6 +193,13 @@ extension AppModel {
             }
             if liked, !superLike { await loadLikesLeft() }
         }
+    }
+
+    /// A monotonic origin for the swipe pace.
+    private static let clockStart = ContinuousClock.now
+
+    nonisolated private static func seconds(_ duration: Duration) -> TimeInterval {
+        Double(duration.components.seconds) + Double(duration.components.attoseconds) / 1e18
     }
 
     /// `swipe`'s parameters. A super like's text is its note (140 characters); any other opener is
@@ -367,6 +391,13 @@ struct DiscoveryState {
     var knownMatches: Set<String> = []
     /// Whether the matches were read once (the first read never shows banners).
     var matchesRead = false
+    /// How long reads take and how fast the person swipes: when to read the next batch.
+    var pace = DeckPace()
+    /// Swipes sent but not answered yet.
+    var pendingSwipes = 0
+    /// The last read brought fewer new people than a batch: swipes don't ask again until another read
+    /// (back at the front, the channel rejoined, new filters) does.
+    var exhausted = false
 }
 
 /// The deck as kept on this iPhone: the filters it was read with and the cards' own bytes.
