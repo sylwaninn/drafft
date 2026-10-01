@@ -28,7 +28,7 @@ enum DeckPhotoMetrics {
 
     static func track(_ names: [String]) {
         if tracked.isEmpty {
-            let reset = ProcessInfo.processInfo.arguments.contains("-deckPhotoReset") ? " (caches emptied)" : ""
+            let reset = Images.cachesEmptied ? " (caches emptied)" : ""
             say("session \(UIDevice.current.model) \(UIDevice.current.systemVersion)\(reset)")
         }
         tracked.formUnion(names.map(key))
@@ -89,9 +89,31 @@ enum DeckPhotoMetrics {
         if let source = ready[k] {
             say("top #\(swipes) \(short(k)) ready (\(source)) \(pace)")
         } else {
-            say("top #\(swipes) \(short(k)) NOT READY \(pace) pending=\(pending)")
+            let small = previews[k] != nil ? " (small copy shown)" : ""
+            say("top #\(swipes) \(short(k)) NOT READY\(small) \(pace) pending=\(pending)")
         }
     }
+
+    /// The connection turned limited or back to normal (`NetworkQuality`).
+    static func network(limited: Bool) {
+        say("network \(limited ? "LIMITED" : "normal")")
+    }
+
+    /// A small copy shown first on a limited connection (`Images.preview`).
+    static func preview(_ name: String, _ result: Result<ImageResponse, Error>) {
+        let k = key(name)
+        guard tracked.contains(k), previews[k] == nil else { return }
+        if case .success = result {
+            previews[k] = clock.now
+            let source = (try? result.get().cacheType).map { $0 == .memory ? "memory" : "disk" } ?? "network"
+            if let top, top.key == k, ready[k] == nil {
+                say("preview \(short(k)) \(source), card in play for \(ms(clock.now - top.since)) ms")
+            } else {
+                say("preview \(short(k)) \(source)")
+            }
+        }
+    }
+    private static var previews: [String: ContinuousClock.Instant] = [:]
 
     /// Wraps a download's callbacks (any thread) to record when it left the queue, its bytes and its end.
     nonisolated static func observe(

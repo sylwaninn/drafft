@@ -16,6 +16,8 @@ enum Renditions {
     static let ladder = [160, 320, 640, 1_080, 1_440]
     /// A step up the ladder is worth more than a 5 % upscale nobody sees.
     static let tolerance: CGFloat = 0.95
+    /// On a limited connection, the width asked of a full copy: a step lighter (1 080 for a 1 344 card).
+    static let limitedShare: CGFloat = 0.75
 
     /// Source pixels wide enough to fill `pixels` (aspect fill) with a photo `aspect` wide for 1 high.
     static func neededWidth(for pixels: CGSize, aspect: CGFloat?) -> CGFloat {
@@ -41,10 +43,12 @@ enum Renditions {
         Renditions.width(covering: max(160, width / 4)) ?? ladder[ladder.count - 1]
     }
 
-    /// The decoded size: the frame in pixels, rounded up to 64 px so frames a few points apart (and a
-    /// card in flight, the same card in the deck) share one copy in memory.
+    /// The decoded size: the frame in pixels, its width rounded up to 64 px so frames a few points apart
+    /// share one copy in memory, its height following the frame's exact proportions. Every copy of a photo
+    /// in one frame (small, sharp) is cropped alike, so a sharper one lands exactly over the last.
     static func decodeSize(for pixels: CGSize) -> CGSize {
-        func up(_ value: CGFloat) -> CGFloat { max(64, (value / 64).rounded(.up) * 64) }
-        return CGSize(width: up(pixels.width), height: up(pixels.height))
+        let width = max(64, (pixels.width / 64).rounded(.up) * 64)
+        guard pixels.width > 0, pixels.height > 0 else { return CGSize(width: width, height: width) }
+        return CGSize(width: width, height: (width * pixels.height / pixels.width).rounded())
     }
 }

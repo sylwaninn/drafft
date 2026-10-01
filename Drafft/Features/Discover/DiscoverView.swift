@@ -1,3 +1,4 @@
+import Nuke
 import SwiftUI
 
 struct DiscoverView: View {
@@ -151,7 +152,7 @@ struct DiscoverView: View {
                     let isTop = i == 0
                     let d = depth(i)
                     SwipeCard(profile: p, me: app.me, progress: isTop ? progress : 0, isTop: isTop,
-                              photoPriority: i == 0 ? .veryHigh : i == 1 ? .high : .normal) {
+                              photoPriority: photoPriority(i)) {
                         detail = p
                     }
                     .frame(width: geo.size.width, height: geo.size.height - 28)
@@ -210,6 +211,15 @@ struct DiscoverView: View {
         .frame(maxWidth: .infinity, alignment: .top)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+
+    /// The card in play's photo first. On a limited connection every small copy of the window comes
+    /// before it (`PhotoWindow`), and the cards behind it get their full one last.
+    private func photoPriority(_ i: Int) -> ImageRequest.Priority {
+        let limited = NetworkQuality.shared.isLimited
+        if i == 0 { return limited ? .high : .veryHigh }
+        if limited { return .veryLow }
+        return i == 1 ? .high : .normal
     }
 
     private func veilAmount(_ d: CGFloat) -> Double {

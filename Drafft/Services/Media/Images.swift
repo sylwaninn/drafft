@@ -21,6 +21,10 @@ enum Images {
     static let memoryLimit = min(256 << 20, max(96 << 20, Int(ProcessInfo.processInfo.physicalMemory / 20)))
     /// Downloaded bytes kept on disk.
     static let diskLimit = 300 << 20
+    #if DECK_PHOTO_METRICS
+    /// This launch started from an empty photo cache (`DeckPhotoMetrics`).
+    nonisolated(unsafe) static var cachesEmptied = false
+    #endif
 
     /// Once, at launch, before the first photo is drawn.
     static func configure() {
@@ -37,8 +41,14 @@ enum Images {
             config.dataCache = disk
             config.imageCache = memory
             #if DECK_PHOTO_METRICS
-            // `devicectl device process launch … so.drafft.app -- -deckPhotoReset`: a run from an empty cache.
-            if ProcessInfo.processInfo.arguments.contains("-deckPhotoReset") { disk?.removeAll() }
+            // A run from an empty cache: launched with `-deckPhotoReset`, or Documents/deck-photo-reset put
+            // there for the next launch from the home screen (`devicectl device copy to`).
+            let marker = URL.documentsDirectory.appending(path: "deck-photo-reset")
+            if ProcessInfo.processInfo.arguments.contains("-deckPhotoReset") || FileManager.default.fileExists(atPath: marker.path) {
+                disk?.removeAll()
+                try? FileManager.default.removeItem(at: marker)
+                cachesEmptied = true
+            }
             #endif
         }
         // Nuke trims when the app goes to the background; a warning in the foreground empties it too.
@@ -46,8 +56,11 @@ enum Images {
             forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: nil
         ) { _ in memory.removeAll() }
         NetworkQuality.shared.onChange { limited in
-            // Six downloads share a fast line; on a slow one, three, so the photo on screen isn't split six ways.
-            ImagePipeline.shared.configuration.dataLoadingQueue.maxConcurrentOperationCount = limited ? 3 : 6
+            // Six downloads share a fast line; on a slow one, two, so the photo on screen isn't split six ways.
+            ImagePipeline.shared.configuration.dataLoadingQueue.maxConcurrentOperationCount = limited ? 2 : 6
+            #if DECK_PHOTO_METRICS
+            Task { @MainActor in DeckPhotoMetrics.network(limited: limited) }
+            #endif
         }
     }
 
@@ -64,7 +77,9 @@ enum Images {
         if name.hasPrefix("/") {
             url = URL(fileURLWithPath: name)
         } else if name.hasPrefix("http") {
-            let needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
+            var needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
+            // A slow line gets a step lighter (a copy already here still wins): sooner beats sharper there.
+            if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
             url = closest(name, covering: needed, variant: variant)
         } else {
             return nil
@@ -81,7 +96,8 @@ enum Images {
         let needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
         guard let url = sized(name, width: Renditions.previewWidth(covering: needed)) else { return nil }
         let decode = Renditions.decodeSize(for: CGSize(width: pixels.width / 3, height: pixels.height / 3))
-        return make(url, decode: decode, priority: .high, blur: 0, variant: nil)
+        // Ahead of every full copy but the card in play's: on a slow line, it's what keeps up with the swipes.
+        return make(url, decode: decode, priority: .veryHigh, blur: 0, variant: nil)
     }
 
     /// Starts downloading photos that are about to show, to disk: they're decoded at their display size

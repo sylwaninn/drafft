@@ -37,8 +37,12 @@ final class RenditionsTests: XCTestCase {
         XCTAssertEqual(Renditions.previewWidth(covering: 300), 160)
     }
 
-    func testDecodeSizeIsTheFrameRoundedUp() {
-        XCTAssertEqual(Renditions.decodeSize(for: card), CGSize(width: 1_088, height: 1_728))
+    func testDecodeSizeKeepsTheFramesProportions() {
+        let sharp = Renditions.decodeSize(for: card)
+        XCTAssertEqual(sharp, CGSize(width: 1_088, height: 1_688))
+        // The small copy, a third of the pixels: the same proportions, so it's cropped like the sharp one.
+        let small = Renditions.decodeSize(for: CGSize(width: card.width / 3, height: card.height / 3))
+        XCTAssertEqual(small.width / small.height, sharp.width / sharp.height, accuracy: 0.002)
         XCTAssertEqual(Renditions.decodeSize(for: CGSize(width: 10, height: 0)), CGSize(width: 64, height: 64))
     }
 }
