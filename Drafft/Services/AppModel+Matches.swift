@@ -17,18 +17,29 @@ extension AppModel {
     /// each (re)connection. Unchanged if it can't be read.
     func loadLikes() async {
         let premium = isPremium
-        guard phase == .main, let data = try? await Backend.shared.rpc("liked_me", ["p_limit": Self.likesPage]),
-              isPremium == premium else { return }
+        guard phase == .main else { return }
+        let data: Data
+        do { data = try await Backend.shared.rpc("liked_me", ["p_limit": Self.likesPage]) } catch {
+            if isPremium == premium { likesFailed(error) }
+            return
+        }
+        guard isPremium == premium else { return }
         if premium {
-            guard let likes = try? LikeCard.list(from: data) else { return }
+            guard let likes = try? LikeCard.list(from: data) else { return likesFailed(nil) }
             if !blurredLikes.isEmpty { blurredLikes = [] }
             applyLikes(likes.map(\.card))
             openLocalCache()?.save(data, as: .likes)
         } else {
-            guard let fresh = await BlurredLike.list(from: data) else { return }
+            guard let fresh = await BlurredLike.list(from: data) else { return likesFailed(nil) }
             if !likedMe.isEmpty { likedMe = [] }
             if fresh != blurredLikes { withAnimation(Motion.snappy) { blurredLikes = fresh } }
         }
+        likesLoad = .loaded
+    }
+
+    /// A read that failed only shows if nothing was read yet: what's on screen stays otherwise.
+    private func likesFailed(_ error: Error?) {
+        if likesLoad != .loaded { likesLoad = .failed(offline: error.map(ServerMessage.isOffline) ?? false) }
     }
 
     private func applyLikes(_ cards: [ProfileCard]) {
@@ -48,11 +59,17 @@ extension AppModel {
     /// The current matches. The first read of a session only takes them in; a later one that finds a
     /// new match (they liked you back) shows the banner. Unchanged if it can't be read.
     func loadMatches() async {
-        guard phase == .main, let data = try? await Backend.shared.rpc("my_matches", [:]),
-              let rows = try? MatchRow.list(from: data) else { return }
-        applyMatches(rows, announce: discovery.matchesRead)
-        discovery.matchesRead = true
-        openLocalCache()?.save(data, as: .matches)
+        guard phase == .main else { return }
+        do {
+            let data = try await Backend.shared.rpc("my_matches", [:])
+            let rows = try MatchRow.list(from: data)
+            applyMatches(rows, announce: discovery.matchesRead)
+            discovery.matchesRead = true
+            matchesLoad = .loaded
+            openLocalCache()?.save(data, as: .matches)
+        } catch {
+            if matchesLoad != .loaded { matchesLoad = .failed(offline: ServerMessage.isOffline(error)) }
+        }
     }
 
     private func applyMatches(_ rows: [MatchRow], announce: Bool) {
@@ -135,9 +152,11 @@ extension AppModel {
         // Cards are only kept with drafft tempo (a free account's list is blurred, read live).
         if isPremium, likedMe.isEmpty, let entry = cache.entry(.likes), let likes = try? LikeCard.list(from: entry.data) {
             applyLikes(likes.map(\.card))
+            likesLoad = .loaded
         }
         if matches.isEmpty, let entry = cache.entry(.matches), let rows = try? MatchRow.list(from: entry.data) {
             applyMatches(rows, announce: false)
+            matchesLoad = .loaded
         }
     }
 }

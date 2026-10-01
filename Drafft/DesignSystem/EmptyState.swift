@@ -37,6 +37,23 @@ extension EmptyStateView where Actions == EmptyView {
     }
 }
 
+/// An empty tab whose first read failed: what didn't load and a way to try again, never "nobody yet".
+struct ListLoadFailureView: View {
+    let art: EmptyStateArt
+    let title: LocalizedStringKey
+    /// The read never reached the server (else the server failed: no connection advice).
+    let offline: Bool
+    let retry: () -> Void
+
+    var body: some View {
+        EmptyStateView(art: art, title: title,
+                       message: offline ? "Check your connection and try again." : "Something went wrong. Try again in a moment.") {
+            Button(action: retry) { Label("Try again", image: "refresh") }
+                .buttonStyle(.drafftPrimaryFit)
+        }
+    }
+}
+
 /// What each empty tab draws: its tab-bar icon.
 struct EmptyStateArt {
     /// The sign: its outline for `EmptyStateIllustration`, its bold twin ("<name>-bold") on the sticker.

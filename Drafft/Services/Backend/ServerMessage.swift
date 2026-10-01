@@ -38,8 +38,10 @@ enum ServerMessage {
         case "moderated": L("Your account is on hold.")
         case "paused": L("Your profile is paused")
         case "onboarding_required": L("Finish your profile first.")
+        // An edge function without a valid session (it expired, or was ended on another device).
+        case "unauthenticated": L("You've been logged out. Log in again to continue.")
         // Discover and safety
-        case "not_eligible": L("This profile isn't available.")
+        case "not_eligible", "invalid_target": L("This profile isn't available.")
         case "location_required": L("Share your location to see people nearby.")
         case "daily_like_limit": L("You're out of likes for today.")
         case "no_super_likes": L("You're out of super likes.")

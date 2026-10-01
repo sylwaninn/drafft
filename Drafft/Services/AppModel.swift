@@ -161,6 +161,12 @@ final class AppModel {
     var blurredLikes: [BlurredLike] = [] { didSet { refreshBadges() } }
     /// Current matches (`my_matches`), newest first.
     var matches: [Match] = []
+    /// Where a list from the server stands before it has anything to show: an empty list means "nobody"
+    /// only once it was read (or this iPhone's copy of a read was shown). A first read that failed shows
+    /// a retry, never an empty state.
+    enum ListLoad: Equatable { case loading, failed(offline: Bool), loaded }
+    var likesLoad: ListLoad = .loading
+    var matchesLoad: ListLoad = .loading
 
     // Chats
     /// One per active match (`matches`), with its Stream channel (`ChatService`): never sample data.
