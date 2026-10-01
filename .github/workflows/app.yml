@@ -5,7 +5,7 @@ name: app
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [staging] # release.yml only releases a staging commit whose push run is green
 
 permissions:
   contents: read
