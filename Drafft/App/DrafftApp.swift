@@ -113,6 +113,8 @@ struct RootView: View {
                 Task { await PurchaseCredit.shared.resume(app) }
                 // Chat: one connection for the account (a second call only reads matches again).
                 Task { await ChatService.shared.start(app) }
+                // Blocks made offline go now; then the blocked list as the server has it.
+                Task { await app.sendPendingSafety(); await app.loadBlocked() }
                 await UserChannel.watch(app)
             }
             .onChange(of: scenePhase) { _, p in
@@ -132,6 +134,8 @@ struct RootView: View {
                 Task { await PurchaseCredit.shared.resume(app) }
                 // A session changed or was cancelled while away: read again, its calendar event follows.
                 Task { await SessionStore.shared.refresh() }
+                // Blocks still waiting for the server, and those made on another device.
+                Task { await app.sendPendingSafety(); await app.loadBlocked() }
                 // The deck, likes and matches as the server has them now (no card outlives it).
                 app.refreshDiscovery()
             }

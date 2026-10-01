@@ -77,10 +77,10 @@ extension AppModel {
         do {
             let user = try await Backend.shared.client.auth.user()
             if session == sessionID { apply(user) }
-        } catch is AuthError {
+        } catch where Backend.refusesSession(error) {
             if session == sessionID { await endSession() }
         } catch {
-            // Offline: the saved session is the best we know.
+            // Offline, or Auth not answering: the saved session is the best we know.
         }
     }
 
@@ -218,6 +218,9 @@ extension AppModel {
         SessionCalendar.shared.forgetAll()
         SessionStore.shared.reset()
         blocked = []
+        // What's still waiting stays on this iPhone for the account's next sign-in (SafetyOutbox).
+        safetyRetry?.cancel()
+        safetyAttempts = 0
         dataExportRequestedAt = nil
         termsConsent = .unknown
         filters = DiscoverFilters()

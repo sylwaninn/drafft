@@ -33,9 +33,26 @@ actor Backend {
     /// The signed-in person's id (the profile id everywhere on the server).
     var userID: UUID? { client.auth.currentUser?.id }
 
-    /// A valid access token (refreshed by the SDK when it's about to expire).
+    /// A valid access token (refreshed by the SDK when it's about to expire). Signed out only when Auth
+    /// turned the session down; a refresh that couldn't reach it (offline, a server error) throws that
+    /// error, and the session stays.
     func accessToken() async throws -> String {
-        do { return try await client.auth.session.accessToken } catch { throw BackendError.signedOut }
+        do {
+            return try await client.auth.session.accessToken
+        } catch where Self.refusesSession(error) {
+            throw BackendError.signedOut
+        }
+    }
+
+    /// Whether Auth turned the session down for good (none saved, revoked, expired, the account gone),
+    /// as opposed to not answering: only that ends a session.
+    nonisolated static func refusesSession(_ error: Error) -> Bool {
+        switch error as? AuthError {
+        case .sessionMissing?: true
+        case let .api(_, code, _, response)?:
+            (400..<500).contains(response.statusCode) && code != .overRequestRateLimit
+        default: false
+        }
     }
 
     // MARK: Account

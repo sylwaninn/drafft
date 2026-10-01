@@ -10469,6 +10469,98 @@
         }
       }
     },
+    "Couldn't reach drafft. The block goes through as soon as you're back online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ist gerade nicht erreichbar. Die Blockierung wird wirksam, sobald du wieder online bist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't reach drafft. The block goes through as soon as you're back online."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo conectar con drafft. El bloqueo se aplicará en cuanto vuelvas a tener conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de joindre drafft. Le blocage sera pris en compte dès que tu seras de nouveau en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere drafft. Il blocco sarà effettivo appena torni online."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kan drafft niet bereiken. De blokkering gaat door zodra je weer online bent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível ligar ao drafft. O bloqueio fica ativo assim que voltares a estar online."
+          }
+        }
+      }
+    },
+    "Couldn't reach drafft. The unblock goes through as soon as you're back online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ist gerade nicht erreichbar. Die Aufhebung der Blockierung wird wirksam, sobald du wieder online bist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't reach drafft. The unblock goes through as soon as you're back online."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo conectar con drafft. El desbloqueo se aplicará en cuanto vuelvas a tener conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de joindre drafft. Le déblocage sera pris en compte dès que tu seras de nouveau en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere drafft. Lo sblocco sarà effettivo appena torni online."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kan drafft niet bereiken. Het deblokkeren gaat door zodra je weer online bent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível ligar ao drafft. O desbloqueio fica ativo assim que voltares a estar online."
+          }
+        }
+      }
+    },
     "Couldn't reach the App Store. Try again." : {
       "localizations" : {
         "de" : {
