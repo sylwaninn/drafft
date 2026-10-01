@@ -187,7 +187,7 @@ struct PaywallView: View {
             }
         } else if store.state == .failed {
             VStack(alignment: .leading, spacing: DS.Space.md) {
-                Text("Plans couldn't load. Check your connection and try again.")
+                Text("Options couldn't load. Check your connection and try again.")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.75))
                     .fixedSize(horizontal: false, vertical: true)
@@ -203,7 +203,7 @@ struct PaywallView: View {
             ProgressView()
                 .tint(.white)
                 .frame(maxWidth: .infinity, minHeight: 120)
-                .accessibilityLabel("Loading plans")
+                .accessibilityLabel("Loading options")
         }
     }
 
@@ -281,7 +281,7 @@ struct PaywallView: View {
             // Why it's disabled, only while it is: no empty line under the button once a plan
             // is picked.
             if plan == nil {
-                Text("Pick a plan to continue.")
+                Text("Pick an option to continue.")
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
@@ -532,7 +532,7 @@ struct SubscriptionSheet: View {
 
     private func billing(_ sub: TempoSubscription) -> some View {
         SheetBlock(title: L("Billing")) {
-            Text(branded: L("Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change your plan or cancel, go to your App Store subscriptions. Deleting drafft doesn't cancel it."),
+            Text(branded: L("Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change or cancel it, go to your App Store subscriptions. Deleting drafft doesn't cancel it."),
                  font: .subheadline)
                 .foregroundStyle(DS.Palette.body)
                 .fixedSize(horizontal: false, vertical: true)
@@ -589,7 +589,7 @@ struct SubscriptionSheet: View {
                 Text("Manage subscription")
             }
             .buttonStyle(.drafftDark)
-            Text("Change plan or cancel in Apple's subscription settings.")
+            Text("Change or cancel it in Apple's subscription settings.")
                 .font(.footnote)
                 .foregroundStyle(DS.Palette.body)
                 .multilineTextAlignment(.center)

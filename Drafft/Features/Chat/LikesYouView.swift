@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// drafft tempo: everyone who already liked you. Like back and it's a match right away.
+/// drafft tempo: everyone who already liked you. Like back and it's mutual right away.
 struct LikesYouView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
@@ -17,7 +17,7 @@ struct LikesYouView: View {
                             .font(.display(34))
                             .foregroundStyle(DS.Palette.accentOnNight)
                             .accessibilityAddTraits(.isHeader)
-                        Text("Like back and it's a match straight away.")
+                        Text("Like them back and it's mutual. Then propose a session.")
                             .font(.subheadline)
                             .foregroundStyle(.white.opacity(0.72))
                     }

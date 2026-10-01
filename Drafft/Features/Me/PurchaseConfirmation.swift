@@ -163,7 +163,7 @@ struct PurchaseConfirmation: View {
     private var recap: some View {
         let rows: [(String, String)] = switch receipt.item {
         case .tempo(let sub):
-            [(L("Plan"), sub.plan.title),
+            [(L("Length"), sub.plan.title),
              (L("Price"), sub.billing),
              (L("Renews"), sub.periodEnds.formatted(Date.FormatStyle(date: .long, time: .omitted).locale(.app)))]
         case .boosts(let n, let price, let balance):
