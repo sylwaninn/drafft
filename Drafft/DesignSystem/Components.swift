@@ -244,13 +244,15 @@ struct Photo: View {
     var blur: CGFloat = 0
     /// Download order among photos waiting (the deck: the card in play first).
     var priority: ImageRequest.Priority = .normal
+    /// An open profile's photo, looked at closely: may take a copy wider than the everyday 1 080 px.
+    var detail = false
 
     var body: some View {
         Color.clear
             .overlay {
                 if name.hasPrefix("http") || name.hasPrefix("/") {
                     // Blurred at decode time, never a live blur (locked likes).
-                    LoadedPhoto(name: name, blur: blur / max(side ?? 200, 1), priority: priority)
+                    LoadedPhoto(name: name, blur: blur / max(side ?? 200, 1), priority: priority, detail: detail)
                 } else if let img = blur > 0
                             ? ImageStore.blurred(name, fraction: blur / max(side ?? 200, 1))
                             : side == nil ? ImageStore.preparedFull(name) : ImageStore.image(name, side: side) {

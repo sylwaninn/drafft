@@ -12,6 +12,7 @@ struct LoadedPhoto: View {
     /// Blur radius as a share of the photo's shorter side (0: sharp).
     var blur: CGFloat = 0
     var priority: ImageRequest.Priority = .normal
+    var detail = false
     @Environment(\.displayScale) private var scale
     /// The running load: its priority follows the card's place without restarting it (a changed request
     /// would cancel the download and start over).
@@ -23,7 +24,7 @@ struct LoadedPhoto: View {
         GeometryReader { geo in
             let size = geo.size
             let large = blur == 0 && min(size.width, size.height) >= 200
-            LazyImage(request: Images.request(name, points: size, scale: scale, blur: blur),
+            LazyImage(request: Images.request(name, points: size, scale: scale, blur: blur, detail: detail),
                       transaction: Transaction(animation: .easeOut(duration: 0.2))) { state in
                 // Layers stack, never swap: each sharper one fades in over the last, which stays underneath,
                 // so a change of quality is a fade and never a flash of the empty tile.

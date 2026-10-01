@@ -54,7 +54,7 @@ final class PhotoWindow {
             ? deck.prefix(onScreen + 8).map(\.portrait).compactMap { Images.preview($0, points: points, scale: scale) }
             : [])
         set(extras, limited ? [] : (deck.first?.photos ?? [])
-            .compactMap { Images.download($0, points: points, scale: scale, priority: .veryLow) })
+            .compactMap { Images.download($0, points: points, scale: scale, priority: .veryLow, detail: true) })
     }
 
     /// Everything stops (the deck is gone, another screen).
