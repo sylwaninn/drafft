@@ -4658,43 +4658,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sag, was dir aufgefallen ist"
+            "value" : "Schreib eine Notiz"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di qué te ha llamado la atención"
+            "value" : "Añade una nota"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis ce qui t'a donné envie"
+            "value" : "Ajoute un petit mot"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di' cosa ti ha colpito"
+            "value" : "Aggiungi una nota"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeg wat je opviel"
+            "value" : "Schrijf een berichtje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diz o que te chamou a atenção"
+            "value" : "Escreve uma nota"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Say why they caught your eye"
+            "value" : "Add a note"
           }
         }
       }
@@ -43886,43 +43886,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um mich rumzukriegen, schlag vor:"
+            "value" : "Um mich zu überzeugen, schlag vor:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para conquistarme, proponme"
+            "value" : "Para convencerme, proponme"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour me faire craquer, propose-moi"
+            "value" : "Pour me convaincre, propose-moi"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per conquistarmi, proponimi"
+            "value" : "Per convincermi, proponimi"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wil je me voor je winnen, stel dan voor:"
+            "value" : "Wil je me overtuigen, stel dan voor:"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para me conquistares, propõe"
+            "value" : "Para me convenceres, propõe"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To win me over, suggest"
+            "value" : "To convince me, propose"
           }
         }
       }
