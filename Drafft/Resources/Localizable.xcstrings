@@ -15069,42 +15069,48 @@
         }
       }
     },
-    "Turn your matches into sessions, and meet at the start line." : {
+    "Meet singles who share your rhythm." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach aus deinen Matches Sessions und trefft euch an der Startlinie."
+            "value" : "Triff Singles, die deinen Rhythmus teilen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Convierte tus matches en sesiones y quedad en la línea de salida."
+            "value" : "Conoce a gente soltera que comparte tu ritmo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transforme tes matchs en séances, et rendez-vous au départ."
+            "value" : "Rencontre des célibataires qui partagent ton rythme."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trasforma i tuoi match in sessioni e datevi appuntamento alla partenza."
+            "value" : "Incontra single che condividono il tuo ritmo."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maak van je matches sessies en spreek af aan de start."
+            "value" : "Ontmoet singles die jouw ritme delen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transforma os teus matches em sessões e encontrem-se na linha de partida."
+            "value" : "Conhece pessoas solteiras que partilham o teu ritmo."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meet singles who share your rhythm."
           }
         }
       }

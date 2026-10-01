@@ -7,12 +7,12 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 ## Bloquant avant publication
 
 - **Recherche de marque** « Meet me on the start line » / « Rendez-vous au départ » (INPI, EUIPO,
-  classe 45) : seulement si la phrase sert en campagne. Depuis le 30/09/2026, la phrase principale est
-  « Meet singles who train » / « Rencontre des célibataires qui s'entraînent » (WORDING §7.2).
+  classe 45) : seulement si la phrase sert en campagne. Depuis le 30/09/2026, la ligne principale est
+  « Meet singles who share your rhythm » / « Rencontre des célibataires qui partagent ton rythme »
+  (WORDING §7.2, jeu de quatre formules validé le 01/10/2026).
 
 ## Décisions produit
 
-- Valider les taglines (WORDING.md §7.2, statut « proposed »).
 - Prompt « I'm looking for someone who » : proche de la question « looking for » que DESIGN.md exclut.
   Garder ou retirer ?
 - « How often you train shapes who you meet » (onboarding) promet plus que ce que fait l'app.

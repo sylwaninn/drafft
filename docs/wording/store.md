@@ -27,34 +27,34 @@ Principes appliqués :
 
 | Champ | Langue | Texte | Caractères |
 |---|---|---|---|
-| Sous-titre | EN | `Meet singles who train` | 22 / 30 |
-| Sous-titre | FR | `Célibataires qui s'entraînent` | 29 / 30 |
+| Sous-titre | EN | `Singles on your rhythm` | 22 / 30 |
+| Sous-titre | FR | `Célibataires à ton rythme` | 25 / 30 |
 
 ### 1.3 Texte promotionnel (170 caractères max)
 
 Modifiable sans nouvelle version. À faire tourner avec les saisons (reprise de septembre, saison des
 marathons) sans promettre d'offre qui n'existe pas.
 
-**EN** (126 / 170)
+**EN** (132 / 170)
 
 ```text
-Meet singles who train. Profiles lead with their sports and how often; when it's mutual, propose a session with up to 3 times.
+Meet singles who share your rhythm. Profiles lead with sports and how often; when it's mutual, propose a session with up to 3 times.
 ```
 
-**FR** (168 / 170)
+**FR** (166 / 170)
 
 ```text
-Rencontre des célibataires qui s'entraînent. Les profils commencent par les sports et la fréquence ; quand c'est réciproque, propose une séance avec jusqu'à 3 créneaux.
+Rencontre des célibataires qui partagent ton rythme. Les profils montrent les sports et la fréquence ; quand c'est réciproque, propose une séance, jusqu'à 3 créneaux.
 ```
 
 ### 1.4 Description (4 000 caractères max)
 
-**EN** (2750 / 4000)
+**EN** (2746 / 4000)
 
 ```text
 drafft is a dating app for people whose week is built around training. Profiles lead with how you move: your sports and how often you go. When you like each other, the next step is simple. Propose a session.
 
-Meet singles who train.
+Meet singles who share your rhythm.
 
 How it works
 - Pick up to 5 sports and how often you train each one. It's the first thing people see.
@@ -103,12 +103,12 @@ Privacy policy: https://getdrafft.com/privacy
 drafft is for people 18 and over.
 ```
 
-**FR** (3205 / 4000)
+**FR** (3210 / 4000)
 
 ```text
-drafft est une appli de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
+drafft est une app de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
 
-Rencontre des célibataires qui s'entraînent.
+Rencontre des célibataires qui partagent ton rythme.
 
 Comment ça marche
 - Choisis jusqu'à 5 sports et ta fréquence pour chacun. C'est la première chose qu'on voit de toi.
@@ -131,10 +131,10 @@ La sécurité d'abord
 - Ta position est floutée à environ 1 km avant de quitter ton téléphone. Les autres voient ta zone et une distance arrondie, jamais ton adresse.
 - Signale ou bloque quelqu'un depuis son profil ou votre discussion. La personne n'est pas prévenue, et vous ne vous verrez plus.
 - Notre équipe de modération peut demander un selfie pour vérifier qu'une personne ressemble à ses photos.
-- Des conseils de sécurité pour une première rencontre, directement dans l'appli.
+- Des conseils de sécurité pour une première rencontre, directement dans l'app.
 
 Tous les niveaux, toutes les allures
-Premier run club ou dixième marathon, tu as ta place ici. Une séance, c'est se retrouver au départ, pas une histoire de chrono.
+Premier run club ou dixième marathon, tu as ta place ici. Une séance, c'est venir ensemble, pas une histoire de chrono.
 
 Running, run club, padel, escalade, bloc, vélo, natation, musculation, yoga, tennis, trail, triathlon et bien d'autres.
 
@@ -164,8 +164,8 @@ Apple annonce une limite de 100 caractères ; par prudence, les comptes en octet
 
 | Champ | Langue | Texte | Caractères |
 |---|---|---|---|
-| Mots-clés | EN | `running,run,club,padel,climbing,bouldering,cycling,gym,swimming,trail,triathlon,yoga,singles,date` | 97 / 100, 97 octets UTF-8 |
-| Mots-clés | FR | `sport,célibataire,course,running,padel,escalade,bloc,vélo,natation,muscu,trail,yoga,séance,club` | 95 / 100, 98 octets UTF-8 |
+| Mots-clés | EN | `running,run,club,padel,climbing,bouldering,cycling,gym,swimming,trail,triathlon,yoga,fitness,date` | 97 / 100, 97 octets UTF-8 |
+| Mots-clés | FR | `sport,fitness,course,running,padel,escalade,bloc,vélo,natation,muscu,trail,yoga,séance,club` | 91 / 100, 93 octets UTF-8 |
 
 ### 1.6 Nouveautés (modèle)
 
@@ -207,20 +207,20 @@ Un souci ? Dis-le-nous dans Toi, puis Aide.
 
 | Champ | Langue | Texte | Caractères |
 |---|---|---|---|
-| Description courte | EN | `Meet singles who train, match on your sports, then propose a session.` | 69 / 80 |
-| Description courte | FR | `Rencontre des célibataires qui s'entraînent, puis propose une séance.` | 69 / 80 |
+| Description courte | EN | `Meet singles who share your rhythm, then propose a session.` | 59 / 80 |
+| Description courte | FR | `Rencontre des célibataires qui partagent ton rythme, puis propose une séance.` | 77 / 80 |
 
 ### 2.3 Description complète (4 000 caractères max)
 
 Même corps que l'App Store ; seul le paragraphe d'abonnement change (facturation Google Play, pas de
 délai de 24 h imposé par Google).
 
-**EN** (2752 / 4000)
+**EN** (2748 / 4000)
 
 ```text
 drafft is a dating app for people whose week is built around training. Profiles lead with how you move: your sports and how often you go. When you like each other, the next step is simple. Propose a session.
 
-Meet singles who train.
+Meet singles who share your rhythm.
 
 How it works
 - Pick up to 5 sports and how often you train each one. It's the first thing people see.
@@ -269,12 +269,12 @@ Privacy policy: https://getdrafft.com/privacy
 drafft is for people 18 and over.
 ```
 
-**FR** (3202 / 4000)
+**FR** (3207 / 4000)
 
 ```text
-drafft est une appli de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
+drafft est une app de rencontre pour les personnes dont la semaine tourne autour de l'entraînement. Les profils commencent par ta façon de bouger : tes sports et ta fréquence. Quand c'est réciproque, la suite est simple. Propose une séance.
 
-Rencontre des célibataires qui s'entraînent.
+Rencontre des célibataires qui partagent ton rythme.
 
 Comment ça marche
 - Choisis jusqu'à 5 sports et ta fréquence pour chacun. C'est la première chose qu'on voit de toi.
@@ -297,10 +297,10 @@ La sécurité d'abord
 - Ta position est floutée à environ 1 km avant de quitter ton téléphone. Les autres voient ta zone et une distance arrondie, jamais ton adresse.
 - Signale ou bloque quelqu'un depuis son profil ou votre discussion. La personne n'est pas prévenue, et vous ne vous verrez plus.
 - Notre équipe de modération peut demander un selfie pour vérifier qu'une personne ressemble à ses photos.
-- Des conseils de sécurité pour une première rencontre, directement dans l'appli.
+- Des conseils de sécurité pour une première rencontre, directement dans l'app.
 
 Tous les niveaux, toutes les allures
-Premier run club ou dixième marathon, tu as ta place ici. Une séance, c'est se retrouver au départ, pas une histoire de chrono.
+Premier run club ou dixième marathon, tu as ta place ici. Une séance, c'est venir ensemble, pas une histoire de chrono.
 
 Running, run club, padel, escalade, bloc, vélo, natation, musculation, yoga, tennis, trail, triathlon et bien d'autres.
 
@@ -326,7 +326,7 @@ drafft est réservé aux personnes de 18 ans et plus.
 ## 3. Mots-clés : justification
 
 Règles Apple : les mots du nom et du sous-titre sont déjà indexés, donc on ne les répète pas (EN :
-drafft, sports, dating, meet, start, line ; FR : drafft, rencontre, sportive, rendez-vous, départ). Pas
+drafft, sports, dating, singles, your, rhythm ; FR : drafft, rencontre, sportive, célibataires, ton, rythme). Pas
 de marque tierce (Hyrox, CrossFit, Strava, bpm, Tinder) : risque de refus et de litige. Des mots seuls
 plutôt que des expressions, qu'Apple combine entre eux (« run » + « club » couvre « run club »).
 
@@ -353,11 +353,11 @@ D'après `competitive-research.md` (relevé du 29/09/2026, lignes non reprises) 
   Partners « Rencontre sportive », Hinge et Tinder « appli de rencontre »). Notre nom suit ce format,
   c'est ce qui porte le mot-clé principal.
 - **Sous-titres :** la plupart sont descriptifs et bourrés de mots-clés (« Meet active and fit singles »,
-  « Chat, dating, et meet amis »). Le nôtre dit la catégorie (« Meet singles who train », « Célibataires qui
-  s'entraînent ») : descriptif, il indexe « singles », « célibataires » et « entraîner ». Surf utilise déjà la construction « Meet Me On The Grid » en sous-titre.
+  « Chat, dating, et meet amis »). Le nôtre dit la catégorie (« Singles on your rhythm », « Célibataires à ton
+  rythme ») : descriptif, il indexe « singles », « célibataires » et « rythme ». Surf utilise déjà la construction « Meet Me On The Grid » en sous-titre.
 - **Territoires saturés à ne pas reprendre :** l'anti-swipe et le « X less, Y more », « 100 % sportifs »,
   « people who actually train », la sueur, « zéro fake ». Notre angle libre : la proposition de séance
-  (sport, créneaux) et le départ.
+  (sport, créneaux) et le rythme partagé.
 - **Tutoiement :** la norme de la catégorie en FR (Tinder, Bumble, happn, bpm, Breeze). On le garde.
 
 ## 5. Ce que la fiche décrit (fonctions vérifiées dans l'app)
@@ -378,8 +378,8 @@ Pas de champ « niveau » dans l'app (la carte affiche les sports sans niveau) :
 ## 6. Fiche stores — à valider
 
 - [x] **Marque :** « Meet me on the start line » / « Rendez-vous au départ » n'est plus la phrase principale
-      (remplacée le 30/09/2026 par « Meet singles who train » / « Rencontre des célibataires qui
-      s'entraînent », descriptive, sans enjeu de marque). Recherche d'antériorité seulement si l'ancienne
+      (remplacée le 01/10/2026 par « Meet singles who share your rhythm » / « Rencontre des
+      célibataires qui partagent ton rythme », descriptive, sans enjeu de marque). Recherche d'antériorité seulement si l'ancienne
       phrase sert en campagne. Surf utilise « Meet Me On The Grid ».
 - [ ] **Casse du nom :** WORDING §7.4 écrit « drafft: Sports Dating » mais §6 impose la casse de phrase
       partout (store compris). Trancher : « drafft: Sports Dating » ou « drafft: sports dating ».
