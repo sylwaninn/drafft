@@ -219,8 +219,9 @@ struct ChangeEmailSheet: View {
         let email = newEmail.trimmingCharacters(in: .whitespaces)
         let current = app.email
         let password = password
-        flow.messages = [.wrongCredentials: L("Your password is incorrect.")]
-        flow.formProblems = [.emailTaken]
+        flow.messages = [.wrongCredentials: L("Your password is incorrect."),
+                         .emailTaken: L("This email is already linked to another drafft account. Use another one.")]
+        flow.formProblems = [.emailTaken, .invalidEmail]
         Task {
             await flow.send(to: email) {
                 // The password proves it's them; the code proves the new address is theirs.

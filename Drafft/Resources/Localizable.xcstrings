@@ -14249,6 +14249,52 @@
         }
       }
     },
+    "This email is already linked to another drafft account. Use another one." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese E-Mail ist schon mit einem anderen drafft-Konto verknüpft. Nimm eine andere."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This email is already linked to another drafft account. Use another one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este email ya está vinculado a otra cuenta de drafft. Usa otro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet e-mail est déjà lié à un autre compte drafft. Choisis-en un autre."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa email è già collegata a un altro account drafft. Usane un'altra."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit e-mailadres is al gekoppeld aan een ander drafft-account. Gebruik een ander."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este email já está associado a outra conta drafft. Usa outro."
+          }
+        }
+      }
+    },
     "This invite has already been answered." : {
       "localizations" : {
         "de" : {
@@ -14525,6 +14571,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Demasiados códigos enviados. Tenta mais tarde."
+          }
+        }
+      }
+    },
+    "Too many tries. Wait a few minutes and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu viele Versuche. Warte ein paar Minuten und versuch es noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many tries. Wait a few minutes and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demasiados intentos. Espera unos minutos y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trop de tentatives. Attends quelques minutes et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Troppi tentativi. Aspetta qualche minuto e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te veel pogingen. Wacht een paar minuten en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demasiadas tentativas. Espera uns minutos e tenta de novo."
           }
         }
       }
