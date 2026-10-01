@@ -295,6 +295,7 @@ struct MainTabs: View {
         // the like green and the red. Each tab's content gets the accent tint back.
         .tint(DS.Palette.ink)
         .tabBarMinimizeBehavior(.onScrollDown)
+        .environment(\.tabsOnScreen, isActive && !mayPrebuild)
         .task { await prebuildTabs() }
         // drafft tempo's details (plan, renewal) follow the App Store through RevenueCat's stream, for
         // the signed-in account only. Whether it's on, and every balance, comes from the wallet.

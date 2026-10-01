@@ -116,6 +116,12 @@ enum DS {
                                    violet: Color(light: 0xD9D8E0, dark: 0x2A2A30),
                                graphite: Color(light: 0xDADCE0, dark: 0x2A2C2F))
 
+        /// The empty-state stickers are paper: the same in light and dark mode. A white die-cut
+        /// edge, the sign in the accent (graphite's near-black, whatever the mode), a grey back.
+        static let stickerPaper = Color(hex: 0xFFFFFF)
+        static let stickerBack = Color(hex: 0xE2E4E7)
+        static let stickerInk = accent == .graphite ? Color(hex: 0x111214) : lime
+
         /// Always-dark surface used for the polarity-flipped moments. In dark mode it's lifted a
         /// step above the page (which is near-black there too), so night blocks stay distinct.
         static let night = accent == .graphite ? Color(light: 0x2A2D31, dark: 0x232528)
@@ -295,6 +301,9 @@ extension EnvironmentValues {
     @Entry var isSheetSurface = false
     /// Content sits on a night surface: components swap the accent for `accentOnNight`.
     @Entry var isNightSurface = false
+    /// The tabs are on screen: false while they're walked through, hidden under the splash, the
+    /// welcome screen or sign-up. Arrival motion waits for it.
+    @Entry var tabsOnScreen = true
 }
 
 extension View {

@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// An empty tab: a quiet illustration on the page, a title, one line of text, and an action if
-/// there is one to take. Sits in the middle of the space it is given.
+/// An empty tab: its sign as a sticker on the page (`EmptyStateSticker`), a title, one line of
+/// text, and an action if there is one to take. Sits in the middle of the space it is given.
 struct EmptyStateView<Actions: View>: View {
     let art: EmptyStateArt
     let title: LocalizedStringKey
@@ -11,7 +11,7 @@ struct EmptyStateView<Actions: View>: View {
     var body: some View {
         VStack(spacing: DS.Space.xl) {
             VStack(spacing: DS.Space.md) {
-                EmptyStateIllustration(art: art)
+                EmptyStateSticker(art: art)
                 VStack(spacing: DS.Space.sm) {
                     Text(title)
                         .font(.display(22, relativeTo: .title2))
@@ -39,7 +39,7 @@ extension EmptyStateView where Actions == EmptyView {
 
 /// What each empty tab draws: its tab-bar icon.
 struct EmptyStateArt {
-    /// The sign's outline, drawn in the accent.
+    /// The sign: its outline for `EmptyStateIllustration`, its bold twin ("<name>-bold") on the sticker.
     let symbol: String
 
     static let discover = EmptyStateArt(symbol: "fire")
