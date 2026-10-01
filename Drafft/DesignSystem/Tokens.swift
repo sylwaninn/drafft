@@ -79,6 +79,9 @@ enum DS {
         static let onAccentOnNight = accent == .graphite ? Color(hex: 0x111214) : onLime
         /// "tempo" set on an accent fill: night on the colour accents, a light grey on graphite.
         static let tierOnAccent = accent == .graphite ? Color(light: 0xB8BCC2, dark: 0x55595E) : night
+        /// "tempo" set on a night block: a light grey next to the white "drafft" on graphite (7.3:1 on
+        /// night, 1.9:1 from the word), the accent itself on the colour accents.
+        static let tierOnNight = accent == .graphite ? Color(hex: 0xB8BCC2) : lime
         /// Glyph discs sitting on an accent fill (the Plus card, a picked sport tile).
         static let onLimeWash = onLime.opacity(0.22)
 
