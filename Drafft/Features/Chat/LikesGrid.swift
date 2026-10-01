@@ -232,9 +232,10 @@ private struct SuperLikeDisc: View {
 
 // MARK: - Banner
 
-/// The top of Likes: a night banner with the likes sign, how many people like you (counted from the
-/// list the server sent, never a made-up figure) and one sentence on what to do. It holds no button:
-/// the screen's one action is pinned at the bottom (or on each tile with drafft tempo).
+/// The top of Likes: a night banner with the likes sticker (the empty tab's, still), how many people
+/// like you (counted from the list the server sent, never a made-up figure) and one sentence on what
+/// to do. It holds no button: the screen's one action is pinned at the bottom (or on each tile with
+/// drafft tempo).
 struct LikesBanner: View {
     let count: Int
     let message: Text
@@ -242,12 +243,7 @@ struct LikesBanner: View {
     var body: some View {
         let line = count == 1 ? L("1 person likes you.") : L("\(count) people like you.")
         HStack(alignment: .center, spacing: DS.Space.md) {
-            Image("user-heart")
-                .font(.title3.weight(.bold))
-                .foregroundStyle(DS.Palette.onAccentOnNight)
-                .frame(width: 48, height: 48)
-                .background(DS.Palette.accentOnNight, in: .circle)
-                .accessibilityHidden(true)
+            StillSticker(art: .likes, size: 56)
             VStack(alignment: .leading, spacing: DS.Space.xs) {
                 Text(line)
                     .rollingDigits(wording: line.wording)
