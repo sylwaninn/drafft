@@ -4618,7 +4618,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ um %@ hinzufügen"
+            "value" : "%@, %@ hinzufügen"
           }
         },
         "es" : {
@@ -5242,37 +5242,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Kalender hinzufügen"
+            "value" : "In den Kalender"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir al calendario"
+            "value" : "Añadir a la agenda"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouter au calendrier"
+            "value" : "Ajouter à l'agenda"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aggiungi al calendario"
+            "value" : "Metti in agenda"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aan agenda toevoegen"
+            "value" : "In agenda zetten"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar ao calendário"
+            "value" : "Pôr no calendário"
           }
         }
       }
@@ -6398,7 +6398,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vraag om een nieuwe beoordeling"
+            "value" : "Opnieuw laten beoordelen"
           }
         },
         "pt" : {
@@ -9869,6 +9869,46 @@
         }
       }
     },
+    "Confirm %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bestätigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmer %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferma %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bevestigen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar %@"
+          }
+        }
+      }
+    },
     "Confirm %@, %@" : {
       "localizations" : {
         "de" : {
@@ -12848,37 +12888,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie drafft diese Daten nutzt"
+            "value" : "Wie wir diese Daten nutzen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo usa drafft estos datos"
+            "value" : "Cómo usamos estos datos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment drafft utilise ces données"
+            "value" : "Comment on les utilise"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come drafft usa questi dati"
+            "value" : "Come usiamo questi dati"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoe drafft deze gegevens gebruikt"
+            "value" : "Hoe we ze gebruiken"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como o drafft usa estes dados"
+            "value" : "Como usamos estes dados"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How we use this data"
           }
         }
       }
@@ -13651,6 +13697,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ninguém vê o teu perfil ainda, por isso um boost não chegaria a ninguém."
+          }
+        }
+      }
+    },
+    "Other times" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere Zeiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otros horarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autres créneaux"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altri orari"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere tijden"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outros horários"
           }
         }
       }
@@ -22283,19 +22369,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En tu calendario"
+            "value" : "En tu agenda"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans ton calendrier"
+            "value" : "Dans ton agenda"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nel tuo calendario"
+            "value" : "Nella tua agenda"
           }
         },
         "nl" : {
@@ -22323,19 +22409,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En tu calendario. Añadir de nuevo"
+            "value" : "En tu agenda. Añadir de nuevo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans ton calendrier. Ajouter à nouveau"
+            "value" : "Dans ton agenda. Ajouter à nouveau"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nel tuo calendario. Aggiungi di nuovo"
+            "value" : "Nella tua agenda. Aggiungi di nuovo"
           }
         },
         "nl" : {
@@ -24423,7 +24509,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dar like con esta respuesta"
+            "value" : "Like con esta respuesta"
           }
         },
         "fr" : {
@@ -24447,7 +24533,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dar like com esta resposta"
+            "value" : "Like com esta resposta"
           }
         }
       }
@@ -33025,13 +33111,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis un créneau ci-dessus"
+            "value" : "Choisis un créneau"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli un orario qui sopra"
+            "value" : "Scegli un orario"
           }
         },
         "nl" : {
@@ -33043,7 +33129,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolhe um horário acima"
+            "value" : "Escolhe um horário"
           }
         }
       }
@@ -37413,7 +37499,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ um %@ speichern"
+            "value" : "%@, %@ speichern"
           }
         },
         "es" : {
@@ -38489,7 +38575,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer avec un commentaire"
+            "value" : "Liker avec un commentaire"
           }
         },
         "it" : {
@@ -46850,7 +46936,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Letzten Swipe rückgängig machen"
+            "value" : "Letzten Swipe zurücknehmen"
           }
         },
         "es" : {
@@ -46874,7 +46960,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn laatste swipe ongedaan maken"
+            "value" : "Laatste swipe terugdraaien"
           }
         },
         "pt" : {
