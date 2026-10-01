@@ -32,17 +32,21 @@ extension AppModel {
         } else {
             guard let fresh = await BlurredLike.list(from: data) else { return likesFailed(nil) }
             if !likedMe.isEmpty { likedMe = [] }
-            guard fresh != blurredLikes else { return }
-            // New links for the same likes (signatures renew on every read): swapped in place, no
-            // animation; anything else animates.
-            if fresh.count == blurredLikes.count, zip(fresh, blurredLikes).allSatisfy({ $0.sameLike(as: $1) }) {
-                blurredLikes = fresh
-            } else {
-                withAnimation(Motion.snappy) { blurredLikes = fresh }
-            }
-            Images.prefetch(fresh.compactMap(\.blurURL), points: CGSize(width: 180, height: 240), variant: "blurred")
+            applyBlurredLikes(fresh)
         }
         likesLoad = .loaded
+    }
+
+    private func applyBlurredLikes(_ fresh: [BlurredLike]) {
+        guard fresh != blurredLikes else { return }
+        // New links for the same likes (signatures renew on every read): swapped in place, no
+        // animation; anything else animates.
+        if fresh.count == blurredLikes.count, zip(fresh, blurredLikes).allSatisfy({ $0.sameLike(as: $1) }) {
+            blurredLikes = fresh
+        } else {
+            withAnimation(Motion.snappy) { blurredLikes = fresh }
+        }
+        Images.prefetch(fresh.compactMap(\.blurURL), points: CGSize(width: 180, height: 240), variant: "blurred")
     }
 
     /// A read that failed only shows if nothing was read yet: what's on screen stays otherwise.
