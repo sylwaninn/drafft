@@ -9,6 +9,8 @@ import UIKit
 struct BlurredLike: Identifiable, Equatable {
     let id: String
     let superLike: Bool
+    /// When they liked you (the server's `likedAt`). Nil if it didn't send one: no age label then.
+    let likedAt: Date?
     /// The ThumbHash (about 32 × 32 px) drawn smooth at tile size, once, when the list is read. Nil: a
     /// night tile stands in. Also the placeholder and the fallback of `blurURL`.
     let preview: UIImage?
@@ -17,12 +19,12 @@ struct BlurredLike: Identifiable, Equatable {
     let blurURL: String?
 
     static func == (a: BlurredLike, b: BlurredLike) -> Bool {
-        a.id == b.id && a.superLike == b.superLike && a.blurURL == b.blurURL
+        a.id == b.id && a.superLike == b.superLike && a.likedAt == b.likedAt && a.blurURL == b.blurURL
     }
 
     /// Same like, same look: only the link's signature may differ (it's renewed on every read).
     func sameLike(as other: BlurredLike) -> Bool {
-        id == other.id && superLike == other.superLike
+        id == other.id && superLike == other.superLike && likedAt == other.likedAt
             && blurURL.flatMap(URL.init(string:)).map(MediaURL.canonical)
             == other.blurURL.flatMap(URL.init(string:)).map(MediaURL.canonical)
     }
@@ -32,6 +34,7 @@ extension BlurredLike {
     private struct Row: Decodable {
         let likeId: String
         let superLike: Bool
+        let likedAt: String?
         let thumbhash: String?
         let blurUrl: String?
     }
@@ -41,11 +44,13 @@ extension BlurredLike {
     static func list(from data: Data) async -> [BlurredLike]? {
         guard let rows = try? JSONDecoder().decode([Row].self, from: data) else { return nil }
         return await Task.detached(priority: .userInitiated) {
-            rows.map { row in
+            let likes = rows.map { row in
                 BlurredLike(id: row.likeId, superLike: row.superLike,
+                            likedAt: row.likedAt.flatMap { try? ServerDate.parse($0) },
                             preview: row.thumbhash.flatMap(ThumbHash.image(fromBase64:)).map(frosted),
                             blurURL: row.blurUrl.flatMap { $0.hasPrefix("http") ? $0 : nil })
             }
+            return LikeOrder.newestFirst(likes, date: \.likedAt, id: \.id)
         }.value
     }
 

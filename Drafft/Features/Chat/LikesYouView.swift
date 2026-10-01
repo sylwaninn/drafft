@@ -22,11 +22,13 @@ struct LikesYouView: View {
                         LikesGrid(items: app.likedMe, visitKey: "likes-sheet") {
                             LikesBanner.tempo(count: app.likedMe.count)
                         } tile: { p in
-                            LikeTile(profile: p) {
-                                Haptics.tap()
-                                open = p
-                            } onLike: {
-                                app.swipe(p, liked: true)
+                            EveryMinute { now in
+                                LikeTile(profile: p, now: now) {
+                                    Haptics.tap()
+                                    open = p
+                                } onLike: {
+                                    app.swipe(p, liked: true)
+                                }
                             }
                         }
                     }

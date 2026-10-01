@@ -11,7 +11,7 @@ extension AppModel {
 
     // MARK: Likes
 
-    /// Everyone waiting for an answer, super likes first: the one read of `liked_me`. With drafft tempo
+    /// Everyone waiting for an answer, newest first: the one read of `liked_me`. With drafft tempo
     /// the server sends their cards; without, only a blurred list (`blurredLikes`, decision 5.5). Read
     /// again when Likes opens, on a `like` or `wallet` event (drafft tempo starting or ending) and on
     /// each (re)connection. Unchanged if it can't be read.
@@ -22,7 +22,7 @@ extension AppModel {
         if premium {
             guard let likes = try? LikeCard.list(from: data) else { return }
             if !blurredLikes.isEmpty { blurredLikes = [] }
-            applyLikes(likes.map(\.card))
+            applyLikes(likes)
             openLocalCache()?.save(data, as: .likes)
         } else {
             guard let fresh = await BlurredLike.list(from: data) else { return }
@@ -39,9 +39,14 @@ extension AppModel {
         }
     }
 
-    private func applyLikes(_ cards: [ProfileCard]) {
+    private func applyLikes(_ likes: [LikeCard]) {
         let hidden = discovery.swiped.union(blocked.map(\.id)).union(matches.map(\.profile.id))
-        let fresh = cards.filter { $0.isShowable && !hidden.contains($0.id) }.map { $0.profile(mediaBase: MediaURL.saved) }
+        let shown = likes.filter { $0.card.isShowable && !hidden.contains($0.card.id) }.map { like in
+            var profile = like.card.profile(mediaBase: MediaURL.saved)
+            profile.likedAt = like.likedAt.flatMap { try? ServerDate.parse($0) }
+            return profile
+        }
+        let fresh = LikeOrder.newestFirst(shown, date: \.likedAt, id: \.id)
         if fresh != likedMe { withAnimation(Motion.snappy) { likedMe = fresh } }
     }
 
@@ -142,7 +147,7 @@ extension AppModel {
     func showCachedLikesAndMatches(_ cache: LocalCache) {
         // Cards are only kept with drafft tempo (a free account's list is blurred, read live).
         if isPremium, likedMe.isEmpty, let entry = cache.entry(.likes), let likes = try? LikeCard.list(from: entry.data) {
-            applyLikes(likes.map(\.card))
+            applyLikes(likes)
         }
         if matches.isEmpty, let entry = cache.entry(.matches), let rows = try? MatchRow.list(from: entry.data) {
             applyMatches(rows, announce: false)

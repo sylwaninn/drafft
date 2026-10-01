@@ -27,11 +27,13 @@ struct LikesTabView: View {
                             LikesGrid(items: app.likedMe, visitKey: "likes-tab") {
                                 LikesBanner.tempo(count: app.likedMe.count)
                             } tile: { p in
-                                LikeTile(profile: p) {
-                                    Haptics.tap()
-                                    open = p
-                                } onLike: {
-                                    app.swipe(p, liked: true)
+                                EveryMinute { now in
+                                    LikeTile(profile: p, now: now) {
+                                        Haptics.tap()
+                                        open = p
+                                    } onLike: {
+                                        app.swipe(p, liked: true)
+                                    }
                                 }
                             }
                         }
@@ -41,13 +43,16 @@ struct LikesTabView: View {
                         LikesGrid(items: app.blurredLikes, visitKey: "likes-tab") {
                             LikesBanner.locked(count: app.blurredLikes.count)
                         } tile: { like in
-                            Button {
-                                Haptics.tap()
-                                showPaywall = true
-                            } label: { LockedLikeTile(like: like) }
-                            .buttonStyle(PressScaleStyle(scale: 0.97))
-                            .accessibilityLabel(like.superLike ? "Someone super liked you. Unlock with drafft tempo"
-                                                               : "Someone who likes you. Unlock with drafft tempo")
+                            EveryMinute { now in
+                                Button {
+                                    Haptics.tap()
+                                    showPaywall = true
+                                } label: { LockedLikeTile(like: like, now: now) }
+                                .buttonStyle(PressScaleStyle(scale: 0.97))
+                                .accessibilityLabel(like.superLike ? "Someone super liked you. Unlock with drafft tempo"
+                                                                   : "Someone who likes you. Unlock with drafft tempo")
+                                .accessibilityValue(LikeAge.text(of: like.likedAt, at: now) ?? "")
+                            }
                         }
                     }
                 }

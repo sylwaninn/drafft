@@ -95,6 +95,34 @@ private struct DraftIn: ViewModifier {
 
 // MARK: - Tiles
 
+/// Reads the clock once a minute for what it wraps: the age labels on the tiles stay true while the
+/// screen is open (the tiles themselves are static between refreshes).
+struct EveryMinute<Content: View>: View {
+    @ViewBuilder let content: (Date) -> Content
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 60)) { context in content(context.date) }
+    }
+}
+
+/// "5 min ago": a small translucent night capsule at the top of a tile. Night at 45 % so white text
+/// reads over a blurred photo and a sharp one alike; one line, never cut.
+private struct LikeAgeLabel: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.white)
+            .lineLimit(1)
+            .fixedSize()
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(DS.Palette.night.opacity(0.45), in: .capsule)
+            .accessibilityHidden(true)
+    }
+}
+
 /// The one tile shape: 3:4 portrait, whatever the screen width, so every row of the grid is the same
 /// height. Content fills it; nothing in it sizes it.
 private struct PortraitFrame<Content: View>: View {
@@ -116,6 +144,8 @@ private struct PortraitFrame<Content: View>: View {
 /// like.
 struct LockedLikeTile: View {
     let like: BlurredLike
+    /// The clock the age label reads (`EveryMinute`).
+    let now: Date
 
     var body: some View {
         PortraitFrame {
@@ -139,8 +169,13 @@ struct LockedLikeTile: View {
                 .background(.white.opacity(0.2), in: .circle)
                 .padding(DS.Space.md)
         }
-        .overlay(alignment: .topTrailing) {
-            if like.superLike { SuperLikeDisc().padding(DS.Space.sm) }
+        .overlay(alignment: .top) {
+            HStack(alignment: .top, spacing: DS.Space.xs) {
+                if let age = LikeAge.text(of: like.likedAt, at: now) { LikeAgeLabel(text: age) }
+                Spacer(minLength: 0)
+                if like.superLike { SuperLikeDisc() }
+            }
+            .padding(DS.Space.sm)
         }
         .overlay {
             RoundedRectangle(cornerRadius: DS.Radius.xl).strokeBorder(DS.Palette.blockEdge, lineWidth: 1)
@@ -175,6 +210,8 @@ private struct ServerBlurredPhoto: View {
 /// likes them back at once (it's mutual from there).
 struct LikeTile: View {
     let profile: Profile
+    /// The clock the age label reads (`EveryMinute`).
+    let now: Date
     let onOpen: () -> Void
     let onLike: () -> Void
 
@@ -188,6 +225,11 @@ struct LikeTile: View {
                                                .init(color: DS.Palette.night.opacity(0.85), location: 1)],
                                        startPoint: .top, endPoint: .bottom)
                     }
+                    .overlay(alignment: .topLeading) {
+                        if let age = LikeAge.text(of: profile.likedAt, at: now) {
+                            LikeAgeLabel(text: age).padding(DS.Space.sm)
+                        }
+                    }
                     .overlay(alignment: .bottomLeading) {
                         ProfileIdentity(profile: profile, nameSize: 20, showsLocation: false, showsSuperLike: true)
                             .padding(.leading, DS.Space.md)
@@ -198,6 +240,7 @@ struct LikeTile: View {
         }
         .buttonStyle(PressScaleStyle(scale: 0.97))
         .accessibilityLabel("\(profile.name), \(profile.age). Open profile")
+        .accessibilityValue(LikeAge.text(of: profile.likedAt, at: now) ?? "")
         .overlay(alignment: .bottomTrailing) {
             Button {
                 Haptics.thump()

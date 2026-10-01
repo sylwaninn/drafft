@@ -134,6 +134,8 @@ struct Profile: Identifiable, Hashable {
     /// They super liked you: their card comes first in your deck, marked in red, with their note.
     var superLikedMe = false
     var superLikeNote: String?
+    /// When they liked you (`liked_me`, drafft tempo): the age label on their Likes tile. Nil elsewhere.
+    var likedAt: Date?
     /// From the server's card, or set when the user edits their own profile.
     var vitalsOverride: Vitals?
     var promptsOverride: [ProfilePrompt]?
