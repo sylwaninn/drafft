@@ -2146,7 +2146,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld personnes te likent."
+            "value" : "%lld personnes ont liké ton profil."
           }
         },
         "it" : {
@@ -2186,7 +2186,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld personnes te likent. Voir qui"
+            "value" : "%lld personnes ont liké ton profil. Voir qui"
           }
         },
         "it" : {
@@ -2226,7 +2226,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld personnes te likent. Découvre-les avec drafft tempo"
+            "value" : "%lld personnes ont liké ton profil. Découvre-les avec drafft tempo"
           }
         },
         "it" : {
@@ -2960,7 +2960,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 personne te like."
+            "value" : "1 personne a liké ton profil."
           }
         },
         "it" : {
@@ -37489,43 +37489,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sieh mit drafft tempo, wer es ist, und matche mit einem Tipp."
+            "value" : "Entdecke diese Profile mit drafft tempo und matche mit einem Tipp."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descubre quién es con drafft tempo y haz match con un toque."
+            "value" : "Descubre estos perfiles con drafft tempo y haz match con un toque."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Découvre qui c'est avec drafft tempo et matche en un geste."
+            "value" : "Découvre ces profils avec drafft tempo et matche en un geste."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scopri chi è con drafft tempo e fai match con un tocco."
+            "value" : "Scopri questi profili con drafft tempo e fai match con un tocco."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zie met drafft tempo wie het is en match met één tik."
+            "value" : "Ontdek deze profielen met drafft tempo en match met één tik."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descobre quem é com o drafft tempo e faz match com um toque."
+            "value" : "Descobre estes perfis com o drafft tempo e faz match com um toque."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "See who it is with drafft tempo and match in one tap."
+            "value" : "See these profiles with drafft tempo and match in one tap."
           }
         }
       }
