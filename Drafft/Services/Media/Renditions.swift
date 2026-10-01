@@ -18,6 +18,16 @@ enum Renditions {
     static let tolerance: CGFloat = 0.95
     /// On a limited connection, the width asked of a full copy: a step lighter (1 080 for a 1 344 card).
     static let limitedShare: CGFloat = 0.75
+    /// The widest copy a deck card, a grid or any photo but an open profile's asks for: 1 080, about 2.4
+    /// pixels a point on a 3x phone's card, which a photo doesn't show (Instagram's order of magnitude for a
+    /// full-width photo), for about 40 % less to download and to keep in memory than 1 440. An open profile's
+    /// photos (`detail`), looked at closely, may take 1 440 and the original.
+    static let everydayWidth: CGFloat = 1_080
+
+    /// The width to ask for: what the frame needs, at most `everydayWidth` unless it's an open profile's photo.
+    static func asked(_ needed: CGFloat, detail: Bool) -> CGFloat {
+        detail ? needed : min(needed, everydayWidth)
+    }
 
     /// Source pixels wide enough to fill `pixels` (aspect fill) with a photo `aspect` wide for 1 high.
     static func neededWidth(for pixels: CGSize, aspect: CGFloat?) -> CGFloat {

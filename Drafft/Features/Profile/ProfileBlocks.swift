@@ -352,7 +352,7 @@ struct LikablePhoto: View {
     @State private var pop = false
 
     var body: some View {
-        Photo(name: name)
+        Photo(name: name, detail: true)
             .frame(height: height)
             .overlay {
                 Image("heart")
