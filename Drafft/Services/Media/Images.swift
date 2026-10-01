@@ -12,8 +12,8 @@ import UIKit
 ///   downloaded bytes (keys never change, so a photo is downloaded once);
 /// - both caches keyed by the object (`MediaURL.canonical`), never by its signed link: a photo stays
 ///   cached when its link is renewed, and a link about to expire is renewed before it's downloaded;
-/// - with `MediaImageResizing` on (the media domain runs Cloudflare Image Resizing), the server
-///   sends a copy at the display width instead of the original.
+/// - the media Worker sends a copy at the display width (`&w=`) instead of the 2048 px original
+///   whenever a smaller one is enough (thumbnails, grids, avatars).
 enum Images {
     /// Decoded photos kept in memory (the system can still evict them earlier).
     static let memoryLimit = 120 << 20
@@ -83,29 +83,26 @@ enum Images {
         buckets.first { CGFloat($0) >= pixels } ?? largest
     }
 
-    // MARK: Sizes served by the CDN
+    // MARK: Sizes served by the media Worker
 
-    /// Whether the media domain resizes on the fly (`/cdn-cgi/image/…`, Cloudflare Image Resizing):
-    /// `MEDIA_IMAGE_RESIZING` in Config/*.xcconfig. Off until the media domain has it turned on;
-    /// the original is downloaded then, and still decoded at the display size here.
-    static let resizesOnServer = (Bundle.main.object(forInfoDictionaryKey: "MediaImageResizing") as? String)
-        .map { ["yes", "true", "1"].contains($0.lowercased()) } ?? false
+    /// The widths the media Worker resizes to (cloudflare/media-worker in drafft-backend); any other
+    /// value gets the original.
+    private static let serverWidths = [160, 320, 640, 1_080]
 
-    /// `https://media…/key` → `https://media…/cdn-cgi/image/width=W,quality=80,fit=scale-down/key`,
-    /// only for photos on the media domain (other URLs are left as they are).
+    /// A signed photo link on the media domain with `&w=` set to the smallest width the Worker serves that
+    /// covers `width` pixels; above the largest, the original (2048 px at most). `w` isn't part of the
+    /// signature, and the caches keep one copy per width (`MediaURL.canonical`). Other URLs are left as
+    /// they are.
     static func sized(_ name: String, width: Int) -> URL? {
         guard let url = URL(string: name) else { return nil }
-        guard resizesOnServer, let base = MediaURL.saved,
-              url.host == base.host, url.scheme == base.scheme else { return url }
-        let basePath = base.path.hasSuffix("/") ? String(base.path.dropLast()) : base.path
-        guard url.path.hasPrefix(basePath + "/"), !url.path.contains("/cdn-cgi/") else { return url }
-        let key = url.path.dropFirst(basePath.count + 1)
-        var parts = URLComponents()
-        parts.scheme = url.scheme
-        parts.host = url.host
-        parts.port = url.port
-        parts.path = "/cdn-cgi/image/width=\(width),quality=80,fit=scale-down" + basePath + "/" + key
-        parts.percentEncodedQuery = URLComponents(url: url, resolvingAgainstBaseURL: false)?.percentEncodedQuery
+        guard let base = MediaURL.saved, url.host == base.host, url.scheme == base.scheme,
+              MediaURL.key(of: url) != nil,
+              var parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
+        var items = (parts.queryItems ?? []).filter { $0.name != "w" }
+        if let served = serverWidths.first(where: { $0 >= width }) {
+            items.append(URLQueryItem(name: "w", value: String(served)))
+        }
+        parts.queryItems = items.isEmpty ? nil : items
         return parts.url ?? url
     }
 }
