@@ -77,10 +77,10 @@ extension AppModel {
         do {
             let user = try await Backend.shared.client.auth.user()
             if session == sessionID { apply(user) }
-        } catch is AuthError {
+        } catch where Backend.refusesSession(error) {
             if session == sessionID { await endSession() }
         } catch {
-            // Offline: the saved session is the best we know.
+            // Offline, or Auth not answering: the saved session is the best we know.
         }
     }
 
