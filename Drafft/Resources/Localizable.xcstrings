@@ -13077,6 +13077,46 @@
         }
       }
     },
+    "Like back" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Like zurück"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devuelve el like"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Like en retour"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricambia il like"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Like terug"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devolve o like"
+          }
+        }
+      }
+    },
     "Loading profiles" : {
       "localizations" : {
         "de" : {
@@ -14045,6 +14085,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Partilha a tua localização para ver pessoas perto de ti."
+          }
+        }
+      }
+    },
+    "Someone super liked you. Unlock with drafft tempo" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jemand hat dir einen Super Like gegeben. Freischalten mit drafft tempo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alguien te ha dado un superlike. Desbloquéalo con drafft tempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelqu'un t'a envoyé un super like. Débloque avec drafft tempo"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qualcuno ti ha mandato un super like. Sblocca con drafft tempo"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iemand gaf je een superlike. Ontgrendel met drafft tempo"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alguém te deu um super like. Desbloqueia com drafft tempo"
           }
         }
       }

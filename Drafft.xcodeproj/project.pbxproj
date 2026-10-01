@@ -90,6 +90,7 @@
 		6F4700B2DD240CC3558FFC1E /* SelfieCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA082CABB23AF8C3558B0114 /* SelfieCaptureView.swift */; };
 		6F7C558D530CE30F62B9F18E /* PurchaseCredit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC86AF977A1EDBF5DE763BB /* PurchaseCredit.swift */; };
 		70160593C9BD600FD6A71DD7 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C5E7D968B0F2038B779A7B32 /* InfoPlist.xcstrings */; };
+		70C69DA98E7FC9A5344E298E /* LikesMosaic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F335A624AC9AB40C652506 /* LikesMosaic.swift */; };
 		74F2FD432001286F8C985957 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7186BB2F3676CD699A59C3F8 /* SplashView.swift */; };
 		79DCA843E06D8835AD7B0734 /* PhotoCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C633B64178A8325E4B7210C /* PhotoCompressor.swift */; };
 		7C84EDCEA76BE441AFD42E4C /* PhotoModeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1253938196232F9A95943AB6 /* PhotoModeration.swift */; };
@@ -219,6 +220,7 @@
 		20EBF74B57B3B01D28DE507C /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		211BB36B1A27A5C59BBE5F0F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		214BEF0A582723680CE4ADD6 /* PromptPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptPickerSheet.swift; sourceTree = "<group>"; };
+		21F335A624AC9AB40C652506 /* LikesMosaic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikesMosaic.swift; sourceTree = "<group>"; };
 		221DE3BB0D77782A2CD345C9 /* ProfileExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileExtras.swift; sourceTree = "<group>"; };
 		227AF8DE6682A785901C630E /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		2324E42BB5A423511DA8ADB4 /* ChangePhoneSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePhoneSheet.swift; sourceTree = "<group>"; };
@@ -745,6 +747,7 @@
 				ED475785E5CCE3685F02ACA3 /* ChatView.swift */,
 				AE5938300AB49911EBB80A21 /* Composer.swift */,
 				39C0AB013A496688C65614BE /* ConversationsView.swift */,
+				21F335A624AC9AB40C652506 /* LikesMosaic.swift */,
 				0E2647DE23A6D03EF6DD56AC /* LikesTabView.swift */,
 				B69D4B6B02894B481173D440 /* LikesYouView.swift */,
 				47FBEF63E9F1FD3B9E982BA5 /* MediaViewer.swift */,
@@ -951,6 +954,7 @@
 				DE5C54EB35CAB18B294AAEAC /* LifestylePicker.swift in Sources */,
 				38D49871947737887A486599 /* LikeComposer.swift in Sources */,
 				0B9405144736422BC446F413 /* LikesChip.swift in Sources */,
+				70C69DA98E7FC9A5344E298E /* LikesMosaic.swift in Sources */,
 				15A09D3C87499FACC9D5881F /* LikesTabView.swift in Sources */,
 				0C551FD229D9D25741B5AB96 /* LikesYouView.swift in Sources */,
 				4119274452EABFDCF4F81F15 /* LocalCache.swift in Sources */,
