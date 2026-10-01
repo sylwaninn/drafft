@@ -97,13 +97,6 @@ actor Backend {
         try await client.auth.verifyOTP(email: email, token: code, type: .recovery)
     }
 
-    /// Whether the signed-in person finished sign-up (`profiles.onboarded_at`).
-    func isOnboarded() async throws -> Bool {
-        let data = try await myProfile(select: "onboarded_at")
-        let rows = try JSONSerialization.jsonObject(with: data) as? [[String: Any]]
-        return rows?.first?["onboarded_at"] is String
-    }
-
     /// Emails a 6-digit code to the new address (the "Change email address" template shows `{{ .Token }}`).
     func updateEmail(_ email: String) async throws {
         try await client.auth.update(user: UserAttributes(email: email))

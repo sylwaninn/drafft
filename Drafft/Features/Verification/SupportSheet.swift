@@ -23,6 +23,8 @@ struct SupportSheet: View {
     @State private var sending = false
     @State private var reference: String?
     @State private var error: String?
+    /// The server turned the reply address down: said on the field.
+    @State private var emailError: String?
     @FocusState private var messageFocused: Bool
     @State private var captcha = TurnstileChallenge()
 
@@ -35,6 +37,7 @@ struct SupportSheet: View {
     private var captchaReady: Bool { session == .signedIn || captcha.token != nil }
     private var replyTo: String { session == .signedIn ? app.email : replyEmail.trimmingCharacters(in: .whitespaces) }
     private var isHelpCenter: Bool { topic == nil }
+    static let messageLimit = 4000
     private var sentTopic: String? { topic ?? picked }
 
     var body: some View {
@@ -114,7 +117,8 @@ struct SupportSheet: View {
             if session == .signedOut {
                 SheetBlock(title: L("Where should we reply?")) {
                     DrafftField(title: L("Email"), text: $replyEmail, prompt: L("you@example.com"),
-                                contentType: .emailAddress, keyboard: .emailAddress)
+                                error: emailError, contentType: .emailAddress, keyboard: .emailAddress)
+                        .onChange(of: replyEmail) { emailError = nil }
                 }
             }
 
@@ -124,6 +128,8 @@ struct SupportSheet: View {
                                        : L("A few words help us fix it faster"),
                           text: $message, axis: .vertical)
                     .lineLimit(8...)
+                    // The support function's limit: typing stops there.
+                    .maxLength(Self.messageLimit, of: $message)
                     .font(.body)
                     .focused($messageFocused)
                     .revealsOnFocus(messageFocused)
@@ -204,18 +210,27 @@ struct SupportSheet: View {
             let answer = try JSONDecoder().decode([String: String].self, from: data)
             Haptics.success()
             withAnimation(Motion.bouncy) { reference = answer["reference"] ?? "" }
-        } catch let Backend.BackendError.http(_, detail) where detail.contains("captcha_not_configured") {
-            Haptics.warning()
-            error = L("Support can't take messages this way right now. Try again later.")
-        } catch let Backend.BackendError.http(_, detail) where detail.contains("captcha_") {
-            Haptics.warning()
-            error = L("The security check didn't go through. Try again.")
-        } catch Backend.BackendError.http(429, _) {
-            Haptics.warning()
-            error = L("You've sent several messages already. Try again in an hour.")
         } catch {
             Haptics.warning()
-            self.error = L("Your message couldn't be sent. Check your connection and try again.")
+            if case Backend.BackendError.http(_, "invalid_email") = error {
+                emailError = L("That doesn't look like an email address. Check for typos.")
+            } else {
+                self.error = Self.failure(error)
+            }
+        }
+    }
+
+    /// Why the message didn't go: the support function's own refusals, else the usual words.
+    private static func failure(_ error: Error) -> String {
+        switch error {
+        case let Backend.BackendError.http(_, detail) where detail.contains("captcha_not_configured"):
+            L("Support can't take messages this way right now. Try again later.")
+        case let Backend.BackendError.http(_, detail) where detail.contains("captcha_"):
+            L("The security check didn't go through. Try again.")
+        // Signed out, the limit also runs per day: no promise of an hour.
+        case Backend.BackendError.http(429, _): L("You've sent several messages already. Try again later.")
+        case Backend.BackendError.http(_, "invalid_message"): L("Your message is too long. Shorten it, then send it again.")
+        default: ServerMessage.text(for: error, offline: L("Your message couldn't be sent. Check your connection and try again."))
         }
     }
 }

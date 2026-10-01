@@ -47,6 +47,42 @@ extension AppModel {
         }
     }
 
+    /// Logged in, or a password reset: to sign-up if it isn't finished (another device, a reinstall).
+    /// Without an answer (offline, a server error), in as far as this iPhone knows, and to sign-up as soon
+    /// as a read says it isn't finished: never left in the tabs with a profile that can't open.
+    func enterAfterLogIn() async {
+        if let account = await refreshAccount() {
+            signIn(onboard: !account.onboarded)
+            return
+        }
+        routeOnAccountRead = true
+        signIn(onboard: false)
+        Task { await routeWhenAccountRead() }
+    }
+
+    /// In the tabs without knowing whether sign-up is finished: the account is read again, less often
+    /// each time, until a read answers (this loop's or any other: Realtime, back at the front), and that
+    /// read brings sign-up back if it isn't finished (`routeIfUnfinished`).
+    func routeWhenAccountRead() async {
+        let session = sessionID
+        var delay: Duration = .seconds(2)
+        // Waits first: the read that just failed was the first try, and the tabs are on screen by then.
+        while routeOnAccountRead {
+            try? await Task.sleep(for: delay)
+            guard session == sessionID, phase == .main, routeOnAccountRead else { return }
+            if let account = await refreshAccount() { routeIfUnfinished(account) }
+            delay = min(delay * 2, .seconds(60))
+        }
+    }
+
+    /// The first account read that answers in the tabs after an unknown sign-in: to sign-up if it isn't
+    /// finished. One that answers before the tabs show (sign-in's own read) leaves it to the loop's next read.
+    func routeIfUnfinished(_ account: ProfileSync.Account) {
+        guard routeOnAccountRead, phase == .main else { return }
+        routeOnAccountRead = false
+        if !account.onboarded { withAnimation(Motion.gentle) { phase = .onboarding } }
+    }
+
     func finishOnboarding(_ profile: Profile) {
         OnboardingStore.clear()
         me = profile
@@ -116,10 +152,13 @@ extension AppModel {
         case .some(.some(let account)):
             signIn(onboard: !account.onboarded, immediately: true)
         default:
-            // No answer yet (slow or no network): in, as far as this iPhone knows.
+            // No answer yet (slow or no network): in, as far as this iPhone knows, until the server says.
+            // The late read, when it answers, decides (`routeIfUnfinished`); else it's tried again.
+            routeOnAccountRead = true
             signIn(onboard: false, immediately: true)
-            if let account = await read.value, session == sessionID, !account.onboarded, phase == .main {
-                withAnimation(Motion.gentle) { phase = .onboarding }
+            Task {
+                if let account = await read.value { routeIfUnfinished(account) }
+                await routeWhenAccountRead()
             }
         }
     }
@@ -232,6 +271,7 @@ extension AppModel {
         email = ""
         phoneNumber = nil
         applyServerPause(false)
+        routeOnAccountRead = false
         sessionID += 1
         withAnimation(Motion.gentle) {
             phase = .welcome

@@ -15693,6 +15693,52 @@
         }
       }
     },
+    "You've sent several messages already. Try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast uns schon mehrere Nachrichten geschickt. Versuch es später noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've sent several messages already. Try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya nos has enviado varios mensajes. Inténtalo de nuevo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nous as déjà envoyé plusieurs messages. Réessaie plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci hai già inviato diversi messaggi. Riprova più tardi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt ons al een paar berichten gestuurd. Probeer het later opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já nos enviaste várias mensagens. Tenta de novo mais tarde."
+          }
+        }
+      }
+    },
     "Your address, workplace and last name can wait until you trust them." : {
       "localizations" : {
         "de" : {
@@ -15819,6 +15865,52 @@
         }
       }
     },
+    "Your chats couldn't load" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Chats konnten nicht geladen werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your chats couldn't load"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han podido cargar tus chats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger tes discussions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile caricare le chat"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je chats konden niet laden"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar as tuas conversas"
+          }
+        }
+      }
+    },
     "Your first photo wasn't approved. Put another one first." : {
       "localizations" : {
         "de" : {
@@ -15855,6 +15947,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A tua primeira foto não foi aprovada. Põe outra primeiro."
+          }
+        }
+      }
+    },
+    "Your likes couldn't load" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Likes konnten nicht geladen werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your likes couldn't load"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han podido cargar tus likes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger tes likes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile caricare i like"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je likes konden niet laden"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar os teus likes"
+          }
+        }
+      }
+    },
+    "Your message is too long. Shorten it, then send it again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Nachricht ist zu lang. Kürz sie und schick sie noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your message is too long. Shorten it, then send it again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu mensaje es demasiado largo. Acórtalo y vuelve a enviarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton message est trop long. Raccourcis-le, puis renvoie-le."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il messaggio è troppo lungo. Accorcialo e rimandalo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bericht is te lang. Maak het korter en stuur het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua mensagem é demasiado longa. Encurta-a e envia de novo."
           }
         }
       }
@@ -52480,46 +52664,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Já viste toda a gente a menos de %@."
-          }
-        }
-      }
-    },
-    "You've sent several messages already. Try again in an hour." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast uns schon mehrere Nachrichten geschickt. Versuch es in einer Stunde noch mal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya nos has enviado varios mensajes. Inténtalo de nuevo dentro de una hora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu nous as déjà envoyé plusieurs messages. Réessaie dans une heure."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ci hai già inviato diversi messaggi. Riprova tra un'ora."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je hebt ons al een paar berichten gestuurd. Probeer het over een uur opnieuw."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Já nos enviaste várias mensagens. Tenta de novo daqui a uma hora."
           }
         }
       }

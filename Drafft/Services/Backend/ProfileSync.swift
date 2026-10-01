@@ -306,10 +306,16 @@ enum ProfileSync {
         do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
     }
 
-    /// Best effort: the area can be set again later from the app.
-    private static func setLocation(_ c: CLLocationCoordinate2D?) async {
+    /// Not sent (no connection, a server error): sign-up fails like the other writes and is tried again,
+    /// or Discover would open on "share your location" right after it was shared. A refusal of the
+    /// place itself doesn't hold sign-up back: Discover sends the location again (`LocationOnce`).
+    private static func setLocation(_ c: CLLocationCoordinate2D?) async throws {
         guard let c else { return }
-        _ = try? await Backend.shared.rpc("set_location", ["p_lat": c.latitude, "p_lng": c.longitude])
+        do {
+            _ = try await Backend.shared.rpc("set_location", ["p_lat": c.latitude, "p_lng": c.longitude])
+        } catch where ServerMessage.code(of: error) == nil {
+            throw error
+        } catch {}
     }
 
     private static func setSports(_ sports: [SportEntry]) async throws {

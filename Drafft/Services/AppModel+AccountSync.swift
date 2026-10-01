@@ -30,11 +30,15 @@ extension AppModel {
                 lastAccountRead = (.now, account)
                 apply(account, pauseReadAt: pauseEdits)
                 applyConsent(fromServer: account.consent)
+                routeIfUnfinished(account)
                 return account
             } catch {
                 guard session == sessionID else { return nil }
                 Self.accountLog.error("The account couldn't be read: \(String(describing: error), privacy: .public)")
-                if profileLoad != .loaded { profileLoad = .failed }
+                if profileLoad != .loaded {
+                    profileLoadFailure = ServerMessage.text(for: error, offline: L("Check your connection and try again."))
+                    profileLoad = .failed
+                }
                 retryWhileConsentUnknown()
                 return nil
             }

@@ -21,10 +21,15 @@ final class AppModel {
     var publicMe: Profile { me.showingApprovedPhotos() }
     enum ProfileLoad: Equatable { case loading, failed, loaded }
     var profileLoad: ProfileLoad = .loading
+    /// Why the last read failed, in words (`.failed`): the connection only when it never got through.
+    var profileLoadFailure: String?
     /// The signed-in account's last known state on this iPhone (see `LocalCache`, `refreshAccount`).
     @ObservationIgnored var localCache: LocalCache?
     /// The account read in flight, shared by everyone who asks meanwhile.
     @ObservationIgnored var accountRefresh: Task<ProfileSync.Account?, Never>?
+    /// In the tabs without knowing whether sign-up is finished: the next account read that answers
+    /// decides (`routeWhenAccountRead`), whoever asked for it.
+    @ObservationIgnored var routeOnAccountRead = false
     /// The last account read, and when: a read asked for right after it reuses it.
     @ObservationIgnored var lastAccountRead: (at: Date, account: ProfileSync.Account)?
     /// drafft tempo's details as the App Store reports them for this account (plan, price, renewal),
@@ -161,6 +166,12 @@ final class AppModel {
     var blurredLikes: [BlurredLike] = [] { didSet { refreshBadges() } }
     /// Current matches (`my_matches`), newest first.
     var matches: [Match] = []
+    /// Where a list from the server stands before it has anything to show: an empty list means "nobody"
+    /// only once it was read (or this iPhone's copy of a read was shown). A first read that failed shows
+    /// a retry, never an empty state.
+    enum ListLoad: Equatable { case loading, failed(offline: Bool), loaded }
+    var likesLoad: ListLoad = .loading
+    var matchesLoad: ListLoad = .loading
 
     // Chats
     /// One per active match (`matches`), with its Stream channel (`ChatService`): never sample data.

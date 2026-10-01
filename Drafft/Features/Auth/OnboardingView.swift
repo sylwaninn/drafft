@@ -397,7 +397,7 @@ struct OnboardingView: View {
         )
         app.language = language
         app.phoneNumber = phone.displayNumber
-        guard let birthday else { return }
+        guard let birthday else { Haptics.warning(); go(to: Step.birthday.rawValue); return } // lost from a restored draft
         let signUp = ProfileSync.SignUp(
             name: p.name, birthday: birthday, gender: identity, interestedIn: interestedIn,
             neighborhood: area?.name ?? "", location: locator.blurred, bio: p.bio,

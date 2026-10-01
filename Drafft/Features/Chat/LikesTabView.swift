@@ -17,7 +17,7 @@ struct LikesTabView: View {
                 VStack(alignment: .leading, spacing: DS.Space.md) {
                     if app.isPremium {
                         if app.likedMe.isEmpty {
-                            emptyState
+                            emptyOrLoading
                         } else {
                             LazyVGrid(columns: columns, spacing: DS.Space.sm) {
                                 ForEach(app.likedMe) { p in
@@ -31,7 +31,7 @@ struct LikesTabView: View {
                             }
                         }
                     } else if app.blurredLikes.isEmpty {
-                        emptyState
+                        emptyOrLoading
                     } else {
                         unlockBlock
                         LazyVGrid(columns: columns, spacing: DS.Space.sm) {
@@ -104,6 +104,24 @@ struct LikesTabView: View {
         .padding(DS.Space.xl)
         .frame(maxWidth: .infinity, alignment: .leading)
         .nightBlock()
+    }
+
+    /// Nobody yet only once the list was read: before, a spinner; after a failed first read, a retry.
+    @ViewBuilder
+    private var emptyOrLoading: some View {
+        switch app.likesLoad {
+        case .loaded: emptyState
+        case .failed(let offline):
+            ListLoadFailureView(art: .likes, title: "Your likes couldn't load", offline: offline) {
+                app.likesLoad = .loading
+                Task { await app.loadLikes() }
+            }
+            .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
+        case .loading:
+            ProgressView()
+                .frame(maxWidth: .infinity)
+                .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
+        }
     }
 
     private var emptyState: some View {
