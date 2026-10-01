@@ -114,8 +114,6 @@ targets:
         RevenueCatAPIKey: $(REVENUECAT_API_KEY)
         SmsCodeLifetime: $(SMS_CODE_LIFETIME)
         TurnstileSiteKey: $(TURNSTILE_SITE_KEY)
-        # YES once the media domain resizes on the fly (Cloudflare /cdn-cgi/image/); read by Images.
-        MediaImageResizing: $(MEDIA_IMAGE_RESIZING)
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, fr, es, de, it, pt, nl]
         NSLocationDefaultAccuracyReduced: true

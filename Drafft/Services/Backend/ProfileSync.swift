@@ -499,10 +499,11 @@ enum MediaURL {
         return String(url.path[url.path.index(after: start.lowerBound)...])
     }
 
-    /// The same object whatever its signature: what caches are keyed by.
+    /// The same object (and width, `w`) whatever its signature: what caches are keyed by.
     nonisolated static func canonical(_ url: URL) -> URL {
         guard var parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
-        parts.query = nil
+        let width = parts.queryItems?.filter { $0.name == "w" } ?? []
+        parts.queryItems = width.isEmpty ? nil : width
         return parts.url ?? url
     }
 
@@ -514,9 +515,13 @@ enum MediaURL {
 
     /// The link while it has more than a minute left; otherwise a new one from the backend (own and
     /// chat media: cards come with fresh links each time they're read again), or the same link.
+    /// The width asked of the media Worker (`w`) is kept.
     static func fresh(_ url: URL) async -> URL {
         guard let expiry = expiry(of: url), expiry.timeIntervalSinceNow < 60, let key = key(of: url),
               let renewed = await signed([key])[key].flatMap(URL.init(string:)) else { return url }
-        return renewed
+        guard let width = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == "w" }),
+              var parts = URLComponents(url: renewed, resolvingAgainstBaseURL: false) else { return renewed }
+        parts.queryItems = (parts.queryItems ?? []).filter { $0.name != "w" } + [width]
+        return parts.url ?? renewed
     }
 }

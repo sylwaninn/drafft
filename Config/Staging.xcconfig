@@ -8,5 +8,3 @@ REVENUECAT_API_KEY = appl_nPDeedcmfhgYnAvrGnLpAoYIQkm
 // How long an SMS code works, in seconds: Auth > Providers > Phone > SMS OTP Expiry.
 SMS_CODE_LIFETIME = 600
 APP_DISPLAY_NAME = drafft β
-// Photos sized by the media domain (Cloudflare Image Resizing, /cdn-cgi/image/): YES once it's enabled there.
-MEDIA_IMAGE_RESIZING = NO
