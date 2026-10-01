@@ -85,6 +85,8 @@ final class AppModel {
     /// began before the latest flip was saved says the old state, and mustn't put it back on screen.
     @ObservationIgnored var pauseEdits = 0
     @ObservationIgnored var pauseSaves = 0
+    /// The latest flip's save: nil once saved, else why it wasn't (the switch went back).
+    @ObservationIgnored var pauseSave: Task<String?, Never>?
 
     var notifyMatches = true
     var notifyMessages = true

@@ -133,6 +133,15 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     private static let settingsKey = "notificationSettings"
     /// Set while settings from the phone or the server are applied: nothing is saved or sent back.
     private var applying = false
+    private static let unsentKey = "notificationSettingsUnsent"
+    /// The account whose settings changed here and haven't reached the server yet (offline, a failed
+    /// save): kept over the server's copy, and sent again at each account read until one goes through.
+    @ObservationIgnored private var unsentFor: String? {
+        get { UserDefaults.standard.string(forKey: Self.unsentKey) }
+        set { UserDefaults.standard.set(newValue, forKey: Self.unsentKey) }
+    }
+    /// Bumped by each send: only the latest one clears `unsentFor`.
+    @ObservationIgnored private var sends = 0
 
     private var current: NotificationSettings {
         NotificationSettings(language: language, matches: matches, likes: likes, messages: messages,
@@ -158,16 +167,36 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     private func changed() {
         guard !applying else { return }
         if let data = try? JSONEncoder().encode(current) { UserDefaults.standard.set(data, forKey: Self.settingsKey) }
-        let settings = current
+        guard let account = Backend.shared.client.auth.currentUser?.id.uuidString else { return }
+        unsentFor = account
+        send(current, for: account)
+    }
+
+    /// The switch stays as the person set it: a save that fails is sent again at the next account
+    /// read (return to the app), never undone by the server's older copy.
+    private func send(_ settings: NotificationSettings, for account: String) {
+        sends += 1
+        let send = sends
         Task {
-            guard await Backend.shared.hasSession else { return }
-            try? await Backend.shared.updateMyProfile(settings.fields)
+            do {
+                try await Backend.shared.updateMyProfile(settings.fields)
+                if send == sends, unsentFor == account { unsentFor = nil }
+            } catch {
+                // Still marked unsent: `applyServer` sends it again.
+            }
         }
     }
 
-    /// The settings saved on the profile (another device, a reinstall) replace the phone's. Read
-    /// with the rest of the profile row (`AppModel.refreshAccount`).
+    /// The settings saved on the profile (another device, a reinstall) replace the phone's, unless
+    /// this phone has a change the server hasn't got yet: that one is sent again instead. Read with
+    /// the rest of the profile row (`AppModel.refreshAccount`).
     func applyServer(_ remote: NotificationSettings) {
+        if let account = Backend.shared.client.auth.currentUser?.id.uuidString, unsentFor == account {
+            send(current, for: account)
+            return
+        }
+        // Another account's leftover: this one's server copy wins.
+        unsentFor = nil
         applying = true
         apply(remote)
         applying = false

@@ -348,6 +348,13 @@ struct PaywallView: View {
         withAnimation(Motion.snappy) { notice = text }
     }
 
+    /// A restore that failed: the account not linked (nothing was asked of the App Store), or the
+    /// App Store itself.
+    static func restoreFailure(_ error: Error) -> String {
+        if case Store.StoreError.notLinked = error { return L("Couldn't connect. Check your connection and try again.") }
+        return L("Couldn't reach the App Store. Try again.")
+    }
+
     /// Restores from the App Store, for the signed-in account. Unlocks once the server has drafft
     /// tempo on the account's wallet.
     private func restore() {
@@ -371,7 +378,7 @@ struct PaywallView: View {
                 }
             } catch {
                 Haptics.warning()
-                say(L("Couldn't reach the App Store. Try again."))
+                say(Self.restoreFailure(error))
             }
         }
     }
@@ -401,8 +408,9 @@ struct PaywallView: View {
                     receipt = PurchaseReceipt(item: .tempo(sub))
                 }
             } catch {
+                guard let problem = Store.PurchaseProblem(error) else { return }
                 Haptics.warning()
-                say(L("The purchase didn't go through. You haven't been charged."))
+                say(problem.message(restorable: true))
             }
         }
     }
@@ -419,7 +427,11 @@ struct SubscriptionSheet: View {
     @Environment(\.openURL) private var openURL
     @State private var managing = false
     @State private var restoring = false
-    @State private var restoreResult: String?
+    /// What Restore found, and whether it's good news (a failure or nothing active is a warning).
+    @State private var restoreResult: (text: String, ok: Bool)?
+    /// Restore found no active subscription: the page stays to say so, and the drafft tempo row
+    /// goes once it's closed.
+    @State private var endedOnClose = false
 
     private var perks: [(icon: String, title: String)] { [
         ("undo-left", L("Undo your last swipe")),
@@ -457,6 +469,7 @@ struct SubscriptionSheet: View {
             .onChange(of: managing) { _, open in if !open { Task { await app.refreshSubscription(apply: apply) } } }
         }
         .presentationDragIndicator(.visible)
+        .onDisappear { if endedOnClose { withAnimation(Motion.snappy) { app.subscription = nil } } }
     }
 
     // MARK: Blocks
@@ -572,9 +585,10 @@ struct SubscriptionSheet: View {
             .font(.footnote.weight(.semibold))
             .foregroundStyle(DS.Palette.body)
             if let restoreResult {
-                Label(restoreResult, image: "check-circle")
+                Label(restoreResult.text, image: restoreResult.ok ? "check-circle" : "info-circle")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(DS.Palette.positiveDeep)
+                    .foregroundStyle(restoreResult.ok ? DS.Palette.positiveDeep : DS.Palette.negative)
+                    .fixedSize(horizontal: false, vertical: true)
                     .transition(.opacity)
             }
         }
@@ -608,13 +622,19 @@ struct SubscriptionSheet: View {
             defer { restoring = false }
             do {
                 let info = try await Store.shared.restore()
-                apply(Store.shared.subscription(from: info))
                 await app.loadWallet()
+                guard let sub = Store.shared.subscription(from: info) else {
+                    Haptics.warning()
+                    endedOnClose = true
+                    withAnimation(Motion.snappy) { restoreResult = (L("No drafft tempo purchase on this Apple ID."), false) }
+                    return
+                }
+                apply(sub)
                 Haptics.success()
-                withAnimation(Motion.snappy) { restoreResult = L("Your subscription is up to date.") }
+                withAnimation(Motion.snappy) { restoreResult = (L("Your subscription is up to date."), true) }
             } catch {
                 Haptics.warning()
-                withAnimation(Motion.snappy) { restoreResult = L("Couldn't reach the App Store. Try again.") }
+                withAnimation(Motion.snappy) { restoreResult = (PaywallView.restoreFailure(error), false) }
             }
         }
     }
@@ -629,6 +649,8 @@ struct SubscriptionSheet: View {
                 withAnimation(Motion.snappy) { app.subscription = nil }
             }
         } else {
+            // Active again (a later Restore, back from Apple's sheet): closing keeps the row.
+            endedOnClose = false
             withAnimation(Motion.snappy) { app.subscription = sub }
         }
     }

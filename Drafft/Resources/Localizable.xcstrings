@@ -14021,6 +14021,52 @@
         }
       }
     },
+    "Purchases are turned off on this iPhone. You can allow them in Screen Time settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käufe sind auf diesem iPhone deaktiviert. Du kannst sie in den Bildschirmzeit-Einstellungen erlauben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchases are turned off on this iPhone. You can allow them in Screen Time settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las compras están desactivadas en este iPhone. Puedes permitirlas en los ajustes de Tiempo de uso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les achats sont désactivés sur cet iPhone. Tu peux les autoriser dans les réglages Temps d'écran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli acquisti sono disattivati su questo iPhone. Puoi consentirli nelle impostazioni di Tempo di utilizzo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aankopen staan uit op deze iPhone. Je kunt ze toestaan in de instellingen van Schermtijd."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As compras estão desativadas neste iPhone. Podes permiti-las nas definições de Tempo de ecrã."
+          }
+        }
+      }
+    },
     "Read once, not tracked" : {
       "localizations" : {
         "en" : {
@@ -14389,6 +14435,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta proposta já foi respondida."
+          }
+        }
+      }
+    },
+    "This is already on your Apple ID. Tap Restore purchases to get it back." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist schon mit deiner Apple-ID verknüpft. Tippe auf „Käufe wiederherstellen“, um es zurückzuholen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is already on your Apple ID. Tap Restore purchases to get it back."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya está en tu Apple ID. Toca «Restaurar compras» para recuperarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est déjà sur ton identifiant Apple. Touche « Restaurer les achats » pour le récupérer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È già sul tuo ID Apple. Tocca «Ripristina acquisti» per recuperarlo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit staat al op je Apple ID. Tik op ‘Aankopen herstellen’ om het terug te krijgen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já está no teu ID Apple. Toca em «Restaurar compras» para o recuperar."
           }
         }
       }
@@ -15057,6 +15149,52 @@
         }
       }
     },
+    "Waiting for approval. It'll be added to your account once the payment goes through." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartet auf Freigabe. Es wird deinem Konto hinzugefügt, sobald die Zahlung durch ist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for approval. It'll be added to your account once the payment goes through."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendiente de aprobación. Se añadirá a tu cuenta cuando se complete el pago."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attente de validation. L'achat sera ajouté à ton compte dès que le paiement aura abouti."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa di approvazione. Verrà aggiunto al tuo account appena il pagamento andrà a buon fine."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wacht op goedkeuring. Het wordt aan je account toegevoegd zodra de betaling rond is."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A aguardar aprovação. Será adicionado à tua conta assim que o pagamento for concluído."
+          }
+        }
+      }
+    },
     "Watch for red flags" : {
       "localizations" : {
         "de" : {
@@ -15133,6 +15271,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "De momento não conseguimos verificar este número. Tenta daqui a pouco."
+          }
+        }
+      }
+    },
+    "We couldn't confirm the purchase. If you were charged, it'll be added to your account automatically." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten den Kauf nicht bestätigen. Falls dir etwas berechnet wurde, kommt es automatisch auf dein Konto."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't confirm the purchase. If you were charged, it'll be added to your account automatically."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido confirmar la compra. Si se te ha cobrado, se añadirá a tu cuenta automáticamente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de confirmer l'achat. Si un montant a été débité, il sera ajouté automatiquement à ton compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a confermare l'acquisto. Se ti è stato addebitato, verrà aggiunto al tuo account in automatico."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We konden de aankoop niet bevestigen. Als er iets is afgeschreven, wordt het automatisch aan je account toegevoegd."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos confirmar a compra. Se o pagamento foi cobrado, a compra será adicionada à tua conta automaticamente."
           }
         }
       }
@@ -15671,6 +15855,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A tua primeira foto não foi aprovada. Põe outra primeiro."
+          }
+        }
+      }
+    },
+    "Your profile couldn't be paused. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Profil konnte nicht pausiert werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your profile couldn't be paused. Check your connection and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido pausar tu perfil. Revisa tu conexión y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton profil n'a pas pu être mis en pause. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile mettere in pausa il tuo profilo. Controlla la connessione e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je profiel kon niet worden gepauzeerd. Controleer je verbinding en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível pôr o teu perfil em pausa. Verifica a tua ligação e tenta de novo."
+          }
+        }
+      }
+    },
+    "Your profile couldn't be resumed. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Profil konnte nicht reaktiviert werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your profile couldn't be resumed. Check your connection and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido reactivar tu perfil. Revisa tu conexión y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton profil n'a pas pu être réactivé. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile riattivare il tuo profilo. Controlla la connessione e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je profiel kon niet opnieuw worden geactiveerd. Controleer je verbinding en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível reativar o teu perfil. Verifica a tua ligação e tenta de novo."
           }
         }
       }

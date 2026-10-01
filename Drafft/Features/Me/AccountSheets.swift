@@ -446,6 +446,8 @@ struct DeleteAccountSheet: View {
     @State private var loading = false
     @State private var failure: String?
     @State private var managingSubscription = false
+    @State private var pausing = false
+    @State private var pauseFailure: String?
 
     private var showsSubscriptionNotice: Bool {
         let renewal: SubscriptionNotice.Renewal = app.subscription.map { $0.willRenew ? .renews : .ends } ?? .unknown
@@ -591,14 +593,34 @@ struct DeleteAccountSheet: View {
                 .font(.subheadline)
                 .foregroundStyle(DS.Palette.body)
             Button {
-                Haptics.success()
-                app.profilePaused = true
-                dismiss()
+                Haptics.tap()
+                pausing = true
+                pauseFailure = nil
+                Task {
+                    // Closes only once the server has it: a pause that didn't save stays here to say so.
+                    let failure = await app.pauseNow()
+                    pausing = false
+                    if let failure {
+                        withAnimation(Motion.snappy) { pauseFailure = failure }
+                    } else {
+                        Haptics.success()
+                        dismiss()
+                    }
+                }
             } label: {
                 Label(app.profilePaused ? "Your profile is paused" : "Pause my profile instead", image: "pause")
+                    .opacity(pausing ? 0 : 1)
+                    .overlay { if pausing { ProgressView().tint(DS.Palette.ink) } }
             }
             .buttonStyle(.drafftSecondary)
-            .disabled(app.profilePaused)
+            .disabled(app.profilePaused || pausing)
+            if let pauseFailure {
+                Text(pauseFailure)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(DS.Palette.negative)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .transition(.opacity)
+            }
         }
     }
 }
