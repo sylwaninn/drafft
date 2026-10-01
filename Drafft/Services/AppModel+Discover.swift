@@ -80,7 +80,7 @@ extension AppModel {
             guard generation == discovery.generation else { return }
             if case .cards = outcome { discovery.pace.read(took: Self.seconds(ContinuousClock.now - started)) }
             discovery.load = nil
-            apply(outcome, filters: filters)
+            apply(outcome, filters: filters, asked: limit)
         }
     }
 
@@ -104,16 +104,18 @@ extension AppModel {
         return .refused("location_required")
     }
 
-    private func apply(_ outcome: DeckOutcome, filters: DiscoverFilters) {
+    /// A read's outcome. `asked`: how many cards the read asked for.
+    private func apply(_ outcome: DeckOutcome, filters: DiscoverFilters, asked: Int) {
         switch outcome {
         case .cards(let data):
-            let cards = ((try? ProfileCard.list(from: data)) ?? []).filter(\.isShowable)
+            let sent = (try? ProfileCard.list(from: data)) ?? []
+            // A full page may have more behind it; a shorter one is all the server has: swipes stop asking
+            // until another read does (counted before this phone leaves anything out).
+            discovery.exhausted = sent.count < asked
+            let cards = sent.filter(\.isShowable)
             let hidden = discovery.swiped.union(blocked.map(\.id)).union(matches.map(\.profile.id))
             let fresh = cards.filter { !hidden.contains($0.id) }
             let byID = Dictionary(fresh.map { ($0.id, $0.profile(mediaBase: MediaURL.saved)) }) { a, _ in a }
-            let held = Set(queue.map(\.id))
-            // Fewer new people than a batch: the pool is running out, swipes stop asking until something else does.
-            discovery.exhausted = fresh.filter { !held.contains($0.id) }.count < Self.deckBatch
             let order = DeckMerge.merge(current: queue.map(\.id), fresh: fresh.map(\.id), keep: Self.deckKeep,
                                         exclude: hidden)
             // The fresh copy of each card (new links, a changed profile), in the merged order.
@@ -395,8 +397,8 @@ struct DiscoveryState {
     var pace = DeckPace()
     /// Swipes sent but not answered yet.
     var pendingSwipes = 0
-    /// The last read brought fewer new people than a batch: swipes don't ask again until another read
-    /// (back at the front, the channel rejoined, new filters) does.
+    /// The last read got fewer cards than it asked for, all the server has: swipes don't ask again until
+    /// another read (back at the front, the channel rejoined, new filters) does.
     var exhausted = false
 }
 
