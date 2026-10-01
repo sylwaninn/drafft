@@ -21,23 +21,37 @@ struct Vitals: Hashable {
 
     /// Lifestyle answers are saved as their English option ("Early bird", "Never"…), which stays
     /// their identity; this is the text to show. Anything else (free text) is shown as is.
-    static func label(for value: String) -> String {
-        switch value {
-        case "Very early bird": L("Very early bird")
-        case "Early bird": L("Early bird")
-        case "Night owl": L("Night owl")
-        case "Omnivore": L("Omnivore")
-        case "Flexitarian": L("Flexitarian")
-        case "Vegetarian": L("Vegetarian")
-        case "Vegan": L("Vegan")
-        case "Pescatarian": L("Pescatarian")
-        case "Never": L("Never")
-        case "Rarely": L("Rarely")
-        case "Socially": L("Socially")
-        case "Post-race only": L("Post-race only")
-        case "Sometimes": L("Sometimes")
-        case "Yes": L("Yes")
-        default: value
+    /// `gender` picks the gendered form where a language has one ("Viandard", "Viandarde").
+    static func label(for value: String, gender: DiscoverFilters.Audience? = nil) -> String {
+        guard value == "Meat lover" else { return labels[value] ?? value }
+        return switch gender {
+        case .women: L("Meat lover (woman)")
+        case .men: L("Meat lover (man)")
+        default: L("Meat lover")
+        }
+    }
+
+    private static var labels: [String: String] {
+        [
+            "Very early bird": L("Very early bird"), "Early bird": L("Early bird"), "Night owl": L("Night owl"),
+            "Omnivore": L("Omnivore"), "Flexitarian": L("Flexitarian"), "Vegetarian": L("Vegetarian"),
+            "Vegan": L("Vegan"), "Pescatarian": L("Pescatarian"),
+            "Never": L("Never"), "Rarely": L("Rarely"), "Socially": L("Socially"),
+            "Post-race only": L("Post-race only"), "Apéro is sacred": L("Apéro is sacred"),
+            "Sometimes": L("Sometimes"), "Yes": L("Yes")
+        ]
+    }
+
+    /// The drinking answer as a short phrase for summaries ("Drinks socially"); empty if unanswered.
+    var drinksSummary: String {
+        switch drinks {
+        case "": ""
+        case "Never": L("No alcohol")
+        case "Rarely": L("Drinks rarely")
+        case "Socially": L("Drinks socially")
+        case "Post-race only": L("Drinks post-race only")
+        case "Apéro is sacred": L("Drinks: apéro is sacred")
+        default: drinks
         }
     }
 }
@@ -72,7 +86,6 @@ extension ProfilePrompt {
             "After a workout you'll find me",
             "A stat I'm weirdly proud of",
             "My competitive streak, rated",
-            "The sport I'm secretly bad at",
             "My pre-race ritual involves",
             "The worst run of my life happened when",
             "I'd drop everything to watch",
@@ -82,11 +95,9 @@ extension ProfilePrompt {
             "I've never been as sore as the day I"
         ]),
         PromptCategory(id: "dating", icon: "heart", questions: [
-            "We'll get along if",
             "The way to win me over",
             "I'll know it's a match if",
             "Green flag in a training partner",
-            "Red flag: you skip",
             "A first date that isn't dinner",
             "I'm looking for someone who",
             "You should not go out with me if",

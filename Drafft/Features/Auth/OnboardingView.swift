@@ -868,7 +868,7 @@ struct OnboardingView: View {
     private var lifestyleStep: some View {
         page {
             stepTitle(L("Your routine"), L("Shown on your profile. Answer what you like, leave the rest."))
-            LifestylePicker(vitals: $lifestyle)
+            LifestylePicker(vitals: $lifestyle, gender: identity.flatMap { DiscoverFilters.Audience(answer: $0) })
                 .padding(DS.Space.xl)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
