@@ -171,8 +171,9 @@ struct RootView: View {
                     tabsBuilt = true
                 }
                     .id(app.sessionID)
-                    // Hidden, they don't follow the keyboard of the forms on top.
-                    .ignoresSafeArea(inMain ? SafeAreaRegions() : .keyboard)
+                    // Hidden, they don't follow the keyboard of the forms on top; under a sheet
+                    // neither (a field in the filters never moves the home).
+                    .ignoresSafeArea(!inMain || SheetPresence.shared.isUp ? .keyboard : SafeAreaRegions())
                     .opacity(inMain ? 1 : 0)
                     .allowsHitTesting(inMain)
                     .accessibilityHidden(!inMain)

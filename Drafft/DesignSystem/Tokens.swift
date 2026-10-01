@@ -321,6 +321,8 @@ extension View {
         presentationBackground(DS.Palette.canvasSoft)
             .environment(\.isSheetSurface, true)
             .noScrollIndicators()
+            .onAppear { SheetPresence.shared.up += 1 }
+            .onDisappear { SheetPresence.shared.up = max(0, SheetPresence.shared.up - 1) }
     }
 
     /// No scroll bar anywhere, not even while scrolling (`.never`; `.hidden` still flashes them).
@@ -329,4 +331,13 @@ extension View {
     func noScrollIndicators() -> some View {
         scrollIndicators(.never, axes: [.vertical, .horizontal])
     }
+}
+
+/// How many sheets are up. The screens under a sheet ignore the keyboard meanwhile (DrafftApp's
+/// root): a field focused in a sheet lifts the sheet's own content, never the page below it.
+@MainActor @Observable
+final class SheetPresence {
+    static let shared = SheetPresence()
+    var up = 0
+    var isUp: Bool { up > 0 }
 }
