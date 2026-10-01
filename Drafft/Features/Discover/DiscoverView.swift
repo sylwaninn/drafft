@@ -293,12 +293,12 @@ struct DiscoverView: View {
         CenterUnlessCrowded {
             HStack(spacing: 6) {
                 Wordmark(size: 30, color: DS.Palette.ink)
-                // Plus members get the spark next to the wordmark, as on the paywall.
+                // Plus members get the spark next to the wordmark, as a round sticker (the one on the
+                // Get drafft tempo card, smaller).
                 if app.isPremium {
-                    SparkPlus()
-                        .fill(DS.Palette.lime)
-                        .frame(width: 30, height: 21)
+                    StillSticker(tempoSize: 30)
                         .transition(.scale.combined(with: .opacity))
+                        .accessibilityElement(children: .ignore)
                         .accessibilityLabel("Plus")
                 }
             }
