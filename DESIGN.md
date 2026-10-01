@@ -719,6 +719,7 @@ One job per colour, everywhere:
 - Haptics come from generators kept warm (`Haptics` re-prepares after each use), so the tick lands with the visual change.
 - No artificial waits on the user's own actions: confirmation beats last 120–250 ms at most, simulated network calls 200–400 ms (export 600 ms). Only the other person's simulated typing is allowed to take seconds.
 - Motion always follows the finger or the action; nothing loops or decorates.
+- **Empty tabs show their sign as a sticker** (`EmptyStateSticker`, Likes, Sessions, Chats, and Discover's failed load): the tab icon's bold twin in the accent (graphite's near-black in both modes) on a white die-cut edge, a grey back, tilted -6°. Its top-right corner is never stuck down: a small fold always shows. Arriving on the screen after 30 s away (or for the first time) plays the end of the sticking, quick (one spring, 0.42 s); a quick round of tabs doesn't replay it, nor does the walk under the splash. Dragging the sticker moves the loose corner a little (rubber-banded, a selection tick), and it springs back. Reduce Motion: already stuck.
 
 ### Touch (nothing may block a tap)
 - Every custom button label takes the touch on its whole frame: `PressScaleStyle` and `TextLinkStyle` add a content shape; any other label ends with `.contentShape(...)`. Without it only drawn pixels answer, and glass (`glassEffect`) isn't hit-testable: a glass circle answered only on its glyph (the pass button "sometimes" did nothing).
