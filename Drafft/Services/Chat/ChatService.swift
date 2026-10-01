@@ -46,7 +46,8 @@ final class ChatService {
     var pendingSessions: [String: [Message]] = [:]
     /// Session rows already asked for by a card.
     var requestedSessions: Set<UUID> = []
-    /// Media being prepared and uploaded, not yet a Stream message (by match).
+    /// Media being prepared and uploaded, and text written before the chat was connected: not yet a Stream
+    /// message (by match).
     var uploads: [String: [Upload]] = [:]
     /// What this device sent (its own picture, video file, recording): shown instead of the downloaded copy.
     var localMedia: [String: MessageContent] = [:]
@@ -60,7 +61,7 @@ final class ChatService {
         var message: Message
         let matchID: String
         let source: Source
-        enum Source { case photo(Data), video(URL), voice(URL, TimeInterval, [Float]) }
+        enum Source { case text(String), photo(Data), video(URL), voice(URL, TimeInterval, [Float]) }
     }
 
     // MARK: Connection
@@ -114,6 +115,7 @@ final class ChatService {
                 }
                 guard userID == me, !Task.isCancelled else { return }
                 connected = true
+                sendWaitingTexts()
                 try await watchChannels(client, me: me)
                 if let deviceToken { addDevice(deviceToken) }
             } catch {
@@ -290,12 +292,10 @@ final class ChatService {
         let id = UUID().uuidString.lowercased()
         switch content {
         case .text(let text):
-            guard let chat = chat(matchID) else { return }
-            Task {
-                do { try await chat.sendMessage(with: text, quote: replyTo, messageId: id) } catch {
-                    log.error("send failed: \(error.localizedDescription, privacy: .public)")
-                }
-            }
+            // Not connected yet (just launched offline): the bubble shows as sending and goes once the chat
+            // connects, never dropped. Connected, Stream keeps its own copy and resends it.
+            startUpload(Upload(message: Message(id: id, content, fromMe: true, state: .sending, replyTo: replyTo),
+                               matchID: matchID, source: .text(text)))
         case .photo(_, let data?):
             startUpload(Upload(message: pendingMessage(id, content, replyTo), matchID: matchID, source: .photo(data)))
         case let .video(url, _, _):
@@ -324,10 +324,15 @@ final class ChatService {
         let tickets = EdgeFunctionTicketProvider(functionsURL: BackendConfig.functionsURL) {
             try await Backend.shared.accessToken()
         }
+        if case .text(let text) = upload.source {
+            sendText(text, upload)
+            return
+        }
         Task {
             do {
                 let media: ChatPayload.Media
                 switch upload.source {
+                case .text: return
                 case .photo(let data):
                     let sent = try await MediaUploads.photo(data, purpose: .chatPhoto, tickets: tickets)
                     media = .init(kind: .photo, key: sent.key, width: sent.width, height: sent.height,
@@ -358,6 +363,32 @@ final class ChatService {
                     publish()
                 }
             }
+        }
+    }
+
+    /// A text, handed to Stream once it can take it (written before the chat connected, it waits). Stream's
+    /// own copy, with the same id, replaces this bubble as soon as it exists.
+    func sendText(_ text: String, _ upload: Upload) {
+        guard connected, let chat = chat(upload.matchID) else { return }
+        Task {
+            do {
+                try await chat.sendMessage(with: text, quote: upload.message.replyTo, messageId: upload.message.id)
+                uploads[upload.matchID]?.removeAll { $0.message.id == upload.message.id }
+            } catch {
+                // Stream's copy (same id) shows as failed with its retry; without one, this bubble does.
+                log.error("send failed: \(error.localizedDescription, privacy: .public)")
+                if let i = uploads[upload.matchID]?.firstIndex(where: { $0.message.id == upload.message.id }) {
+                    uploads[upload.matchID]?[i].message.state = .failed
+                }
+            }
+            publish()
+        }
+    }
+
+    /// Connected: the texts written while it wasn't go now, in the order they were written.
+    func sendWaitingTexts() {
+        for upload in uploads.values.joined() {
+            if case .text(let text) = upload.source { sendText(text, upload) }
         }
     }
 

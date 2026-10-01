@@ -115,7 +115,13 @@ struct PhotoRefusalSheet: View {
             Haptics.success()
             sent = true
         } catch {
-            self.error = ServerMessage.text(for: error) ?? L("Couldn't send it. Check your connection and try again.")
+            self.error = switch error {
+            // The photo is no longer on the server (removed meanwhile, or never registered).
+            case _ where ServerMessage.code(of: error) == "not_found":
+                L("This photo is no longer there. Remove it, then add it again.")
+            case is URLError: L("Couldn't send it. Check your connection and try again.")
+            default: ServerMessage.failure(for: error)
+            }
         }
         sending = false
     }

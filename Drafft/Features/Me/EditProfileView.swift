@@ -348,8 +348,14 @@ struct EditProfileView: View {
 
     private func addPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
-        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-        guard let path = await PhotoCompressor.savePicked(data) else { return }
+        // An iCloud photo that can't download (offline), or a format that won't decode: said, never a
+        // pick that does nothing. Shown with the save line, cleared by the next change.
+        guard let data = try? await item.loadTransferable(type: Data.self),
+              let path = await PhotoCompressor.savePicked(data) else {
+            Haptics.warning()
+            saveError = L("This photo couldn't be opened. Pick another one, or check your connection.")
+            return
+        }
         picked.append(path)
         withAnimation(Motion.snappy) { setPhotos(allPhotos + [path]) }
         Haptics.success()
@@ -591,8 +597,7 @@ struct EditProfileView: View {
                 try await ProfileSync.save(result, previous: previous, voice: recorded)
             } catch {
                 Haptics.warning()
-                saveError = (error as? LocalizedError)?.errorDescription
-                    ?? L("Couldn't connect. Check your connection and try again.")
+                saveError = ProfileSync.failure(error, photos: photosCheck)
                 return
             }
             Haptics.success()

@@ -27,6 +27,7 @@ struct Composer: View {
     @State private var hintTask: Task<Void, Never>?
     @FocusState private var focused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(AppModel.self) private var app
 
     private let cancelThreshold: CGFloat = -110
     private let lockThreshold: CGFloat = -90
@@ -403,14 +404,24 @@ struct Composer: View {
     }
 
     private func sendPicked(_ items: [PhotosPickerItem]) async {
+        var unreadable = false
         for item in items {
-            if item.supportedContentTypes.contains(where: { $0.conforms(to: .movie) }),
-               let movie = try? await item.loadTransferable(type: PickedMovie.self) {
+            if item.supportedContentTypes.contains(where: { $0.conforms(to: .movie) }) {
+                guard let movie = try? await item.loadTransferable(type: PickedMovie.self) else { unreadable = true; continue }
                 await sendVideo(movie.url)
-            } else if let data = try? await item.loadTransferable(type: Data.self) {
-                // At most 2048 px, decoded off the main thread: the thread never holds a 48 MP original.
-                let photo = (try? await PhotoCompressor.prepare(data))?.data ?? data
-                onSend(.photo(asset: nil, imageData: photo))
+            } else if let data = try? await item.loadTransferable(type: Data.self),
+                      // At most 2048 px, decoded off the main thread: the thread never holds a 48 MP original.
+                      let photo = try? await PhotoCompressor.prepare(data) {
+                onSend(.photo(asset: nil, imageData: photo.data))
+            } else {
+                unreadable = true
+            }
+        }
+        // An iCloud item that can't download (offline), or a file that won't decode: said, never skipped.
+        if unreadable {
+            Haptics.warning()
+            withAnimation(Motion.bouncy) {
+                app.notice = AppModel.Notice(text: L("A photo or video couldn't be opened. Pick it again, or check your connection."))
             }
         }
     }
