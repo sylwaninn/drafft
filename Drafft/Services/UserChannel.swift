@@ -101,7 +101,7 @@ enum UserChannel {
                     await PurchaseCredit.shared.resume(app)
                     await SessionStore.shared.refresh()
                     // Discovery missed nothing while the socket was down.
-                    await app.refreshDiscovery()
+                    await app.refreshDiscovery(.reconnected)
                 }
                 return joined
             }

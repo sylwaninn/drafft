@@ -8,7 +8,7 @@ extension AppModel {
     func pauseChanged(from old: Bool) {
         // Resumed by the server (another device, a lifted hold): discovery reads the deck again. A
         // flip on this iPhone does it once saved (`syncPause`).
-        if old, !profilePaused, pauseFromServer { refreshDiscovery() }
+        if old, !profilePaused, pauseFromServer { refreshDiscovery(.entered) }
         guard profilePaused != old, !pauseFromServer else { return }
         let paused = profilePaused
         pauseEdits += 1
@@ -48,7 +48,7 @@ extension AppModel {
             try await Backend.shared.updateMyProfile(["paused": paused])
             // Resumed: discovery reads the deck again (nothing was read while paused). Only once
             // the server has it: asked sooner, it answers "paused" and the pause came back on.
-            if !paused, edit == pauseEdits { refreshDiscovery() }
+            if !paused, edit == pauseEdits { refreshDiscovery(.entered) }
             return nil
         } catch {
             // A later flip is on its way: it decides.

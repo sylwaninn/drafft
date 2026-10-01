@@ -92,7 +92,7 @@ extension AppModel {
         tab = .discover
         withAnimation(Motion.gentle) { phase = .main }
         // The first deck, now that the profile is open.
-        refreshDiscovery()
+        refreshDiscovery(.entered)
     }
 
     /// Reads the person's profile from the server (You's retry). Until it's in, You shows a loading
