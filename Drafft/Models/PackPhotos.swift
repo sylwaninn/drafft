@@ -11,7 +11,7 @@ enum PackPhotos {
     /// What the body is doing: a pile reads natural when poses differ.
     enum Pose { case resting, moving, closeUp }
     /// Where and how they train: a pile never shows the same kind of sport twice when it can.
-    enum Setting { case gym, climbing, mountain, street, cycling }
+    enum Setting { case gym, climbing, cycling, skiing, running }
 
     struct Shot {
         let name: String
@@ -27,17 +27,18 @@ enum PackPhotos {
         var light = false
         /// Only used when the pool has nothing better: a look-alike of a preferred shot.
         var spare = false
+        /// In the pile for non-binary and everyone: the same three shots, a woman skiing, a man
+        /// lifting, a woman running.
+        var mixed = false
     }
 
     static let shots: [Shot] = [
-        Shot(name: "pack_man_1", isWoman: false, look: 1, facing: .front, pose: .resting, setting: .gym),
-        Shot(name: "pack_man_2", isWoman: false, look: 2, facing: .left, pose: .moving, setting: .gym, light: true),
-        Shot(name: "pack_man_3", isWoman: false, look: 6, facing: .left, pose: .moving, setting: .mountain),
-        Shot(name: "pack_man_4", isWoman: false, look: 1, facing: .front, pose: .moving, setting: .cycling),
+        Shot(name: "pack_man_1", isWoman: false, look: 2, facing: .left, pose: .moving, setting: .gym, light: true, mixed: true),
+        Shot(name: "pack_man_2", isWoman: false, look: 6, facing: .left, pose: .resting, setting: .cycling),
+        Shot(name: "pack_man_3", isWoman: false, look: 7, facing: .front, pose: .moving, setting: .running, light: true),
         Shot(name: "pack_woman_1", isWoman: true, look: 3, facing: .left, pose: .moving, setting: .climbing, light: true),
-        Shot(name: "pack_woman_2", isWoman: true, look: 3, facing: .front, pose: .resting, setting: .gym, spare: true),
-        Shot(name: "pack_woman_3", isWoman: true, look: 1, facing: .front, pose: .closeUp, setting: .street),
-        Shot(name: "pack_woman_4", isWoman: true, look: 4, facing: .right, pose: .moving, setting: .gym)
+        Shot(name: "pack_woman_2", isWoman: true, look: 5, facing: .front, pose: .closeUp, setting: .skiing, light: true, mixed: true),
+        Shot(name: "pack_woman_3", isWoman: true, look: 4, facing: .front, pose: .moving, setting: .running, mixed: true)
     ]
 
     /// A fresh pick for an audience, never two of the same kind of sport (fewer than `count` if the
@@ -49,7 +50,7 @@ enum PackPhotos {
             switch audience {
             case .women: s.isWoman
             case .men: !s.isWoman
-            case .nonBinary, .everyone: true
+            case .nonBinary, .everyone: s.mixed
             }
         }
         let mixes = audience == .nonBinary || audience == .everyone

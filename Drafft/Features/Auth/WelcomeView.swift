@@ -14,12 +14,12 @@ struct WelcomeView: View {
         "hero_2": .init(zoom: 1.05, focus: UnitPoint(x: 0.5, y: 0.45), at: UnitPoint(x: 0.5, y: 0.42)),
         // Marathon: a close portrait, off-centre, her waving hand cut by the left edge.
         "hero_3": .init(zoom: 1.45, focus: UnitPoint(x: 0.62, y: 0.46), at: UnitPoint(x: 0.62, y: 0.36)),
-        // Trail: wide action, the runner in the left third, the stride running into the panel.
-        "hero_4": .init(zoom: 1.15, focus: UnitPoint(x: 0.5, y: 0.3), at: UnitPoint(x: 0.4, y: 0.3)),
-        // Bouldering: the reach, hands and holds high, her profile half past the left edge.
-        "hero_5": .init(zoom: 1.25, focus: UnitPoint(x: 0.42, y: 0.52), at: UnitPoint(x: 0.36, y: 0.44)),
-        // Gravel: the rider small and off-centre in the forest, the road leading down into the panel.
-        "hero_6": .init(zoom: 1.3, focus: UnitPoint(x: 0.53, y: 0.68), at: UnitPoint(x: 0.62, y: 0.56))
+        // Selfie: a close portrait, goggles and beanie in the band, the thumb cut by the left edge.
+        "hero_4": .init(zoom: 1.05, focus: UnitPoint(x: 0.5, y: 0.45), at: UnitPoint(x: 0.5, y: 0.38)),
+        // Climbing: the whole climber on the rock, her reach and her feet in the band.
+        "hero_5": .init(zoom: 1.05, focus: UnitPoint(x: 0.5, y: 0.45), at: UnitPoint(x: 0.5, y: 0.42)),
+        // Kayak: the paddler small on a calm lake, the mountains at the horizon, the bow in the panel.
+        "hero_6": .init(zoom: 1.3, focus: UnitPoint(x: 0.45, y: 0.62), at: UnitPoint(x: 0.5, y: 0.52))
     ]
 
     var body: some View {
