@@ -16,7 +16,7 @@ docs/store-screenshots/run.sh feature    # seulement l'image de présentation Go
 ```
 
 - `STORE_WORK` (par défaut `~/Library/Caches/drafft-store-shots`) garde le build, les captures brutes et les
-  éléments détourés. `STORE_OUT` (par défaut `~/Projets/drafft-store-screenshots`) reçoit les PNG.
+  éléments détourés. `STORE_OUT` (par défaut `~/Projets/drafft/store-screenshots`) reçoit les PNG.
 - Aperçu : chaque composition existe aussi en HTML dans `STORE_WORK/html/<format>/<langue>.html`, à ouvrir
   dans un navigateur. Les planches `STORE_WORK/lib-<langue>.jpg` montrent les éléments détourés de chaque langue.
 - Les images ne sont pas versionnées (plus de 200 Mo). Tout se recalcule depuis le code de l'app, ce patch

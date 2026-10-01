@@ -9,13 +9,13 @@
 #   docs/store-screenshots/run.sh feature      the Google Play feature graphic (1024 x 500), from the same pieces
 #
 # STORE_WORK (default ~/Library/Caches/drafft-store-shots) keeps the build, captures and pieces;
-# STORE_OUT (default ~/Projets/drafft-store-screenshots) receives the PNGs, one folder per store and device.
+# STORE_OUT (default ~/Projets/drafft/store-screenshots) receives the PNGs, one folder per store and device.
 set -euo pipefail
 
 HERE=${0:A:h}
 REPO=${HERE:h:h}
 WORK=${STORE_WORK:-$HOME/Library/Caches/drafft-store-shots}
-OUT=${STORE_OUT:-$HOME/Projets/drafft-store-screenshots}
+OUT=${STORE_OUT:-$HOME/Projets/drafft/store-screenshots}
 LANGS=(en fr es de it pt nl)
 DEVICE="drafft store 6.9"
 BUNDLE=so.drafft.app

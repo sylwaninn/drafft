@@ -5,8 +5,9 @@ states, errors, push, email, SMS, paywall, App Store / Play Store, website, scre
 
 - **Read it before writing or changing any user-facing text, in any of the 7 languages. Apply it.
   Run the [review checklist](#10-review-checklist) before you finish.**
-- Canonical file: `drafft/WORDING.md`. `drafft-backend/WORDING.md`, `drafft-web/WORDING.md` and
-  `drafft-android/WORDING.md` are synced copies: edit only this one, then run `scripts/sync-wording.sh`.
+- Canonical file: `drafft-ios/WORDING.md`. `drafft-backend/WORDING.md`, `drafft-web/WORDING.md` and
+  `drafft-android/WORDING.md` are synced copies: edit only this one, then run `scripts/sync-docs.sh`
+  in the drafft workspace.
 - Every new editorial decision goes here (section 11). Other files point here, never restate rules.
 - Machine-checked: the forbidden patterns in section 5 fail CI (`scripts/ci/i18n_lint.py` here, a
   test in drafft-backend, a CI step in drafft-web).
