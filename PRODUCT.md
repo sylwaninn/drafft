@@ -16,11 +16,11 @@ Active urban adults, 25–40, who train 2–5 times a week (run clubs, gyms, pad
 
 ## Product Purpose
 
-Drafft is a sports dating app. Its distinctive mechanism: the first date is a training session together. A match is not an invitation to chat forever; it is an invitation to propose a session (sport, place, time, level). Success = matches that turn into a real session within days.
+drafft is a dating app for people who train. Its distinctive mechanism: a match invites you to propose a session together (sport, day, time, a short note). A match is not an invitation to chat forever. Success = proposed sessions that actually happen within days.
 
 ## Positioning
 
-Where swipe apps end at "it's a match", Drafft continues to "Tuesday 7am, 8 km, Canal Saint-Martin". Profiles lead with how someone moves (sports, level, weekly rhythm, preferred slots), not just photos. Reference in the category: bpm.so.
+Where swipe apps end at "it's a match", Drafft continues to "Tuesday 7am, 8 km, Canal Saint-Martin". Profiles lead with how someone moves (sports, weekly rhythm, preferred slots), not just photos. Reference in the category: bpm.so.
 
 ## Operating Context
 

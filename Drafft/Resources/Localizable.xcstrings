@@ -15069,42 +15069,48 @@
         }
       }
     },
-    "Turn your matches into sessions, and meet at the start line." : {
+    "Meet someone who gets your rhythm." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach aus deinen Matches Sessions und trefft euch an der Startlinie."
+            "value" : "Triff jemanden, der deinen Rhythmus versteht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Convierte tus matches en sesiones y quedad en la línea de salida."
+            "value" : "Conoce a alguien que entienda tu ritmo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transforme tes matchs en séances, et rendez-vous au départ."
+            "value" : "Rencontre quelqu'un qui comprend ton rythme."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trasforma i tuoi match in sessioni e datevi appuntamento alla partenza."
+            "value" : "Incontra qualcuno che capisce il tuo ritmo."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maak van je matches sessies en spreek af aan de start."
+            "value" : "Ontmoet iemand die jouw ritme begrijpt."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transforma os teus matches em sessões e encontrem-se na linha de partida."
+            "value" : "Conhece alguém que perceba o teu ritmo."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meet someone who gets your rhythm."
           }
         }
       }

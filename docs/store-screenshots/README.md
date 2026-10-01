@@ -69,7 +69,7 @@ netteté. Dix versions sont prêtes, chacune dans les 7 langues, avec un slogan 
 
 | Version | Idée | Slogan |
 |---|---|---|
-| **`01-deck` (retenue)** | Logo sans sillage et slogan à gauche, vraies cartes Découvrir et like à droite | Rencontre des célibataires qui s'entraînent. |
+| **`01-deck` (retenue)** | Logo sans sillage et slogan à gauche, vraies cartes Découvrir et like à droite | Rencontre quelqu'un qui comprend ton rythme. |
 | `02-creneaux` | Trois cartes de créneaux sur graphite | Des rencontres avec une heure de départ. |
 | `03-photo` | Coureur au coucher du soleil en plein cadre, texte blanc sur voile | Rendez-vous au départ. |
 | `04-logo` | Le logo en très grand avec son sillage | Rendez-vous au départ. |
