@@ -47,6 +47,37 @@ extension AppModel {
         }
     }
 
+    /// Logged in, or a password reset: to sign-up if it isn't finished (another device, a reinstall).
+    /// Without an answer (offline, a server error), in as far as this iPhone knows, and to sign-up as soon
+    /// as a read says it isn't finished: never left in the tabs with a profile that can't open.
+    func enterAfterLogIn() async {
+        if let account = await refreshAccount() {
+            signIn(onboard: !account.onboarded)
+            return
+        }
+        signIn(onboard: false)
+        Task { await routeWhenAccountRead() }
+    }
+
+    /// In the tabs without knowing whether sign-up is finished: the account is read again, less often
+    /// each time, until it answers, then sign-up comes back if it isn't finished.
+    func routeWhenAccountRead() async {
+        let session = sessionID
+        var delay: Duration = .seconds(2)
+        // Waits first: the read that just failed was the first try, and the tabs are on screen by then.
+        while true {
+            try? await Task.sleep(for: delay)
+            guard session == sessionID, phase == .main else { return }
+            if let account = await refreshAccount() {
+                if !account.onboarded, session == sessionID, phase == .main {
+                    withAnimation(Motion.gentle) { phase = .onboarding }
+                }
+                return
+            }
+            delay = min(delay * 2, .seconds(60))
+        }
+    }
+
     func finishOnboarding(_ profile: Profile) {
         OnboardingStore.clear()
         me = profile
@@ -116,10 +147,11 @@ extension AppModel {
         case .some(.some(let account)):
             signIn(onboard: !account.onboarded, immediately: true)
         default:
-            // No answer yet (slow or no network): in, as far as this iPhone knows.
+            // No answer yet (slow or no network): in, as far as this iPhone knows, until the server says.
             signIn(onboard: false, immediately: true)
-            if let account = await read.value, session == sessionID, !account.onboarded, phase == .main {
-                withAnimation(Motion.gentle) { phase = .onboarding }
+            Task {
+                _ = await read.value
+                await routeWhenAccountRead()
             }
         }
     }

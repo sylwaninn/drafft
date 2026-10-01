@@ -10,6 +10,8 @@ struct AuthScaffold<Content: View>: View {
     let action: () -> Void
     /// Small print under the action (demo hints).
     var footnote: String? = nil
+    /// A problem that isn't about one field (no connection, a server error), in red under the action.
+    var error: String?
     /// Terrain for the page background (defaults to one derived from the title).
     @ViewBuilder var content: Content
 
@@ -42,6 +44,13 @@ struct AuthScaffold<Content: View>: View {
                 }
                 .buttonStyle(.drafftPrimary)
                 .disabled(!actionEnabled || loading)
+                if let error {
+                    Text(error)
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(DS.Palette.negative)
+                        .multilineTextAlignment(.center)
+                        .contentTransition(.opacity)
+                }
                 if let footnote {
                     Text(footnote)
                         .font(.caption)
@@ -95,8 +104,11 @@ struct SignUpView: View {
         return L("That doesn't look like an email address. Check for typos.")
     }
 
-    private var passwordError: String? {
-        guard let problem, problem != .emailTaken, problem != .invalidEmail else { return nil }
+    private var passwordError: String? { problem == .weakPassword ? problem?.message : nil }
+
+    /// Not about one field (no connection, too many emails, a server error): under the action.
+    private var formError: String? {
+        guard let problem, problem != .emailTaken, problem != .invalidEmail, problem != .weakPassword else { return nil }
         return problem.message
     }
 
@@ -110,7 +122,8 @@ struct SignUpView: View {
             actionTitle: L("Create account"),
             actionEnabled: canSubmit,
             loading: loading,
-            action: submit
+            action: submit,
+            error: formError
         ) {
             VStack(alignment: .leading, spacing: DS.Space.xl) {
                 DrafftField(title: L("Email"), text: $email, prompt: L("you@example.com"), error: emailError,
@@ -144,7 +157,7 @@ struct SignUpView: View {
             }
         }
         .navigationDestination(isPresented: $confirming) { ConfirmEmailView(email: email) }
-        .onChange(of: email) { if problem == .emailTaken || problem == .invalidEmail { problem = nil } }
+        .onChange(of: email) { if problem != .weakPassword { problem = nil } }
         .onChange(of: password) { if problem != .emailTaken && problem != .invalidEmail { problem = nil } }
     }
 
@@ -230,6 +243,8 @@ struct LogInView: View {
     /// Errors sit on the field they're about.
     @State private var emailError: String?
     @State private var passwordError: String?
+    /// Not about one field (no connection, too many tries, a server error): under the action.
+    @State private var formError: String?
     @State private var loading = false
     @State private var showReset = false
     /// An account whose email was never confirmed: its code comes first (sign-up goes email, code, phone).
@@ -243,7 +258,8 @@ struct LogInView: View {
             actionTitle: L("Log in"),
             actionEnabled: !email.isEmpty && !password.isEmpty,
             loading: loading,
-            action: submit
+            action: submit,
+            error: formError
         ) {
             VStack(alignment: .leading, spacing: DS.Space.xl) {
                 DrafftField(title: L("Email"), text: $email, prompt: L("you@example.com"), error: emailError,
@@ -263,8 +279,8 @@ struct LogInView: View {
                     }
             }
         }
-        .onChange(of: email) { emailError = nil }
-        .onChange(of: password) { passwordError = nil }
+        .onChange(of: email) { emailError = nil; formError = nil }
+        .onChange(of: password) { passwordError = nil; formError = nil }
         // Its own page, pushed like the rest of the auth flow (not an alert).
         .navigationDestination(isPresented: $showReset) { ResetPasswordView(email: email) }
         .navigationDestination(isPresented: $confirmingEmail) { ConfirmEmailView(email: email) }
@@ -281,6 +297,7 @@ struct LogInView: View {
             return
         }
         loading = true
+        formError = nil
         Task {
             defer { loading = false }
             do {
@@ -289,22 +306,31 @@ struct LogInView: View {
                 app.email = email
                 // Someone who stopped mid sign-up goes back to it.
                 // (The account read here is the one sign-in then uses: read once.)
-                let onboarded = await app.refreshAccount()?.onboarded ?? true
-                app.signIn(onboard: !onboarded)
+                await app.enterAfterLogIn()
             } catch {
                 Haptics.warning()
                 let problem = AuthProblem(error)
                 if problem == .emailNotConfirmed {
-                    // A new code, then the code step: confirming it signs in and goes on to sign-up.
-                    if (try? await Backend.shared.resendConfirmation(to: email)) != nil {
-                        confirmingEmail = true
-                    } else {
-                        emailError = problem.message
-                    }
-                } else {
+                    await confirmEmailFirst()
+                } else if problem == .wrongCredentials {
                     passwordError = problem.message
+                } else {
+                    formError = problem.message
                 }
             }
+        }
+    }
+
+    /// An account whose email was never confirmed: a new code, then the code step (confirming it signs
+    /// in and goes on to sign-up). Too many emails means a recent code is still on its way: the code step
+    /// too, where Resend waits. Anything else is said, not a code screen without a code.
+    private func confirmEmailFirst() async {
+        do {
+            try await Backend.shared.resendConfirmation(to: email)
+            confirmingEmail = true
+        } catch {
+            let problem = AuthProblem(error)
+            if problem == .tooManyEmails { confirmingEmail = true } else { formError = problem.message }
         }
     }
 }

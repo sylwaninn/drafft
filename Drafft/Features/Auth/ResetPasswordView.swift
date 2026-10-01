@@ -137,8 +137,7 @@ struct ResetPasswordView: View {
                 Haptics.success()
                 app.email = flow.sentTo
                 // Someone who stopped mid sign-up goes back to it.
-                let onboarded = (try? await Backend.shared.isOnboarded()) ?? true
-                app.signIn(onboard: !onboarded)
+                await app.enterAfterLogIn()
             } catch {
                 Haptics.warning()
                 problem = AuthProblem(error)
