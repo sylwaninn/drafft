@@ -33,8 +33,8 @@ extension BlurredLike {
         }.value
     }
 
-    /// Built once: a CIContext per call costs tens of milliseconds. CIContext is thread-safe.
-    nonisolated(unsafe) private static let context = CIContext(options: [.useSoftwareRenderer: false])
+    /// Built once: a CIContext per call costs tens of milliseconds.
+    private static let context = CIContext(options: [.useSoftwareRenderer: false])
 
     /// The preview scaled up six times and softened, so a 32 px hash reads as frosted glass on a
     /// 250 pt tile instead of showing its pixels. It adds no detail: the hash is all there is.
