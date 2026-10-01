@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// drafft tempo: everyone who already liked you, as the Likes mosaic (`LikesMosaic`). Like back and
-/// it's mutual right away.
+/// drafft tempo: everyone who already liked you, as the Likes grid (`LikesGrid`) under its banner.
+/// Like back and it's mutual right away.
 struct LikesYouView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
@@ -12,7 +12,6 @@ struct LikesYouView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.md) {
                     if app.likedMe.isEmpty {
-                        TempoLikesLead()
                         Text("No new likes right now. Keep swiping, they'll show up here.")
                             .font(.body)
                             .foregroundStyle(DS.Palette.body)
@@ -20,10 +19,10 @@ struct LikesYouView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .background(DS.Palette.canvas, in: .rect(cornerRadius: DS.Radius.xl))
                     } else {
-                        LikesMosaic(items: app.likedMe, visitKey: "likes-sheet") {
-                            TempoLikesLead()
-                        } tile: { p, height in
-                            LikeTile(profile: p, height: height) {
+                        LikesGrid(items: app.likedMe, visitKey: "likes-sheet") {
+                            LikesBanner.tempo(count: app.likedMe.count)
+                        } tile: { p in
+                            LikeTile(profile: p) {
                                 Haptics.tap()
                                 open = p
                             } onLike: {

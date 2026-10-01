@@ -90,7 +90,6 @@
 		6F4700B2DD240CC3558FFC1E /* SelfieCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA082CABB23AF8C3558B0114 /* SelfieCaptureView.swift */; };
 		6F7C558D530CE30F62B9F18E /* PurchaseCredit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AC86AF977A1EDBF5DE763BB /* PurchaseCredit.swift */; };
 		70160593C9BD600FD6A71DD7 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C5E7D968B0F2038B779A7B32 /* InfoPlist.xcstrings */; };
-		70C69DA98E7FC9A5344E298E /* LikesMosaic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F335A624AC9AB40C652506 /* LikesMosaic.swift */; };
 		74F2FD432001286F8C985957 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7186BB2F3676CD699A59C3F8 /* SplashView.swift */; };
 		79DCA843E06D8835AD7B0734 /* PhotoCompressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C633B64178A8325E4B7210C /* PhotoCompressor.swift */; };
 		7C84EDCEA76BE441AFD42E4C /* PhotoModeration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1253938196232F9A95943AB6 /* PhotoModeration.swift */; };
@@ -122,6 +121,7 @@
 		AAADB5E7398DEA0AA25F9B91 /* UserChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F53A1076A536B1D57B80FA /* UserChannel.swift */; };
 		AB0F5897095930A03A4BB610 /* TabHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDD95AF690348854AF18981 /* TabHeader.swift */; };
 		AB793B4ECDD96F42FAFDC6EA /* AppModel+Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23380D998845B8EDCDF6DDF /* AppModel+Account.swift */; };
+		ACE330DEBB36E0690B33A50A /* LikesGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9F7322D3A98C3958221D0E /* LikesGrid.swift */; };
 		AD095C7A68E24E8B4CD28C12 /* SportPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45691EAF086604D51BDF558C /* SportPicker.swift */; };
 		AE44FBF649FF1A2179301868 /* AccountSheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D9A77E15F0B5594795A792 /* AccountSheets.swift */; };
 		AEB4595E6511E0795CBE9182 /* DiscoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72FD67ABFF1763C37D4B8BAB /* DiscoverView.swift */; };
@@ -220,7 +220,6 @@
 		20EBF74B57B3B01D28DE507C /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		211BB36B1A27A5C59BBE5F0F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		214BEF0A582723680CE4ADD6 /* PromptPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptPickerSheet.swift; sourceTree = "<group>"; };
-		21F335A624AC9AB40C652506 /* LikesMosaic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikesMosaic.swift; sourceTree = "<group>"; };
 		221DE3BB0D77782A2CD345C9 /* ProfileExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileExtras.swift; sourceTree = "<group>"; };
 		227AF8DE6682A785901C630E /* Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		2324E42BB5A423511DA8ADB4 /* ChangePhoneSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePhoneSheet.swift; sourceTree = "<group>"; };
@@ -359,6 +358,7 @@
 		EADF8CD3ED305F11D85C9D67 /* InterDisplay-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "InterDisplay-Black.ttf"; sourceTree = "<group>"; };
 		EBC5879E137F89B2870864B1 /* MeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeView.swift; sourceTree = "<group>"; };
 		ED475785E5CCE3685F02ACA3 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		EF9F7322D3A98C3958221D0E /* LikesGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikesGrid.swift; sourceTree = "<group>"; };
 		F17B87D2CAFA3428A9FD7C28 /* DrafftTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DrafftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2ED76FFC6DC766F672E7AFB /* OnboardingProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProgress.swift; sourceTree = "<group>"; };
 		F44E047B37AAE6A38029ACD0 /* EdgeTone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeTone.swift; sourceTree = "<group>"; };
@@ -747,7 +747,7 @@
 				ED475785E5CCE3685F02ACA3 /* ChatView.swift */,
 				AE5938300AB49911EBB80A21 /* Composer.swift */,
 				39C0AB013A496688C65614BE /* ConversationsView.swift */,
-				21F335A624AC9AB40C652506 /* LikesMosaic.swift */,
+				EF9F7322D3A98C3958221D0E /* LikesGrid.swift */,
 				0E2647DE23A6D03EF6DD56AC /* LikesTabView.swift */,
 				B69D4B6B02894B481173D440 /* LikesYouView.swift */,
 				47FBEF63E9F1FD3B9E982BA5 /* MediaViewer.swift */,
@@ -954,7 +954,7 @@
 				DE5C54EB35CAB18B294AAEAC /* LifestylePicker.swift in Sources */,
 				38D49871947737887A486599 /* LikeComposer.swift in Sources */,
 				0B9405144736422BC446F413 /* LikesChip.swift in Sources */,
-				70C69DA98E7FC9A5344E298E /* LikesMosaic.swift in Sources */,
+				ACE330DEBB36E0690B33A50A /* LikesGrid.swift in Sources */,
 				15A09D3C87499FACC9D5881F /* LikesTabView.swift in Sources */,
 				0C551FD229D9D25741B5AB96 /* LikesYouView.swift in Sources */,
 				4119274452EABFDCF4F81F15 /* LocalCache.swift in Sources */,

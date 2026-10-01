@@ -1,10 +1,12 @@
 import SwiftUI
 
-/// Likes tab: everyone who already liked you, as a staggered mosaic of portraits (`LikesMosaic`).
+/// Likes tab: a banner with how many people like you, then everyone who already liked you as a grid of
+/// equal portraits (`LikesGrid`).
 ///
-/// - Without drafft tempo the server sends no identity, only a ThumbHash per like
-///   (`AppModel.blurredLikes`): the tiles are those blurred previews, the lead block counts them, and
-///   the one action, pinned at the bottom, opens the paywall (so does any tile).
+/// - Without drafft tempo the server sends no identity, only blurred previews per like
+///   (`AppModel.blurredLikes`: a ThumbHash, and a blurred copy of the photo when the backend has one):
+///   the tiles are those previews, the banner counts them, and the one action, pinned at the bottom,
+///   opens the paywall (so does any tile).
 /// - With drafft tempo the tiles are their photos: open a profile, or like back right from the tile.
 struct LikesTabView: View {
     @Environment(AppModel.self) private var app
@@ -22,10 +24,10 @@ struct LikesTabView: View {
                         if app.likedMe.isEmpty {
                             emptyState
                         } else {
-                            LikesMosaic(items: app.likedMe, visitKey: "likes-tab") {
-                                TempoLikesLead()
-                            } tile: { p, height in
-                                LikeTile(profile: p, height: height) {
+                            LikesGrid(items: app.likedMe, visitKey: "likes-tab") {
+                                LikesBanner.tempo(count: app.likedMe.count)
+                            } tile: { p in
+                                LikeTile(profile: p) {
                                     Haptics.tap()
                                     open = p
                                 } onLike: {
@@ -36,13 +38,13 @@ struct LikesTabView: View {
                     } else if app.blurredLikes.isEmpty {
                         emptyState
                     } else {
-                        LikesMosaic(items: app.blurredLikes, visitKey: "likes-tab") {
-                            countLead
-                        } tile: { like, height in
+                        LikesGrid(items: app.blurredLikes, visitKey: "likes-tab") {
+                            LikesBanner.locked(count: app.blurredLikes.count)
+                        } tile: { like in
                             Button {
                                 Haptics.tap()
                                 showPaywall = true
-                            } label: { LockedLikeTile(like: like, height: height) }
+                            } label: { LockedLikeTile(like: like) }
                             .buttonStyle(PressScaleStyle(scale: 0.97))
                             .accessibilityLabel(like.superLike ? "Someone super liked you. Unlock with drafft tempo"
                                                                : "Someone who likes you. Unlock with drafft tempo")
@@ -89,18 +91,6 @@ struct LikesTabView: View {
                 .sheetSurface()
             }
         }
-    }
-
-    /// Free plan: how many people like you (the server's own count of blurred likes, nothing made up)
-    /// and what drafft tempo does about it.
-    private var countLead: some View {
-        let count = app.blurredLikes.count
-        let line = count == 1 ? L("1 person likes you.") : L("\(count) people like you.")
-        return LikesLeadBlock(headline: {
-            Text(line).rollingDigits(wording: line.wording)
-        }, message: Text(branded: L("See who, and match in one tap with drafft tempo."), font: .subheadline,
-                         tierColor: DS.Palette.tierOnNight))
-        .animation(Motion.snappy, value: count)
     }
 
     /// The one action without drafft tempo, always on screen above the tab bar.
