@@ -49,12 +49,12 @@ final class PhotoWindow {
         last = (deck, onScreen, points, scale)
         let limited = NetworkQuality.shared.isLimited
         let ahead = limited ? [] : deck.dropFirst(onScreen).prefix(6).map(\.portrait)
-        set(portraits, ahead.compactMap { Images.request($0, points: points, scale: scale, priority: .low) })
+        set(portraits, ahead.compactMap { Images.download($0, points: points, scale: scale, priority: .low) })
         set(previews, limited
             ? deck.prefix(onScreen + 8).map(\.portrait).compactMap { Images.preview($0, points: points, scale: scale) }
             : [])
         set(extras, limited ? [] : (deck.first?.photos ?? [])
-            .compactMap { Images.request($0, points: points, scale: scale, priority: .veryLow) })
+            .compactMap { Images.download($0, points: points, scale: scale, priority: .veryLow) })
     }
 
     /// Everything stops (the deck is gone, another screen).

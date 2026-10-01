@@ -104,10 +104,24 @@ enum Images {
     /// once they're drawn. `points` is the frame they'll be drawn in, so the right copy is fetched. The deck
     /// has its own window (`PhotoWindow`); this is for the rest (blurred likes).
     static func prefetch(_ names: [String], points: CGSize, variant: String? = nil) {
-        let requests = names.filter { $0.hasPrefix("http") }
-            .compactMap { request($0, points: points, priority: .low, variant: variant) }
+        let requests = names.compactMap { download($0, points: points, priority: .low, variant: variant) }
         guard !requests.isEmpty else { return }
         prefetcher.startPrefetching(with: requests)
+    }
+
+    /// The download of the copy `request` would show, for a prefetch to disk: nil when that copy (or a
+    /// larger one) is already on this phone. Only the object and width: the decode size and processors
+    /// would make Nuke look the bytes up under a key it never stores them under, and download them again.
+    static func download(_ name: String, points: CGSize, scale: CGFloat = 3, priority: ImageRequest.Priority,
+                         variant: String? = nil) -> ImageRequest? {
+        guard name.hasPrefix("http") else { return nil }
+        let pixels = CGSize(width: points.width * scale, height: points.height * scale)
+        var needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
+        if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
+        guard let url = closest(name, covering: needed, variant: variant) else { return nil }
+        var request = ImageRequest(url: url, priority: priority)
+        request.imageID = cacheID(url, variant: variant)
+        return ImagePipeline.shared.cache.containsData(for: request) ? nil : request
     }
 
     private static let prefetcher = ImagePrefetcher(destination: .diskCache)
