@@ -37,7 +37,7 @@ extension AppModel {
         blocked = list
     }
 
-    /// Sends what this iPhone hasn't sent yet, oldest action first per person. A failure the server
+    /// Sends what this iPhone hasn't sent yet: the last action on each person. A failure the server
     /// may get over (offline, a server error) waits and tries again; `announce` says so once, for an
     /// action just taken. Signed in, at launch and back at the front: whatever was left goes too.
     func sendPendingSafety(announce: Bool = false) async {
@@ -51,6 +51,9 @@ extension AppModel {
     private func flushSafety(announce: Bool) async {
         guard let user = Backend.shared.client.auth.currentUser?.id else { return }
         for (id, entry) in SafetyOutbox.pending(for: user) {
+            // Signed out (or into another account) meanwhile: the rest waits for this account's sign-in,
+            // never sent with someone else's session.
+            guard Backend.shared.client.auth.currentUser?.id == user else { return }
             do {
                 try await Safety.send(entry.action, id)
                 SafetyOutbox.remove(entry, for: id, user: user)
