@@ -666,7 +666,7 @@
         }
       }
     },
-    "%@ session planned on drafft." : {
+    "%@ session, confirmed on drafft." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3994,6 +3994,52 @@
         }
       }
     },
+    "A photo or video couldn't be opened. Pick it again, or check your connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Foto oder Video ließ sich nicht öffnen. Wähl es noch mal aus oder prüf deine Verbindung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A photo or video couldn't be opened. Pick it again, or check your connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido abrir una foto o un vídeo. Vuelve a elegirlo o revisa tu conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'ouvrir une photo ou une vidéo. Choisis-la de nouveau ou vérifie ta connexion."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile aprire una foto o un video. Sceglilo di nuovo o controlla la connessione."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een foto of video kon niet worden geopend. Kies hem opnieuw of controleer je verbinding."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir uma foto ou um vídeo. Escolhe-o de novo ou verifica a tua ligação."
+          }
+        }
+      }
+    },
     "A photo wasn't approved" : {
       "localizations" : {
         "de" : {
@@ -4572,7 +4618,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ um %@ hinzufügen"
+            "value" : "%@, %@ hinzufügen"
           }
         },
         "es" : {
@@ -4612,43 +4658,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sag, was dir aufgefallen ist"
+            "value" : "Schreib eine Notiz"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di qué te ha llamado la atención"
+            "value" : "Añade una nota"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis ce qui t'a donné envie"
+            "value" : "Ajoute un petit mot"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Di' cosa ti ha colpito"
+            "value" : "Aggiungi una nota"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeg wat je opviel"
+            "value" : "Schrijf een berichtje"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diz o que te chamou a atenção"
+            "value" : "Escreve uma nota"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Say why they caught your eye"
+            "value" : "Add a note"
           }
         }
       }
@@ -5196,37 +5242,37 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Kalender hinzufügen"
+            "value" : "In den Kalender"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir al calendario"
+            "value" : "Añadir a la agenda"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ajouter au calendrier"
+            "value" : "Ajouter à l'agenda"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aggiungi al calendario"
+            "value" : "Metti in agenda"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aan agenda toevoegen"
+            "value" : "In agenda zetten"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adicionar ao calendário"
+            "value" : "Pôr no calendário"
           }
         }
       }
@@ -6352,7 +6398,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vraag om een nieuwe beoordeling"
+            "value" : "Opnieuw laten beoordelen"
           }
         },
         "pt" : {
@@ -8513,7 +8559,7 @@
         }
       }
     },
-    "Change plan or cancel in Apple's subscription settings." : {
+    "Change or cancel it in Apple's subscription settings." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9823,6 +9869,46 @@
         }
       }
     },
+    "Confirm %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bestätigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmer %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferma %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bevestigen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmar %@"
+          }
+        }
+      }
+    },
     "Confirm %@, %@" : {
       "localizations" : {
         "de" : {
@@ -10465,6 +10551,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Geen verbinding. Controleer je verbinding en probeer het opnieuw."
+          }
+        }
+      }
+    },
+    "Couldn't reach drafft. The block goes through as soon as you're back online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ist gerade nicht erreichbar. Die Blockierung wird wirksam, sobald du wieder online bist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't reach drafft. The block goes through as soon as you're back online."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo conectar con drafft. El bloqueo se aplicará en cuanto vuelvas a tener conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de joindre drafft. Le blocage sera pris en compte dès que tu seras de nouveau en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere drafft. Il blocco sarà effettivo appena torni online."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kan drafft niet bereiken. De blokkering gaat door zodra je weer online bent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível ligar ao drafft. O bloqueio fica ativo assim que voltares a estar online."
+          }
+        }
+      }
+    },
+    "Couldn't reach drafft. The unblock goes through as soon as you're back online." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "drafft ist gerade nicht erreichbar. Die Aufhebung der Blockierung wird wirksam, sobald du wieder online bist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't reach drafft. The unblock goes through as soon as you're back online."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo conectar con drafft. El desbloqueo se aplicará en cuanto vuelvas a tener conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de joindre drafft. Le déblocage sera pris en compte dès que tu seras de nouveau en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile raggiungere drafft. Lo sblocco sarà effettivo appena torni online."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kan drafft niet bereiken. Het deblokkeren gaat door zodra je weer online bent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível ligar ao drafft. O desbloqueio fica ativo assim que voltares a estar online."
           }
         }
       }
@@ -12710,37 +12888,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie drafft diese Daten nutzt"
+            "value" : "Wie wir diese Daten nutzen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo usa drafft estos datos"
+            "value" : "Cómo usamos estos datos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment drafft utilise ces données"
+            "value" : "Comment on les utilise"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come drafft usa questi dati"
+            "value" : "Come usiamo questi dati"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoe drafft deze gegevens gebruikt"
+            "value" : "Hoe we ze gebruiken"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como o drafft usa estes dados"
+            "value" : "Como usamos estes dados"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How we use this data"
           }
         }
       }
@@ -13557,6 +13741,46 @@
         }
       }
     },
+    "Other times" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere Zeiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otros horarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autres créneaux"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altri orari"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere tijden"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outros horários"
+          }
+        }
+      }
+    },
     "Our team is checking your first photo. Put another one first, or wait." : {
       "localizations" : {
         "de" : {
@@ -13919,6 +14143,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compra"
+          }
+        }
+      }
+    },
+    "Purchases are turned off on this iPhone. You can allow them in Screen Time settings." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Käufe sind auf diesem iPhone deaktiviert. Du kannst sie in den Bildschirmzeit-Einstellungen erlauben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchases are turned off on this iPhone. You can allow them in Screen Time settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las compras están desactivadas en este iPhone. Puedes permitirlas en los ajustes de Tiempo de uso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les achats sont désactivés sur cet iPhone. Tu peux les autoriser dans les réglages Temps d'écran."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gli acquisti sono disattivati su questo iPhone. Puoi consentirli nelle impostazioni di Tempo di utilizzo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aankopen staan uit op deze iPhone. Je kunt ze toestaan in de instellingen van Schermtijd."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As compras estão desativadas neste iPhone. Podes permiti-las nas definições de Tempo de ecrã."
           }
         }
       }
@@ -14335,6 +14605,52 @@
         }
       }
     },
+    "This is already on your Apple ID. Tap Restore purchases to get it back." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist schon mit deiner Apple-ID verknüpft. Tippe auf „Käufe wiederherstellen“, um es zurückzuholen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is already on your Apple ID. Tap Restore purchases to get it back."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya está en tu Apple ID. Toca «Restaurar compras» para recuperarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C'est déjà sur ton identifiant Apple. Touche « Restaurer les achats » pour le récupérer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È già sul tuo ID Apple. Tocca «Ripristina acquisti» per recuperarlo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit staat al op je Apple ID. Tik op ‘Aankopen herstellen’ om het terug te krijgen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já está no teu ID Apple. Toca em «Restaurar compras» para o recuperar."
+          }
+        }
+      }
+    },
     "This is taking longer than usual." : {
       "localizations" : {
         "de" : {
@@ -14411,6 +14727,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Este número não pode receber códigos. Usa um número de telemóvel."
+          }
+        }
+      }
+    },
+    "This photo couldn't be opened. Pick another one, or check your connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Foto ließ sich nicht öffnen. Wähl ein anderes oder prüf deine Verbindung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This photo couldn't be opened. Pick another one, or check your connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido abrir esta foto. Elige otra o revisa tu conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'ouvrir cette photo. Choisis-en une autre ou vérifie ta connexion."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile aprire questa foto. Scegline un'altra o controlla la connessione."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deze foto kon niet worden geopend. Kies een andere of controleer je verbinding."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir esta foto. Escolhe outra ou verifica a tua ligação."
+          }
+        }
+      }
+    },
+    "This photo is no longer there. Remove it, then add it again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Foto ist nicht mehr da. Entfern es und füg es dann noch mal hinzu."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This photo is no longer there. Remove it, then add it again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta foto ya no está. Quítala y vuelve a añadirla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette photo n'existe plus. Retire-la, puis ajoute-la de nouveau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa foto non c'è più. Toglila, poi aggiungila di nuovo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deze foto is er niet meer. Verwijder hem en voeg hem daarna opnieuw toe."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta foto já não existe. Remove-a e depois adiciona-a de novo."
           }
         }
       }
@@ -14907,6 +15315,52 @@
         }
       }
     },
+    "Waiting for approval. It'll be added to your account once the payment goes through." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartet auf Freigabe. Es wird deinem Konto hinzugefügt, sobald die Zahlung durch ist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for approval. It'll be added to your account once the payment goes through."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendiente de aprobación. Se añadirá a tu cuenta cuando se complete el pago."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attente de validation. L'achat sera ajouté à ton compte dès que le paiement aura abouti."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In attesa di approvazione. Verrà aggiunto al tuo account appena il pagamento andrà a buon fine."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wacht op goedkeuring. Het wordt aan je account toegevoegd zodra de betaling rond is."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A aguardar aprovação. Será adicionado à tua conta assim que o pagamento for concluído."
+          }
+        }
+      }
+    },
     "Watch for red flags" : {
       "localizations" : {
         "de" : {
@@ -14983,6 +15437,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "De momento não conseguimos verificar este número. Tenta daqui a pouco."
+          }
+        }
+      }
+    },
+    "We couldn't confirm the purchase. If you were charged, it'll be added to your account automatically." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten den Kauf nicht bestätigen. Falls dir etwas berechnet wurde, kommt es automatisch auf dein Konto."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We couldn't confirm the purchase. If you were charged, it'll be added to your account automatically."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido confirmar la compra. Si se te ha cobrado, se añadirá a tu cuenta automáticamente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de confirmer l'achat. Si un montant a été débité, il sera ajouté automatiquement à ton compte."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a confermare l'acquisto. Se ti è stato addebitato, verrà aggiunto al tuo account in automatico."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We konden de aankoop niet bevestigen. Als er iets is afgeschreven, wordt het automatisch aan je account toegevoegd."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos confirmar a compra. Se o pagamento foi cobrado, a compra será adicionada à tua conta automaticamente."
           }
         }
       }
@@ -15359,6 +15859,52 @@
         }
       }
     },
+    "You've sent several messages already. Try again later." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast uns schon mehrere Nachrichten geschickt. Versuch es später noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've sent several messages already. Try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya nos has enviado varios mensajes. Inténtalo de nuevo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nous as déjà envoyé plusieurs messages. Réessaie plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci hai già inviato diversi messaggi. Riprova più tardi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je hebt ons al een paar berichten gestuurd. Probeer het later opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Já nos enviaste várias mensagens. Tenta de novo mais tarde."
+          }
+        }
+      }
+    },
     "Your address, workplace and last name can wait until you trust them." : {
       "localizations" : {
         "de" : {
@@ -15416,7 +15962,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu zona sale de donde estás ahora. drafft no sigue tus desplazamientos ni te localiza en segundo plano."
+            "value" : "Tu zona sale de donde estás ahora. drafft no sigue tus desplazamientos ni te localiza cuando no lo usas."
           }
         },
         "de" : {
@@ -15434,7 +15980,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A tua zona vem do sítio onde estás agora. O drafft não segue as tuas deslocações nem te localiza em segundo plano."
+            "value" : "A tua zona vem do sítio onde estás agora. O drafft não segue as tuas deslocações nem te localiza quando não o usas."
           }
         },
         "nl" : {
@@ -15485,6 +16031,52 @@
         }
       }
     },
+    "Your chats couldn't load" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Chats konnten nicht geladen werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your chats couldn't load"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han podido cargar tus chats"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger tes discussions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile caricare le chat"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je chats konden niet laden"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar as tuas conversas"
+          }
+        }
+      }
+    },
     "Your first photo wasn't approved. Put another one first." : {
       "localizations" : {
         "de" : {
@@ -15521,6 +16113,190 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A tua primeira foto não foi aprovada. Põe outra primeiro."
+          }
+        }
+      }
+    },
+    "Your likes couldn't load" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Likes konnten nicht geladen werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your likes couldn't load"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han podido cargar tus likes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger tes likes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile caricare i like"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je likes konden niet laden"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar os teus likes"
+          }
+        }
+      }
+    },
+    "Your message is too long. Shorten it, then send it again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Nachricht ist zu lang. Kürz sie und schick sie noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your message is too long. Shorten it, then send it again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu mensaje es demasiado largo. Acórtalo y vuelve a enviarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton message est trop long. Raccourcis-le, puis renvoie-le."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il messaggio è troppo lungo. Accorcialo e rimandalo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bericht is te lang. Maak het korter en stuur het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tua mensagem é demasiado longa. Encurta-a e envia de novo."
+          }
+        }
+      }
+    },
+    "Your profile couldn't be paused. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Profil konnte nicht pausiert werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your profile couldn't be paused. Check your connection and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido pausar tu perfil. Revisa tu conexión y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton profil n'a pas pu être mis en pause. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile mettere in pausa il tuo profilo. Controlla la connessione e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je profiel kon niet worden gepauzeerd. Controleer je verbinding en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível pôr o teu perfil em pausa. Verifica a tua ligação e tenta de novo."
+          }
+        }
+      }
+    },
+    "Your profile couldn't be resumed. Check your connection and try again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Profil konnte nicht reaktiviert werden. Prüf deine Verbindung und versuch es noch mal."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your profile couldn't be resumed. Check your connection and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido reactivar tu perfil. Revisa tu conexión y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton profil n'a pas pu être réactivé. Vérifie ta connexion et réessaie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile riattivare il tuo profilo. Controlla la connessione e riprova."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je profiel kon niet opnieuw worden geactiveerd. Controleer je verbinding en probeer het opnieuw."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível reativar o teu perfil. Verifica a tua ligação e tenta de novo."
           }
         }
       }
@@ -21032,7 +21808,7 @@
         }
       }
     },
-    "I'll know it's a match if" : {
+    "We're on the same wavelength if" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -21673,19 +22449,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En tu calendario"
+            "value" : "En tu agenda"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans ton calendrier"
+            "value" : "Dans ton agenda"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nel tuo calendario"
+            "value" : "Nella tua agenda"
           }
         },
         "nl" : {
@@ -21713,19 +22489,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En tu calendario. Añadir de nuevo"
+            "value" : "En tu agenda. Añadir de nuevo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans ton calendrier. Ajouter à nouveau"
+            "value" : "Dans ton agenda. Ajouter à nouveau"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nel tuo calendario. Aggiungi di nuovo"
+            "value" : "Nella tua agenda. Aggiungi di nuovo"
           }
         },
         "nl" : {
@@ -22240,7 +23016,7 @@
         }
       }
     },
-    "It's a match." : {
+    "It's mutual." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -22286,7 +23062,7 @@
         }
       }
     },
-    "It's a match. Tap to say hi." : {
+    "It's mutual. Tap to say hi." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -23676,7 +24452,7 @@
         }
       }
     },
-    "Like back and it's a match straight away." : {
+    "Like them back and it's mutual. Then propose a session." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -23813,7 +24589,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dar like con esta respuesta"
+            "value" : "Like con esta respuesta"
           }
         },
         "fr" : {
@@ -23837,7 +24613,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dar like com esta resposta"
+            "value" : "Like com esta resposta"
           }
         }
       }
@@ -24162,7 +24938,7 @@
         }
       }
     },
-    "Loading plans" : {
+    "Loading options" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -30190,46 +30966,6 @@
         }
       }
     },
-    "Open App Store subscriptions" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App-Store-Abos öffnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir suscripciones del App Store"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvrir les abonnements App Store"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri abbonamenti App Store"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open App Store-abonnementen"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir subscrições da App Store"
-          }
-        }
-      }
-    },
     "Open Settings" : {
       "localizations" : {
         "de" : {
@@ -32312,7 +33048,7 @@
         }
       }
     },
-    "Pick a plan to continue." : {
+    "Pick an option to continue." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -32455,13 +33191,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis un créneau ci-dessus"
+            "value" : "Choisis un créneau"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli un orario qui sopra"
+            "value" : "Scegli un orario"
           }
         },
         "nl" : {
@@ -32473,7 +33209,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolhe um horário acima"
+            "value" : "Escolhe um horário"
           }
         }
       }
@@ -33136,7 +33872,7 @@
         }
       }
     },
-    "Plan" : {
+    "Length" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -33182,7 +33918,7 @@
         }
       }
     },
-    "Plans couldn't load. Check your connection and try again." : {
+    "Options couldn't load. Check your connection and try again." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -36843,7 +37579,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ um %@ speichern"
+            "value" : "%@, %@ speichern"
           }
         },
         "es" : {
@@ -37919,7 +38655,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer avec un commentaire"
+            "value" : "Liker avec un commentaire"
           }
         },
         "it" : {
@@ -43271,48 +44007,48 @@
         }
       }
     },
-    "The way to win me over" : {
+    "To convince me, propose" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um mich rumzukriegen, schlag vor:"
+            "value" : "Um mich zu überzeugen, schlag vor:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para conquistarme, proponme"
+            "value" : "Para convencerme, proponme"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour me faire craquer, propose-moi"
+            "value" : "Pour me convaincre, propose-moi"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per conquistarmi, proponimi"
+            "value" : "Per convincermi, proponimi"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wil je me voor je winnen, stel dan voor:"
+            "value" : "Wil je me overtuigen, stel dan voor:"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para me conquistares, propõe"
+            "value" : "Para me convenceres, propõe"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To win me over, suggest"
+            "value" : "To convince me, propose"
           }
         }
       }
@@ -46240,7 +46976,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Letzten Swipe rückgängig machen"
+            "value" : "Letzten Swipe zurücknehmen"
           }
         },
         "es" : {
@@ -46264,7 +47000,7 @@
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mijn laatste swipe ongedaan maken"
+            "value" : "Laatste swipe terugdraaien"
           }
         },
         "pt" : {
@@ -50782,7 +51518,7 @@
         }
       }
     },
-    "You and %@ both do %@. Say hi, then plan a first session." : {
+    "You and %@ both do %@. Say hi, or propose a session while it's fresh." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -50828,7 +51564,7 @@
         }
       }
     },
-    "You and %@ liked each other. Say hi, then plan a first session." : {
+    "%@ likes you too. Say hi, or propose a session while it's fresh." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -52014,46 +52750,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Já viste toda a gente a menos de %@."
-          }
-        }
-      }
-    },
-    "You've sent several messages already. Try again in an hour." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast uns schon mehrere Nachrichten geschickt. Versuch es in einer Stunde noch mal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ya nos has enviado varios mensajes. Inténtalo de nuevo dentro de una hora."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu nous as déjà envoyé plusieurs messages. Réessaie dans une heure."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ci hai già inviato diversi messaggi. Riprova tra un'ora."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Je hebt ons al een paar berichten gestuurd. Probeer het over een uur opnieuw."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Já nos enviaste várias mensagens. Tenta de novo daqui a uma hora."
           }
         }
       }
@@ -53974,7 +54670,7 @@
         }
       }
     },
-    "Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change your plan or cancel, go to your App Store subscriptions. Deleting drafft doesn't cancel it." : {
+    "Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change or cancel it, go to your App Store subscriptions. Deleting drafft doesn't cancel it." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -57474,6 +58170,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tu@exemplo.com"
+          }
+        }
+      }
+    },
+    "Your voice intro couldn't be sent, so nothing was saved. Record it again, or remove it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Sprach-Intro wurde nicht gesendet, deshalb wurde nichts gespeichert. Nimm es neu auf oder entfern es."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your voice intro couldn't be sent, so nothing was saved. Record it again, or remove it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido enviar tu presentación de voz, así que no se ha guardado nada. Grábala de nuevo o quítala."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta présentation vocale n'est pas partie, rien n'a donc été enregistré. Enregistre-la de nouveau ou retire-la."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile inviare la tua presentazione vocale, quindi non è stato salvato nulla. Registrala di nuovo o toglila."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je spraakintro kon niet worden verstuurd, dus er is niets opgeslagen. Neem hem opnieuw op of verwijder hem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar a tua apresentação de voz, por isso nada foi guardado. Grava-a de novo ou remove-a."
           }
         }
       }

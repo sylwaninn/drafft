@@ -62,7 +62,7 @@ states, errors, push, email, SMS, paywall, App Store / Play Store, website, scre
 | A training date | session | séance | The login session is "login" / « connexion » |
 | Send one | propose (a session) | proposer (une séance) | The only verb. Not suggest, offer, invite, pitch |
 | The sent card | session invite | proposition de séance | |
-| Time options | times | créneaux | "Pick a time", "Propose other times" / « Proposer d'autres créneaux » |
+| Time options | times | créneaux | "Pick a time", "Other times" (button), "Propose other times" (title) / « Autres créneaux », « Proposer d'autres créneaux » |
 | The short note on an invite | note | petit mot | Not "pitch" |
 | Mutual like | match; screen title "It's mutual." | match ; titre « C'est réciproque. » | Never "It's a match." |
 | First date | first date | premier rendez-vous | FR avoids « un date » (bpm's word) |
@@ -122,6 +122,22 @@ chaud / hot, sexy, "get physical", "sweat together" / « transpirer ensemble »,
 in a romantic sense, positions, "body count", partner in a dating sense (FR « partenaire »: use
 « binôme » for training), Netflix. No double meaning, ever.
 
+**Desire and attraction words.** In a dating app, a word that is innocent elsewhere reads as desire
+for the person. Copy talks about the thing (the photo, the answer, the sport, the time), never about
+what the person makes someone feel. Same family as « plan » (5.1).
+
+| Banned when it points at a person or their profile | Use instead |
+|---|---|
+| FR « envie » (« ce qui t'a donné envie », « envie de toi »), « craquer » / « faire craquer », « plaire » / « ce qui t'a plu », « attirer », « désir », « tenter », « séduire », « conquérir » | « petit mot », « réagir », « convaincre », « retenir l'attention » |
+| EN "turn on", "into you", "tempt", "desire", "seduce", "make me fall", "caught your eye", "win me over" | note, react, convince, "stood out" |
+| ES conquistar, seducir, "te pone" | convencer |
+| DE rumkriegen, verführen, anmachen | überzeugen |
+| IT conquistare, sedurre | convincere |
+| PT conquistar, seduzir | convencer |
+| NL versieren, verleiden | overtuigen |
+
+« envie » stays fine when it's about the thing, not the person: « Pas envie d'attendre ? ».
+
 ### 5.3 Category clichés and competitor territory
 
 "It's a match", "find your perfect match", "the one", soulmate / swolemate, gym crush, swipe right,
@@ -155,6 +171,7 @@ repository's copy of this file: keep the format.
 \bplan(s|ned|ning|ner|ners)?\b | "plan" is banned (5.1)
 \bplanifi\w* | "plan" is banned (5.1)
 \bplane(ar|ado|ada|amos)\b | "plan" is banned (5.1)
+\bplanos?\b | "plan" is banned (5.1)
 \b(ge)?plan(t|en|nen|nt|de)\b | "plan" is banned (5.1)
 \bgepland\b | "plan" is banned (5.1)
 \bpianific\w* | "plan" is banned (5.1)
@@ -171,6 +188,10 @@ repository's copy of this file: keep the format.
 \bsmall talk\b | category cliché (5.3)
 \bsweat\w* | bpm territory (5.3)
 \bsueur\b | bpm territory (5.3)
+\bdonn\w* envie\b | desire wording (5.2)
+\bfaire craquer\b | desire wording (5.2)
+\brumzukriegen\b | desire wording (5.2)
+\bwin (me|you|them) over\b | desire wording (5.2)
 \boops\b | robotic filler (5.5)
 \bdon[’']t miss out\b | fake urgency (5.5)
 ```
@@ -183,6 +204,13 @@ repository's copy of this file: keep the format.
 - **CTAs:** a verb first, 1–3 words, 20 characters max in EN. Say what happens ("Propose a session",
   "Pick this time"), not "OK", "Continue" or "Submit" when a precise verb exists. Keep names out of
   one-line buttons ("Say hi", not "Say hi to Maximilien").
+- **Buttons stay on one line, in every language.** Check the longest translation (FR, DE, NL run
+  30–40 % longer than EN), not the EN. Rough budget per line (17 pt semibold, 375 pt iPhone):
+  full-width button ≈ 28 characters (≈ 25 with an icon); button inside a card, such as the session
+  card in a chat, ≈ 18; two buttons side by side ≈ 12. Over budget, adapt the wording in that language
+  (drop "above", a possessive, a second verb) and keep the meaning; a short noun phrase is fine when
+  the icon and context carry the verb ("Other times" / « Autres créneaux »). When a label holds a
+  value (a day, a count), the code drops that detail to stay on one line (`ViewThatFits`), never "…".
 - **Titles and headlines:** short statements ending with a full stop ("You've seen everyone nearby.").
 - **Body:** one idea per sentence, 2 sentences max on a screen block, contractions in EN.
 - **Punctuation:**
@@ -304,7 +332,7 @@ Run on every text before you validate it.
 - [ ] No category cliché or competitor line (5.3). No fake urgency, guilt, body judgement (5.5).
 - [ ] Brand terms exact: drafft, drafft tempo, session/séance, propose/proposer, times/créneaux.
 - [ ] Informal "you"; FR non-breaking spaces; gender-neutral; sentence case.
-- [ ] CTA starts with a verb, 1–3 words, says what happens.
+- [ ] CTA starts with a verb, 1–3 words, says what happens, fits one line in every language (6).
 - [ ] Headline ends with a full stop; no "!" or emoji in UI, push, email.
 - [ ] Error: what happened + one way out, no blame.
 - [ ] All 7 languages updated, adapted (not literal), same placeholders, no longer than needed.
@@ -350,3 +378,15 @@ Run on every text before you validate it.
 - 2026-09-30: The delete page no longer opens on "Your call." / « À toi de voir. »: it read as curt, even
   resentful. It states the fact instead: "Here's what deleting removes." / « Voici ce que la
   suppression efface. »
+- 2026-10-01: "plan" stays banned with no exception, subscriptions included: also out of the
+  catalog's English keys (the lint checks keys) and of "plano" in ES/PT, even as "flat" or
+  "segundo plano" (background).
+- 2026-10-01: Desire and attraction words banned when they point at a person (5.2), like « plan »:
+  « ce qui t'a donné envie », « faire craquer », "win me over", DE "rumkriegen". The like comment
+  field becomes "Add a note" / « Ajoute un petit mot »; the prompt "The way to win me over" reads
+  "To convince me, propose" / « Pour me convaincre, propose-moi ».
+- 2026-10-01: Buttons stay on one line in every language, with a character budget per layout (6).
+  The session card's "Propose other times" wrapped in French and German: it became "Other times" /
+  « Autres créneaux » (calendar icon); the sheet it opens keeps the full title. Other labels over
+  budget were shortened in the languages concerned (calendar, data, undo, comment buttons), and the
+  confirm and send buttons drop the day or the count rather than wrap.

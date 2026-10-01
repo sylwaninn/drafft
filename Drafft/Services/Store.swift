@@ -113,6 +113,52 @@ final class Store {
         return .purchased(result.customerInfo, transactionID: result.transaction?.transactionIdentifier)
     }
 
+    /// Why a purchase didn't complete, in words that stay true whatever the App Store did. Nil: the
+    /// person cancelled (nothing to say).
+    enum PurchaseProblem: Equatable {
+        /// Waiting for a parent's approval (Ask to Buy) or the bank's: RevenueCat gets the purchase
+        /// once it goes through, and the server credits it then.
+        case pending
+        /// Screen Time or a profile forbids purchases on this iPhone.
+        case notAllowed
+        /// The subscription is already on this Apple ID: Restore brings it to this account.
+        case alreadyOwned
+        /// Refused before the App Store took any payment.
+        case notCharged
+        /// Not confirmed, and the App Store may have charged: RevenueCat keeps the transaction and
+        /// sends it again (next launch, back to the app), and the server credits it then.
+        case unconfirmed
+        /// The account couldn't be linked (offline): nothing was asked of the App Store.
+        case notLinked
+
+        init?(_ error: Error) {
+            if case StoreError.notLinked = error { self = .notLinked; return }
+            switch error as? RevenueCat.ErrorCode {
+            case .purchaseCancelledError: return nil
+            case .paymentPendingError: self = .pending
+            case .purchaseNotAllowedError: self = .notAllowed
+            case .productAlreadyPurchasedError: self = .alreadyOwned
+            case .purchaseInvalidError, .productNotAvailableForPurchaseError, .ineligibleError,
+                 .invalidPromotionalOfferError, .operationAlreadyInProgressForProductError:
+                self = .notCharged
+            default: self = .unconfirmed
+            }
+        }
+
+        /// `restorable`: the screen has Restore purchases.
+        func message(restorable: Bool) -> String {
+            switch self {
+            case .pending: L("Waiting for approval. It'll be added to your account once the payment goes through.")
+            case .notAllowed: L("Purchases are turned off on this iPhone. You can allow them in Screen Time settings.")
+            case .alreadyOwned where restorable: L("This is already on your Apple ID. Tap Restore purchases to get it back.")
+            case .notCharged: L("The purchase didn't go through. You haven't been charged.")
+            case .alreadyOwned, .unconfirmed:
+                L("We couldn't confirm the purchase. If you were charged, it'll be added to your account automatically.")
+            case .notLinked: L("Couldn't connect. Check your connection and try again.")
+            }
+        }
+    }
+
     func restore() async throws -> CustomerInfo {
         guard await link() else { throw StoreError.notLinked }
         return try await Purchases.shared.restorePurchases()

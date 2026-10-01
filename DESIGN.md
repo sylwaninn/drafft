@@ -675,7 +675,7 @@ One job per colour, everywhere:
 ### Subscription (drafft tempo)
 - Billing belongs to the App Store (auto-renewable subscription). The app reads the state (`TempoSubscription`: plan, end of period, renews or not) and never cancels or changes a plan itself.
 - You shows the tier card (entry to the paywall) while not subscribed, and a "drafft tempo" row under Account only while subscribed ("Renews 24 Oct", or "Ends 24 Oct" once cancelled).
-- The row opens `SubscriptionSheet`: a night status block (lockup, Active/Ending pill, price, renewal or end date), what's included, the App Store billing terms (renews unless cancelled 24 h before the period ends; deleting the app doesn't cancel), "Open App Store subscriptions", Restore purchases, Terms, Privacy. The pinned action is "Manage subscription", which opens Apple's own sheet (`manageSubscriptionsSheet`).
+- The row opens `SubscriptionSheet`: a night status block (lockup, Active/Ending pill, price, renewal or end date), what's included, the App Store billing terms (renews unless cancelled 24 h before the period ends; deleting the app doesn't cancel), Restore purchases, Terms, Privacy. The pinned action is "Manage subscription", which opens Apple's own sheet (`manageSubscriptionsSheet`); no second link to the App Store subscriptions, it would do the same thing.
 - The paywall carries the same auto-renewal terms, plus Restore, Terms and Privacy, at the end of the scrolling page under the plans (`finePrint`), never in the pinned bar: the bar keeps only the button, its hint and the notice, so it never runs over the plans.
 
 ### Notifications
@@ -709,6 +709,7 @@ One job per colour, everywhere:
 - **Disabled, not hidden.** When the action can't run yet (nothing changed, required field missing), the button stays visible in its disabled state, with one short line under it saying why ("Make a change to save it.", "Add at least one sport.").
 - **Button labels fit on one line.** Never let a button wrap: shorten the label, give it the full width, or stack buttons vertically.
 - **Close is top-right** on every sheet and modal. Back navigation stays top-left (system).
+- **One way out, never two.** No two controls on a screen do the same thing. When a sheet's only action just closes it ("Got it" on Meet safely, "Done" once an email, password, phone number or help message is through, "Keep swiping"), that pinned button is the way out and there is no close button (the swipe down stays). An editing sheet keeps both: Close leaves without saving, the pinned button saves.
 - Unsaved changes: closing asks for confirmation ("Discard changes" / "Keep editing").
 - Destructive or sensitive actions (report, block) are quiet in the layout and confirmed in a dialog anchored to the control.
 
@@ -748,6 +749,8 @@ One job per colour, everywhere:
   - Search (Chats) lives in the header under the title and folds into a round search button once scrolled; tapping it opens the field again.
   - Actions sit on the right of the title row (e.g. the Discover filter pill). Side margin 16 pt, content starts 4 pt below the header.
 - Pushed screens and sheets keep the native navigation bar with an inline title (Inter Display ExtraBold), close on the right, back on the left, and soft scroll-edge blur.
+- **Chat header (WhatsApp style):** the chat draws its own header: the system navigation bar is hidden and a plain SwiftUI row is pinned with `.topBar` (swipe-back still works). Native bar items did not render custom icons reliably on device (titles instead of glyphs, missing items), so nothing in the chat depends on toolbar item rendering. Row: Back (glass disc), the person's avatar (44 pt) and first name beside it, leading, with "Typing…" or "Active now" under it; both open their profile. On the right, "Propose a session" (calendar-add on a solid accent disc) and More (vertical dots on a glass disc, an image-only `Menu` label with an accessibility label, never a titled `Label`). The name takes the room up to those buttons and ends with "…" only when it can't fit: the one header text allowed to truncate, at the user's request.
+- Never draw a `glassEffect` inside a native navigation bar item: the bar merges it into its own glass and the glyph on it disappears. Custom glass buttons belong in a `.topBar` row, not in a `ToolbarItem`.
 
 ### Matching
 - No contact before a mutual match: no messages and no session invites from Discover.

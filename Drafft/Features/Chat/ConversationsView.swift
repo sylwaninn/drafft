@@ -99,10 +99,21 @@ struct ConversationsView: View {
             // header and the keyboard), on the page itself.
             .overlay {
                 if app.conversations.isEmpty {
-                    EmptyStateView(art: .chats, title: "No chats yet",
-                                   message: "Match with someone on Discover to start chatting.") {
-                        Button("Back to Discover") { app.tab = .discover }
-                            .buttonStyle(.drafftPrimaryFit)
+                    // Nobody yet only once the matches were read: before, a spinner; a failed first read, a retry.
+                    switch app.matchesLoad {
+                    case .loaded:
+                        EmptyStateView(art: .chats, title: "No chats yet",
+                                       message: "Match with someone on Discover to start chatting.") {
+                            Button("Back to Discover") { app.tab = .discover }
+                                .buttonStyle(.drafftPrimaryFit)
+                        }
+                    case .failed(let offline):
+                        ListLoadFailureView(art: .chats, title: "Your chats couldn't load", offline: offline) {
+                            app.matchesLoad = .loading
+                            Task { await app.loadMatches() }
+                        }
+                    case .loading:
+                        ProgressView()
                     }
                 } else if threads.isEmpty && !query.isEmpty {
                     Text("No results")

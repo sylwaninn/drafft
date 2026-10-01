@@ -15,12 +15,15 @@ enum ProfileSync {
         case notLoaded
         /// A photo of the draft is no longer on the server (removed from another screen or device).
         case photoGone
+        /// The voice intro's upload was turned down or failed on the server's side (not the connection).
+        case voiceUpload
 
         var errorDescription: String? {
             switch self {
             case .photoUpload: L("A photo couldn't be sent. Tap it to see why, then try again.")
             case .notLoaded: L("Your profile hasn't loaded, so nothing was saved. Close and try again.")
             case .photoGone: L("A photo is no longer there, so nothing was saved. Close and try again.")
+            case .voiceUpload: L("Your voice intro couldn't be sent, so nothing was saved. Record it again, or remove it.")
             case .refused(let code): Self.message(for: code)
             }
         }
@@ -28,6 +31,15 @@ enum ProfileSync {
         static func message(for code: String) -> String {
             ServerMessage.text(forCode: code) ?? ServerMessage.generic
         }
+    }
+
+    /// A failed sign-up or save, in words. The first photo still with the team answers `portrait_required`:
+    /// said as that, not as a photo to change.
+    @MainActor static func failure(_ error: Error, photos: PhotoSetCheck) -> String {
+        if case SyncError.refused("portrait_required") = error, photos == .firstInReview,
+           let waiting = photos.reason { return waiting }
+        if let error = error as? SyncError { return error.errorDescription ?? ServerMessage.generic }
+        return ServerMessage.failure(for: error)
     }
 
     /// The account whose server profile was read (or sent by sign-up) in this session. Edit profile
@@ -294,10 +306,16 @@ enum ProfileSync {
         do { try await Backend.shared.updateMyProfile(fields) } catch { throw refused(error) }
     }
 
-    /// Best effort: the area can be set again later from the app.
-    private static func setLocation(_ c: CLLocationCoordinate2D?) async {
+    /// Not sent (no connection, a server error): sign-up fails like the other writes and is tried again,
+    /// or Discover would open on "share your location" right after it was shared. A refusal of the
+    /// place itself doesn't hold sign-up back: Discover sends the location again (`LocationOnce`).
+    private static func setLocation(_ c: CLLocationCoordinate2D?) async throws {
         guard let c else { return }
-        _ = try? await Backend.shared.rpc("set_location", ["p_lat": c.latitude, "p_lng": c.longitude])
+        do {
+            _ = try await Backend.shared.rpc("set_location", ["p_lat": c.latitude, "p_lng": c.longitude])
+        } catch where ServerMessage.code(of: error) == nil {
+            throw error
+        } catch {}
     }
 
     private static func setSports(_ sports: [SportEntry]) async throws {
@@ -367,7 +385,12 @@ enum ProfileSync {
 
     /// Uploads a voice intro (.m4a) and returns the profile columns that point to it.
     private static func uploadVoice(_ voice: (url: URL, duration: TimeInterval, levels: [Float])) async throws -> [String: Any] {
-        let key = try await MediaUploads.voice(voice.url, tickets: tickets)
+        let key: String
+        do { key = try await MediaUploads.voice(voice.url, tickets: tickets) } catch is MediaUploadError {
+            // A hold (`moderated`) has its own screen, which takes over; anything else, the recording's fault
+            // or the server's, is said as such (never "check your connection").
+            throw SyncError.voiceUpload
+        }
         var fields: [String: Any] = ["voice_intro_key": key, "voice_duration": min(60, voice.duration)]
         if !voice.levels.isEmpty { fields["voice_levels"] = Array(voice.levels.prefix(200)).map(Double.init) }
         return fields

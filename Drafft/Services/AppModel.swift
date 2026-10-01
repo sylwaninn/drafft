@@ -21,10 +21,15 @@ final class AppModel {
     var publicMe: Profile { me.showingApprovedPhotos() }
     enum ProfileLoad: Equatable { case loading, failed, loaded }
     var profileLoad: ProfileLoad = .loading
+    /// Why the last read failed, in words (`.failed`): the connection only when it never got through.
+    var profileLoadFailure: String?
     /// The signed-in account's last known state on this iPhone (see `LocalCache`, `refreshAccount`).
     @ObservationIgnored var localCache: LocalCache?
     /// The account read in flight, shared by everyone who asks meanwhile.
     @ObservationIgnored var accountRefresh: Task<ProfileSync.Account?, Never>?
+    /// In the tabs without knowing whether sign-up is finished: the next account read that answers
+    /// decides (`routeWhenAccountRead`), whoever asked for it.
+    @ObservationIgnored var routeOnAccountRead = false
     /// The last account read, and when: a read asked for right after it reuses it.
     @ObservationIgnored var lastAccountRead: (at: Date, account: ProfileSync.Account)?
     /// drafft tempo's details as the App Store reports them for this account (plan, price, renewal),
@@ -85,6 +90,8 @@ final class AppModel {
     /// began before the latest flip was saved says the old state, and mustn't put it back on screen.
     @ObservationIgnored var pauseEdits = 0
     @ObservationIgnored var pauseSaves = 0
+    /// The latest flip's save: nil once saved, else why it wasn't (the switch went back).
+    @ObservationIgnored var pauseSave: Task<String?, Never>?
 
     var notifyMatches = true
     var notifyMessages = true
@@ -92,6 +99,10 @@ final class AppModel {
     /// People you blocked: gone from Discover, Likes and Chats until you unblock them.
     var blocked: [Profile] = []
     var blockedCount: Int { blocked.count }
+    /// Blocks and unblocks on their way to the server (`SafetyOutbox`): the send running, the next try.
+    @ObservationIgnored var safetySending: Task<Void, Never>?
+    @ObservationIgnored var safetyRetry: Task<Void, Never>?
+    @ObservationIgnored var safetyAttempts = 0
     /// Data export: requested here, sent by email as a download link (server side).
     var dataExportRequestedAt: Date?
     /// Whether this account's consent to the current terms and to the use of its sensitive data is
@@ -155,6 +166,12 @@ final class AppModel {
     var blurredLikes: [BlurredLike] = [] { didSet { refreshBadges() } }
     /// Current matches (`my_matches`), newest first.
     var matches: [Match] = []
+    /// Where a list from the server stands before it has anything to show: an empty list means "nobody"
+    /// only once it was read (or this iPhone's copy of a read was shown). A first read that failed shows
+    /// a retry, never an empty state.
+    enum ListLoad: Equatable { case loading, failed(offline: Bool), loaded }
+    var likesLoad: ListLoad = .loading
+    var matchesLoad: ListLoad = .loading
 
     // Chats
     /// One per active match (`matches`), with its Stream channel (`ChatService`): never sample data.

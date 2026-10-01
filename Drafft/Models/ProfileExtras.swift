@@ -145,8 +145,10 @@ extension ProfilePrompt {
         case "The piece of gear I'd save in a fire": L("The piece of gear I'd save in a fire")
         case "I've never been as sore as the day I": L("I've never been as sore as the day I")
         case "We'll get along if": L("We'll get along if")
-        case "The way to win me over": L("The way to win me over")
-        case "I'll know it's a match if": L("I'll know it's a match if")
+        // The saved question stays as it was; only its text moved off desire wording (WORDING.md 5.2).
+        case "The way to win me over": L("To convince me, propose")
+        // The saved question keeps its text; only the catalog key moved off "it's a match" (WORDING.md 5.3).
+        case "I'll know it's a match if": L("We're on the same wavelength if")
         case "Green flag in a training partner": L("Green flag in a training partner")
         case "Red flag: you skip": L("Red flag: you skip")
         case "A first date that isn't dinner": L("A first date that isn't dinner")

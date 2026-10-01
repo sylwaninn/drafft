@@ -12,6 +12,11 @@ struct AccountSheet<Content: View>: View {
     var loading = false
     /// A real problem (turned down, failed), in red under the action. Never why it's disabled.
     var error: String?
+    /// With an error, a Get help link on this topic (where the person can't be left stuck).
+    var helpTopic: String?
+    /// Done: the pinned action only closes the sheet now ("Done"), so it is the one way out and
+    /// the close button goes (never two controls that do the same thing).
+    var finished = false
     /// Something typed that closing would lose: Close asks before discarding it.
     var hasChanges = false
     let action: () -> Void
@@ -32,9 +37,11 @@ struct AccountSheet<Content: View>: View {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", image: .icon("close")) {
-                        if hasChanges { confirmDiscard = true } else { dismiss() }
+                if !finished {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Close", image: .icon("close")) {
+                            if hasChanges { confirmDiscard = true } else { dismiss() }
+                        }
                     }
                 }
             }
@@ -67,6 +74,7 @@ struct AccountSheet<Content: View>: View {
                             .foregroundStyle(DS.Palette.negative)
                             .multilineTextAlignment(.center)
                             .contentTransition(.opacity)
+                        if let helpTopic { GetHelpButton(topic: helpTopic) }
                     }
                 }
                 .padding(.horizontal, DS.Space.xl)
@@ -167,6 +175,7 @@ struct ChangeEmailSheet: View {
         AccountSheet(title: L("Email"), actionTitle: actionTitle,
                      actionIcon: flow.stage == .form ? "plain" : flow.stage == .done ? "check" : nil,
                      enabled: enabled, loading: flow.busy, error: error,
+                     finished: flow.stage == .done,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(newEmail.isEmpty && password.isEmpty))) {
             switch flow.stage {
             case .form: send()
@@ -278,6 +287,7 @@ struct ChangePasswordSheet: View {
                      actionIcon: flow.stage == .form ? "plain" : flow.stage == .code ? "lock-keyhole-minimalistic"
                          : flow.stage == .done ? "check" : nil,
                      enabled: enabled, loading: flow.busy, error: error,
+                     finished: flow.stage == .done,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(new.isEmpty && confirm.isEmpty))) {
             switch flow.stage {
             case .form: send()
@@ -386,7 +396,8 @@ struct ExportDataSheet: View {
                     withAnimation(Motion.bouncy) { app.dataExportRequestedAt = .now }
                 } catch {
                     Haptics.warning()
-                    exportError = L("Your request couldn't be sent. Check your connection and try again.")
+                    exportError = ServerMessage.text(
+                        for: error, offline: L("Your request couldn't be sent. Check your connection and try again."))
                 }
             }
         } content: {
@@ -445,7 +456,10 @@ struct DeleteAccountSheet: View {
     @State private var understood = false
     @State private var loading = false
     @State private var failure: String?
+    @State private var loggedOut = false
     @State private var managingSubscription = false
+    @State private var pausing = false
+    @State private var pauseFailure: String?
 
     private var showsSubscriptionNotice: Bool {
         let renewal: SubscriptionNotice.Renewal = app.subscription.map { $0.willRenew ? .renews : .ends } ?? .unknown
@@ -458,7 +472,7 @@ struct DeleteAccountSheet: View {
         AccountSheet(title: withdrawsConsent ? L("Sensitive data consent") : L("Delete account"),
                      actionTitle: L("Delete my account"), actionIcon: "trash-bin-minimalistic",
                      destructive: true, enabled: understood, loading: loading,
-                     error: failure) {
+                     error: failure, helpTopic: failure == nil || loggedOut ? nil : L("Delete account")) {
             loading = true
             failure = nil
             Task {
@@ -466,14 +480,15 @@ struct DeleteAccountSheet: View {
                     try await app.deleteAccount()
                     Haptics.success()
                     dismiss()
-                } catch Backend.BackendError.signedOut {
-                    Haptics.warning()
-                    loading = false
-                    failure = L("You're logged out, so nothing was deleted. Log in again, then delete your account.")
                 } catch {
                     Haptics.warning()
                     loading = false
-                    failure = L("We couldn't delete your account. Check your connection and try again.")
+                    // Deleting is a right: a refusal that isn't about the connection comes with Get help.
+                    loggedOut = error.isSignedOut
+                    failure = loggedOut
+                        ? L("You're logged out, so nothing was deleted. Log in again, then delete your account.")
+                        : ServerMessage.text(
+                            for: error, offline: L("We couldn't delete your account. Check your connection and try again."))
                 }
             }
         } content: {
@@ -591,14 +606,34 @@ struct DeleteAccountSheet: View {
                 .font(.subheadline)
                 .foregroundStyle(DS.Palette.body)
             Button {
-                Haptics.success()
-                app.profilePaused = true
-                dismiss()
+                Haptics.tap()
+                pausing = true
+                pauseFailure = nil
+                Task {
+                    // Closes only once the server has it: a pause that didn't save stays here to say so.
+                    let failure = await app.pauseNow()
+                    pausing = false
+                    if let failure {
+                        withAnimation(Motion.snappy) { pauseFailure = failure }
+                    } else {
+                        Haptics.success()
+                        dismiss()
+                    }
+                }
             } label: {
                 Label(app.profilePaused ? "Your profile is paused" : "Pause my profile instead", image: "pause")
+                    .opacity(pausing ? 0 : 1)
+                    .overlay { if pausing { ProgressView().tint(DS.Palette.ink) } }
             }
             .buttonStyle(.drafftSecondary)
-            .disabled(app.profilePaused)
+            .disabled(app.profilePaused || pausing)
+            if let pauseFailure {
+                Text(pauseFailure)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(DS.Palette.negative)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .transition(.opacity)
+            }
         }
     }
 }

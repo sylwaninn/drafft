@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 /// The pause switch against the server: sent when the person flips it, read back when signing in,
 /// and forced on when the server refuses an action because the profile is paused.
@@ -12,7 +13,13 @@ extension AppModel {
         let paused = profilePaused
         pauseEdits += 1
         let edit = pauseEdits
-        Task { await syncPause(paused, edit: edit) }
+        pauseSave = Task { await syncPause(paused, edit: edit) }
+    }
+
+    /// Pauses and waits for the server: nil once it has it, else what to say (the switch is back).
+    func pauseNow() async -> String? {
+        profilePaused = true
+        return await pauseSave?.value
     }
 
     /// The server says the profile is paused (or not): shown as is, never sent back. `readAt` is
@@ -32,8 +39,9 @@ extension AppModel {
     }
 
     /// Sends the switch to the server; if it can't be saved (signed out included), the switch goes
-    /// back to the server's state.
-    func syncPause(_ paused: Bool, edit: Int) async {
+    /// back to the server's state and a notice says so. Nil once saved, else that notice's text.
+    @discardableResult
+    func syncPause(_ paused: Bool, edit: Int) async -> String? {
         pauseSaves += 1
         defer { pauseSaves -= 1 }
         do {
@@ -41,11 +49,21 @@ extension AppModel {
             // Resumed: discovery reads the deck again (nothing was read while paused). Only once
             // the server has it: asked sooner, it answers "paused" and the pause came back on.
             if !paused, edit == pauseEdits { refreshDiscovery() }
+            return nil
         } catch {
             // A later flip is on its way: it decides.
-            guard edit == pauseEdits else { return }
+            guard edit == pauseEdits else { return nil }
             Haptics.warning()
             applyServerPause(!paused)
+            let text = if !(error is URLError) {
+                ServerMessage.text(for: error) ?? ServerMessage.generic
+            } else if paused {
+                L("Your profile couldn't be paused. Check your connection and try again.")
+            } else {
+                L("Your profile couldn't be resumed. Check your connection and try again.")
+            }
+            withAnimation(Motion.bouncy) { notice = Notice(text: text) }
+            return text
         }
     }
 

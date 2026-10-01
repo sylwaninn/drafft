@@ -213,7 +213,7 @@ final class PhotoModeration {
                 // Left without saving while it was on its way: it goes at once.
                 if discarded.remove(path) != nil {
                     states[slot(path)] = nil
-                    Task { _ = try? await Backend.shared.rpc("delete_media", ["p_id": id]) }
+                    Task { await Self.deleteOnServer(id) }
                     return
                 }
                 mediaIDs[path] = id
@@ -224,10 +224,28 @@ final class PhotoModeration {
         }
     }
 
+    /// Deletes a photo the person took off (refused, or a draft never saved). The screen already let it go,
+    /// so a failure isn't put back on it: tried again a few times (offline, a server hiccup) so it doesn't
+    /// come back with the next read. A refusal with a code is the server's answer, never tried again:
+    /// already gone (`not_found`) is done, and one it won't delete (`portrait_required`) stays refused.
+    /// Drafts missed here are deleted by the server after a few days.
+    static func deleteOnServer(_ id: String) async {
+        for attempt in 0..<4 {
+            do {
+                _ = try await Backend.shared.rpc("delete_media", ["p_id": id])
+                return
+            } catch {
+                if ServerMessage.code(of: error) != nil || error is CancellationError { return }
+                if case Backend.BackendError.signedOut = error { return }
+                if attempt < 3 { try? await Task.sleep(for: .seconds(2 << attempt)) }
+            }
+        }
+    }
+
     /// Asks a person to look at a refused photo again. It stays off the profile meanwhile.
     func requestReview(_ path: String) async throws {
         // Not uploaded (yet): nothing the team could look at, so never say it was sent.
-        guard let id = id(for: path) else { throw Backend.BackendError.http(404, "photo not on the server") }
+        guard let id = id(for: path) else { throw Backend.BackendError.http(404, "not_found") }
         _ = try await Backend.shared.rpc("request_media_review", ["p_media": id])
         states[slot(path)] = .inReview
     }
@@ -237,7 +255,7 @@ final class PhotoModeration {
     func remove(_ path: String) {
         removeRequest = path
         if let id = id(for: path) {
-            Task { _ = try? await Backend.shared.rpc("delete_media", ["p_id": id]) }
+            Task { await Self.deleteOnServer(id) }
         }
         mediaIDs[path] = nil
         serverIDs[slot(path)] = nil
@@ -249,7 +267,7 @@ final class PhotoModeration {
     func discard(_ paths: [String]) {
         for path in paths where path.hasPrefix("/") {
             if let id = mediaIDs[path] {
-                Task { _ = try? await Backend.shared.rpc("delete_media", ["p_id": id]) }
+                Task { await Self.deleteOnServer(id) }
                 mediaIDs[path] = nil
                 states[slot(path)] = nil
             } else if states[slot(path)]?.isWorking == true {

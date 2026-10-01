@@ -247,8 +247,13 @@ final class SelfieCaptureModel {
             // the selfie request.
             await AccountModeration.shared.load()
             sent = true
+        } catch where ServerMessage.code(of: error) == "not_requested" {
+            // The team decided meanwhile (the hold was lifted or changed): nothing left to send here.
+            await AccountModeration.shared.load()
+            sent = true
         } catch {
-            self.error = L("Your selfie couldn't be sent. Try again.")
+            self.error = error is URLError ? L("Couldn't connect. Check your connection and try again.")
+                : L("Your selfie couldn't be sent. Try again.")
             Haptics.warning()
             stage = .captured(image)
         }

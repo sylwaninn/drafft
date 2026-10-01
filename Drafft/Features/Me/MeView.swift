@@ -193,7 +193,7 @@ struct MeView: View {
                         .foregroundStyle(.white)
                         .fixedSize(horizontal: false, vertical: true)
                     if failed {
-                        Text("Check your connection and try again.")
+                        Text(app.profileLoadFailure ?? L("Check your connection and try again."))
                             .font(.footnote)
                             .foregroundStyle(.white.opacity(0.8))
                             .fixedSize(horizontal: false, vertical: true)

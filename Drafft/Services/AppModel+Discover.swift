@@ -77,7 +77,7 @@ extension AppModel {
     private enum DeckOutcome {
         case cards(Data)
         case refused(String)
-        case failed
+        case failed(Error)
     }
 
     /// One `discover` call; with no location on file, the location is sent first and it's asked again once.
@@ -86,7 +86,7 @@ extension AppModel {
             do {
                 return .cards(try await Backend.shared.rpc("discover", ["p_filters": filters.serverFilters, "p_limit": Self.deckBatch]))
             } catch {
-                guard let code = ServerMessage.code(of: error) else { return .failed }
+                guard let code = ServerMessage.code(of: error) else { return .failed(error) }
                 if code == "location_required", attempt == 0, await LocationOnce.send() { continue }
                 return .refused(code)
             }
@@ -112,8 +112,10 @@ extension AppModel {
             // Paused or on hold: the lock and the hold screen say so.
             if code == "paused" || code == "moderated" { deckState = .idle; return }
             if queue.isEmpty { deckState = .failed(ServerMessage.text(forCode: code) ?? ServerMessage.generic) }
-        case .failed:
-            if queue.isEmpty { deckState = .failed(L("Couldn't connect. Check your connection and try again.")) }
+        case .failed(let error):
+            if queue.isEmpty {
+                deckState = .failed(ServerMessage.text(for: error, offline: L("Couldn't connect. Check your connection and try again.")))
+            }
         }
     }
 
@@ -285,7 +287,7 @@ extension AppModel {
 
     /// A refusal or failure, above the tabs, in the person's language.
     func say(_ error: Error) {
-        let text = ServerMessage.text(for: error) ?? L("Couldn't connect. Check your connection and try again.")
+        let text = ServerMessage.text(for: error, offline: L("Couldn't connect. Check your connection and try again."))
         withAnimation(Motion.bouncy) { notice = Notice(text: text) }
     }
 
@@ -343,6 +345,8 @@ extension AppModel {
         history = []
         likedMe = []
         matches = []
+        likesLoad = .loading
+        matchesLoad = .loading
         likesLeft = nil
         notice = nil
     }

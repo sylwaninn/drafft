@@ -249,7 +249,8 @@ struct ChatView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(DS.Palette.canvasSoft)
-        .blurredNavigationEdge()
+        .toolbarVisibility(.hidden, for: .navigationBar)
+        .topBar { chatBar(convo) }
         .bottomBar {
             Composer(text: $draft, onSend: { content in
                 scroll.stick = true // your own message always brings you to the end
@@ -260,57 +261,6 @@ struct ChatView: View {
             }, onCancelReply: {
                 withAnimation(Motion.snappy) { replyingTo = nil }
             })
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Button { showProfile = true } label: {
-                    HStack(spacing: DS.Space.sm) {
-                        Avatar(name: convo.profile.portrait, size: 32)
-                        // No capsule behind: the bar's own blur is the only backdrop, so the text
-                        // uses the page's inks (ink, then body at 4.5:1 on sage), not system greys.
-                        VStack(alignment: .leading, spacing: 0) {
-                            // Long names (Alexandre-Maxime) shrink a little, then end with "…":
-                            // the header never pushes the bar's buttons away.
-                            Text(convo.profile.name).font(.headline).foregroundStyle(DS.Palette.ink)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
-                                // design-lint: allow truncation - a person's name (content, not copy) after scaling down
-                                .truncationMode(.tail)
-                            PresenceLine(convo: convo)
-                        }
-                    }
-                    .frame(maxWidth: 210, alignment: .leading)
-                    .padding(.vertical, 4)
-                    .contentShape(.rect)
-                }
-                // Plain: a bar button paints its label in the accent tint, over the styles above.
-                .buttonStyle(.plain)
-                .accessibilityLabel("View \(convo.profile.name)'s profile")
-            }
-            // iOS 26 puts bar items on a shared glass pill: not this one.
-            .sharedBackgroundVisibility(.hidden)
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Propose a session", image: .icon("calendar-add")) { proposing = true }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu("More", image: .icon("menu-dots")) {
-                    // Profile and sessions are one tap away in the bar: this is about the chat, then
-                    // safety, apart.
-                    Section {
-                        Button(convo.muted ? "Unmute notifications" : "Mute notifications",
-                               image: .icon(convo.muted ? "bell" : "bell-off")) {
-                            app.toggleMute(conversationID)
-                        }
-                        Button("Mark as unread", image: .icon("letter-unread")) { markUnread() }
-                    }
-                    Section {
-                        Button("Report or block", image: .icon("shield-warning"), role: .destructive) { showSafety = true }
-                    }
-                }
-                // Neutral icons: the menu doesn't take the accent tint.
-                .tint(DS.Palette.ink)
-            }
         }
         // The tab bar is hidden by the stack that pushes the chat (see ConversationsView), so it
         // comes back the moment Back starts.
@@ -356,6 +306,100 @@ struct ChatView: View {
         }
         .task(id: focusSession) { await reveal(convo, with: reader) }
         }
+    }
+
+    /// The overflow menu: vertical dots, neutral. Profile and sessions are one tap away in the bar:
+    /// this is about the chat, then safety, apart.
+    private func moreMenu(_ convo: Conversation) -> some View {
+        Menu {
+            Section {
+                Button(convo.muted ? "Unmute notifications" : "Mute notifications",
+                       image: .icon(convo.muted ? "bell" : "bell-off")) {
+                    app.toggleMute(conversationID)
+                }
+                Button("Mark as unread", image: .icon("letter-unread")) { markUnread() }
+            }
+            Section {
+                Button("Report or block", image: .icon("shield-warning"), role: .destructive) { showSafety = true }
+            }
+        } label: {
+            // A drawn image, never a titled Label: no text can show, VoiceOver reads the label below.
+            Image("menu-dots-vertical")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(DS.Palette.ink)
+                .frame(width: 40, height: 40)
+                .glassEffect(.regular, in: .circle)
+                .frame(width: Self.barControl, height: Self.barControl)
+                .contentShape(.circle)
+        }
+        .menuStyle(.button)
+        .menuIndicator(.hidden)
+        .buttonStyle(.plain)
+        // Neutral icon: the menu doesn't take the accent tint.
+        .tint(DS.Palette.ink)
+        .accessibilityLabel("More")
+    }
+
+    /// "Typing…" or "Active now" for VoiceOver on the header (the thread shows the typing dots).
+    private func presence(_ convo: Conversation) -> Text {
+        if convo.isTyping { return Text("Typing…") }
+        return convo.online ? Text("Active now") : Text(verbatim: "")
+    }
+
+    /// Header controls are 44 pt discs, as iOS 26 draws Back.
+    static let barControl: CGFloat = 44
+
+    /// The chat's own header, plain views pinned by `topBar` (the system bar is hidden): native bar
+    /// items didn't render custom icons reliably on device. Back, their avatar and first name (the
+    /// name takes the room left and truncates only if it can't fit), then the two actions.
+    private func chatBar(_ convo: Conversation) -> some View {
+        HStack(spacing: DS.Space.sm) {
+            Button {
+                Haptics.tap()
+                dismissChat()
+            } label: {
+                Image("alt-arrow-left")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(DS.Palette.ink)
+                    .frame(width: 40, height: 40)
+                    .glassEffect(.regular, in: .circle)
+                    .frame(width: Self.barControl, height: Self.barControl)
+                    .contentShape(.circle)
+            }
+            .buttonStyle(PressScaleStyle())
+            .accessibilityLabel("Back")
+
+            // WhatsApp's header: their avatar right after Back, the first name beside it. Tapping
+            // either opens their profile.
+            Button { showProfile = true } label: {
+                ChatTitle(convo: convo)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("View \(convo.profile.name)'s profile")
+            .accessibilityValue(presence(convo))
+
+            // Proposing a session is the chat's main action: a solid accent disc.
+            Button {
+                Haptics.tap()
+                proposing = true
+            } label: {
+                Image("calendar-add")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(DS.Palette.onLime)
+                    .frame(width: Self.barControl, height: Self.barControl)
+                    .background(DS.Palette.lime, in: .circle)
+                    .contentShape(.circle)
+            }
+            .buttonStyle(PressScaleStyle())
+            .accessibilityLabel("Propose a session")
+
+            moreMenu(convo)
+        }
+        .padding(.horizontal, DS.Space.lg)
+        .padding(.top, DS.Space.xs)
+        .padding(.bottom, DS.Space.sm)
     }
 
     private static let bottomID = "chat-bottom"
@@ -484,6 +528,30 @@ private struct JumpToLatestButton: View {
 }
 
 // MARK: - Header
+
+/// The bar's title, WhatsApp style: their avatar (Back's size) and the first name beside it, with
+/// "Typing…" or "Active now" under the name. The name is the one header text that may end with
+/// "…": it takes the room up to the trailing buttons, never more (DESIGN.md, Headers).
+private struct ChatTitle: View {
+    let convo: Conversation
+
+    var body: some View {
+        HStack(spacing: DS.Space.sm) {
+            Avatar(name: convo.profile.portrait, size: ChatView.barControl)
+            VStack(alignment: .leading, spacing: 0) {
+                // No capsule behind: the bar's own blur is the only backdrop, so the text uses the
+                // page's inks (ink, then body at 4.5:1 on sage), not system greys.
+                Text(convo.profile.name)
+                    .font(.headline)
+                    .foregroundStyle(DS.Palette.ink)
+                    .lineLimit(1)
+                    // design-lint: allow truncation - the chat header name, asked for by the user (DESIGN.md, Headers)
+                    .truncationMode(.tail)
+                PresenceLine(convo: convo)
+            }
+        }
+    }
+}
 
 /// Under the name in the bar: "Typing…", or "Active now" while they have the app open (nothing otherwise).
 private struct PresenceLine: View {

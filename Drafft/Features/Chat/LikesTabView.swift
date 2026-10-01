@@ -22,7 +22,7 @@ struct LikesTabView: View {
                 Group {
                     if app.isPremium {
                         if app.likedMe.isEmpty {
-                            emptyState
+                            emptyOrLoading
                         } else {
                             LikesGrid(items: app.likedMe, visitKey: "likes-tab") {
                                 LikesBanner.tempo(count: app.likedMe.count)
@@ -38,7 +38,7 @@ struct LikesTabView: View {
                             }
                         }
                     } else if app.blurredLikes.isEmpty {
-                        emptyState
+                        emptyOrLoading
                     } else {
                         LikesGrid(items: app.blurredLikes, visitKey: "likes-tab") {
                             LikesBanner.locked(count: app.blurredLikes.count)
@@ -112,6 +112,24 @@ struct LikesTabView: View {
         .padding(.horizontal, DS.Space.lg)
         .padding(.vertical, DS.Space.md)
         .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    /// Nobody yet only once the list was read: before, a spinner; after a failed first read, a retry.
+    @ViewBuilder
+    private var emptyOrLoading: some View {
+        switch app.likesLoad {
+        case .loaded: emptyState
+        case .failed(let offline):
+            ListLoadFailureView(art: .likes, title: "Your likes couldn't load", offline: offline) {
+                app.likesLoad = .loading
+                Task { await app.loadLikes() }
+            }
+            .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
+        case .loading:
+            ProgressView()
+                .frame(maxWidth: .infinity)
+                .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
+        }
     }
 
     private var emptyState: some View {

@@ -187,7 +187,7 @@ struct PaywallView: View {
             }
         } else if store.state == .failed {
             VStack(alignment: .leading, spacing: DS.Space.md) {
-                Text("Plans couldn't load. Check your connection and try again.")
+                Text("Options couldn't load. Check your connection and try again.")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.75))
                     .fixedSize(horizontal: false, vertical: true)
@@ -203,7 +203,7 @@ struct PaywallView: View {
             ProgressView()
                 .tint(.white)
                 .frame(maxWidth: .infinity, minHeight: 120)
-                .accessibilityLabel("Loading plans")
+                .accessibilityLabel("Loading options")
         }
     }
 
@@ -281,7 +281,7 @@ struct PaywallView: View {
             // Why it's disabled, only while it is: no empty line under the button once a plan
             // is picked.
             if plan == nil {
-                Text("Pick a plan to continue.")
+                Text("Pick an option to continue.")
                     .font(.footnote)
                     .foregroundStyle(.white.opacity(0.7))
                     .multilineTextAlignment(.center)
@@ -348,6 +348,13 @@ struct PaywallView: View {
         withAnimation(Motion.snappy) { notice = text }
     }
 
+    /// A restore that failed: the account not linked (nothing was asked of the App Store), or the
+    /// App Store itself.
+    static func restoreFailure(_ error: Error) -> String {
+        if case Store.StoreError.notLinked = error { return L("Couldn't connect. Check your connection and try again.") }
+        return L("Couldn't reach the App Store. Try again.")
+    }
+
     /// Restores from the App Store, for the signed-in account. Unlocks once the server has drafft
     /// tempo on the account's wallet.
     private func restore() {
@@ -371,7 +378,7 @@ struct PaywallView: View {
                 }
             } catch {
                 Haptics.warning()
-                say(L("Couldn't reach the App Store. Try again."))
+                say(Self.restoreFailure(error))
             }
         }
     }
@@ -401,8 +408,9 @@ struct PaywallView: View {
                     receipt = PurchaseReceipt(item: .tempo(sub))
                 }
             } catch {
+                guard let problem = Store.PurchaseProblem(error) else { return }
                 Haptics.warning()
-                say(L("The purchase didn't go through. You haven't been charged."))
+                say(problem.message(restorable: true))
             }
         }
     }
@@ -419,7 +427,11 @@ struct SubscriptionSheet: View {
     @Environment(\.openURL) private var openURL
     @State private var managing = false
     @State private var restoring = false
-    @State private var restoreResult: String?
+    /// What Restore found, and whether it's good news (a failure or nothing active is a warning).
+    @State private var restoreResult: (text: String, ok: Bool)?
+    /// Restore found no active subscription: the page stays to say so, and the drafft tempo row
+    /// goes once it's closed.
+    @State private var endedOnClose = false
 
     private var perks: [(icon: String, title: String)] { [
         ("undo-left", L("Undo your last swipe")),
@@ -457,6 +469,7 @@ struct SubscriptionSheet: View {
             .onChange(of: managing) { _, open in if !open { Task { await app.refreshSubscription(apply: apply) } } }
         }
         .presentationDragIndicator(.visible)
+        .onDisappear { if endedOnClose { withAnimation(Motion.snappy) { app.subscription = nil } } }
     }
 
     // MARK: Blocks
@@ -532,20 +545,14 @@ struct SubscriptionSheet: View {
 
     private func billing(_ sub: TempoSubscription) -> some View {
         SheetBlock(title: L("Billing")) {
-            Text(branded: L("Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change your plan or cancel, go to your App Store subscriptions. Deleting drafft doesn't cancel it."),
+            Text(branded: L("""
+                Your subscription is billed through your Apple Account and renews automatically unless you cancel it \
+                at least 24 hours before the end of the current period. To change or cancel it, go to your App Store \
+                subscriptions. Deleting drafft doesn't cancel it.
+                """),
                  font: .subheadline)
                 .foregroundStyle(DS.Palette.body)
                 .fixedSize(horizontal: false, vertical: true)
-            Button {
-                openURL(URL(string: "https://apps.apple.com/account/subscriptions")!)
-            } label: {
-                Label("Open App Store subscriptions", image: "arrow-right-up")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(DS.Palette.accentInk)
-                    .frame(minHeight: 44)
-                    .contentShape(.rect)
-            }
-            .buttonStyle(.plain)
             // One row while it fits; otherwise restore on its own line above the two documents.
             let restoreLink = Button(action: restore) {
                 Text("Restore purchases")
@@ -572,9 +579,10 @@ struct SubscriptionSheet: View {
             .font(.footnote.weight(.semibold))
             .foregroundStyle(DS.Palette.body)
             if let restoreResult {
-                Label(restoreResult, image: "check-circle")
+                Label(restoreResult.text, image: restoreResult.ok ? "check-circle" : "info-circle")
                     .font(.footnote.weight(.semibold))
-                    .foregroundStyle(DS.Palette.positiveDeep)
+                    .foregroundStyle(restoreResult.ok ? DS.Palette.positiveDeep : DS.Palette.negative)
+                    .fixedSize(horizontal: false, vertical: true)
                     .transition(.opacity)
             }
         }
@@ -589,7 +597,7 @@ struct SubscriptionSheet: View {
                 Text("Manage subscription")
             }
             .buttonStyle(.drafftDark)
-            Text("Change plan or cancel in Apple's subscription settings.")
+            Text("Change or cancel it in Apple's subscription settings.")
                 .font(.footnote)
                 .foregroundStyle(DS.Palette.body)
                 .multilineTextAlignment(.center)
@@ -608,13 +616,19 @@ struct SubscriptionSheet: View {
             defer { restoring = false }
             do {
                 let info = try await Store.shared.restore()
-                apply(Store.shared.subscription(from: info))
                 await app.loadWallet()
+                guard let sub = Store.shared.subscription(from: info) else {
+                    Haptics.warning()
+                    endedOnClose = true
+                    withAnimation(Motion.snappy) { restoreResult = (L("No drafft tempo purchase on this Apple ID."), false) }
+                    return
+                }
+                apply(sub)
                 Haptics.success()
-                withAnimation(Motion.snappy) { restoreResult = L("Your subscription is up to date.") }
+                withAnimation(Motion.snappy) { restoreResult = (L("Your subscription is up to date."), true) }
             } catch {
                 Haptics.warning()
-                withAnimation(Motion.snappy) { restoreResult = L("Couldn't reach the App Store. Try again.") }
+                withAnimation(Motion.snappy) { restoreResult = (PaywallView.restoreFailure(error), false) }
             }
         }
     }
@@ -629,6 +643,8 @@ struct SubscriptionSheet: View {
                 withAnimation(Motion.snappy) { app.subscription = nil }
             }
         } else {
+            // Active again (a later Restore, back from Apple's sheet): closing keeps the row.
+            endedOnClose = false
             withAnimation(Motion.snappy) { app.subscription = sub }
         }
     }
