@@ -3994,6 +3994,52 @@
         }
       }
     },
+    "A photo or video couldn't be opened. Pick it again, or check your connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Foto oder Video ließ sich nicht öffnen. Wähl es noch mal aus oder prüf deine Verbindung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A photo or video couldn't be opened. Pick it again, or check your connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido abrir una foto o un vídeo. Vuelve a elegirlo o revisa tu conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'ouvrir une photo ou une vidéo. Choisis-la de nouveau ou vérifie ta connexion."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile aprire una foto o un video. Sceglilo di nuovo o controlla la connessione."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een foto of video kon niet worden geopend. Kies hem opnieuw of controleer je verbinding."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir uma foto ou um vídeo. Escolhe-o de novo ou verifica a tua ligação."
+          }
+        }
+      }
+    },
     "A photo wasn't approved" : {
       "localizations" : {
         "de" : {
@@ -14285,6 +14331,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Este número não pode receber códigos. Usa um número de telemóvel."
+          }
+        }
+      }
+    },
+    "This photo couldn't be opened. Pick another one, or check your connection." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Foto ließ sich nicht öffnen. Wähl ein anderes oder prüf deine Verbindung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This photo couldn't be opened. Pick another one, or check your connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido abrir esta foto. Elige otra o revisa tu conexión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'ouvrir cette photo. Choisis-en une autre ou vérifie ta connexion."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile aprire questa foto. Scegline un'altra o controlla la connessione."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deze foto kon niet worden geopend. Kies een andere of controleer je verbinding."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível abrir esta foto. Escolhe outra ou verifica a tua ligação."
+          }
+        }
+      }
+    },
+    "This photo is no longer there. Remove it, then add it again." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Foto ist nicht mehr da. Entfern es und füg es dann noch mal hinzu."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This photo is no longer there. Remove it, then add it again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta foto ya no está. Quítala y vuelve a añadirla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette photo n'existe plus. Retire-la, puis ajoute-la de nouveau."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa foto non c'è più. Toglila, poi aggiungila di nuovo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deze foto is er niet meer. Verwijder hem en voeg hem daarna opnieuw toe."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta foto já não existe. Remove-a e depois adiciona-a de novo."
           }
         }
       }
@@ -57342,6 +57480,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "tu@exemplo.com"
+          }
+        }
+      }
+    },
+    "Your voice intro couldn't be sent, so nothing was saved. Record it again, or remove it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Sprach-Intro wurde nicht gesendet, deshalb wurde nichts gespeichert. Nimm es neu auf oder entfern es."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your voice intro couldn't be sent, so nothing was saved. Record it again, or remove it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido enviar tu presentación de voz, así que no se ha guardado nada. Grábala de nuevo o quítala."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta présentation vocale n'est pas partie, rien n'a donc été enregistré. Enregistre-la de nouveau ou retire-la."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile inviare la tua presentazione vocale, quindi non è stato salvato nulla. Registrala di nuovo o toglila."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je spraakintro kon niet worden verstuurd, dus er is niets opgeslagen. Neem hem opnieuw op of verwijder hem."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar a tua apresentação de voz, por isso nada foi guardado. Grava-a de novo ou remove-a."
           }
         }
       }
