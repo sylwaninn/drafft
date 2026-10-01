@@ -53,10 +53,12 @@ extension AppModel {
     }
 
     /// Reads a batch. `.restart` drops the deck on screen first (new filters or preferences): a card
-    /// that doesn't fit them any more never shows. A `.refresh` while one runs waits for it.
-    func loadDeck(_ mode: DeckLoad) {
+    /// that doesn't fit them any more never shows. A `.refresh` while one runs waits for it. Any read
+    /// but one asked by a swipe may find new people again (`DiscoveryState.exhausted`).
+    func loadDeck(_ mode: DeckLoad, afterSwipe: Bool = false) {
         guard phase == .main, !profilePaused else { return }
         if mode == .refresh, discovery.load != nil { return }
+        if !afterSwipe { discovery.exhausted = false }
         discovery.load?.cancel()
         discovery.generation += 1
         let generation = discovery.generation
@@ -109,6 +111,9 @@ extension AppModel {
             let hidden = discovery.swiped.union(blocked.map(\.id)).union(matches.map(\.profile.id))
             let fresh = cards.filter { !hidden.contains($0.id) }
             let byID = Dictionary(fresh.map { ($0.id, $0.profile(mediaBase: MediaURL.saved)) }) { a, _ in a }
+            let held = Set(queue.map(\.id))
+            // Fewer new people than a batch: the pool is running out, swipes stop asking until something else does.
+            discovery.exhausted = fresh.filter { !held.contains($0.id) }.count < Self.deckBatch
             let order = DeckMerge.merge(current: queue.map(\.id), fresh: fresh.map(\.id), keep: Self.deckKeep,
                                         exclude: hidden)
             // The fresh copy of each card (new links, a changed profile), in the merged order.
@@ -167,7 +172,8 @@ extension AppModel {
         }
         saveDeck(filters)
         discovery.pace.swiped(at: Self.seconds(ContinuousClock.now - Self.clockStart))
-        if queue.count <= discovery.pace.lowWater { loadDeck(.refresh) }
+        // Not when the last read had nothing new to add: no read per swipe at the end of a small pool.
+        if queue.count <= discovery.pace.lowWater, !discovery.exhausted { loadDeck(.refresh, afterSwipe: true) }
         // The last card went while the next batch is on its way: that's loading, not "no one new".
         if queue.isEmpty, discovery.load != nil { deckState = .loading }
 
@@ -389,6 +395,9 @@ struct DiscoveryState {
     var pace = DeckPace()
     /// Swipes sent but not answered yet.
     var pendingSwipes = 0
+    /// The last read brought fewer new people than a batch: swipes don't ask again until another read
+    /// (back at the front, the channel rejoined, new filters) does.
+    var exhausted = false
 }
 
 /// The deck as kept on this iPhone: the filters it was read with and the cards' own bytes.
