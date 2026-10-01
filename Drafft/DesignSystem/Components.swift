@@ -264,50 +264,6 @@ struct Photo: View {
     }
 }
 
-/// A photo on the server (`http…`) or picked on this phone (`/…`), through `Images`: the copy the frame
-/// needs, decoded in the background at the frame's size, shared downloads, capped caches. A copy already
-/// in memory shows on the first frame; otherwise its ThumbHash preview (`MediaPreviews`), or a sage tile,
-/// stands in until it's there. On a slow connection a large frame first shows a small copy
-/// (`Images.preview`), sharp enough to read the photo, while the right one arrives.
-private struct LoadedPhoto: View {
-    let name: String
-    /// Blur radius as a share of the photo's shorter side (0: sharp).
-    var blur: CGFloat = 0
-    var priority: ImageRequest.Priority = .normal
-    @Environment(\.displayScale) private var scale
-    /// Decoded once per view (a few microseconds, then cached by key).
-    private var preview: UIImage? { MediaPreviews.image(for: name) }
-
-    var body: some View {
-        GeometryReader { geo in
-            LazyImage(request: Images.request(name, points: geo.size, scale: scale, blur: blur),
-                      transaction: Transaction(animation: .easeOut(duration: 0.2))) { state in
-                ZStack {
-                    Rectangle().fill(DS.Palette.canvasSoft)
-                    if state.image == nil, let preview {
-                        Image(uiImage: preview).resizable().interpolation(.medium).scaledToFill()
-                    }
-                    if state.image == nil, blur == 0, min(geo.size.width, geo.size.height) >= 200,
-                       NetworkQuality.shared.isLimited {
-                        LazyImage(request: Images.preview(name, points: geo.size, scale: scale)) { small in
-                            if let image = small.image { image.resizable().scaledToFill() }
-                        }
-                    }
-                    if let image = state.image {
-                        image.resizable().scaledToFill().transition(.opacity)
-                    }
-                }
-            }
-            .priority(priority)
-            #if DECK_PHOTO_METRICS
-            .onCompletion { DeckPhotoMetrics.finished(name, $0) }
-            .onAppear { DeckPhotoMetrics.appeared(name) }
-            #endif
-            .frame(width: geo.size.width, height: geo.size.height)
-        }
-    }
-}
-
 /// Photos and video posters sent in chat (kept as Data on the message): their size is read from
 /// the header, without decoding, and the pixels are decoded in the background at the bubble's size.
 enum MessageImage {
