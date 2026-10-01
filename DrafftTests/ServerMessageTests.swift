@@ -13,6 +13,15 @@ final class ServerMessageTests: XCTestCase {
         XCTAssertEqual(ServerMessage.text(forCode: "invalid_target"), ServerMessage.text(forCode: "not_eligible"))
     }
 
+    func testConnectionAdviceOnlyWhenOffline() {
+        let offline = "offline"
+        XCTAssertEqual(ServerMessage.text(for: URLError(.notConnectedToInternet), offline: offline), offline)
+        XCTAssertFalse(ServerMessage.isOffline(URLError(.cancelled)))
+        // The server answered: its words or the generic line, never connection advice.
+        XCTAssertEqual(ServerMessage.text(for: Backend.BackendError.http(500, "boom"), offline: offline), ServerMessage.generic)
+        XCTAssertTrue(Backend.BackendError.http(401, "unauthenticated").isSignedOut)
+    }
+
     func testUnknownCodeHasNoWords() {
         // The caller then shows its own line: accept_terms' own codes are handled by TermsConsent.
         XCTAssertNil(ServerMessage.text(forCode: "invalid_terms_version"))
