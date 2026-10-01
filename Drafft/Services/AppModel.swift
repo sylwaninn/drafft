@@ -92,6 +92,10 @@ final class AppModel {
     /// People you blocked: gone from Discover, Likes and Chats until you unblock them.
     var blocked: [Profile] = []
     var blockedCount: Int { blocked.count }
+    /// Blocks and unblocks on their way to the server (`SafetyOutbox`): the send running, the next try.
+    @ObservationIgnored var safetySending: Task<Void, Never>?
+    @ObservationIgnored var safetyRetry: Task<Void, Never>?
+    @ObservationIgnored var safetyAttempts = 0
     /// Data export: requested here, sent by email as a download link (server side).
     var dataExportRequestedAt: Date?
     /// Whether this account's consent to the current terms and to the use of its sensitive data is

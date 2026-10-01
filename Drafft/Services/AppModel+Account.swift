@@ -218,6 +218,9 @@ extension AppModel {
         SessionCalendar.shared.forgetAll()
         SessionStore.shared.reset()
         blocked = []
+        // What's still waiting stays on this iPhone for the account's next sign-in (SafetyOutbox).
+        safetyRetry?.cancel()
+        safetyAttempts = 0
         dataExportRequestedAt = nil
         termsConsent = .unknown
         filters = DiscoverFilters()

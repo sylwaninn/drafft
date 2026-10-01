@@ -86,6 +86,7 @@ struct BlockedPeopleSheet: View {
                 }
             }
         }
+        .task { await app.loadBlocked() }
         .drafftConfirm(isPresented: Binding(get: { pending != nil }, set: { if !$0 { pending = nil } }),
                        icon: "user-check",
                        title: pending.map { L("Unblock \($0.name)?") } ?? L("Unblock?"),
@@ -105,10 +106,15 @@ struct BlockedPeopleSheet: View {
 
     private func row(_ person: Profile) -> some View {
         HStack(spacing: DS.Space.md) {
-            Photo(name: person.portrait, side: 36)
-                .frame(width: 36, height: 36)
-                .clipShape(.circle)
-                .accessibilityHidden(true)
+            // Listed by the server after a relaunch: a name only, their photo isn't yours to see any more.
+            if person.portrait.isEmpty {
+                RowBadge(symbol: "user-block")
+            } else {
+                Photo(name: person.portrait, side: 36)
+                    .frame(width: 36, height: 36)
+                    .clipShape(.circle)
+                    .accessibilityHidden(true)
+            }
             Text(person.name)
                 .font(.body.weight(.semibold))
                 .foregroundStyle(DS.Palette.ink)
