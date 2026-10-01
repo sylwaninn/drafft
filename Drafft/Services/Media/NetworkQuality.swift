@@ -22,7 +22,10 @@ final class NetworkQuality: @unchecked Sendable {
     /// Bytes per second, averaged over recent photo downloads.
     private var speed: Double?
     private var slow = false
-    private var limitedNow = false
+    /// Unknown at launch: limited until measured.
+    private var limitedNow = true
+    /// Observers are told in order, one change after the other.
+    private let notifications = DispatchQueue(label: "so.drafft.network-quality.notify")
     private var observers: [@Sendable (Bool) -> Void] = []
 
     private static let slowBelow = 200_000.0
@@ -65,30 +68,24 @@ final class NetworkQuality: @unchecked Sendable {
         observer(now)
     }
 
-    /// Wraps a photo download's callbacks to time it: once, a second in (a slow line shows within the
-    /// first download, finished or not), or at its end for one shorter than that and of some size (a small
-    /// file is all latency, which says nothing of the line).
+    /// Wraps a photo download's callbacks to time it, from its first byte (renewing the link and the wait
+    /// for the server aren't transfer time): once, a second after that byte (a slow line shows within the
+    /// first download, finished or not), or at a successful end for a shorter one of some size. A failed or
+    /// cancelled download says nothing of the line, nor do a few kilobytes.
     func measure(
         _ url: URL?,
         _ didReceiveData: @escaping @Sendable (Data, URLResponse) -> Void,
         _ completion: @escaping @Sendable (Error?) -> Void
     ) -> (@Sendable (Data, URLResponse) -> Void, @Sendable (Error?) -> Void) {
         guard let url, !url.isFileURL else { return (didReceiveData, completion) }
-        let start = ContinuousClock.now
-        let bytes = Counter()
-        let seconds: @Sendable () -> Double = {
-            let elapsed = ContinuousClock.now - start
-            return Double(elapsed.components.seconds) + Double(elapsed.components.attoseconds) / 1e18
-        }
+        let transfer = Counter()
         return ({ [weak self] data, response in
-            let total = bytes.add(data.count)
-            let now = seconds()
-            if now >= 1, bytes.claim() { self?.record(Double(total) / now) }
+            let (total, seconds) = transfer.add(data.count)
+            if seconds >= 1, total >= 32_000, transfer.claim() { self?.record(Double(total) / seconds) }
             didReceiveData(data, response)
         }, { [weak self] error in
-            let now = seconds()
-            let total = bytes.value
-            if now >= 1 || (error == nil && total >= 60_000), now > 0, bytes.claim() { self?.record(Double(total) / now) }
+            let (total, seconds) = transfer.now
+            if error == nil, total >= 60_000, seconds > 0, transfer.claim() { self?.record(Double(total) / seconds) }
             completion(error)
         })
     }
@@ -108,16 +105,32 @@ final class NetworkQuality: @unchecked Sendable {
         let notify = limited != limitedNow ? observers : []
         limitedNow = limited
         lock.unlock()
-        for observer in notify { observer(limited) }
+        guard !notify.isEmpty else { return }
+        notifications.async { for observer in notify { observer(limited) } }
     }
 
-    /// A download's bytes so far, and whether its speed was recorded (once).
+    /// A download's bytes since its first one, the time since then, and whether its speed was recorded (once).
     private final class Counter: @unchecked Sendable {
         private let lock = NSLock()
         private var total = 0
+        private var first: ContinuousClock.Instant?
         private var recorded = false
-        func add(_ n: Int) -> Int { lock.lock(); defer { lock.unlock() }; total += n; return total }
-        var value: Int { lock.lock(); defer { lock.unlock() }; return total }
+
+        /// Adds a chunk: the bytes after the first chunk, and the seconds since it arrived.
+        func add(_ n: Int) -> (Int, Double) {
+            lock.lock(); defer { lock.unlock() }
+            if first == nil { first = .now } else { total += n }
+            return (total, elapsed)
+        }
+
+        var now: (Int, Double) { lock.lock(); defer { lock.unlock() }; return (total, elapsed) }
+
+        private var elapsed: Double {
+            guard let first else { return 0 }
+            let d = ContinuousClock.now - first
+            return Double(d.components.seconds) + Double(d.components.attoseconds) / 1e18
+        }
+
         /// True the first time only.
         func claim() -> Bool {
             lock.lock(); defer { lock.unlock() }
