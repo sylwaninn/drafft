@@ -69,7 +69,10 @@ extension VerificationError {
 
     init(_ error: Error) {
         if error is URLError { self = .network; return }
-        if (error as? AuthError)?.errorCode == .phoneExists { self = .numberTaken; return }
+        if let e = error as? AuthError, e.errorCode == .phoneExists || AuthProblem.hint(of: e) == "phone_taken" {
+            self = .numberTaken
+            return
+        }
         if case let Backend.BackendError.http(_, code) = error {
             self = Self.serverCodes[code] ?? .sendFailed
             return
@@ -228,6 +231,16 @@ final class PhoneVerificationModel {
         } catch VerificationError.expired {
             error = L("This code has expired. Send a new one.")
             code = ""
+            Haptics.warning()
+        } catch VerificationError.numberTaken {
+            // Verified on another account meanwhile: no code fixes that, the number has to change.
+            changeNumber()
+            error = VerificationError.numberTaken.message
+            Haptics.warning()
+        } catch let failure as VerificationError where failure != .wrongCode {
+            // Not the code's fault (offline, a server error): no try used up, the same code can go again.
+            error = failure == .network ? failure.message : L("Something went wrong. Try again in a moment.")
+            needsHelp = failure != .network
             Haptics.warning()
         } catch {
             attemptsLeft -= 1
