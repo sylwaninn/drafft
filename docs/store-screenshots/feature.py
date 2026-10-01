@@ -32,10 +32,10 @@ T4 = {"en": "Dating, with a start time.", "fr": "Des rencontres avec une heure d
       "de": "Dating mit Startzeit.", "it": "Appuntamenti con un orario di partenza.", "pt": "Encontros com hora de partida.",
       "nl": "Daten met een starttijd."}
 # WORDING.md §7.2, the Line (2026-10-01): says "dating" and the shared rhythm at a glance, neutral wording.
-T0 = {"en": "Meet singles who share your rhythm.", "fr": "Rencontre des célibataires qui partagent ton rythme.",
-      "es": "Conoce a gente soltera que comparte tu ritmo.", "de": "Triff Singles, die deinen Rhythmus teilen.",
-      "it": "Incontra single che condividono il tuo ritmo.", "pt": "Conhece pessoas solteiras que partilham o teu ritmo.",
-      "nl": "Ontmoet singles die jouw ritme delen."}
+T0 = {"en": "Meet someone who gets your rhythm.", "fr": "Rencontre quelqu'un qui comprend ton rythme.",
+      "es": "Conoce a alguien que entienda tu ritmo.", "de": "Triff jemanden, der deinen Rhythmus versteht.",
+      "it": "Incontra qualcuno che capisce il tuo ritmo.", "pt": "Conhece alguém que perceba o teu ritmo.",
+      "nl": "Ontmoet iemand die jouw ritme begrijpt."}
 DAY = {"en": "Saturday", "fr": "Samedi", "es": "Sábado", "de": "Samstag", "it": "Sabato", "pt": "Sábado", "nl": "Zaterdag"}
 
 PAGE, NIGHT, WHITE, GRAPHITE = C.PAGE, C.NIGHT, C.WHITE, C.GRAPHITE

@@ -15069,48 +15069,48 @@
         }
       }
     },
-    "Meet singles who share your rhythm." : {
+    "Meet someone who gets your rhythm." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Triff Singles, die deinen Rhythmus teilen."
+            "value" : "Triff jemanden, der deinen Rhythmus versteht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conoce a gente soltera que comparte tu ritmo."
+            "value" : "Conoce a alguien que entienda tu ritmo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rencontre des célibataires qui partagent ton rythme."
+            "value" : "Rencontre quelqu'un qui comprend ton rythme."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incontra single che condividono il tuo ritmo."
+            "value" : "Incontra qualcuno che capisce il tuo ritmo."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ontmoet singles die jouw ritme delen."
+            "value" : "Ontmoet iemand die jouw ritme begrijpt."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conhece pessoas solteiras que partilham o teu ritmo."
+            "value" : "Conhece alguém que perceba o teu ritmo."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meet singles who share your rhythm."
+            "value" : "Meet someone who gets your rhythm."
           }
         }
       }

@@ -63,7 +63,7 @@ struct WelcomeView: View {
 
     private var panel: some View {
         VStack(alignment: .leading, spacing: DS.Space.xl) {
-            Text("Meet singles who share your rhythm.")
+            Text("Meet someone who gets your rhythm.")
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)

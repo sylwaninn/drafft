@@ -8,7 +8,7 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 
 - **Recherche de marque** « Meet me on the start line » / « Rendez-vous au départ » (INPI, EUIPO,
   classe 45) : seulement si la phrase sert en campagne. Depuis le 30/09/2026, la ligne principale est
-  « Meet singles who share your rhythm » / « Rencontre des célibataires qui partagent ton rythme »
+  « Meet someone who gets your rhythm » / « Rencontre quelqu'un qui comprend ton rythme »
   (WORDING §7.2, jeu de quatre formules validé le 01/10/2026).
 
 ## Décisions produit
