@@ -324,11 +324,7 @@ struct SessionSafetySheet: View {
             .background(DS.Palette.canvasSoft)
             .navigationTitle("Meet safely")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", image: .icon("close")) { dismiss() }
-                }
-            }
+            // No close button: "Got it" is the one way out (and the swipe down), never both.
             .blurredNavigationEdge()
             .bottomBar {
                 Button("Got it") { dismiss() }

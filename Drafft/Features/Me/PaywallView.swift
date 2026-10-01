@@ -553,16 +553,6 @@ struct SubscriptionSheet: View {
                  font: .subheadline)
                 .foregroundStyle(DS.Palette.body)
                 .fixedSize(horizontal: false, vertical: true)
-            Button {
-                openURL(URL(string: "https://apps.apple.com/account/subscriptions")!)
-            } label: {
-                Label("Open App Store subscriptions", image: "arrow-right-up")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(DS.Palette.accentInk)
-                    .frame(minHeight: 44)
-                    .contentShape(.rect)
-            }
-            .buttonStyle(.plain)
             // One row while it fits; otherwise restore on its own line above the two documents.
             let restoreLink = Button(action: restore) {
                 Text("Restore purchases")

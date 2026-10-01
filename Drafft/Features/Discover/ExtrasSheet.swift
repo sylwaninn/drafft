@@ -192,22 +192,31 @@ struct ExtrasSheet: View {
 
     // MARK: Hero
 
+    /// Likes with drafft tempo: nothing to buy, the pinned "Keep swiping" only closes the sheet.
+    private var keepsSwipingOnly: Bool { tab == .likes && app.isPremium }
+
+    private var closeButton: some View {
+        Button { dismiss() } label: {
+            Image("close")
+                .font(.body.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 40, height: 40)
+                .background(.white.opacity(0.14), in: .circle)
+                .frame(width: 44, height: 44)
+        }
+        .buttonStyle(PressScaleStyle())
+        .accessibilityLabel("Close")
+    }
+
     /// What the extra does, shown literally: your card rising out of the pack to the front.
     private var hero: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
             HStack(alignment: .top) {
                 inventory
                 Spacer()
-                Button { dismiss() } label: {
-                    Image("close")
-                        .font(.body.weight(.bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 40, height: 40)
-                        .background(.white.opacity(0.14), in: .circle)
-                        .frame(width: 44, height: 44)
-                }
-                .buttonStyle(PressScaleStyle())
-                .accessibilityLabel("Close")
+                // Not when the only action already just closes ("Keep swiping"): never both. The
+                // space stays so the hero doesn't move.
+                if keepsSwipingOnly { Color.clear.frame(width: 44, height: 44) } else { closeButton }
             }
 
             PackFan(lifted: lifted) { badge }

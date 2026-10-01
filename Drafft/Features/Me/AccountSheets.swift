@@ -14,6 +14,9 @@ struct AccountSheet<Content: View>: View {
     var error: String?
     /// With an error, a Get help link on this topic (where the person can't be left stuck).
     var helpTopic: String?
+    /// Done: the pinned action only closes the sheet now ("Done"), so it is the one way out and
+    /// the close button goes (never two controls that do the same thing).
+    var finished = false
     /// Something typed that closing would lose: Close asks before discarding it.
     var hasChanges = false
     let action: () -> Void
@@ -34,9 +37,11 @@ struct AccountSheet<Content: View>: View {
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Close", image: .icon("close")) {
-                        if hasChanges { confirmDiscard = true } else { dismiss() }
+                if !finished {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Close", image: .icon("close")) {
+                            if hasChanges { confirmDiscard = true } else { dismiss() }
+                        }
                     }
                 }
             }
@@ -170,6 +175,7 @@ struct ChangeEmailSheet: View {
         AccountSheet(title: L("Email"), actionTitle: actionTitle,
                      actionIcon: flow.stage == .form ? "plain" : flow.stage == .done ? "check" : nil,
                      enabled: enabled, loading: flow.busy, error: error,
+                     finished: flow.stage == .done,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(newEmail.isEmpty && password.isEmpty))) {
             switch flow.stage {
             case .form: send()
@@ -281,6 +287,7 @@ struct ChangePasswordSheet: View {
                      actionIcon: flow.stage == .form ? "plain" : flow.stage == .code ? "lock-keyhole-minimalistic"
                          : flow.stage == .done ? "check" : nil,
                      enabled: enabled, loading: flow.busy, error: error,
+                     finished: flow.stage == .done,
                      hasChanges: flow.stage == .code || (flow.stage == .form && !(new.isEmpty && confirm.isEmpty))) {
             switch flow.stage {
             case .form: send()

@@ -48,6 +48,7 @@ struct SupportSheet: View {
                         || (sentTopic != nil && hasMessage && hasEmail && session != .unknown && captchaReady),
                      loading: sending,
                      error: error,
+                     finished: reference != nil,
                      hasChanges: reference == nil && hasMessage) {
             if reference != nil { dismiss(); return }
             Task { await send() }
