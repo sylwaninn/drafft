@@ -649,6 +649,8 @@ struct SubscriptionSheet: View {
                 withAnimation(Motion.snappy) { app.subscription = nil }
             }
         } else {
+            // Active again (a later Restore, back from Apple's sheet): closing keeps the row.
+            endedOnClose = false
             withAnimation(Motion.snappy) { app.subscription = sub }
         }
     }
