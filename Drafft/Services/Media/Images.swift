@@ -5,28 +5,28 @@ import UIKit
 /// Every photo that isn't bundled with the app (on the server, or picked on this phone) goes
 /// through one Nuke pipeline:
 ///
-/// - decoded in the background, straight at the size it's drawn (ImageIO thumbnail), never the
-///   full bitmap on the main thread;
+/// - the copy downloaded is the smallest the frame needs (`Renditions`, from the photo's proportions),
+///   or a larger one already on this phone; the media Worker makes each copy once and keeps it;
+/// - decoded in the background, straight at the frame's size in pixels and cropped to it (ImageIO
+///   thumbnail), never the full bitmap on the main thread: memory holds what the screen shows;
 /// - one download per photo, however many views ask for it at once;
-/// - a capped memory cache, emptied on a memory warning, and a capped disk cache of the
-///   downloaded bytes (keys never change, so a photo is downloaded once);
-/// - both caches keyed by the object (`MediaURL.canonical`), never by its signed link: a photo stays
-///   cached when its link is renewed, and a link about to expire is renewed before it's downloaded;
-/// - the media Worker sends a copy at the display width (`&w=`) instead of the 2048 px original
-///   whenever a smaller one is enough (thumbnails, grids, avatars).
+/// - a memory cache sized to the phone, emptied on a memory warning, and a capped disk cache of the
+///   downloaded bytes (keys never change, so a copy is downloaded once);
+/// - both caches keyed by the object and width (`MediaURL.canonical`), never by its signed link: a photo
+///   stays cached when its link is renewed, and a link about to expire is renewed before it's downloaded;
+/// - on a slow connection (`NetworkQuality`), fewer downloads at once, so the one on screen finishes first.
 enum Images {
-    /// Decoded photos kept in memory (the system can still evict them earlier).
-    static let memoryLimit = 120 << 20
+    /// Decoded photos kept in memory (the system can still evict them earlier): a twentieth of the
+    /// phone's memory, between 96 and 256 MB. A deck card is about 7.5 MB (its frame at 3x).
+    static let memoryLimit = min(256 << 20, max(96 << 20, Int(ProcessInfo.processInfo.physicalMemory / 20)))
     /// Downloaded bytes kept on disk.
     static let diskLimit = 300 << 20
-    /// Pixel sizes shared by nearby displays: a size change (rotation, animation) reuses a copy
-    /// instead of decoding again, and two avatars a few points apart share one.
-    private static let buckets = [128, 256, 512, 768, 1_080, 1_440]
-    private static let largest = 2_048
 
     /// Once, at launch, before the first photo is drawn.
     static func configure() {
         let memory = ImageCache(costLimit: memoryLimit)
+        // Nuke's default (a tenth of the cache) would refuse a full-screen photo.
+        memory.entryCostLimit = 0.25
         ImagePipeline.shared = ImagePipeline { config in
             let session = URLSessionConfiguration.default
             session.urlCache = nil // the disk cache below keeps the bytes
@@ -36,11 +36,19 @@ enum Images {
             disk?.sizeLimit = diskLimit
             config.dataCache = disk
             config.imageCache = memory
+            #if DECK_PHOTO_METRICS
+            // `devicectl device process launch … so.drafft.app -- -deckPhotoReset`: a run from an empty cache.
+            if ProcessInfo.processInfo.arguments.contains("-deckPhotoReset") { disk?.removeAll() }
+            #endif
         }
         // Nuke trims when the app goes to the background; a warning in the foreground empties it too.
         NotificationCenter.default.addObserver(
             forName: UIApplication.didReceiveMemoryWarningNotification, object: nil, queue: nil
         ) { _ in memory.removeAll() }
+        NetworkQuality.shared.onChange { limited in
+            // Six downloads share a fast line; on a slow one, three, so the photo on screen isn't split six ways.
+            ImagePipeline.shared.configuration.dataLoadingQueue.maxConcurrentOperationCount = limited ? 3 : 6
+        }
     }
 
     /// The request for a photo drawn in a frame of `points` (nil for a photo that isn't ours to
@@ -50,32 +58,35 @@ enum Images {
     /// never be served for another rendition of the same object, or the other way round.
     static func request(_ name: String, points: CGSize, scale: CGFloat = 3, priority: ImageRequest.Priority = .normal,
                         blur: CGFloat = 0, variant: String? = nil) -> ImageRequest? {
-        let pixels = bucket(max(points.width, points.height) * scale)
+        let pixels = CGSize(width: points.width * scale, height: points.height * scale)
+        let decode = Renditions.decodeSize(for: pixels)
         let url: URL?
-        var options: ImageRequest.Options = []
         if name.hasPrefix("/") {
             url = URL(fileURLWithPath: name)
-            options.insert(.disableDiskCache) // already on disk
         } else if name.hasPrefix("http") {
-            url = sized(name, width: pixels)
+            let needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
+            url = closest(name, covering: needed, variant: variant)
         } else {
             return nil
         }
         guard let url else { return nil }
-        var request = ImageRequest(url: url, priority: priority, options: options)
-        if !url.isFileURL {
-            let key = MediaURL.canonical(url).absoluteString
-            request.imageID = variant.map { "\(key)#\($0)" } ?? key
-        }
-        // Square box, aspect fill: the copy covers the frame whatever its proportions.
-        request.thumbnail = .init(size: CGSize(width: pixels, height: pixels), unit: .pixels, contentMode: .aspectFill)
-        if blur > 0 { request.processors = [.gaussianBlur(radius: max(1, Int(blur * CGFloat(pixels))))] }
-        return request
+        return make(url, decode: decode, priority: priority, blur: blur, variant: variant)
     }
 
-    /// Starts downloading photos that are about to show (the next cards of the deck), to disk:
-    /// they're decoded at their display size once they're drawn.
-    /// `points` is the frame they'll be drawn in, so the server-sized copy is the one fetched.
+    /// A small copy of a server photo for the same frame (`Renditions.previewWidth`), decoded at a third of
+    /// its pixels: shown first on a slow connection, under the right copy while it arrives.
+    static func preview(_ name: String, points: CGSize, scale: CGFloat = 3) -> ImageRequest? {
+        guard name.hasPrefix("http") else { return nil }
+        let pixels = CGSize(width: points.width * scale, height: points.height * scale)
+        let needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
+        guard let url = sized(name, width: Renditions.previewWidth(covering: needed)) else { return nil }
+        let decode = Renditions.decodeSize(for: CGSize(width: pixels.width / 3, height: pixels.height / 3))
+        return make(url, decode: decode, priority: .high, blur: 0, variant: nil)
+    }
+
+    /// Starts downloading photos that are about to show, to disk: they're decoded at their display size
+    /// once they're drawn. `points` is the frame they'll be drawn in, so the right copy is fetched. The deck
+    /// has its own window (`PhotoWindow`); this is for the rest (blurred likes).
     static func prefetch(_ names: [String], points: CGSize, variant: String? = nil) {
         let requests = names.filter { $0.hasPrefix("http") }
             .compactMap { request($0, points: points, priority: .low, variant: variant) }
@@ -85,29 +96,51 @@ enum Images {
 
     private static let prefetcher = ImagePrefetcher(destination: .diskCache)
 
-    private static func bucket(_ pixels: CGFloat) -> Int {
-        buckets.first { CGFloat($0) >= pixels } ?? largest
+    private static func make(_ url: URL, decode: CGSize, priority: ImageRequest.Priority,
+                             blur: CGFloat, variant: String?) -> ImageRequest {
+        // A file on this phone is already on disk: no second copy in the cache.
+        var request = ImageRequest(url: url, priority: priority, options: url.isFileURL ? [.disableDiskCache] : [])
+        if !url.isFileURL { request.imageID = cacheID(url, variant: variant) }
+        // Aspect fill: the copy covers the frame whatever its proportions; then cropped to it, so memory
+        // never keeps the edges the frame hides.
+        request.thumbnail = .init(size: decode, unit: .pixels, contentMode: .aspectFill)
+        var processors: [any ImageProcessing] = [.resize(size: decode, unit: .pixels, contentMode: .aspectFill, crop: true)]
+        if blur > 0 { processors.append(.gaussianBlur(radius: max(1, Int(blur * max(decode.width, decode.height))))) }
+        request.processors = processors
+        return request
     }
 
-    // MARK: Sizes served by the media Worker
+    /// The caches' key: the object and width, whatever the signature.
+    private static func cacheID(_ url: URL, variant: String?) -> String {
+        let key = MediaURL.canonical(url).absoluteString
+        return variant.map { "\(key)#\($0)" } ?? key
+    }
 
-    /// The widths the media Worker resizes to (cloudflare/media-worker in drafft-backend); any other
-    /// value gets the original.
-    private static let serverWidths = [160, 320, 640, 1_080]
+    // MARK: Copies served by the media Worker
 
-    /// A signed photo link on the media domain with `&w=` set to the smallest width the Worker serves that
-    /// covers `width` pixels; above the largest, the original (2048 px at most). `w` isn't part of the
-    /// signature, and the caches keep one copy per width (`MediaURL.canonical`). Other URLs are left as
-    /// they are.
-    static func sized(_ name: String, width: Int) -> URL? {
+    /// The copy to show for `needed` pixels of width: the first of `Renditions.candidates` already on this
+    /// phone (a larger copy beats a download), otherwise the one covering it.
+    private static func closest(_ name: String, covering needed: CGFloat, variant: String?) -> URL? {
+        let candidates = Renditions.candidates(covering: needed)
+        let cache = ImagePipeline.shared.cache
+        for width in candidates {
+            guard let url = sized(name, width: width) else { continue }
+            var probe = ImageRequest(url: url)
+            probe.imageID = cacheID(url, variant: variant)
+            if cache.containsData(for: probe) { return url }
+        }
+        return sized(name, width: candidates[0])
+    }
+
+    /// A photo link with `&w=` set to `width` (nil: the original). Only a signed link goes through the
+    /// media Worker, which serves the widths; any other is left as it is. `w` isn't part of the
+    /// signature, and the caches keep one copy per width (`MediaURL.canonical`).
+    static func sized(_ name: String, width: Int?) -> URL? {
         guard let url = URL(string: name) else { return nil }
-        guard let base = MediaURL.saved, url.host == base.host, url.scheme == base.scheme,
-              MediaURL.key(of: url) != nil,
+        guard MediaURL.key(of: url) != nil, MediaURL.expiry(of: url) != nil,
               var parts = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return url }
         var items = (parts.queryItems ?? []).filter { $0.name != "w" }
-        if let served = serverWidths.first(where: { $0 >= width }) {
-            items.append(URLQueryItem(name: "w", value: String(served)))
-        }
+        if let width { items.append(URLQueryItem(name: "w", value: String(width))) }
         parts.queryItems = items.isEmpty ? nil : items
         return parts.url ?? url
     }
@@ -125,6 +158,11 @@ private final class SignedLinkLoader: DataLoading, @unchecked Sendable {
         didReceiveData: @escaping @Sendable (Data, URLResponse) -> Void,
         completion: @escaping @Sendable (Error?) -> Void
     ) -> any Cancellable {
+        // Leaves Nuke's queue now: how fast it arrives tells how fast the line is.
+        var (didReceiveData, completion) = NetworkQuality.shared.measure(request.url, didReceiveData, completion)
+        #if DECK_PHOTO_METRICS
+        (didReceiveData, completion) = DeckPhotoMetrics.observe(request.url, didReceiveData, completion)
+        #endif
         guard let url = request.url, !url.isFileURL, MediaURL.expiry(of: url) != nil else {
             return inner.loadData(with: request, didReceiveData: didReceiveData, completion: completion)
         }

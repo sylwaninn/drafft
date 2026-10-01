@@ -5,7 +5,7 @@ extension ProfileCard {
     /// The profile the screens show. `base`: the media base for a backend from before signed links.
     func profile(mediaBase base: URL?) -> Profile {
         // Each photo's blurred preview, shown while it loads.
-        for m in media { MediaPreviews.register(m.thumbhash, key: m.key) }
+        for m in media { MediaPreviews.register(m.thumbhash, key: m.key, width: m.width, height: m.height) }
         let photos = photoLinks(base: base)
         var lifestyle = Vitals(drinks: vitals?.drinks ?? "", smokes: vitals?.smokes ?? "",
                                diet: vitals?.diet ?? "", chronotype: vitals?.chronotype ?? "")

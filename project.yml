@@ -126,6 +126,8 @@ targets:
       - path: Drafft/Services/Cache/LocalCache.swift
       - path: Drafft/Services/PushTokenRegistration.swift
       - path: Drafft/Services/Media/ThumbHash.swift
+      - path: Drafft/Services/Media/Renditions.swift
+      - path: Drafft/Services/DeckPace.swift
       - path: Drafft/Services/Sessions/SessionLedger.swift
       - path: Drafft/Services/Backend/ProfileCard.swift
       - path: Drafft/Services/Chat/ChatPayload.swift

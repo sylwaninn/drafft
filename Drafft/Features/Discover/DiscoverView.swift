@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DiscoverView: View {
     @Environment(AppModel.self) private var app
+    @Environment(\.displayScale) private var displayScale
     @State private var drag: CGSize = .zero
     /// Cards on their way out. Each one leaves the deck (and the data) the moment it's swiped and
     /// finishes its flight in its own layer, so the next card is in play at once: fast swipes never
@@ -31,6 +32,12 @@ struct DiscoverView: View {
         /// Where the drag left it: the flight starts from there.
         var start: CGSize = .zero
         static func == (l: FlyOut, r: FlyOut) -> Bool { l.id == r.id }
+    }
+
+    /// What the photo window is aimed at: the next cards, and the size they're drawn at.
+    private struct PhotoAim: Equatable {
+        let ids: [String]
+        let size: CGSize
     }
 
     private let threshold: CGFloat = 110
@@ -143,7 +150,8 @@ struct DiscoverView: View {
                 ForEach(Array(app.deck.prefix(4).enumerated().reversed()), id: \.element.id) { i, p in
                     let isTop = i == 0
                     let d = depth(i)
-                    SwipeCard(profile: p, me: app.me, progress: isTop ? progress : 0, isTop: isTop) {
+                    SwipeCard(profile: p, me: app.me, progress: isTop ? progress : 0, isTop: isTop,
+                              photoPriority: i == 0 ? .veryHigh : i == 1 ? .high : .normal) {
                         detail = p
                     }
                     .frame(width: geo.size.width, height: geo.size.height - 28)
@@ -174,11 +182,19 @@ struct DiscoverView: View {
             .animation(.smooth(duration: 0.26, extraBounce: 0.04), value: app.deck.first?.id)
             .onAppear { deckSize = geo.size }
             .onChange(of: geo.size) { _, size in deckSize = size }
-            // Every photo of the card in play and the next three, fetched ahead (to disk, at the
-            // card's size): swiping or opening a profile never waits on the network.
-            .task(id: app.deck.prefix(4).map(\.id)) {
-                Images.prefetch(app.deck.prefix(4).flatMap(\.allPhotos), points: geo.size)
+            // The next cards' photos, fetched ahead and re-aimed on every swipe (`PhotoWindow`): what
+            // leaves the window is cancelled, so the card in play keeps the line.
+            .task(id: PhotoAim(ids: app.deck.prefix(12).map(\.id), size: geo.size)) {
+                PhotoWindow.deck.aim(deck: Array(app.deck.prefix(12)), onScreen: 4,
+                                     points: CGSize(width: geo.size.width, height: geo.size.height - 28), scale: displayScale)
             }
+            .onDisappear { PhotoWindow.deck.clear() }
+            #if DECK_PHOTO_METRICS
+            .onChange(of: app.deck.first?.portrait, initial: true) { _, top in
+                DeckPhotoMetrics.track(app.deck.prefix(4).map(\.portrait))
+                DeckPhotoMetrics.becameTop(top)
+            }
+            #endif
         }
     }
 

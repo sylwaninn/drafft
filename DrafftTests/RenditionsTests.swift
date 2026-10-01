@@ -1,0 +1,44 @@
+import XCTest
+
+final class RenditionsTests: XCTestCase {
+    /// A deck card on a 6.3" iPhone: 361 × 560 pt at 3x.
+    private let card = CGSize(width: 1_083, height: 1_680)
+
+    func testPortraitPhotoFillsTheCardFromTheSmallestCoveringCopy() {
+        // 4:5: the card's height decides, 1 344 px wide, the 1 440 copy.
+        let needed = Renditions.neededWidth(for: card, aspect: 0.8)
+        XCTAssertEqual(needed, 1_344, accuracy: 0.5)
+        XCTAssertEqual(Renditions.width(covering: needed), 1_440)
+    }
+
+    func testLandscapePhotoOnATallCardNeedsTheOriginal() {
+        let needed = Renditions.neededWidth(for: card, aspect: 4.0 / 3.0)
+        XCTAssertNil(Renditions.width(covering: needed))
+        XCTAssertEqual(Renditions.candidates(covering: needed), [nil])
+    }
+
+    func testUnknownProportionsCountAsSquare() {
+        XCTAssertEqual(Renditions.neededWidth(for: card, aspect: nil), 1_680)
+        XCTAssertEqual(Renditions.neededWidth(for: card, aspect: 0), 1_680)
+    }
+
+    func testAFivePercentUpscaleSavesAStep() {
+        XCTAssertEqual(Renditions.width(covering: 1_120), 1_080)
+        XCTAssertEqual(Renditions.width(covering: 1_150), 1_440)
+    }
+
+    func testLargerCopiesStandInBestFirst() {
+        XCTAssertEqual(Renditions.candidates(covering: 600), [640, 1_080, 1_440, nil])
+        XCTAssertEqual(Renditions.candidates(covering: 72), [160, 320, 640, 1_080, 1_440, nil])
+    }
+
+    func testPreviewIsAQuarterOfTheWidth() {
+        XCTAssertEqual(Renditions.previewWidth(covering: 1_344), 320)
+        XCTAssertEqual(Renditions.previewWidth(covering: 300), 160)
+    }
+
+    func testDecodeSizeIsTheFrameRoundedUp() {
+        XCTAssertEqual(Renditions.decodeSize(for: card), CGSize(width: 1_088, height: 1_728))
+        XCTAssertEqual(Renditions.decodeSize(for: CGSize(width: 10, height: 0)), CGSize(width: 64, height: 64))
+    }
+}
