@@ -32,7 +32,6 @@ struct ChatView: View {
     @State private var unseen = 0
     @Environment(\.scenePhase) private var scenePhase
     @State private var showSafety = false
-    @State private var pageWidth: CGFloat = 390
     @State private var safetyFor: SafetyRequest?
 
     struct SafetyRequest: Identifiable {
@@ -250,7 +249,8 @@ struct ChatView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(DS.Palette.canvasSoft)
-        .blurredNavigationEdge()
+        .toolbarVisibility(.hidden, for: .navigationBar)
+        .topBar { chatBar(convo) }
         .bottomBar {
             Composer(text: $draft, onSend: { content in
                 scroll.stick = true // your own message always brings you to the end
@@ -261,49 +261,6 @@ struct ChatView: View {
             }, onCancelReply: {
                 withAnimation(Motion.snappy) { replyingTo = nil }
             })
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        // The page's width sets how far the name may run before the trailing buttons.
-        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { pageWidth = $0 }
-        .toolbar {
-            // WhatsApp's header: their avatar right after Back, the first name beside it. Tapping
-            // either opens their profile.
-            ToolbarItem(placement: .topBarLeading) {
-                Button { showProfile = true } label: {
-                    ChatTitle(convo: convo, nameWidth: nameWidth)
-                }
-                // Plain: a bar button paints its label in the accent tint, over the styles above.
-                .buttonStyle(.plain)
-                .accessibilityLabel("View \(convo.profile.name)'s profile")
-                .accessibilityValue(presence(convo))
-            }
-            // iOS 26 puts bar items on a shared glass pill: not this one.
-            .sharedBackgroundVisibility(.hidden)
-            // Proposing a session is the chat's main action: a solid accent disc, drawn here rather
-            // than as glass. A glass view inside a bar item is merged into the bar's own glass, which
-            // then covers the glyph (the disc showed, its icon didn't).
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    Haptics.tap()
-                    proposing = true
-                } label: {
-                    Image("calendar-add")
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(DS.Palette.onLime)
-                        .frame(width: Self.barControl, height: Self.barControl)
-                        .background(DS.Palette.lime, in: .circle)
-                        .contentShape(.circle)
-                }
-                .buttonStyle(PressScaleStyle())
-                .accessibilityLabel("Propose a session")
-            }
-            .sharedBackgroundVisibility(.hidden)
-            // The overflow menu is a plain bar item: the system draws its glass disc (the size of
-            // Back) and renders the symbol in the bar's tint.
-            ToolbarSpacer(.fixed, placement: .topBarTrailing)
-            ToolbarItem(placement: .topBarTrailing) {
-                moreMenu(convo)
-            }
         }
         // The tab bar is hidden by the stack that pushes the chat (see ConversationsView), so it
         // comes back the moment Back starts.
@@ -366,11 +323,21 @@ struct ChatView: View {
                 Button("Report or block", image: .icon("shield-warning"), role: .destructive) { showSafety = true }
             }
         } label: {
-            // A Label, not a drawn view: the bar shows its icon and VoiceOver reads its title.
-            Label("More", image: .icon("menu-dots-vertical"))
+            // A drawn image, never a titled Label: no text can show, VoiceOver reads the label below.
+            Image("menu-dots-vertical")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(DS.Palette.ink)
+                .frame(width: 40, height: 40)
+                .glassEffect(.regular, in: .circle)
+                .frame(width: Self.barControl, height: Self.barControl)
+                .contentShape(.circle)
         }
+        .menuStyle(.button)
+        .menuIndicator(.hidden)
+        .buttonStyle(.plain)
         // Neutral icon: the menu doesn't take the accent tint.
         .tint(DS.Palette.ink)
+        .accessibilityLabel("More")
     }
 
     /// "Typing…" or "Active now" for VoiceOver on the header (the thread shows the typing dots).
@@ -379,14 +346,60 @@ struct ChatView: View {
         return convo.online ? Text("Active now") : Text(verbatim: "")
     }
 
-    /// Bar controls, as iOS 26 draws Back: a 44 pt disc. The avatar and the trailing buttons match it.
+    /// Header controls are 44 pt discs, as iOS 26 draws Back.
     static let barControl: CGFloat = 44
 
-    /// Room for the name: the page minus the bar margins, Back, the avatar and the two trailing
-    /// buttons with their gaps.
-    private var nameWidth: CGFloat {
-        let taken = 2 * DS.Space.lg + 4 * Self.barControl + 4 * DS.Space.sm + DS.Space.md
-        return max(60, pageWidth - taken)
+    /// The chat's own header, plain views pinned by `topBar` (the system bar is hidden): native bar
+    /// items didn't render custom icons reliably on device. Back, their avatar and first name (the
+    /// name takes the room left and truncates only if it can't fit), then the two actions.
+    private func chatBar(_ convo: Conversation) -> some View {
+        HStack(spacing: DS.Space.sm) {
+            Button {
+                Haptics.tap()
+                dismissChat()
+            } label: {
+                Image("alt-arrow-left")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(DS.Palette.ink)
+                    .frame(width: 40, height: 40)
+                    .glassEffect(.regular, in: .circle)
+                    .frame(width: Self.barControl, height: Self.barControl)
+                    .contentShape(.circle)
+            }
+            .buttonStyle(PressScaleStyle())
+            .accessibilityLabel("Back")
+
+            // WhatsApp's header: their avatar right after Back, the first name beside it. Tapping
+            // either opens their profile.
+            Button { showProfile = true } label: {
+                ChatTitle(convo: convo)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("View \(convo.profile.name)'s profile")
+            .accessibilityValue(presence(convo))
+
+            // Proposing a session is the chat's main action: a solid accent disc.
+            Button {
+                Haptics.tap()
+                proposing = true
+            } label: {
+                Image("calendar-add")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(DS.Palette.onLime)
+                    .frame(width: Self.barControl, height: Self.barControl)
+                    .background(DS.Palette.lime, in: .circle)
+                    .contentShape(.circle)
+            }
+            .buttonStyle(PressScaleStyle())
+            .accessibilityLabel("Propose a session")
+
+            moreMenu(convo)
+        }
+        .padding(.horizontal, DS.Space.lg)
+        .padding(.top, DS.Space.xs)
+        .padding(.bottom, DS.Space.sm)
     }
 
     private static let bottomID = "chat-bottom"
@@ -521,7 +534,6 @@ private struct JumpToLatestButton: View {
 /// "…": it takes the room up to the trailing buttons, never more (DESIGN.md, Headers).
 private struct ChatTitle: View {
     let convo: Conversation
-    let nameWidth: CGFloat
 
     var body: some View {
         HStack(spacing: DS.Space.sm) {
@@ -537,10 +549,7 @@ private struct ChatTitle: View {
                     .truncationMode(.tail)
                 PresenceLine(convo: convo)
             }
-            // Its own width when it fits, the room left when it doesn't.
-            .frame(maxWidth: nameWidth, alignment: .leading)
         }
-        .contentShape(.rect)
     }
 }
 
