@@ -13,6 +13,9 @@ struct LoadedPhoto: View {
     var blur: CGFloat = 0
     var priority: ImageRequest.Priority = .normal
     @Environment(\.displayScale) private var scale
+    /// The running load: its priority follows the card's place without restarting it (a changed request
+    /// would cancel the download and start over).
+    @State private var task: ImageTask?
     /// Decoded once per view (a few microseconds, then cached by key).
     private var preview: UIImage? { MediaPreviews.image(for: name) }
 
@@ -51,13 +54,17 @@ struct LoadedPhoto: View {
                 .frame(width: size.width, height: size.height)
                 .clipped()
             }
-            .priority(priority)
+            .onStart { started in
+                started.priority = priority
+                task = started
+            }
             #if DECK_PHOTO_METRICS
             .onCompletion { DeckPhotoMetrics.finished(name, $0) }
             .onAppear { DeckPhotoMetrics.appeared(name) }
             #endif
             .frame(width: size.width, height: size.height)
         }
+        .onChange(of: priority) { _, now in task?.priority = now }
     }
 
     /// Every layer (blurred preview, small copy, sharp copy) fills exactly the same frame, centred, so
@@ -73,7 +80,7 @@ struct LoadedPhoto: View {
     /// in over it).
     private func smallCopy(_ size: CGSize, sharp: Bool) -> ImageRequest? {
         guard let request = Images.preview(name, points: size, scale: scale) else { return nil }
-        if ImagePipeline.shared.cache.containsCachedImage(for: request) { return request }
+        if ImagePipeline.shared.cache.containsCachedImage(for: request, caches: [.memory]) { return request }
         return !sharp && NetworkQuality.shared.isLimited ? request : nil
     }
 }
