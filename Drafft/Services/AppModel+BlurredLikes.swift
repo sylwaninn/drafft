@@ -1,3 +1,4 @@
+import CoreImage
 import UIKit
 
 /// One like on the free plan: what the server gives without drafft tempo (`liked_me`, backend
@@ -6,7 +7,8 @@ import UIKit
 struct BlurredLike: Identifiable, Equatable {
     let id: String
     let superLike: Bool
-    /// About 32 × 32 px, decoded once when the list is read. Nil: a sage tile stands in.
+    /// The ThumbHash (about 32 × 32 px) drawn smooth at tile size, once, when the list is read. Nil: a
+    /// night tile stands in.
     let preview: UIImage?
 
     static func == (a: BlurredLike, b: BlurredLike) -> Bool { a.id == b.id && a.superLike == b.superLike }
@@ -26,8 +28,25 @@ extension BlurredLike {
         return await Task.detached(priority: .userInitiated) {
             rows.map { row in
                 BlurredLike(id: row.likeId, superLike: row.superLike,
-                            preview: row.thumbhash.flatMap(ThumbHash.image(fromBase64:)).map(UIImage.init(cgImage:)))
+                            preview: row.thumbhash.flatMap(ThumbHash.image(fromBase64:)).map(frosted))
             }
         }.value
+    }
+
+    /// Built once: a CIContext per call costs tens of milliseconds. CIContext is thread-safe.
+    nonisolated(unsafe) private static let context = CIContext(options: [.useSoftwareRenderer: false])
+
+    /// The preview scaled up six times and softened, so a 32 px hash reads as frosted glass on a
+    /// 250 pt tile instead of showing its pixels. It adds no detail: the hash is all there is.
+    private static func frosted(_ hash: CGImage) -> UIImage {
+        let scale: CGFloat = 6
+        let extent = CGRect(x: 0, y: 0, width: CGFloat(hash.width) * scale, height: CGFloat(hash.height) * scale)
+        let image = CIImage(cgImage: hash)
+            .clampedToExtent()
+            .transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+            .applyingGaussianBlur(sigma: Double(scale) * 0.8)
+            .cropped(to: extent)
+        guard let out = context.createCGImage(image, from: extent) else { return UIImage(cgImage: hash) }
+        return UIImage(cgImage: out)
     }
 }
