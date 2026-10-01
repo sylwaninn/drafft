@@ -469,8 +469,9 @@ extension ExtrasSheet {
                 guard case .purchased(_, let id) = try await store.purchase(pack.package) else { return }
                 transactionID = id
             } catch {
+                guard let problem = Store.PurchaseProblem(error) else { return }
                 Haptics.warning()
-                failure = L("The purchase didn't go through. You haven't been charged.")
+                failure = problem.message(restorable: false)
                 return
             }
             // Confirmed by the App Store: the server is asked to credit the pack at once. Slow, the
