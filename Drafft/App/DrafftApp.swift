@@ -136,8 +136,9 @@ struct RootView: View {
                 Task { await SessionStore.shared.refresh() }
                 // Blocks still waiting for the server, and those made on another device.
                 Task { await app.sendPendingSafety(); await app.loadBlocked() }
-                // The deck, likes and matches as the server has them now (no card outlives it).
-                app.refreshDiscovery()
+                // The deck, likes and matches as the server has them now (no card outlives it), if
+                // away long enough for them to have changed; quietly, over what's on screen.
+                app.refreshDiscovery(.foreground)
             }
             // A session that ends on its own (revoked, expired, account deleted elsewhere): back to
             // the welcome screen, which says why.
@@ -315,8 +316,14 @@ struct MainTabs: View {
         .task(id: isActive) {
             guard isActive else { return }
             // In (sign-in, end of sign-up, a hold lifted): discovery as the server has it.
-            app.refreshDiscovery()
+            app.refreshDiscovery(.entered)
             await NotificationService.shared.refresh()
+        }
+        // Discover shown again (its tab, a notification, a button elsewhere): what's grown old since,
+        // read quietly. Never during the walk under the splash or the welcome screen.
+        .onChange(of: app.tab) { old, new in
+            guard new == .discover, old != .discover, isActive, !mayPrebuild else { return }
+            app.refreshDiscovery(.tabShown)
         }
         .onChange(of: NotificationService.shared.openChatID) { _, id in
             if let id { app.openChat(id); NotificationService.shared.openChatID = nil }

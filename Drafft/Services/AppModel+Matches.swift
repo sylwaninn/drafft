@@ -14,27 +14,40 @@ extension AppModel {
     /// Everyone waiting for an answer, newest first: the one read of `liked_me`. With drafft tempo
     /// the server sends their cards; without, only a blurred list (`blurredLikes`, decision 5.5). Read
     /// again when Likes opens, on a `like` or `wallet` event (drafft tempo starting or ending) and on
-    /// each (re)connection. Unchanged if it can't be read.
+    /// each (re)connection, and quietly back at the front once old enough (`refreshDiscovery`).
+    /// Unchanged if it can't be read, or if a newer read already landed.
     func loadLikes() async {
         let premium = isPremium
         guard phase == .main else { return }
+        let read = startRead(.likes)
         let data: Data
         do { data = try await Backend.shared.rpc("liked_me", ["p_limit": Self.likesPage]) } catch {
+            _ = readLanded(read, ok: false)
+            guard read.session == sessionID else { return }
             if isPremium == premium { likesFailed(error) }
             return
         }
-        guard isPremium == premium else { return }
+        guard isPremium == premium else { _ = readLanded(read, ok: false); return }
         if premium {
-            guard let likes = try? LikeCard.list(from: data) else { return likesFailed(nil) }
+            let likes = try? LikeCard.list(from: data)
+            guard readLanded(read, ok: likes != nil), let likes else { return likesReadDropped(read) }
             if !blurredLikes.isEmpty { blurredLikes = [] }
             applyLikes(likes)
             openLocalCache()?.save(data, as: .likes)
         } else {
-            guard let fresh = await BlurredLike.list(from: data) else { return likesFailed(nil) }
+            let fresh = await BlurredLike.list(from: data)
+            guard readLanded(read, ok: fresh != nil), let fresh else { return likesReadDropped(read) }
             if !likedMe.isEmpty { likedMe = [] }
             applyBlurredLikes(fresh)
         }
         likesLoad = .loaded
+    }
+
+    /// A likes read that isn't applied (unreadable, or older than one already shown): a failure only
+    /// for this account, and only while nothing was read yet (`likesFailed`).
+    private func likesReadDropped(_ read: (read: DiscoveryFreshness.Read, session: Int)) {
+        guard read.session == sessionID else { return }
+        likesFailed(nil)
     }
 
     private func applyBlurredLikes(_ fresh: [BlurredLike]) {
@@ -74,17 +87,22 @@ extension AppModel {
     // MARK: Matches
 
     /// The current matches. The first read of a session only takes them in; a later one that finds a
-    /// new match (they liked you back) shows the banner. Unchanged if it can't be read.
+    /// new match (they liked you back) shows the banner. Unchanged if it can't be read, or if a newer
+    /// read already landed.
     func loadMatches() async {
         guard phase == .main else { return }
+        let read = startRead(.matches)
         do {
             let data = try await Backend.shared.rpc("my_matches", [:])
             let rows = try MatchRow.list(from: data)
+            guard readLanded(read, ok: true) else { return }
             applyMatches(rows, announce: discovery.matchesRead)
             discovery.matchesRead = true
             matchesLoad = .loaded
             openLocalCache()?.save(data, as: .matches)
         } catch {
+            _ = readLanded(read, ok: false)
+            guard read.session == sessionID else { return }
             if matchesLoad != .loaded { matchesLoad = .failed(offline: ServerMessage.isOffline(error)) }
         }
     }
