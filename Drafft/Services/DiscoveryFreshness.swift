@@ -53,12 +53,14 @@ struct DiscoveryFreshness {
     private var applied: [Part: Int] = [:]
 
     /// Whether `part` should be read again at `moment`. A read on its way counts from when it started,
-    /// unless it looks lost.
-    func isDue(_ part: Part, for moment: Moment, now: TimeInterval) -> Bool {
+    /// unless it looks lost. `empty`: nothing of it shows (no one left to swipe, a failure), where anyone
+    /// new matters most and the read is light: back at the front or on the tab, it's read whatever its
+    /// age, unless a read is already on its way.
+    func isDue(_ part: Part, for moment: Moment, now: TimeInterval, empty: Bool = false) -> Bool {
+        let runningSince = running[part].map(\.startedAt).flatMap { now - $0 < Self.lostAfter ? $0 : nil }
+        if empty, moment.maxAge > 0 { return runningSince == nil }
         var latest = readAt[part]
-        if let run = running[part], now - run.startedAt < Self.lostAfter {
-            latest = max(latest ?? run.startedAt, run.startedAt)
-        }
+        if let runningSince { latest = max(latest ?? runningSince, runningSince) }
         guard let latest else { return true }
         return now - latest >= moment.maxAge
     }

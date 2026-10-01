@@ -58,6 +58,26 @@ final class DiscoveryFreshnessTests: XCTestCase {
         XCTAssertTrue(fresh.finish(newer, ok: true))
     }
 
+    func testAnEmptyDeckIsReadAgainWhateverItsAge() {
+        var fresh = DiscoveryFreshness()
+        let read = fresh.start(.deck, now: 100)
+        XCTAssertTrue(fresh.finish(read, ok: true))
+        XCTAssertTrue(fresh.isDue(.deck, for: .foreground, now: 101, empty: true))
+        XCTAssertTrue(fresh.isDue(.deck, for: .tabShown, now: 101, empty: true))
+        // With cards on screen, the usual wait.
+        XCTAssertFalse(fresh.isDue(.deck, for: .foreground, now: 101))
+    }
+
+    func testAnEmptyDeckWaitsForTheReadOnItsWay() {
+        var fresh = DiscoveryFreshness()
+        _ = fresh.start(.deck, now: 100)
+        XCTAssertFalse(fresh.isDue(.deck, for: .foreground, now: 102, empty: true))
+        // Lost: read again.
+        XCTAssertTrue(fresh.isDue(.deck, for: .foreground, now: 100 + DiscoveryFreshness.lostAfter, empty: true))
+        // The channel rejoined: read again even so (events were maybe missed).
+        XCTAssertTrue(fresh.isDue(.deck, for: .reconnected, now: 102, empty: true))
+    }
+
     func testPartsAgeOnTheirOwn() {
         var fresh = DiscoveryFreshness()
         let likes = fresh.start(.likes, now: 100)

@@ -36,13 +36,16 @@ extension AppModel {
     /// Everything discovery shows, read again when `moment` finds it old enough (`DiscoveryFreshness`):
     /// the deck, who liked you, the matches and the likes left. Quiet: what's on screen stays until the
     /// fresh copy lands, and a failure keeps it. Back at the front on another tab, the deck waits for
-    /// Discover to show (`.tabShown`).
+    /// Discover to show (`.tabShown`). An empty deck ("no one new", a failure) is read whatever its age:
+    /// anyone new shows as soon as the person is back.
     func refreshDiscovery(_ moment: DiscoveryFreshness.Moment) {
         guard phase == .main else { return }
         let now = Self.clock
         let freshness = discovery.freshness
-        func due(_ part: DiscoveryFreshness.Part) -> Bool { freshness.isDue(part, for: moment, now: now) }
-        if due(.deck), moment != .foreground || tab == .discover { loadDeck(.revalidate) }
+        func due(_ part: DiscoveryFreshness.Part, empty: Bool = false) -> Bool {
+            freshness.isDue(part, for: moment, now: now, empty: empty)
+        }
+        if due(.deck, empty: queue.isEmpty), moment != .foreground || tab == .discover { loadDeck(.revalidate) }
         if due(.likes) { Task { await loadLikes() } }
         if due(.matches) { Task { await loadMatches() } }
         if due(.likesLeft) { Task { await loadLikesLeft() } }
