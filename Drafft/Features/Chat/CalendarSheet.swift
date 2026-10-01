@@ -19,7 +19,7 @@ struct AddToCalendarSheet: UIViewControllerRepresentable {
         event.url = SessionCalendar.marker(session.id)
         event.startDate = session.date
         event.endDate = session.date.addingTimeInterval(90 * 60)
-        event.notes = L("\(session.sport.name) session planned on drafft.")
+        event.notes = L("\(session.sport.name) session, confirmed on drafft.")
         event.addAlarm(EKAlarm(relativeOffset: -60 * 60))
         let vc = EKEventEditViewController()
         vc.eventStore = Self.store

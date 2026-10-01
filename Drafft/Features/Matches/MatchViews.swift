@@ -28,7 +28,7 @@ struct MatchView: View {
                     .frame(height: 300)
 
                 VStack(alignment: .leading, spacing: DS.Space.md) {
-                    Text("It's a match.")
+                    Text("It's mutual.")
                         .font(.display(64))
                         .displayLeading(64)
                         .foregroundStyle(DS.Palette.accentOnNight)
@@ -76,9 +76,9 @@ struct MatchView: View {
 
     private var subtitle: String {
         if let shared {
-            return L("You and \(profile.name) both do \(shared.inSentence). Say hi, then plan a first session.")
+            return L("You and \(profile.name) both do \(shared.inSentence). Say hi, or propose a session while it's fresh.")
         }
-        return L("You and \(profile.name) liked each other. Say hi, then plan a first session.")
+        return L("\(profile.name) likes you too. Say hi, or propose a session while it's fresh.")
     }
 
     private var formation: some View {
@@ -138,7 +138,7 @@ struct MatchBannerView: View {
                     Text("\(banner.profile.name) liked you back")
                         .font(.headline)
                         .foregroundStyle(.white)
-                    Text("It's a match. Tap to say hi.")
+                    Text("It's mutual. Tap to say hi.")
                         .font(.subheadline)
                         .foregroundStyle(DS.Palette.accentOnNight)
                 }

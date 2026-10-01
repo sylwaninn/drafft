@@ -666,7 +666,7 @@
         }
       }
     },
-    "%@ session planned on drafft." : {
+    "%@ session, confirmed on drafft." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -8559,7 +8559,7 @@
         }
       }
     },
-    "Change plan or cancel in Apple's subscription settings." : {
+    "Change or cancel it in Apple's subscription settings." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -15796,7 +15796,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu zona sale de donde estás ahora. drafft no sigue tus desplazamientos ni te localiza en segundo plano."
+            "value" : "Tu zona sale de donde estás ahora. drafft no sigue tus desplazamientos ni te localiza cuando no lo usas."
           }
         },
         "de" : {
@@ -15814,7 +15814,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A tua zona vem do sítio onde estás agora. O drafft não segue as tuas deslocações nem te localiza em segundo plano."
+            "value" : "A tua zona vem do sítio onde estás agora. O drafft não segue as tuas deslocações nem te localiza quando não o usas."
           }
         },
         "nl" : {
@@ -21642,7 +21642,7 @@
         }
       }
     },
-    "I'll know it's a match if" : {
+    "We're on the same wavelength if" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -22850,7 +22850,7 @@
         }
       }
     },
-    "It's a match." : {
+    "It's mutual." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -22896,7 +22896,7 @@
         }
       }
     },
-    "It's a match. Tap to say hi." : {
+    "It's mutual. Tap to say hi." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -24286,7 +24286,7 @@
         }
       }
     },
-    "Like back and it's a match straight away." : {
+    "Like them back and it's mutual. Then propose a session." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -24772,7 +24772,7 @@
         }
       }
     },
-    "Loading plans" : {
+    "Loading options" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -32922,7 +32922,7 @@
         }
       }
     },
-    "Pick a plan to continue." : {
+    "Pick an option to continue." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -33746,7 +33746,7 @@
         }
       }
     },
-    "Plan" : {
+    "Length" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -33792,7 +33792,7 @@
         }
       }
     },
-    "Plans couldn't load. Check your connection and try again." : {
+    "Options couldn't load. Check your connection and try again." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -51432,7 +51432,7 @@
         }
       }
     },
-    "You and %@ both do %@. Say hi, then plan a first session." : {
+    "You and %@ both do %@. Say hi, or propose a session while it's fresh." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -51478,7 +51478,7 @@
         }
       }
     },
-    "You and %@ liked each other. Say hi, then plan a first session." : {
+    "%@ likes you too. Say hi, or propose a session while it's fresh." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -54584,7 +54584,7 @@
         }
       }
     },
-    "Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change your plan or cancel, go to your App Store subscriptions. Deleting drafft doesn't cancel it." : {
+    "Your subscription is billed through your Apple Account and renews automatically unless you cancel it at least 24 hours before the end of the current period. To change or cancel it, go to your App Store subscriptions. Deleting drafft doesn't cancel it." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -65,6 +65,8 @@ def check_catalog(path: pathlib.Path, errors: list[str], warnings: list[str]) ->
         # Keys without words (\"%@ %@\", \"2×\") need no translation.
         if not WORD.search(PLACEHOLDER.sub("", key)):
             continue
+        # The key is the English source: no forbidden word there either, even when `en` overrides it.
+        check_wording(f"{rel}: key", key, errors)
         locs = entry.get("localizations", {})
         source = locs.get(source_language, {}).get("stringUnit", {}).get("value", key)
         for lang in LANGUAGES:

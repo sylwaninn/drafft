@@ -26,7 +26,7 @@ un changement de code plus large. Une fois tranchés, les décisions éditoriale
 ## Dette de code (sans effet visible, les textes affichés sont déjà corrigés)
 
 - Des clés Swift gardent l'ancien texte anglais (« Plus », « Keep swiping », « Pitch it », « No pitch
-  yet », « Pick a plan to continue. », « …plan a first session. »). La valeur affichée vient de la
+  yet »). La valeur affichée vient de la
   localisation `en`. Renommer les clés dans le code et le catalogue.
 - « Propose these times (2 times) » : le compteur est redondant dans la feuille de contre-proposition.
 - « Get boosts » et « Get more super likes » : deux formes pour le même bouton.
