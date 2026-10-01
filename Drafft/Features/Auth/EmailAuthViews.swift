@@ -90,13 +90,13 @@ struct SignUpView: View {
     enum Field { case email, password }
 
     private var emailError: String? {
-        if problem == .emailTaken { return problem?.message }
+        if problem == .emailTaken || problem == .invalidEmail { return problem?.message }
         guard emailTouched, !email.isEmpty, !Validation.isEmail(email) else { return nil }
         return L("That doesn't look like an email address. Check for typos.")
     }
 
     private var passwordError: String? {
-        guard let problem, problem != .emailTaken else { return nil }
+        guard let problem, problem != .emailTaken, problem != .invalidEmail else { return nil }
         return problem.message
     }
 
@@ -144,8 +144,8 @@ struct SignUpView: View {
             }
         }
         .navigationDestination(isPresented: $confirming) { ConfirmEmailView(email: email) }
-        .onChange(of: email) { if problem == .emailTaken { problem = nil } }
-        .onChange(of: password) { if problem != .emailTaken { problem = nil } }
+        .onChange(of: email) { if problem == .emailTaken || problem == .invalidEmail { problem = nil } }
+        .onChange(of: password) { if problem != .emailTaken && problem != .invalidEmail { problem = nil } }
     }
 
     private func submit() {
