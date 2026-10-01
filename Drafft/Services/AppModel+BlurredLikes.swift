@@ -2,16 +2,30 @@ import CoreImage
 import UIKit
 
 /// One like on the free plan: what the server gives without drafft tempo (`liked_me`, backend
-/// 20260928000231), an opaque handle, whether it was a super like, when, and a ThumbHash of the first
-/// photo. Nobody's id, name or photo reaches the phone: the blur is the server's, not a filter here.
+/// 20260928000231), an opaque handle, whether it was a super like, when, a ThumbHash of the first
+/// photo and, when the backend has made one, a signed link to a blurred copy of that photo
+/// (`blurUrl`). Nobody's id, name or sharp photo reaches the phone: the blur is the server's, not a
+/// filter here.
 struct BlurredLike: Identifiable, Equatable {
     let id: String
     let superLike: Bool
     /// The ThumbHash (about 32 × 32 px) drawn smooth at tile size, once, when the list is read. Nil: a
-    /// night tile stands in.
+    /// night tile stands in. Also the placeholder and the fallback of `blurURL`.
     let preview: UIImage?
+    /// Signed link to the server's blurred rendition of the first photo. Nil from a backend that
+    /// doesn't send it yet, or when there is none: the ThumbHash alone.
+    let blurURL: String?
 
-    static func == (a: BlurredLike, b: BlurredLike) -> Bool { a.id == b.id && a.superLike == b.superLike }
+    static func == (a: BlurredLike, b: BlurredLike) -> Bool {
+        a.id == b.id && a.superLike == b.superLike && a.blurURL == b.blurURL
+    }
+
+    /// Same like, same look: only the link's signature may differ (it's renewed on every read).
+    func sameLike(as other: BlurredLike) -> Bool {
+        id == other.id && superLike == other.superLike
+            && blurURL.flatMap(URL.init(string:)).map(MediaURL.canonical)
+            == other.blurURL.flatMap(URL.init(string:)).map(MediaURL.canonical)
+    }
 }
 
 extension BlurredLike {
@@ -19,6 +33,7 @@ extension BlurredLike {
         let likeId: String
         let superLike: Bool
         let thumbhash: String?
+        let blurUrl: String?
     }
 
     /// `liked_me` as a free account gets it (`AppModel.loadLikes`): previews decoded off the main actor.
@@ -28,7 +43,8 @@ extension BlurredLike {
         return await Task.detached(priority: .userInitiated) {
             rows.map { row in
                 BlurredLike(id: row.likeId, superLike: row.superLike,
-                            preview: row.thumbhash.flatMap(ThumbHash.image(fromBase64:)).map(frosted))
+                            preview: row.thumbhash.flatMap(ThumbHash.image(fromBase64:)).map(frosted),
+                            blurURL: row.blurUrl.flatMap { $0.hasPrefix("http") ? $0 : nil })
             }
         }.value
     }
