@@ -226,15 +226,16 @@ final class PhotoModeration {
 
     /// Deletes a photo the person took off (refused, or a draft never saved). The screen already let it go,
     /// so a failure isn't put back on it: tried again a few times (offline, a server hiccup) so it doesn't
-    /// come back with the next read. Already gone (`not_found`) is done; drafts missed here are deleted by
-    /// the server after a few days.
+    /// come back with the next read. A refusal with a code is the server's answer, never tried again:
+    /// already gone (`not_found`) is done, and one it won't delete (`portrait_required`) stays refused.
+    /// Drafts missed here are deleted by the server after a few days.
     static func deleteOnServer(_ id: String) async {
         for attempt in 0..<4 {
             do {
                 _ = try await Backend.shared.rpc("delete_media", ["p_id": id])
                 return
             } catch {
-                if ServerMessage.code(of: error) == "not_found" || error is CancellationError { return }
+                if ServerMessage.code(of: error) != nil || error is CancellationError { return }
                 if case Backend.BackendError.signedOut = error { return }
                 if attempt < 3 { try? await Task.sleep(for: .seconds(2 << attempt)) }
             }
