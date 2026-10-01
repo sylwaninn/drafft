@@ -21,6 +21,8 @@ final class AppModel {
     var publicMe: Profile { me.showingApprovedPhotos() }
     enum ProfileLoad: Equatable { case loading, failed, loaded }
     var profileLoad: ProfileLoad = .loading
+    /// Why the last read failed, in words (`.failed`): the connection only when it never got through.
+    var profileLoadFailure: String?
     /// The signed-in account's last known state on this iPhone (see `LocalCache`, `refreshAccount`).
     @ObservationIgnored var localCache: LocalCache?
     /// The account read in flight, shared by everyone who asks meanwhile.
