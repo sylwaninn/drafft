@@ -15,9 +15,9 @@ struct EmptyStateSticker: View {
     @GestureState(resetTransaction: Transaction(animation: Motion.bouncy)) private var pull: CGSize = .zero
 
     static let side: CGFloat = 116
-    private static let tilt = Angle.degrees(-6)
+    static let tilt = Angle.degrees(-6)
     /// How far the fold sits inside the sticker's edge, at rest and when the arrival starts.
-    private static let restPeel: CGFloat = 11
+    static let restPeel: CGFloat = 11
     private static let arrivalPeel: CGFloat = 46
     /// The farthest the finger can move the corner (rubber-banded on the way).
     private static let maxPull: CGFloat = 24
@@ -95,6 +95,24 @@ struct EmptyStateSticker: View {
             withAnimation(Self.arrival) { stuck = 1 }
         }
         StickerVisits.leave(art.symbol)
+    }
+}
+
+/// The same sticker, at rest and still: no arrival, no pull. Drawn at the empty tab's size and scaled
+/// down, so it shares that sticker's sheet and looks the same, only smaller (the Likes banner's sign).
+struct StillSticker: View {
+    let art: EmptyStateArt
+    var size: CGFloat = 56
+
+    var body: some View {
+        let side = EmptyStateSticker.side
+        let sheet = StickerSheet.make(art.symbol, side: side)
+        let inward = 2 * (sheet.reach + EmptyStateSticker.restPeel) / 2.squareRoot()
+        PeeledSticker(sheet: sheet, side: side, corner: CGVector(dx: -inward, dy: inward))
+            .rotationEffect(EmptyStateSticker.tilt)
+            .scaleEffect(size / side)
+            .frame(width: size, height: size)
+            .accessibilityHidden(true)
     }
 }
 

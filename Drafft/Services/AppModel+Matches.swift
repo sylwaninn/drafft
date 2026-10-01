@@ -11,7 +11,7 @@ extension AppModel {
 
     // MARK: Likes
 
-    /// Everyone waiting for an answer, super likes first: the one read of `liked_me`. With drafft tempo
+    /// Everyone waiting for an answer, newest first: the one read of `liked_me`. With drafft tempo
     /// the server sends their cards; without, only a blurred list (`blurredLikes`, decision 5.5). Read
     /// again when Likes opens, on a `like` or `wallet` event (drafft tempo starting or ending) and on
     /// each (re)connection. Unchanged if it can't be read.
@@ -27,14 +27,26 @@ extension AppModel {
         if premium {
             guard let likes = try? LikeCard.list(from: data) else { return likesFailed(nil) }
             if !blurredLikes.isEmpty { blurredLikes = [] }
-            applyLikes(likes.map(\.card))
+            applyLikes(likes)
             openLocalCache()?.save(data, as: .likes)
         } else {
             guard let fresh = await BlurredLike.list(from: data) else { return likesFailed(nil) }
             if !likedMe.isEmpty { likedMe = [] }
-            if fresh != blurredLikes { withAnimation(Motion.snappy) { blurredLikes = fresh } }
+            applyBlurredLikes(fresh)
         }
         likesLoad = .loaded
+    }
+
+    private func applyBlurredLikes(_ fresh: [BlurredLike]) {
+        guard fresh != blurredLikes else { return }
+        // New links for the same likes (signatures renew on every read): swapped in place, no
+        // animation; anything else animates.
+        if fresh.count == blurredLikes.count, zip(fresh, blurredLikes).allSatisfy({ $0.sameLike(as: $1) }) {
+            blurredLikes = fresh
+        } else {
+            withAnimation(Motion.snappy) { blurredLikes = fresh }
+        }
+        Images.prefetch(fresh.compactMap(\.blurURL), points: CGSize(width: 180, height: 240), variant: "blurred")
     }
 
     /// A read that failed only shows if nothing was read yet: what's on screen stays otherwise.
@@ -42,9 +54,14 @@ extension AppModel {
         if likesLoad != .loaded { likesLoad = .failed(offline: error.map(ServerMessage.isOffline) ?? false) }
     }
 
-    private func applyLikes(_ cards: [ProfileCard]) {
+    private func applyLikes(_ likes: [LikeCard]) {
         let hidden = discovery.swiped.union(blocked.map(\.id)).union(matches.map(\.profile.id))
-        let fresh = cards.filter { $0.isShowable && !hidden.contains($0.id) }.map { $0.profile(mediaBase: MediaURL.saved) }
+        let shown = likes.filter { $0.card.isShowable && !hidden.contains($0.card.id) }.map { like in
+            var profile = like.card.profile(mediaBase: MediaURL.saved)
+            profile.likedAt = like.likedAt.flatMap { try? ServerDate.parse($0) }
+            return profile
+        }
+        let fresh = LikeOrder.newestFirst(shown, date: \.likedAt, id: \.id)
         if fresh != likedMe { withAnimation(Motion.snappy) { likedMe = fresh } }
     }
 
@@ -151,7 +168,7 @@ extension AppModel {
     func showCachedLikesAndMatches(_ cache: LocalCache) {
         // Cards are only kept with drafft tempo (a free account's list is blurred, read live).
         if isPremium, likedMe.isEmpty, let entry = cache.entry(.likes), let likes = try? LikeCard.list(from: entry.data) {
-            applyLikes(likes.map(\.card))
+            applyLikes(likes)
             likesLoad = .loaded
         }
         if matches.isEmpty, let entry = cache.entry(.matches), let rows = try? MatchRow.list(from: entry.data) {

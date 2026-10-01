@@ -1,62 +1,77 @@
 import SwiftUI
 
-/// Likes tab: everyone who already liked you, as a grid of cards. With drafft tempo, open a profile and
-/// like back to match. Without it the server sends no identity, only a ThumbHash per like
-/// (`AppModel.blurredLikes`): the grid shows those previews and a night block offers the unlock.
+/// Likes tab: a banner with how many people like you, then everyone who already liked you as a grid of
+/// equal portraits (`LikesGrid`).
+///
+/// - Without drafft tempo the server sends no identity, only blurred previews per like
+///   (`AppModel.blurredLikes`: a ThumbHash, and a blurred copy of the photo when the backend has one):
+///   the tiles are those previews, the banner counts them, and the one action, pinned at the bottom,
+///   opens the paywall (so does any tile).
+/// - With drafft tempo the tiles are their photos: open a profile, or like back right from the tile.
 struct LikesTabView: View {
     @Environment(AppModel.self) private var app
     @State private var scrollOffset: CGFloat = 0
     @State private var open: Profile?
     @State private var showPaywall = false
 
-    private let columns = [GridItem(.flexible(), spacing: DS.Space.sm), GridItem(.flexible(), spacing: DS.Space.sm)]
+    private var locked: Bool { !app.isPremium && !app.blurredLikes.isEmpty }
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: DS.Space.md) {
+                Group {
                     if app.isPremium {
                         if app.likedMe.isEmpty {
                             emptyOrLoading
                         } else {
-                            LazyVGrid(columns: columns, spacing: DS.Space.sm) {
-                                ForEach(app.likedMe) { p in
-                                    Button {
+                            LikesGrid(items: app.likedMe, visitKey: "likes-tab") {
+                                LikesBanner.tempo(count: app.likedMe.count)
+                            } tile: { p in
+                                EveryMinute { now in
+                                    LikeTile(profile: p, now: now) {
                                         Haptics.tap()
                                         open = p
-                                    } label: { card(p) }
-                                    .buttonStyle(PressScaleStyle(scale: 0.97))
-                                    .accessibilityLabel("\(p.name), \(p.age). Open profile")
+                                    } onLike: {
+                                        app.swipe(p, liked: true)
+                                    }
                                 }
                             }
                         }
                     } else if app.blurredLikes.isEmpty {
                         emptyOrLoading
                     } else {
-                        unlockBlock
-                        LazyVGrid(columns: columns, spacing: DS.Space.sm) {
-                            ForEach(app.blurredLikes) { like in
+                        LikesGrid(items: app.blurredLikes, visitKey: "likes-tab") {
+                            LikesBanner.locked(count: app.blurredLikes.count)
+                        } tile: { like in
+                            EveryMinute { now in
                                 Button {
                                     Haptics.tap()
                                     showPaywall = true
-                                } label: { blurredCard(like) }
+                                } label: { LockedLikeTile(like: like, now: now) }
                                 .buttonStyle(PressScaleStyle(scale: 0.97))
-                                .accessibilityLabel("Someone who likes you. Unlock with drafft tempo")
+                                .accessibilityLabel(like.superLike ? "Someone super liked you. Unlock with drafft tempo"
+                                                                   : "Someone who likes you. Unlock with drafft tempo")
+                                .accessibilityValue(LikeAge.text(of: like.likedAt, at: now) ?? "")
                             }
                         }
                     }
                 }
                 .padding(.horizontal, DS.Space.lg)
+                .padding(.top, DS.Space.xs)
                 .padding(.bottom, DS.Space.xl)
             }
             .trackingScrollOffset($scrollOffset)
-            // Live afterwards through the `wallet` event and each reconnection (`UserChannel`).
+            // Live afterwards through the `like` and `wallet` events and each reconnection (`UserChannel`).
             .task { await app.loadLikes() }
             .background(DS.Palette.canvasSoft)
             .toolbarVisibility(.hidden, for: .navigationBar)
             .topBar {
                 TabHeader(offset: scrollOffset) { TabTitle(text: L("Likes")) }
             }
+            .bottomBar {
+                if locked { unlockButton }
+            }
+            .animation(Motion.snappy, value: locked)
             // Same presentation and actions as a profile opened from Discover.
             .sheet(item: $open) { p in
                 Group {
@@ -83,27 +98,20 @@ struct LikesTabView: View {
         }
     }
 
-    private var unlockBlock: some View {
-        VStack(alignment: .leading, spacing: DS.Space.md) {
-            Text(app.blurredLikes.count == 1 ? "1 person likes you." : "\(app.blurredLikes.count) people like you.")
-                .font(.display(30))
-                .displayLeading(30)
-                .foregroundStyle(DS.Palette.accentOnNight)
-                .accessibilityAddTraits(.isHeader)
-            Text(branded: L("See who, and match in one tap with drafft tempo."), font: .subheadline,
-                 tierColor: DS.Palette.accentOnNight)
-                .foregroundStyle(.white.opacity(0.72))
-            Button("See who likes you") {
-                Haptics.tap()
-                showPaywall = true
-            }
-            .buttonStyle(.drafftPrimary)
-            .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-            .padding(.leading, 12)
+    /// The one action without drafft tempo, always on screen above the tab bar.
+    private var unlockButton: some View {
+        Button {
+            Haptics.tap()
+            showPaywall = true
+        } label: {
+            Label("See who likes you", image: "user-heart")
         }
-        .padding(DS.Space.xl)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .nightBlock()
+        .buttonStyle(.drafftPrimary)
+        .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
+        .padding(.leading, 12)
+        .padding(.horizontal, DS.Space.lg)
+        .padding(.vertical, DS.Space.md)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
     }
 
     /// Nobody yet only once the list was read: before, a spinner; after a failed first read, a retry.
@@ -132,53 +140,5 @@ struct LikesTabView: View {
         }
         // The middle of the visible page, under the header.
         .containerRelativeFrame(.vertical) { h, _ in h * 0.8 }
-    }
-
-    /// A like on the free plan: the server's ThumbHash (already a blur), a lock, and a star for a
-    /// super like.
-    private func blurredCard(_ like: BlurredLike) -> some View {
-        Rectangle()
-            .fill(DS.Palette.sage)
-            .frame(height: 230)
-            .overlay {
-                if let preview = like.preview {
-                    Image(uiImage: preview).resizable().interpolation(.medium).scaledToFill()
-                }
-            }
-            .overlay {
-                Image("lock-keyhole-minimalistic")
-                    .font(.title3.weight(.bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 48, height: 48)
-                    .background(.white.opacity(0.18), in: .circle)
-            }
-            .overlay(alignment: .topTrailing) {
-                if like.superLike {
-                    Image("star")
-                        .font(.footnote.weight(.bold))
-                        .foregroundStyle(DS.Palette.onAccentOnNight)
-                        .frame(width: 30, height: 30)
-                        .background(DS.Palette.accentOnNight, in: .circle)
-                        .padding(DS.Space.sm)
-                        .accessibilityHidden(true)
-                }
-            }
-            .clipShape(.rect(cornerRadius: DS.Radius.xl))
-    }
-
-    private func card(_ p: Profile) -> some View {
-        Photo(name: p.portrait, side: 180)
-            .frame(height: 230)
-            .overlay {
-                // design-lint: allow gradient - photo scrim under the name
-                LinearGradient(stops: [.init(color: .clear, location: 0.5),
-                                       .init(color: DS.Palette.night.opacity(0.8), location: 1)],
-                               startPoint: .top, endPoint: .bottom)
-            }
-            .overlay(alignment: .bottomLeading) {
-                ProfileIdentity(profile: p, nameSize: 22, showsLocation: false, showsSuperLike: true)
-                    .padding(DS.Space.md)
-            }
-            .clipShape(.rect(cornerRadius: DS.Radius.xl))
     }
 }
