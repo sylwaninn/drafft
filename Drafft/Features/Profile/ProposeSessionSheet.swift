@@ -485,7 +485,7 @@ struct ProposeSessionSheet: View {
                 if sending {
                     Label("Sent", image: "check")
                 } else {
-                    Label(options.count > 1 ? L("\(sendTitle) (\(options.count) times)") : sendTitle, image: "plain")
+                    SendLabel(title: sendTitle, count: options.count)
                 }
             }
             .buttonStyle(.drafftPrimary)
@@ -563,6 +563,20 @@ private struct Faces: View {
                     .padding(2)
                     .background(ringColor, in: .circle)
             }
+        }
+    }
+}
+
+/// The send button's label, on one line in every language: the count of times goes when it doesn't
+/// fit (the recap above the button already says how many).
+private struct SendLabel: View {
+    let title: String
+    let count: Int
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            Label(count > 1 ? L("\(title) (\(count) times)") : title, image: "plain")
+            Label(title, image: "plain")
         }
     }
 }

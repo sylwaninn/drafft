@@ -179,13 +179,17 @@ struct SessionCard: View {
                 Button {
                     if let selected { onPick(selected) }
                 } label: {
-                    Text(selected.map(confirmTitle) ?? L("Pick a time above"))
-                        .contentTransition(.opacity)
+                    // One line in every language: when the day doesn't fit, the time alone.
+                    ViewThatFits(in: .horizontal) {
+                        Text(selected.map(confirmTitle) ?? L("Pick a time above"))
+                        Text(selected.map(confirmTimeTitle) ?? L("Pick a time above"))
+                    }
+                    .contentTransition(.opacity)
                 }
                 .buttonStyle(.drafftPrimary)
                 .disabled(selected == nil || busy)
                 Button { onCounter() } label: {
-                    Label("Suggest other times", image: "calendar")
+                    Label("Other times", image: "calendar")
                 }
                 .buttonStyle(DrafftButtonStyle(kind: .dark))
                 .overlay(RoundedRectangle(cornerRadius: DS.Radius.xl).strokeBorder(.white.opacity(0.2)))
@@ -234,6 +238,11 @@ struct SessionCard: View {
         let day = d.formatted(.dateTime.weekday(.abbreviated).day().locale(.app))
         let time = d.formatted(Date.FormatStyle(date: .omitted, time: .shortened).locale(.app))
         return L("Confirm \(day), \(time)")
+    }
+
+    /// "Confirm 9:00": the short form, when the day doesn't fit on the button's line.
+    private func confirmTimeTitle(_ d: Date) -> String {
+        L("Confirm \(d.formatted(Date.FormatStyle(date: .omitted, time: .shortened).locale(.app)))")
     }
 
     /// Either person can call off a pending or confirmed session, after a confirmation.
