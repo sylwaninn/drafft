@@ -29,6 +29,9 @@ struct FiltersSheet: View {
                               isOn: { $0 == audienceTitle(draft.audience) }) { label in
                             draft.audience = DiscoverFilters.Audience.allCases.first { audienceTitle($0) == label } ?? .everyone
                         }
+                        Text("This never shows on your profile.")
+                            .font(.footnote)
+                            .foregroundStyle(DS.Palette.body)
                     }
 
                     block("Sports", icon: "running", value: draft.sports.isEmpty ? L("Any") : L("\(draft.sports.count) selected")) {
