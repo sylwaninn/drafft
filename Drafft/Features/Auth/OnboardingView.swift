@@ -43,6 +43,8 @@ struct OnboardingView: View {
     /// The last step sends the profile to the server: spinner, then the server's reason if it refuses.
     @State private var finishing = false
     @State private var finishError: String?
+    /// A picked photo that couldn't be opened, until the next pick.
+    @State private var photoError: String?
 
     /// One question per step, grouped in four chapters shown in the stepper: secure the
     /// account, say who you are, how you move, then what people see.
@@ -226,6 +228,7 @@ struct OnboardingView: View {
         case .sports: return sports.isEmpty ? (L("Pick at least one sport."), false) : nil
         case .rhythm: return nil
         case .photos:
+            if let photoError { return (photoError, true) }
             return photosCheck.reason.map { ($0, photosCheck.needsAction) }
         case .voice: return voice == nil ? (L("Record your intro, or skip it for now."), false) : nil
         case .prompts: return answeredPrompts.isEmpty ? (L("Answer a prompt, or skip it for now."), false) : nil
@@ -419,8 +422,7 @@ struct OnboardingView: View {
                 return
             } catch {
                 Haptics.warning()
-                finishError = (error as? LocalizedError)?.errorDescription
-                    ?? L("Couldn't connect. Check your connection and try again.")
+                finishError = ProfileSync.failure(error, photos: photosCheck)
                 return
             }
             Haptics.success()
@@ -818,6 +820,7 @@ struct OnboardingView: View {
         .task(id: photos.first ?? "") { await checkMainFace() }
         // A sign-up resumed after the app was closed: each photo's verdict read again (or sent again).
         .task(id: photos) { photos.forEach(PhotoModeration.shared.ensureChecked) }
+        .onChange(of: photos) { photoError = nil }
     }
 
     private var photosCheck: PhotoSetCheck { .of(photos, face: mainFace) }
@@ -833,8 +836,15 @@ struct OnboardingView: View {
 
     private func addPhoto(_ item: PhotosPickerItem) async {
         defer { photoItem = nil }
-        guard let data = try? await item.loadTransferable(type: Data.self) else { return }
-        guard let path = await PhotoCompressor.savePicked(data) else { return }
+        photoError = nil
+        // An iCloud photo that can't download (offline), or a format that won't decode: said, never a
+        // pick that does nothing.
+        guard let data = try? await item.loadTransferable(type: Data.self),
+              let path = await PhotoCompressor.savePicked(data) else {
+            Haptics.warning()
+            photoError = L("This photo couldn't be opened. Pick another one, or check your connection.")
+            return
+        }
         let kept = OnboardingStore.persist(photo: path)
         // Sent to the backend: compressed, uploaded, then judged by moderation (the tile shows it).
         PhotoModeration.shared.submit(kept)
