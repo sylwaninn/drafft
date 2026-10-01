@@ -12,6 +12,8 @@ struct AccountSheet<Content: View>: View {
     var loading = false
     /// A real problem (turned down, failed), in red under the action. Never why it's disabled.
     var error: String?
+    /// With an error, a Get help link on this topic (where the person can't be left stuck).
+    var helpTopic: String?
     /// Something typed that closing would lose: Close asks before discarding it.
     var hasChanges = false
     let action: () -> Void
@@ -67,6 +69,7 @@ struct AccountSheet<Content: View>: View {
                             .foregroundStyle(DS.Palette.negative)
                             .multilineTextAlignment(.center)
                             .contentTransition(.opacity)
+                        if let helpTopic { GetHelpButton(topic: helpTopic) }
                     }
                 }
                 .padding(.horizontal, DS.Space.xl)
@@ -386,7 +389,8 @@ struct ExportDataSheet: View {
                     withAnimation(Motion.bouncy) { app.dataExportRequestedAt = .now }
                 } catch {
                     Haptics.warning()
-                    exportError = L("Your request couldn't be sent. Check your connection and try again.")
+                    exportError = ServerMessage.text(
+                        for: error, offline: L("Your request couldn't be sent. Check your connection and try again."))
                 }
             }
         } content: {
@@ -445,6 +449,7 @@ struct DeleteAccountSheet: View {
     @State private var understood = false
     @State private var loading = false
     @State private var failure: String?
+    @State private var loggedOut = false
     @State private var managingSubscription = false
     @State private var pausing = false
     @State private var pauseFailure: String?
@@ -460,7 +465,7 @@ struct DeleteAccountSheet: View {
         AccountSheet(title: withdrawsConsent ? L("Sensitive data consent") : L("Delete account"),
                      actionTitle: L("Delete my account"), actionIcon: "trash-bin-minimalistic",
                      destructive: true, enabled: understood, loading: loading,
-                     error: failure) {
+                     error: failure, helpTopic: failure == nil || loggedOut ? nil : L("Delete account")) {
             loading = true
             failure = nil
             Task {
@@ -468,14 +473,15 @@ struct DeleteAccountSheet: View {
                     try await app.deleteAccount()
                     Haptics.success()
                     dismiss()
-                } catch Backend.BackendError.signedOut {
-                    Haptics.warning()
-                    loading = false
-                    failure = L("You're logged out, so nothing was deleted. Log in again, then delete your account.")
                 } catch {
                     Haptics.warning()
                     loading = false
-                    failure = L("We couldn't delete your account. Check your connection and try again.")
+                    // Deleting is a right: a refusal that isn't about the connection comes with Get help.
+                    loggedOut = error.isSignedOut
+                    failure = loggedOut
+                        ? L("You're logged out, so nothing was deleted. Log in again, then delete your account.")
+                        : ServerMessage.text(
+                            for: error, offline: L("We couldn't delete your account. Check your connection and try again."))
                 }
             }
         } content: {
