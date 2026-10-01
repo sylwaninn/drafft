@@ -290,27 +290,23 @@ struct ChatView: View {
             }
             // iOS 26 puts bar items on a shared glass pill: not this one.
             .sharedBackgroundVisibility(.hidden)
+            // Icons only, each on its own glass disc (a title-and-image item could show its words):
+            // proposing a session is the chat's main action, so it takes the accent fill; the
+            // overflow menu stays a neutral utility.
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Propose a session", image: .icon("calendar-add")) { proposing = true }
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu("More", image: .icon("menu-dots")) {
-                    // Profile and sessions are one tap away in the bar: this is about the chat, then
-                    // safety, apart.
-                    Section {
-                        Button(convo.muted ? "Unmute notifications" : "Mute notifications",
-                               image: .icon(convo.muted ? "bell" : "bell-off")) {
-                            app.toggleMute(conversationID)
-                        }
-                        Button("Mark as unread", image: .icon("letter-unread")) { markUnread() }
+                HStack(spacing: DS.Space.xs) {
+                    Button {
+                        Haptics.tap()
+                        proposing = true
+                    } label: {
+                        headerDisc("calendar-add", glyph: DS.Palette.onLime, glass: .regular.tint(DS.Palette.lime))
                     }
-                    Section {
-                        Button("Report or block", image: .icon("shield-warning"), role: .destructive) { showSafety = true }
-                    }
+                    .buttonStyle(PressScaleStyle())
+                    .accessibilityLabel("Propose a session")
+                    moreMenu(convo)
                 }
-                // Neutral icons: the menu doesn't take the accent tint.
-                .tint(DS.Palette.ink)
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         // The tab bar is hidden by the stack that pushes the chat (see ConversationsView), so it
         // comes back the moment Back starts.
@@ -356,6 +352,39 @@ struct ChatView: View {
         }
         .task(id: focusSession) { await reveal(convo, with: reader) }
         }
+    }
+
+    /// The overflow menu: vertical dots, neutral. Profile and sessions are one tap away in the bar:
+    /// this is about the chat, then safety, apart.
+    private func moreMenu(_ convo: Conversation) -> some View {
+        Menu {
+            Section {
+                Button(convo.muted ? "Unmute notifications" : "Mute notifications",
+                       image: .icon(convo.muted ? "bell" : "bell-off")) {
+                    app.toggleMute(conversationID)
+                }
+                Button("Mark as unread", image: .icon("letter-unread")) { markUnread() }
+            }
+            Section {
+                Button("Report or block", image: .icon("shield-warning"), role: .destructive) { showSafety = true }
+            }
+        } label: {
+            headerDisc("menu-dots-vertical", glyph: DS.Palette.ink, glass: .regular)
+        }
+        // Neutral icons: the menu doesn't take the accent tint.
+        .tint(DS.Palette.ink)
+        .accessibilityLabel("More")
+    }
+
+    /// A bar button's face: the glyph on a 40 pt glass disc, in a 44 pt touch area.
+    private func headerDisc(_ symbol: String, glyph: Color, glass: Glass) -> some View {
+        Image(symbol)
+            .font(.body.weight(.semibold))
+            .foregroundStyle(glyph)
+            .frame(width: 40, height: 40)
+            .glassEffect(glass.interactive(), in: .circle)
+            .frame(width: 44, height: 44)
+            .contentShape(.circle)
     }
 
     private static let bottomID = "chat-bottom"
