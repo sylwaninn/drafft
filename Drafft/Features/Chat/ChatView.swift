@@ -32,6 +32,7 @@ struct ChatView: View {
     @State private var unseen = 0
     @Environment(\.scenePhase) private var scenePhase
     @State private var showSafety = false
+    @State private var pageWidth: CGFloat = 390
     @State private var safetyFor: SafetyRequest?
 
     struct SafetyRequest: Identifiable {
@@ -262,51 +263,47 @@ struct ChatView: View {
             })
         }
         .navigationBarTitleDisplayMode(.inline)
+        // The page's width sets how far the name may run before the trailing buttons.
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { pageWidth = $0 }
         .toolbar {
-            ToolbarItem(placement: .principal) {
+            // WhatsApp's header: their avatar right after Back, the first name beside it. Tapping
+            // either opens their profile.
+            ToolbarItem(placement: .topBarLeading) {
                 Button { showProfile = true } label: {
-                    HStack(spacing: DS.Space.sm) {
-                        Avatar(name: convo.profile.portrait, size: 32)
-                        // No capsule behind: the bar's own blur is the only backdrop, so the text
-                        // uses the page's inks (ink, then body at 4.5:1 on sage), not system greys.
-                        VStack(alignment: .leading, spacing: 0) {
-                            // Long names (Alexandre-Maxime) shrink a little, then end with "…":
-                            // the header never pushes the bar's buttons away.
-                            Text(convo.profile.name).font(.headline).foregroundStyle(DS.Palette.ink)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
-                                // design-lint: allow truncation - a person's name (content, not copy) after scaling down
-                                .truncationMode(.tail)
-                            PresenceLine(convo: convo)
-                        }
-                    }
-                    .frame(maxWidth: 210, alignment: .leading)
-                    .padding(.vertical, 4)
-                    .contentShape(.rect)
+                    ChatTitle(convo: convo, nameWidth: nameWidth)
                 }
                 // Plain: a bar button paints its label in the accent tint, over the styles above.
                 .buttonStyle(.plain)
                 .accessibilityLabel("View \(convo.profile.name)'s profile")
+                .accessibilityValue(presence(convo))
             }
             // iOS 26 puts bar items on a shared glass pill: not this one.
             .sharedBackgroundVisibility(.hidden)
-            // Icons only, each on its own glass disc (a title-and-image item could show its words):
-            // proposing a session is the chat's main action, so it takes the accent fill; the
-            // overflow menu stays a neutral utility.
+            // Proposing a session is the chat's main action: a solid accent disc, drawn here rather
+            // than as glass. A glass view inside a bar item is merged into the bar's own glass, which
+            // then covers the glyph (the disc showed, its icon didn't).
             ToolbarItem(placement: .topBarTrailing) {
-                HStack(spacing: DS.Space.xs) {
-                    Button {
-                        Haptics.tap()
-                        proposing = true
-                    } label: {
-                        headerDisc("calendar-add", glyph: DS.Palette.onLime, glass: .regular.tint(DS.Palette.lime))
-                    }
-                    .buttonStyle(PressScaleStyle())
-                    .accessibilityLabel("Propose a session")
-                    moreMenu(convo)
+                Button {
+                    Haptics.tap()
+                    proposing = true
+                } label: {
+                    Image("calendar-add")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(DS.Palette.onLime)
+                        .frame(width: Self.barControl, height: Self.barControl)
+                        .background(DS.Palette.lime, in: .circle)
+                        .contentShape(.circle)
                 }
+                .buttonStyle(PressScaleStyle())
+                .accessibilityLabel("Propose a session")
             }
             .sharedBackgroundVisibility(.hidden)
+            // The overflow menu is a plain bar item: the system draws its glass disc (the size of
+            // Back) and renders the symbol in the bar's tint.
+            ToolbarSpacer(.fixed, placement: .topBarTrailing)
+            ToolbarItem(placement: .topBarTrailing) {
+                moreMenu(convo)
+            }
         }
         // The tab bar is hidden by the stack that pushes the chat (see ConversationsView), so it
         // comes back the moment Back starts.
@@ -369,22 +366,27 @@ struct ChatView: View {
                 Button("Report or block", image: .icon("shield-warning"), role: .destructive) { showSafety = true }
             }
         } label: {
-            headerDisc("menu-dots-vertical", glyph: DS.Palette.ink, glass: .regular)
+            // A Label, not a drawn view: the bar shows its icon and VoiceOver reads its title.
+            Label("More", image: .icon("menu-dots-vertical"))
         }
-        // Neutral icons: the menu doesn't take the accent tint.
+        // Neutral icon: the menu doesn't take the accent tint.
         .tint(DS.Palette.ink)
-        .accessibilityLabel("More")
     }
 
-    /// A bar button's face: the glyph on a 40 pt glass disc, in a 44 pt touch area.
-    private func headerDisc(_ symbol: String, glyph: Color, glass: Glass) -> some View {
-        Image(symbol)
-            .font(.body.weight(.semibold))
-            .foregroundStyle(glyph)
-            .frame(width: 40, height: 40)
-            .glassEffect(glass.interactive(), in: .circle)
-            .frame(width: 44, height: 44)
-            .contentShape(.circle)
+    /// "Typing…" or "Active now" for VoiceOver on the header (the thread shows the typing dots).
+    private func presence(_ convo: Conversation) -> Text {
+        if convo.isTyping { return Text("Typing…") }
+        return convo.online ? Text("Active now") : Text(verbatim: "")
+    }
+
+    /// Bar controls, as iOS 26 draws Back: a 44 pt disc. The avatar and the trailing buttons match it.
+    static let barControl: CGFloat = 44
+
+    /// Room for the name: the page minus the bar margins, Back, the avatar and the two trailing
+    /// buttons with their gaps.
+    private var nameWidth: CGFloat {
+        let taken = 2 * DS.Space.lg + 4 * Self.barControl + 4 * DS.Space.sm + DS.Space.md
+        return max(60, pageWidth - taken)
     }
 
     private static let bottomID = "chat-bottom"
@@ -513,6 +515,34 @@ private struct JumpToLatestButton: View {
 }
 
 // MARK: - Header
+
+/// The bar's title, WhatsApp style: their avatar (Back's size) and the first name beside it, with
+/// "Typing…" or "Active now" under the name. The name is the one header text that may end with
+/// "…": it takes the room up to the trailing buttons, never more (DESIGN.md, Headers).
+private struct ChatTitle: View {
+    let convo: Conversation
+    let nameWidth: CGFloat
+
+    var body: some View {
+        HStack(spacing: DS.Space.sm) {
+            Avatar(name: convo.profile.portrait, size: ChatView.barControl)
+            VStack(alignment: .leading, spacing: 0) {
+                // No capsule behind: the bar's own blur is the only backdrop, so the text uses the
+                // page's inks (ink, then body at 4.5:1 on sage), not system greys.
+                Text(convo.profile.name)
+                    .font(.headline)
+                    .foregroundStyle(DS.Palette.ink)
+                    .lineLimit(1)
+                    // design-lint: allow truncation - the chat header name, asked for by the user (DESIGN.md, Headers)
+                    .truncationMode(.tail)
+                PresenceLine(convo: convo)
+            }
+            // Its own width when it fits, the room left when it doesn't.
+            .frame(maxWidth: nameWidth, alignment: .leading)
+        }
+        .contentShape(.rect)
+    }
+}
 
 /// Under the name in the bar: "Typing…", or "Active now" while they have the app open (nothing otherwise).
 private struct PresenceLine: View {

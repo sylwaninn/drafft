@@ -748,6 +748,8 @@ One job per colour, everywhere:
   - Search (Chats) lives in the header under the title and folds into a round search button once scrolled; tapping it opens the field again.
   - Actions sit on the right of the title row (e.g. the Discover filter pill). Side margin 16 pt, content starts 4 pt below the header.
 - Pushed screens and sheets keep the native navigation bar with an inline title (Inter Display ExtraBold), close on the right, back on the left, and soft scroll-edge blur.
+- **Chat header (WhatsApp style):** Back, then the person's avatar at the bar controls' size (44 pt, Back's disc) and their first name beside it, leading, with "Typing…" or "Active now" under it; both open their profile. On the right, "Propose a session" (calendar-add on a solid accent disc) and More (vertical dots, the system's glass disc). The name takes the room up to those buttons and ends with "…" only when it can't fit: the one header text allowed to truncate, at the user's request.
+- Never draw a `glassEffect` inside a navigation bar item: the bar merges it into its own glass and the glyph on it disappears. A bar item is either a plain `Label` (the system draws the glass) or a solid shape.
 
 ### Matching
 - No contact before a mutual match: no messages and no session invites from Discover.
