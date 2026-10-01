@@ -30,6 +30,7 @@ extension AppModel {
                 lastAccountRead = (.now, account)
                 apply(account, pauseReadAt: pauseEdits)
                 applyConsent(fromServer: account.consent)
+                routeIfUnfinished(account)
                 return account
             } catch {
                 guard session == sessionID else { return nil }

@@ -27,6 +27,9 @@ final class AppModel {
     @ObservationIgnored var localCache: LocalCache?
     /// The account read in flight, shared by everyone who asks meanwhile.
     @ObservationIgnored var accountRefresh: Task<ProfileSync.Account?, Never>?
+    /// In the tabs without knowing whether sign-up is finished: the next account read that answers
+    /// decides (`routeWhenAccountRead`), whoever asked for it.
+    @ObservationIgnored var routeOnAccountRead = false
     /// The last account read, and when: a read asked for right after it reuses it.
     @ObservationIgnored var lastAccountRead: (at: Date, account: ProfileSync.Account)?
     /// drafft tempo's details as the App Store reports them for this account (plan, price, renewal),
