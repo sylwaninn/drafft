@@ -610,7 +610,7 @@ struct OnboardingView: View {
 
     private var showMeStep: some View {
         page {
-            stepTitle(L("Who do you want to meet?"), L("Pick as many as you like."))
+            stepTitle(L("Who do you want to meet?"), L("Pick as many as you like. This never shows on your profile."))
             choiceRows(["Women", "Men", "Non-binary people", "Everyone"], isOn: { interestedIn.contains($0) }) { o in
                 if o == "Everyone" { interestedIn = interestedIn.contains(o) ? [] : ["Everyone"]; return }
                 interestedIn.remove("Everyone")

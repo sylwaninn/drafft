@@ -33214,42 +33214,42 @@
         }
       }
     },
-    "Pick as many as you like." : {
+    "Pick as many as you like. This never shows on your profile." : {
       "localizations" : {
-        "de" : {
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähl so viele, wie du willst."
+            "value" : "Choisis-en autant que tu veux. Ça n'apparaît jamais sur ton profil."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige tantas como quieras."
+            "value" : "Elige tantas como quieras. No aparece nunca en tu perfil."
           }
         },
-        "fr" : {
+        "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis-en autant que tu veux."
+            "value" : "Wähl so viele, wie du willst. Das steht nie auf deinem Profil."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scegli tutte le opzioni che vuoi."
+            "value" : "Scegli tutte le opzioni che vuoi. Non compare mai sul tuo profilo."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kies er zoveel als je wilt."
+            "value" : "Kies er zoveel als je wilt. Dit staat nooit op je profiel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolhe quantos quiseres."
+            "value" : "Escolhe quantos quiseres. Nunca aparece no teu perfil."
           }
         }
       }
@@ -59741,6 +59741,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld jaar geleden"
+          }
+        }
+      }
+    },
+    "This never shows on your profile." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça n'apparaît jamais sur ton profil."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No aparece nunca en tu perfil."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das steht nie auf deinem Profil."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non compare mai sul tuo profilo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dit staat nooit op je profiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nunca aparece no teu perfil."
           }
         }
       }
