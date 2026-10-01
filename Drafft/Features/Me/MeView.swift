@@ -285,14 +285,10 @@ struct MeView: View {
     private var plusCard: some View {
         Button { sheet = .paywall } label: {
             HStack(spacing: DS.Space.md) {
-                // On an accent surface everything takes the on-accent colour: the glyph too, on
-                // a wash of it (never a night disc with an accent glyph dropped in).
-                SparkPlus()
-                    .fill(DS.Palette.onLime)
-                    .frame(width: 22, height: 16)
+                // The sign as a round sticker (the empty tabs' sticker, still): a night disc with the
+                // filled spark, a white edge, its top-right corner slightly lifted.
+                StillSticker(tempoSize: 50)
                     .frame(width: 44, height: 44)
-                    .background(DS.Palette.onLimeWash, in: .circle)
-                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(branded: L("Get drafft tempo"), font: .headline, brandWeight: .heavy, tierColor: DS.Palette.tierOnAccent)
                         .foregroundStyle(DS.Palette.onLime)

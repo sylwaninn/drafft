@@ -101,12 +101,22 @@ struct EmptyStateSticker: View {
 /// The same sticker, at rest and still: no arrival, no pull. Drawn at the empty tab's size and scaled
 /// down, so it shares that sticker's sheet and looks the same, only smaller (the Likes banner's sign).
 struct StillSticker: View {
-    let art: EmptyStateArt
+    private let sheet: StickerSheet
     var size: CGFloat = 56
+
+    init(art: EmptyStateArt, size: CGFloat = 56) {
+        sheet = StickerSheet.make(art.symbol, side: EmptyStateSticker.side)
+        self.size = size
+    }
+
+    /// drafft tempo's round sticker: its spark filled on a night disc inside a white edge.
+    init(tempoSize size: CGFloat) {
+        sheet = StickerSheet.tempoDisc(side: EmptyStateSticker.side)
+        self.size = size
+    }
 
     var body: some View {
         let side = EmptyStateSticker.side
-        let sheet = StickerSheet.make(art.symbol, side: side)
         let inward = 2 * (sheet.reach + EmptyStateSticker.restPeel) / 2.squareRoot()
         PeeledSticker(sheet: sheet, side: side, corner: CGVector(dx: -inward, dy: inward))
             .rotationEffect(EmptyStateSticker.tilt)
@@ -235,6 +245,36 @@ struct StickerSheet {
         let back = renderer.image { _ in outline(backColor) }
         let sheet = StickerSheet(front: front, back: back, reach: reach(of: back, side: side))
         cache[symbol] = sheet
+        return sheet
+    }
+
+    /// drafft tempo's round sticker: a night disc with the spark in the accent, inside the same white
+    /// edge, over a grey back. The spark is a shape, not an icon, so it is drawn here.
+    static func tempoDisc(side: CGFloat) -> StickerSheet {
+        let key = "drafft.spark.disc"
+        if let sheet = cache[key] { return sheet }
+        let size = CGSize(width: side, height: side)
+        let rim = CGRect(origin: .zero, size: size).insetBy(dx: 3, dy: 3)
+        let face = rim.insetBy(dx: edge, dy: edge)
+        let spark = CGSize(width: face.width * 0.5, height: face.width * 0.5 * 13 / 18)
+        let sparkRect = CGRect(x: face.midX - spark.width / 2, y: face.midY - spark.height / 2,
+                               width: spark.width, height: spark.height)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let front = renderer.image { context in
+            UIColor(DS.Palette.stickerPaper).setFill()
+            context.cgContext.fillEllipse(in: rim)
+            UIColor(DS.Palette.night).setFill()
+            context.cgContext.fillEllipse(in: face)
+            UIColor(DS.Palette.accentOnNight).setFill()
+            context.cgContext.addPath(SparkPlus().path(in: sparkRect).cgPath)
+            context.cgContext.fillPath()
+        }
+        let back = renderer.image { context in
+            UIColor(DS.Palette.stickerBack).setFill()
+            context.cgContext.fillEllipse(in: rim)
+        }
+        let sheet = StickerSheet(front: front, back: back, reach: reach(of: back, side: side))
+        cache[key] = sheet
         return sheet
     }
 
