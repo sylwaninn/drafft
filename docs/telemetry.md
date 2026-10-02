@@ -158,6 +158,22 @@ Revenue is not computed on the phone: turn on RevenueCat's PostHog integration (
 cancellations and refunds with their real amounts, under event names like `rc_initial_purchase_event`,
 keyed by the same app user id).
 
+## Alerts (what pages someone, and where it is set)
+
+Keep this list true: a new flow that costs money, accounts or safety adds its line here.
+
+| Where | Alert | Why |
+|---|---|---|
+| Sentry | New issue in `environment:production` | Something needs a fix |
+| Sentry | An issue's frequency above its baseline (production) | A bad release or an outage |
+| Sentry | Crash-free sessions under 99.5% for the latest release | Release health |
+| Sentry | `area:purchase` issues, to a dedicated channel; the "purchase credited late" message | Money is involved |
+| PostHog | `purchase_failed`, `sign_up_failed`, `log_in_failed` trend up (`app_environment = production`) | Funnel breaks that raise no exception |
+| PostHog | `onboarding_completed` per day falls (`app_environment = production`) | Sign-up is broken or traffic fell |
+
+Set in Sentry's and PostHog's interfaces (or through the PostHog MCP); alerts and insights always filter on
+production.
+
 ### Adding an event
 
 1. Add a factory to `AnalyticsEvent` with typed parameters (enums, numbers, booleans, codes), and the

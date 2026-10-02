@@ -13,20 +13,38 @@ present a match as turning into something. New editorial decisions go into WORDI
 canonical copy; the workspace's `scripts/sync-docs.sh` copies it to drafft-backend, drafft-web and
 drafft-android, with DESIGN.md).
 
-## Telemetry (Sentry and PostHog)
+## Telemetry (Sentry and PostHog): part of every change
 
-[docs/telemetry.md](docs/telemetry.md) is the plan; the code is `Drafft/Services/Telemetry/`, the same
-events and rules as the Android app.
-- A new feature comes with its events: a factory in `AnalyticsEvent` (`object_action`, past tense,
-  typed properties), `Telemetry.track(...)` where it happened (in the model when it can tell whether it
-  worked), a row in the doc's table, the event in `TelemetryTests`. Never rename an event or a property.
-- A new pushed screen, sheet or cover gets `.trackScreen(.x)` (a paywall `.trackPaywall(kind)`).
-- A `catch` that swallows or rethrows an error the code didn't expect calls
-  `Telemetry.unexpected(error, area, action)`: it only alerts on what needs a fix (not offline, not a
-  refusal the screen explains). Log with `AppLog`, never `os.Logger` directly.
-- Never put what people typed, their sensitive answers (gender, who they want to meet, lifestyle),
-  their location or another person's id in an event, a tag or a log line. `PrivacyGuard` drops it
-  anyway, and unit tests fail on it.
+[docs/telemetry.md](docs/telemetry.md) is the plan (events, screens, errors, alerts); the code is
+`Drafft/Services/Telemetry/`, the same events and rules as the Android app.
+
+**Every feature, change or task finishes with a telemetry pass. The pull request's "Notes" says what was
+done, or "Telemetry: none, because ..." (a refactor, a copy change).** The checklist:
+
+1. **Events.** What the person did and whether it worked: a factory in `AnalyticsEvent` (`object_action`, snake_case,
+   past tense, typed properties: numbers, booleans, codes, never free text), fired where the model knows
+   the outcome (after success; a `*_failed` event with a `reason` code on failure). Same name and
+   properties on Android, in the same change or its twin pull request. Never rename an event or a
+   property: add a new one.
+2. **Screens.** A new pushed screen, sheet or cover gets `.trackScreen(.x)` (a paywall `.trackPaywall(kind)`), with its `Screen` case.
+3. **Errors.** A `catch` that swallows or rethrows something unexpected calls
+   `Telemetry.unexpected(error, area, action)`: only what needs a fix alerts (not offline, not a refusal
+   the screen explains). Log with `AppLog`, never `os.Logger` directly.
+4. **Alerts.** A flow that costs money, accounts or safety (sign-up and sign-in, purchases, deletion,
+   moderation, push, chat send) gets its alert, not only its event: a Sentry alert rule filtered on
+   `environment:production` (and the `area` tag), and a PostHog alert or insight on the failure event.
+   Write it in the "Alerts" part of `docs/telemetry.md`; create it through the PostHog MCP / Sentry when
+   asked.
+5. **Conventions, always.** One PostHog project for the two apps and the website, one Sentry project per
+   app, each shared by production and staging: every insight, funnel, alert and experiment filters `app_environment = production`
+   (PostHog; the project's test-account filter already does) and `environment:production` (Sentry).
+   Never switch the privacy rules off to get a number: consent, `PrivacyGuard`, no screenshots or replay
+   (docs/telemetry.md).
+6. **Docs and tests.** The event goes in the doc's table and in the `TelemetryTests` catalog test.
+
+Never put what people typed, their sensitive answers (gender, who they want to meet, lifestyle), their
+location or another person's id in an event, a tag or a log line. `PrivacyGuard` drops it anyway, and unit
+tests fail on it.
 
 ## Workspace rules
 
