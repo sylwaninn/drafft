@@ -8,7 +8,7 @@ struct TelemetryConfig: Sendable, Equatable {
     var postHogKey: String
     /// PostHog's EU cloud (`https://eu.i.posthog.com`): the data stays in the EU, like the backend.
     var postHogHost: String
-    /// "production", "staging" or "local".
+    /// "production", "staging" or "local" (`environmentID` never gives anything else).
     var environment: String
     /// "0.1.0"
     var version: String
@@ -47,6 +47,12 @@ struct TelemetryConfig: Sendable, Equatable {
         return url.query == nil && url.fragment == nil
     }
 
+    /// The three environments a build can be. Anything else (a missing or unexpanded `APP_ENVIRONMENT`,
+    /// a typo) is "unknown": a misconfigured build never counts as production in the dashboards.
+    static func environmentID(_ raw: String) -> String {
+        ["production", "staging", "local"].contains(raw) ? raw : "unknown"
+    }
+
     /// From the app's Info.plist (`SentryDSN`, `PostHogAPIKey`, `PostHogHost`, `AppEnvironment`).
     static func fromBundle(_ bundle: Bundle = .main) -> TelemetryConfig {
         func info(_ key: String) -> String { (bundle.object(forInfoDictionaryKey: key) as? String) ?? "" }
@@ -56,7 +62,7 @@ struct TelemetryConfig: Sendable, Equatable {
             sentryDSN: info("SentryDSN"),
             postHogKey: info("PostHogAPIKey"),
             postHogHost: host.isEmpty ? "https://eu.i.posthog.com" : host,
-            environment: environment.isEmpty ? "production" : environment,
+            environment: environmentID(environment),
             version: info("CFBundleShortVersionString"),
             build: info("CFBundleVersion")
         )

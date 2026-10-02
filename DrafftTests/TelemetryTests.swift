@@ -638,6 +638,13 @@ final class TelemetryTests: XCTestCase {
 
     // MARK: Config
 
+    func testAnUnknownEnvironmentNeverCountsAsProduction() {
+        for known in ["production", "staging", "local"] { XCTAssertEqual(TelemetryConfig.environmentID(known), known) }
+        for odd in ["", "$(APP_ENVIRONMENT)", "Production", "prod", "debug"] {
+            XCTAssertEqual(TelemetryConfig.environmentID(odd), "unknown", odd)
+        }
+    }
+
     func testOnlyEURegionsAreUsed() {
         var config = TelemetryConfig(sentryDSN: "https://abc123@o42.ingest.de.sentry.io/7", postHogKey: "phc_x",
                                      postHogHost: "https://eu.i.posthog.com", environment: "production", version: "1.0", build: "3")
