@@ -67,13 +67,15 @@ jobs:
       - name: Only public keys in build settings
         run: |
           # Supabase secret keys, Sentry auth tokens (sntrys_/sntryu_), PostHog personal API keys (phx_).
-          if grep -nE 'sb_secret_|service_role|PRIVATE KEY|sntrys_|sntryu_|phx_' Config/*.xcconfig project.yml; then
+          # Comment lines (# in project.yml, // in the xcconfigs) may name them.
+          if grep -nE 'sb_secret_|service_role|PRIVATE KEY|sntrys_|sntryu_|phx_' Config/*.xcconfig project.yml \
+            | grep -vE '^[^:]+:[0-9]+:[[:space:]]*(#|//)'; then
             echo "error: a secret in the build settings: only publishable/public keys belong there"; exit 1
           fi
       - name: Telemetry stays in the EU
         run: |
           # Sentry's EU region and PostHog's EU cloud only (docs/telemetry.md); the app also ignores any other.
-          if grep -hE '^[[:space:]]*SENTRY_DSN[[:space:]]*=[[:space:]]*[^[:space:]]' Config/*.xcconfig | grep -vE '@o[0-9]+\.ingest\.de\.sentry\.io/'; then
+          if grep -hE '^[[:space:]]*SENTRY_DSN[[:space:]]*=[[:space:]]*[^[:space:]]' Config/*.xcconfig | grep -vE '=[[:space:]]*https:/(\$\(\))?/[0-9a-f]+@o[0-9]+\.ingest\.de\.sentry\.io/[0-9]+[[:space:]]*$'; then
             echo "error: SENTRY_DSN must be a DSN of Sentry's EU region (ingest.de.sentry.io)"; exit 1
           fi
           if grep -hE '^[[:space:]]*POSTHOG_HOST[[:space:]]*=' Config/*.xcconfig | grep -vE '=[[:space:]]*https:/(\$\(\))?/eu\.i\.posthog\.com[[:space:]]*$'; then

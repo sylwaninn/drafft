@@ -283,6 +283,7 @@ struct VoiceIntroRecorder: View {
     private func stop() {
         Haptics.success()
         if let r = recorder.finish() {
+            Telemetry.track(.voiceIntroRecorded(seconds: Int(r.duration.rounded()), where: ScreenTracker.currentID))
             withAnimation(Motion.snappy) { result = r }
         }
     }

@@ -122,7 +122,7 @@ final class Store {
             } else if (error as? RevenueCat.ErrorCode) == .purchaseCancelledError {
                 // RevenueCat reports the person's cancel as an error too.
                 Telemetry.track(.purchaseCancelled(kind, productID: productID))
-            } else {
+            } else if !(error is CancellationError) {
                 Telemetry.track(.purchaseFailed(kind, productID: productID, problem: "unknown"))
             }
             Telemetry.unexpected(error, "purchase", "purchase", extra: ["product_id": productID])
@@ -174,6 +174,8 @@ final class Store {
 
         init?(_ error: Error) {
             if case StoreError.notLinked = error { self = .notLinked; return }
+            // The task was cancelled (the screen went away): not a purchase that failed.
+            if error is CancellationError { return nil }
             switch error as? RevenueCat.ErrorCode {
             case .purchaseCancelledError: return nil
             case .paymentPendingError: self = .pending

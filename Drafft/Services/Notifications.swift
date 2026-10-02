@@ -85,13 +85,14 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
         let before = await center.notificationSettings().authorizationStatus
         let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
         await refresh()
-        let result: AnalyticsEvent.PermissionResult = switch before {
+        // Already allowed (the usual case): nothing was asked, so nothing to count.
+        let result: AnalyticsEvent.PermissionResult? = switch before {
         case .notDetermined: granted ? .granted : .denied
         // iOS doesn't prompt again: only Settings can turn it on.
         case .denied: .blocked
-        default: .alreadyGranted
+        default: nil
         }
-        Telemetry.track(.permissionRequested(.notifications, result: result, during: ScreenTracker.currentID))
+        if let result { Telemetry.track(.permissionRequested(.notifications, result: result, during: ScreenTracker.currentID)) }
         return granted
     }
 

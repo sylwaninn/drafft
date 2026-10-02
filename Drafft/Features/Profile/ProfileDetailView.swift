@@ -75,7 +75,7 @@ struct ProfileDetailView: View {
                                 try? await Task.sleep(for: .milliseconds(150))
                                 onDecision?(true, opener)
                             }
-                        } : nil, sendTitle: L("Like with this answer"))
+                        } : nil, sendTitle: L("Like with this answer"), tracksAnswer: mode != .me)
                     }
 
                     if profile.photos.count > 1 { photo(profile.photos[1]) }

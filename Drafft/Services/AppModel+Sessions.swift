@@ -10,9 +10,7 @@ extension AppModel {
     /// Sends an invite in a chat (`chatID` is the match's id).
     func proposeSession(_ proposal: SessionProposal, in chatID: String) {
         Haptics.tap()
-        // The sport as a code (`mountain_biking`): its id is camelCase, which isn't one.
-        let sport = proposal.sport.rawValue.replacingOccurrences(of: "([a-z])([A-Z])", with: "$1_$2", options: .regularExpression)
-        Telemetry.track(.sessionProposed(sport: sport.lowercased(), options: proposal.options.count))
+        Telemetry.track(.sessionProposed(sport: proposal.sport.telemetryID, options: proposal.options.count))
         ChatService.shared.showPending(proposal, in: chatID)
         Task {
             guard await !SessionStore.shared.propose(proposal, in: chatID) else { return }

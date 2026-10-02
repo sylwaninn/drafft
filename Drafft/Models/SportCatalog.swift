@@ -26,6 +26,9 @@ enum Sport: String, CaseIterable, Identifiable, Hashable, Codable {
 
     var id: String { rawValue }
 
+    /// The sport as a code for an event (`mountain_biking`): the id is camelCase, which isn't one.
+    var telemetryID: String { rawValue.snakeCased }
+
     private struct Info { let name: String; let symbol: String; let verbing: String; let poster: String }
 
     private var info: Info {

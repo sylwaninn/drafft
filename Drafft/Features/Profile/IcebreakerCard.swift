@@ -6,12 +6,16 @@ struct IcebreakerCard: View {
     /// Called with the opener to send (quote + reply).
     var onSend: ((MessageContent) -> Void)?
     var sendTitle = L("Send as opener")
+    /// False on the person's own profile: trying their own icebreaker says nothing about the app's use.
+    var tracksAnswer = true
 
     @State private var guess: Int?
     @State private var revealed = false
     @State private var take: Bool?
     @State private var choice: Int?
     @State private var sent = false
+    /// `icebreaker_answered` goes once per card.
+    @State private var answered = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.lg) {
@@ -51,6 +55,11 @@ struct IcebreakerCard: View {
         .animation(Motion.bouncy, value: revealed)
         .animation(Motion.bouncy, value: take)
         .animation(Motion.bouncy, value: choice)
+        .onChange(of: opener != nil) { _, has in
+            guard has, tracksAnswer, !answered else { return }
+            answered = true
+            Telemetry.track(.icebreakerAnswered)
+        }
     }
 
     private var title: String {

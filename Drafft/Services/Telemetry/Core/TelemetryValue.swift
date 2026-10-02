@@ -51,5 +51,12 @@ extension TelemetryValueConvertible where Self: RawRepresentable, RawValue == St
     var telemetryValue: TelemetryValue { .string(rawValue) }
 }
 
+extension String {
+    /// A Swift name as a code: `tooManyCodes` becomes `too_many_codes`.
+    var snakeCased: String {
+        replacingOccurrences(of: "([a-z])([A-Z])", with: "$1_$2", options: .regularExpression).lowercased()
+    }
+}
+
 /// Properties as written at the call: a nil value is left out.
 typealias TelemetryProperties = [String: (any TelemetryValueConvertible)?]

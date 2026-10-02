@@ -20,8 +20,8 @@ struct TelemetryConfig: Sendable, Equatable {
 
     /// Off without a DSN, and with a DSN outside Sentry's EU region (the data stays in the EU).
     var hasSentry: Bool { Self.isEUDSN(sentryDSN) }
-    /// Off without a key, and with a host outside PostHog's EU cloud.
-    var hasPostHog: Bool { !postHogKey.isEmpty && postHogHost.hasPrefix("https://eu.") }
+    /// Off without a key, and with a host that isn't exactly PostHog's EU cloud.
+    var hasPostHog: Bool { !postHogKey.isEmpty && Self.isEUPostHogHost(postHogHost) }
 
     /// Share of traces kept (performance): every one in staging and local, where traffic is small and
     /// each slow request matters; 20% in production, enough for percentiles at a fraction of the quota.
@@ -36,7 +36,15 @@ struct TelemetryConfig: Sendable, Equatable {
 
     /// `https://<key>@o<org>.ingest.de.sentry.io/<project>`: a DSN of Sentry's EU region.
     static func isEUDSN(_ dsn: String) -> Bool {
-        dsn.range(of: #"^https://[0-9a-f]+@o[0-9]+\.ingest\.de\.sentry\.io/[0-9]+$"#, options: .regularExpression) != nil
+        dsn.range(of: #"^https://[0-9a-f]+@o[0-9]+\.ingest\.de\.sentry\.io/[0-9]+\z"#, options: .regularExpression) != nil
+    }
+
+    /// `https://eu.i.posthog.com`, by its parsed host (not a prefix: `https://eu.evil.com` or
+    /// `https://eu.i.posthog.com@evil.com` are not PostHog's EU cloud).
+    static func isEUPostHogHost(_ host: String) -> Bool {
+        guard let url = URL(string: host), url.scheme == "https", url.host == "eu.i.posthog.com",
+              url.user == nil, url.port == nil, url.path.isEmpty || url.path == "/" else { return false }
+        return url.query == nil && url.fragment == nil
     }
 
     /// From the app's Info.plist (`SentryDSN`, `PostHogAPIKey`, `PostHogHost`, `AppEnvironment`).

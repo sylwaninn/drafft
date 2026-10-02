@@ -44,6 +44,7 @@ struct AnalyticsEvent: Sendable {
         case location, notifications, camera, microphone, photos, calendar
     }
     enum PermissionResult: String, CaseIterable, TelemetryValueConvertible {
+        /// `alreadyGranted` is no longer sent (nothing was asked); the value stays for the dashboards.
         case granted, denied, alreadyGranted = "already_granted", blocked
     }
 

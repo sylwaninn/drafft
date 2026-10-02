@@ -29,6 +29,9 @@ final class ChatService {
     /// Messages read at a time with each chat: a chat opens on its latest ones.
     static let messagesPage = 25
 
+    /// A media message that can't be sent: not the account's own objects, or the chat is gone.
+    private struct SendRefused: Error {}
+
     weak var app: AppModel?
     var client: ChatClient?
     var apiKey: String?
@@ -369,7 +372,7 @@ final class ChatService {
                 // Only the person's own chat objects are ever sent (keys, never links).
                 guard let me = userID, ChatPayload.Media.isOwnChatKey(media.key, userID: me),
                       media.posterKey.map({ ChatPayload.Media.isOwnChatKey($0, userID: me) }) ?? true,
-                      let chat = chat(upload.matchID) else { throw CancellationError() }
+                      let chat = chat(upload.matchID) else { throw SendRefused() }
                 try await chat.sendMessage(with: "", attachments: [AnyAttachmentPayload(payload: media)],
                                            quote: upload.message.replyTo, messageId: upload.message.id)
                 uploads[upload.matchID]?.removeAll { $0.message.id == upload.message.id }

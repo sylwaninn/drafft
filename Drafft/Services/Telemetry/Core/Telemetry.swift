@@ -84,6 +84,8 @@ enum Telemetry {
         var identified = false
         /// The super properties, sent again after a reset (PostHog's reset forgets them).
         var registered: [String: TelemetryValue] = [:]
+        /// The last person properties described, sent again once the account is identified.
+        var person: [String: TelemetryValue] = [:]
         /// The screen on show, for the next error report and the events' `screen` property.
         var screen: Screen?
     }
@@ -117,6 +119,8 @@ enum Telemetry {
 
     /// A product event: to PostHog (if allowed), and as a breadcrumb for the next error report.
     static func track(_ event: AnalyticsEvent) {
+        // A cancelled task is not a failure: the screen went away, nothing happened worth counting.
+        if event.properties["reason"]??.telemetryValue == .string(ErrorKind.cancelled.rawValue) { return }
         let properties = PrivacyGuard.properties(event.name, event.properties)
         let (crashes, analytics, consent, screen) = state.withLock { ($0.crashes, $0.analytics, $0.consent, $0.screen) }
         crashes.breadcrumb(Breadcrumb(category: "product", message: event.name, data: properties))
@@ -152,7 +156,8 @@ enum Telemetry {
             let previous = s.userID
             s.userID = id
             let reset = previous != nil && previous != id
-            if reset { s.identified = false }
+            // Another account (or none): what described the last one isn't theirs.
+            if reset { s.identified = false; s.person = [:] }
             return (s.crashes, reset)
         }
         crashes.setUser(id)
@@ -163,7 +168,10 @@ enum Telemetry {
     /// Facts about the account for analytics (person properties), only while identified.
     static func describeAccount(_ properties: TelemetryProperties) {
         let safe = PrivacyGuard.properties("person", properties)
-        let (crashes, analytics, identified) = state.withLock { ($0.crashes, $0.analytics, $0.identified) }
+        let (crashes, analytics, identified) = state.withLock { s in
+            for (k, v) in safe { s.person[k] = v }
+            return (s.crashes, s.analytics, s.identified)
+        }
         for (key, value) in safe { crashes.setTag(key, value.description) }
         if identified { analytics.setPersonProperties(safe) }
     }
@@ -204,12 +212,15 @@ enum Telemetry {
     }
 
     private static func identifyIfAllowed() {
-        let target: (id: String, analytics: any Analytics)? = state.withLock { s in
+        let target: (id: String, analytics: any Analytics, person: [String: TelemetryValue])? = state.withLock { s in
             guard let id = s.userID, s.consent == .granted, !s.identified else { return nil }
             s.identified = true
-            return (id, s.analytics)
+            return (id, s.analytics, s.person)
         }
-        if let target { target.analytics.identify(target.id) }
+        guard let target else { return }
+        target.analytics.identify(target.id)
+        // Described before the account was identified (or before the consent): sent now.
+        if !target.person.isEmpty { target.analytics.setPersonProperties(target.person) }
     }
 
     /// Sends what's waiting (the app is about to go to the background).
@@ -249,8 +260,9 @@ enum Telemetry {
 
     /// Something wrong without an error (a state that shouldn't happen): an event at `level`.
     static func problem(_ text: String, _ area: String, level: Level = .warning, extra: TelemetryProperties = [:]) {
+        let text = PrivacyGuard.scrub(text)
         let report = ErrorReport(area: area, extra: PrivacyGuard.properties("problem", extra), fingerprint: [area, text])
-        crashes.message(PrivacyGuard.scrub(text), level, report)
+        crashes.message(text, level, report)
     }
 
     static func breadcrumb(_ category: String, _ message: String, level: Level = .info, data: TelemetryProperties = [:]) {

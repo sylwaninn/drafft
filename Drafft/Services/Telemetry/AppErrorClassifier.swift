@@ -61,19 +61,16 @@ struct AppErrorClassifier: ErrorClassifier {
         switch error {
         case is Backend.EmailAlreadyRegistered: return "email_taken"
         // Supabase Auth's own codes: `invalid_credentials`, `otp_expired`, `weak_password`...
-        case let error as AuthError: return error.errorCode.rawValue
+        // A refusal from the database behind Auth carries its own code in the hint (`email_taken` for an
+        // address a banned account used), the one the screen reads (`AuthProblem`).
+        case let error as AuthError: return AuthProblem.hint(of: error) ?? error.errorCode.rawValue
         case let error as ProfileSync.SyncError:
             if case let .refused(code) = error { return code }
             return nil
-        case let error as VerificationError: return Self.snakeCase(String(describing: error))
-        case let error as Store.StoreError: return Self.snakeCase(String(describing: error))
+        case let error as VerificationError: return String(describing: error).snakeCased
+        case let error as Store.StoreError: return String(describing: error).snakeCased
         default: return ServerMessage.code(of: error)
         }
-    }
-
-    /// `tooManyCodes` → `too_many_codes`.
-    private static func snakeCase(_ name: String) -> String {
-        name.replacingOccurrences(of: "([a-z])([A-Z])", with: "$1_$2", options: .regularExpression).lowercased()
     }
 
     /// The error an SDK's error wraps: Foundation's `NSUnderlyingErrorKey`, or an `underlyingError`.

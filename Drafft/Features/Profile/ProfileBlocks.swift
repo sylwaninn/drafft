@@ -60,6 +60,7 @@ struct VoiceBlock: View {
                 Button {
                     guard let url else { return }
                     Haptics.tap()
+                    if !playing { Telemetry.track(.voiceIntroPlayed(where: ScreenTracker.currentID)) }
                     audio.toggle(url)
                 } label: {
                     Image(playing ? "pause" : "play")

@@ -84,7 +84,7 @@ enum PrivacyGuard {
 
     // MARK: Free text
 
-    private static let slug = regex(#"^[a-z0-9][a-z0-9_.:\-]{0,79}$"#)
+    private static let slug = regex(#"^[a-z0-9][a-z0-9_.:\-]{0,79}\z"#)
     private static let email = regex(#"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"#)
     /// International (+33 6 12 34 56 78) and national (06 12 34 56 78) forms; not timestamps or ids.
     private static let phone = regex(#"\+\d[\d .()-]{6,18}\d|\b0\d(?:[ .-]?\d{2}){4}\b"#)

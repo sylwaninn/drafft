@@ -49,9 +49,11 @@ enum TelemetrySession {
         Telemetry.describeAccount(["is_premium": app.isPremium, "language": app.language.rawValue])
     }
 
-    /// The screen under any sheet or pushed screen: welcome, sign-up, or the current tab.
-    static func baseScreen(_ app: AppModel) -> Screen {
-        switch app.phase {
+    /// The screen under any sheet or pushed screen: welcome, sign-up, or the current tab. While the tabs
+    /// are walked invisibly (`prebuilding`) it stays on Discover: nobody sees the others.
+    static func baseScreen(_ app: AppModel, prebuilding: Bool = false) -> Screen {
+        if prebuilding, app.phase == .main { return .discover }
+        return switch app.phase {
         case .welcome: .welcome
         case .onboarding: .onboarding
         case .main:

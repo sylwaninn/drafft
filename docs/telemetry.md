@@ -64,8 +64,9 @@ long as the privacy policy says so and people can object.
 
 ## Errors: what alerts and what doesn't
 
-`Telemetry.unexpected(error, area, action)` is called in every `catch` that swallows or rethrows a
-failure the app didn't expect. It classifies the error (`ErrorKind`, read by `AppErrorClassifier`):
+`Telemetry.unexpected(error, area, action)` is called in a `catch` that swallows or rethrows a
+failure the app didn't expect. Best-effort upkeep written `try?` (cache refreshes, cleaning up a file)
+is not reported. It classifies the error (`ErrorKind`, read by `AppErrorClassifier`):
 
 | Kind | Sentry issue? | Example |
 |---|---|---|
@@ -82,9 +83,11 @@ So an issue in Sentry means something needs a fix. A 4xx with a one-word code (`
 session's business. Every non-2xx response from `Backend` is also a Sentry log line (searchable, not
 an issue). RevenueCat and Stream unreachable count as offline.
 
-The app's own log lines (`AppLog`, which replaces `os.Logger` and still writes to the device log):
-`info` and `notice` as breadcrumbs, `error` as Sentry log lines, `fault` as issues (something that
-should never happen, like a backend that isn't deployed).
+The app's own log lines (`AppLog`, which replaces `os.Logger` and still writes to the device log), by
+level: `info` and `notice` are breadcrumbs (they come with the next error report), `error` is a Sentry
+log line (searchable, never an issue), `fault` is a Sentry issue (something that should never happen,
+like a backend that isn't deployed). `debug` stays on the phone. A cancelled task is never a failure:
+`Telemetry.track` drops any event whose `reason` is `cancelled`.
 
 Performance: every `Backend` request is a span (`http.client`, `POST rest/v1/rpc/discover`) with its
 status and duration, a child of the running trace or a trace of its own. Lone requests are the most
@@ -106,7 +109,7 @@ properties: `app_environment` (`production`, `staging`, `local`), `app_language`
 its lifecycle events (`Application Installed`, `Updated`, `Opened`, `Backgrounded`).
 
 Screens (`Screen`, PostHog `$screen`): the tabs, sign-up and the welcome screen (set by `RootView` from
-the phase and the tab), the gates (location, terms, hold), and every pushed screen and sheet that
+the phase and the tab; it stays on Discover while the tabs are built invisibly under the splash), the gates (location, terms, hold), and every pushed screen and sheet that
 matters (`profile_detail`, `chat`, `paywall`, `extras`, `edit_profile`...). `.trackScreen(.x)` on a
 view counts it while it's on screen (not while the tabs are hidden); `.trackPaywall(kind)` also sends
 `paywall_viewed` (with `from_screen`) and `paywall_dismissed` (with `purchased`).
@@ -116,14 +119,14 @@ view counts it while it's on screen (not while the tabs are hidden); `.trackPayw
 | Account | `account_created`, `sign_up_failed`, `email_confirmed`, `email_code_resent`, `logged_in`, `log_in_failed`, `password_reset_requested`, `password_reset_completed`, `logged_out`, `session_ended`, `account_deleted`, `account_delete_failed`, `email_changed`, `password_changed`, `data_export_requested`, `terms_accepted`, `analytics_consent_changed`, `account_held` |
 | Sign-up | `onboarding_step_viewed`, `onboarding_step_completed` (with `skipped`, `seconds_on_step`), `onboarding_step_blocked`, `onboarding_resumed`, `onboarding_completed`, `onboarding_failed` |
 | Phone | `phone_code_sent`, `phone_code_failed`, `phone_verified`, `phone_verification_failed` |
-| Discover | `deck_loaded`, `deck_load_failed`, `deck_empty_shown`, `profile_swiped` (`like`, `pass`, `super_like`; from the deck or Likes), `swipe_refused`, `swipe_undone`, `daily_like_limit_reached`, `profile_viewed`, `filters_changed`, `boost_started`, `boost_failed` |
+| Discover | `deck_loaded`, `deck_load_failed`, `deck_empty_shown`, `profile_swiped` (`like`, `pass`, `super_like`; from the deck or Likes), `swipe_refused`, `swipe_undone`, `daily_like_limit_reached`, `profile_viewed`, `filters_changed`, `boost_started`, `boost_failed`, `voice_intro_played` (`where`: the screen, when a tap starts playback, not for chat voice messages), `icebreaker_answered` (once per card, not on the person's own profile) |
 | Likes and matches | `likes_viewed`, `match_created` (`my_swipe`, `their_like`), `match_screen_action`, `unmatched`, `match_ended` |
 | Chat | `chat_opened`, `message_sent` (kind, reply, first message, duration), `message_failed`, `message_retried`, `message_reacted`, `message_deleted`, `chat_muted`, `chat_marked_unread` |
 | Sessions | `session_proposed` (sport, options), `session_countered`, `session_responded`, `session_cancelled`, `session_action_failed`, `session_added_to_calendar` |
 | Purchases | `paywall_viewed` (kind, `from_screen`), `paywall_dismissed`, `products_load_failed`, `purchase_started`, `purchase_completed`, `purchase_cancelled`, `purchase_failed`, `purchase_credited` (`seconds_to_credit`), `purchases_restored`, `restore_failed`, `subscription_manage_opened` |
-| Own profile | `profile_edited` (`fields`), `profile_edit_failed`, `photo_upload_started` (`retry`), `photo_upload_failed`, `photo_removed`, `photo_moderated` (`approved`, `refused`, `in_review`), `photo_review_requested`, `profile_paused`, `selfie_verification_started`, `selfie_verification_submitted`, `selfie_verification_failed` |
+| Own profile | `profile_edited` (`fields`), `profile_edit_failed`, `photo_upload_started` (`retry`), `photo_upload_failed`, `photo_removed`, `photo_moderated` (`approved`, `refused`, `in_review`), `photo_review_requested`, `voice_intro_recorded` (`duration_seconds`, `where`), `profile_paused`, `selfie_verification_started`, `selfie_verification_submitted`, `selfie_verification_failed` |
 | Safety | `user_blocked`, `user_unblocked`, `user_reported` (category), `report_failed` |
-| Settings and system | `language_changed`, `permission_requested` (permission, result, during), `notification_setting_changed`, `push_received`, `push_opened`, `legal_doc_opened`, `support_contacted` |
+| Settings and system | `language_changed`, `permission_requested` (permission, result, during; sent when the system asked or the person is blocked, never for a permission already granted), `notification_setting_changed`, `push_received`, `push_opened`, `legal_doc_opened`, `support_contacted`, `share_tapped` (`what`: `photo` or `video`, from the media viewer) |
 
 Revenue is not computed on the phone: turn on RevenueCat's PostHog integration (purchases, renewals,
 cancellations and refunds with their real amounts, under event names like `rc_initial_purchase_event`,
@@ -193,7 +196,7 @@ interaction, collected, not used for tracking, linked to the account.
 
 ## What remains to do outside this repository
 
-- **Consent switch (here, first):** a switch in You › Privacy & data ("Share usage analytics", off by
+- **Consent switch (first, in the iPhone app):** a switch in You › Privacy & data ("Share usage analytics", off by
   default, with one line on what it means), and optionally a one-time question after sign-up. Its
   words go in the catalog first (WORDING.md), then `TelemetrySession.setConsent` wires it. Until then
   everyone is in anonymous mode.

@@ -73,13 +73,14 @@ final class SessionCalendar {
         case .writeOnly: .addOnly
         default: .refused
         }
-        let result: AnalyticsEvent.PermissionResult = switch (before, access) {
+        // Already allowed (the usual case): nothing was asked, so nothing to count.
+        let result: AnalyticsEvent.PermissionResult? = switch (before, access) {
         case (.notDetermined, .refused): .denied
         case (.notDetermined, _): .granted
         case (_, .refused): .blocked
-        default: .alreadyGranted
+        default: nil
         }
-        Telemetry.track(.permissionRequested(.calendar, result: result, during: ScreenTracker.currentID))
+        if let result { Telemetry.track(.permissionRequested(.calendar, result: result, during: ScreenTracker.currentID)) }
         return access
     }
 

@@ -78,6 +78,8 @@ struct RootView: View {
     /// stays until they're built, so the first tap on a tab never builds it.
     @State private var tabsBuilt = false
     private var inMain: Bool { app.phase == .main }
+    /// The tabs are being walked invisibly (MainTabs): nobody sees them switch.
+    private var prebuilding: Bool { splashShown || !inMain }
 
     var body: some View {
         rootStack
@@ -152,7 +154,9 @@ struct RootView: View {
             .onChange(of: "\(app.language.rawValue) \(app.isPremium) \(TelemetrySession.phaseID(app.phase))", initial: true) {
                 TelemetrySession.describe(app)
             }
-            .onChange(of: TelemetrySession.baseScreen(app), initial: true) { _, screen in ScreenTracker.base(screen) }
+            .onChange(of: TelemetrySession.baseScreen(app, prebuilding: prebuilding), initial: true) { _, screen in
+                ScreenTracker.base(screen)
+            }
             .drafftConfirm(isPresented: Binding(get: { app.sessionEndedNotice }, set: { app.sessionEndedNotice = $0 }),
                            icon: "user-warning",
                            title: L("You've been logged out"),
@@ -178,7 +182,7 @@ struct RootView: View {
                 // banner over the hold screen. They wake up where they were once it's lifted.
                 MainTabs(isActive: inMain && moderation.hold == nil,
                          // Hidden under the splash, the welcome screen or sign-up: tabs may be switched.
-                         mayPrebuild: Binding(get: { splashShown || !inMain }, set: { _ in })) {
+                         mayPrebuild: Binding(get: { prebuilding }, set: { _ in })) {
                     tabsBuilt = true
                 }
                     .id(app.sessionID)

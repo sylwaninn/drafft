@@ -31,19 +31,23 @@ private final class FakeCrashes: Telemetry.CrashReporter, @unchecked Sendable {
     private var _captured: [(Error, Telemetry.ErrorReport)] = []
     private var _crumbs: [Telemetry.Breadcrumb] = []
     private var _messages: [String] = []
+    private var _reports: [Telemetry.ErrorReport] = []
     private var _logs: [String] = []
 
     var userID: String? { lock.withLock { _userID } }
     var captured: [(Error, Telemetry.ErrorReport)] { lock.withLock { _captured } }
     var crumbs: [Telemetry.Breadcrumb] { lock.withLock { _crumbs } }
     var messages: [String] { lock.withLock { _messages } }
+    var reports: [Telemetry.ErrorReport] { lock.withLock { _reports } }
     var logs: [String] { lock.withLock { _logs } }
 
     func setUser(_ id: String?) { lock.withLock { _userID = id } }
     func setTag(_ key: String, _ value: String?) {}
     func breadcrumb(_ crumb: Telemetry.Breadcrumb) { lock.withLock { _crumbs.append(crumb) } }
     func capture(_ error: Error, _ report: Telemetry.ErrorReport) { lock.withLock { _captured.append((error, report)) } }
-    func message(_ text: String, _ level: Telemetry.Level, _ report: Telemetry.ErrorReport) { lock.withLock { _messages.append(text) } }
+    func message(_ text: String, _ level: Telemetry.Level, _ report: Telemetry.ErrorReport) {
+        lock.withLock { _messages.append(text); _reports.append(report) }
+    }
     func log(_ level: Telemetry.Level, _ text: String, _ attributes: [String: TelemetryValue]) { lock.withLock { _logs.append(text) } }
     func startSpan(_ operation: String, _ description: String) -> any Telemetry.Span { NoopSpan() }
 
@@ -61,15 +65,28 @@ private struct HTTPFailure: Error {
 
 private enum StoreFailure: Error { case pending, unconfirmed }
 
+/// The shapes of the app's own errors, as `AppErrorClassifier` reads them: Supabase Auth's code (or the
+/// database's hint), a verification case's name, a store error's name.
+private struct AuthFailure: Error {
+    let code: String
+    var hint: String?
+}
+private enum VerificationFailure: Error { case tooManyCodes, wrongCode, sendFailed }
+private enum NotLinked: Error { case notLinked }
+
 private struct TestClassifier: ErrorClassifier {
     func kind(of error: Error) -> ErrorKind {
         if let basic = ErrorKind.basic(error) { return basic }
         if let http = error as? HTTPFailure { return ErrorKind.http(status: http.status, message: http.message) }
         if let store = error as? StoreFailure { return store == .unconfirmed ? .storeUnconfirmed : .storeDeclined }
+        if error is AuthFailure || error is VerificationFailure { return .refused }
+        if error is NotLinked { return .offline }
         return .unexpected
     }
 
     func code(of error: Error) -> String? {
+        if let auth = error as? AuthFailure { return auth.hint ?? auth.code }
+        if error is VerificationFailure || error is NotLinked { return String(describing: error).snakeCased }
         guard let http = error as? HTTPFailure, !http.message.contains(" ") else { return nil }
         return http.message
     }
@@ -135,6 +152,28 @@ final class TelemetryTests: XCTestCase {
         XCTAssertTrue(afterReset.contains("register:app_environment=production"), "\(afterReset)")
     }
 
+    func testPersonPropertiesDescribedBeforeIdentifyingAreSentOnceIdentified() {
+        // The app describes the account at launch, before the session is read and the consent applied.
+        Telemetry.describeAccount(["is_premium": true, "language": "fr"])
+        Telemetry.signedIn(someone)
+        XCTAssertFalse(analytics.calls.contains { $0.hasPrefix("person") })
+        Telemetry.applyConsent(.granted)
+        let after = Array(analytics.calls.drop { !$0.hasPrefix("identify") })
+        XCTAssertEqual(after, ["identify:\(someone)", "person:[\"is_premium\", \"language\"]"])
+        // Described later, while identified: sent as it comes.
+        Telemetry.describeAccount(["is_premium": false])
+        XCTAssertEqual(analytics.calls.last, "person:[\"is_premium\"]")
+    }
+
+    func testPersonPropertiesOfAnotherAccountAreNotSentAfterSigningOut() {
+        Telemetry.applyConsent(.granted)
+        Telemetry.signedIn("a")
+        Telemetry.describeAccount(["language": "fr"])
+        Telemetry.signedIn(nil)
+        Telemetry.signedIn("b")
+        XCTAssertEqual(analytics.calls.filter { $0.hasPrefix("person") }, ["person:[\"language\"]"])
+    }
+
     func testARefusalStillKeepsBreadcrumbsForCrashReports() {
         Telemetry.applyConsent(.denied)
         Telemetry.track(.matchCreated(.mySwipe))
@@ -163,6 +202,18 @@ final class TelemetryTests: XCTestCase {
         XCTAssertEqual(props["source"], .string("deck"))
         XCTAssertEqual(props["screen"], .string("discover"))
         XCTAssertNil(props["likes_left"])
+    }
+
+    func testACancelledFailureIsNotAnEvent() {
+        Telemetry.track(.messageFailed(.text, reason: "cancelled"))
+        Telemetry.track(.purchaseFailed(.boost, productID: "so.drafft.app.boost.5", problem: "unconfirmed"))
+        XCTAssertEqual(analytics.events.map(\.0), ["purchase_failed"])
+        // Nor a breadcrumb: the task going away isn't something that happened to the person.
+        XCTAssertEqual(crashes.crumbs.map(\.message), ["purchase_failed"])
+        // A cancelled error's reason is `cancelled`, which is what the rule above drops.
+        XCTAssertEqual(Telemetry.reason(CancellationError()), "cancelled")
+        Telemetry.track(.messageFailed(.text, reason: Telemetry.reason(CancellationError())))
+        XCTAssertEqual(analytics.events.count, 1)
     }
 
     func testTheSameScreenTwiceIsOneView() {
@@ -281,6 +332,13 @@ final class TelemetryTests: XCTestCase {
         XCTAssertTrue(scrubbed.contains("Bearer [token]"), scrubbed)
     }
 
+    func testACodeEndsWhereItEnds() {
+        XCTAssertTrue(PrivacyGuard.isCode("daily_like_limit"))
+        // A trailing newline is not part of a code (`$` would let it through).
+        XCTAssertFalse(PrivacyGuard.isCode("daily_like_limit\n"))
+        XCTAssertFalse(PrivacyGuard.properties("x", ["reason": "ok\n"]).keys.contains("reason"))
+    }
+
     func testPathsLoseTheirQuery() {
         XCTAssertEqual(PrivacyGuard.path("rest/v1/profiles?id=eq.4f2c&select=paused"), "rest/v1/profiles")
     }
@@ -315,11 +373,39 @@ final class TelemetryTests: XCTestCase {
         XCTAssertEqual(Telemetry.reason(HTTPFailure(status: 500, message: "boom happened")), "server")
     }
 
+    func testReasonOfAuthVerificationAndStoreErrors() {
+        // Supabase Auth's code, or the database's hint when it gave one (a banned address is `email_taken`).
+        XCTAssertEqual(Telemetry.reason(AuthFailure(code: "invalid_credentials")), "invalid_credentials")
+        XCTAssertEqual(Telemetry.reason(AuthFailure(code: "unexpected_failure", hint: "email_taken")), "email_taken")
+        // A verification case by its name, snake_case.
+        XCTAssertEqual(Telemetry.reason(VerificationFailure.tooManyCodes), "too_many_codes")
+        XCTAssertEqual(Telemetry.reason(VerificationFailure.wrongCode), "wrong_code")
+        // The store's own errors: a name, or the kind when it has none.
+        XCTAssertEqual(Telemetry.reason(NotLinked.notLinked), "not_linked")
+        XCTAssertEqual(Telemetry.reason(StoreFailure.unconfirmed), "store_unconfirmed")
+        // Never words: a message-like code falls back to the kind.
+        XCTAssertEqual(Telemetry.reason(AuthFailure(code: "Invalid login credentials")), "refused")
+        XCTAssertEqual(Telemetry.reason(AuthFailure(code: String(repeating: "a", count: 61))), "refused")
+    }
+
+    func testSwiftNamesBecomeCodes() {
+        XCTAssertEqual("tooManyCodes".snakeCased, "too_many_codes")
+        XCTAssertEqual("mountainBiking".snakeCased, "mountain_biking")
+        XCTAssertEqual("running".snakeCased, "running")
+        XCTAssertTrue(PrivacyGuard.isCode("emailUnconfirmed".snakeCased))
+    }
+
     func testProblemsAndLogsAreScrubbed() {
         Telemetry.log(.warning, "send failed for maya@example.com")
         XCTAssertEqual(crashes.logs, ["send failed for [email]"])
         Telemetry.problem("purchase credited late", "purchase", extra: ["seconds_to_credit": 900])
         XCTAssertEqual(crashes.messages, ["purchase credited late"])
+    }
+
+    func testProblemFingerprintsAreScrubbedToo() {
+        Telemetry.problem("no card for maya@example.com", "discover")
+        XCTAssertEqual(crashes.messages, ["no card for [email]"])
+        XCTAssertEqual(crashes.reports.first?.fingerprint, ["discover", "no card for [email]"])
     }
 
     func testTraceFinishesTheSpanAndKeepsTheValue() async throws {
@@ -347,6 +433,25 @@ final class TelemetryTests: XCTestCase {
         config.postHogKey = ""
         XCTAssertFalse(config.hasSentry)
         XCTAssertFalse(config.hasPostHog)
+    }
+
+    func testOnlyTheExactEUHostsAreUsed() {
+        func config(dsn: String = "", host: String) -> TelemetryConfig {
+            TelemetryConfig(sentryDSN: dsn, postHogKey: "phc_x", postHogHost: host, environment: "production", version: "1", build: "1")
+        }
+        XCTAssertTrue(config(host: "https://eu.i.posthog.com").hasPostHog)
+        XCTAssertTrue(config(host: "https://eu.i.posthog.com/").hasPostHog)
+        // A prefix is not the host: another domain, a userinfo trick, a lookalike, a plain-http one, another port.
+        for host in ["https://eu.evil.com", "https://eu.i.posthog.com@evil.com", "https://eu.i.posthog.com.evil.com",
+                     "http://eu.i.posthog.com", "https://eu.i.posthog.com:8443", "https://eu.i.posthog.com/x",
+                     "https://us.i.posthog.com", "eu.i.posthog.com", ""] {
+            XCTAssertFalse(config(host: host).hasPostHog, host)
+        }
+        XCTAssertTrue(config(dsn: "https://abc123@o42.ingest.de.sentry.io/7", host: "").hasSentry)
+        for dsn in ["https://abc123@o42.ingest.de.sentry.io.evil.com/7", "https://abc123@evil.com/o42.ingest.de.sentry.io/7",
+                    "https://abc123@o42.ingest.de.sentry.io/7\n", "https://abc123@o42.ingest.us.sentry.io/7"] {
+            XCTAssertFalse(config(dsn: dsn, host: "").hasSentry, dsn)
+        }
     }
 
     func testProductionSamplesStagingKeepsEverything() {

@@ -204,7 +204,8 @@ final class SelfieCaptureModel {
             let granted = await AVCaptureDevice.requestAccess(for: .video)
             trackPermission(granted ? .granted : .denied)
             guard granted else { stage = .denied; return }
-        case .authorized: trackPermission(.alreadyGranted)
+        // Already allowed (the usual case): nothing was asked, so nothing to count.
+        case .authorized: break
         default:
             // iOS doesn't prompt again: only Settings can turn it on.
             trackPermission(.blocked)
