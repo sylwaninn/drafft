@@ -17,7 +17,7 @@ app follows the same plan with the same names (drafft-android `docs/telemetry.md
 
 The app talks to neither SDK directly: everything goes through `Telemetry` (an enum with pluggable
 engines, safe from any thread), which applies `PrivacyGuard` and the person's consent first. Without
-keys (local builds, unit tests) every call does nothing.
+keys (unit tests) every call does nothing.
 
 ## Identity: who is who, within the GDPR
 
@@ -111,7 +111,7 @@ that should never happen, like a backend that isn't deployed). `debug` stays on 
 Performance: every `Backend` request is a span (`http.client`, `POST rest/v1/rpc/discover`) with its
 status and duration, a child of the running trace or a trace of its own. Lone requests are the most
 frequent traces, so production keeps 2% of them and 20% of the others (app start, uploads); staging
-and local keep everything. Media uploads (`media.upload`: profile photos, chat media, the selfie) are
+keeps everything. Media uploads (`media.upload`: profile photos, chat media, the selfie) are
 timed too. Profiles follow 5% of the sampled traces in production. Sentry's automatic URLSession
 tracing, failed-request capture and network breadcrumbs are off: they would record Stream, RevenueCat
 and storage URLs (signed links), and turn 5xx into issues the app already classifies.
@@ -123,7 +123,7 @@ metrics on the phone and sends their summary as a Sentry log line.
 
 All events live in `AnalyticsEvent` (one static factory per event). Names are `object_action`,
 snake_case, past tense. Every event also carries `screen` (the screen on show), and these super
-properties: `app_environment` (`production`, `staging`, `local`, or `unknown` for a build whose environment is missing or invalid:
+properties: `app_environment` (`production`, `staging`, or `unknown` for a build whose environment is missing or invalid:
 never production; also stamped on every event on its way out, PostHog's own `$` events included, so the first
 lifecycle events can't miss it), `app_language`, `app_phase`
 (`welcome`, `onboarding`, `main`), `is_premium`. PostHog adds the app version, OS, device model and
@@ -192,12 +192,12 @@ production.
 | `SENTRY_DSN` | Sentry › Project `drafft-ios` › Settings › Client Keys (DSN). EU organisation. Write `https:/$()/...` (an xcconfig reads `//` as a comment) |
 | `POSTHOG_API_KEY` | PostHog › Project settings › Project API key (`phc_...`) |
 | `POSTHOG_HOST` | `https:/$()/eu.i.posthog.com` |
-| `APP_ENVIRONMENT` | `production`, `staging` or `local` (set in each xcconfig) |
+| `APP_ENVIRONMENT` | `production` or `staging` (set in each xcconfig) |
 
 Empty values turn the service off. Production and staging share the Sentry project (the `environment`
 tag separates them) and the PostHog project too, with the Android app and the website: filter every
-insight, funnel, alert and experiment on `app_environment = production` (local builds send nothing:
-empty key). Staging events count in the same quota.
+insight, funnel, alert and experiment on `app_environment = production` (staging events count in
+the same quota).
 CI refuses a non-EU host or DSN, and anything shaped like a secret (Sentry auth tokens, PostHog
 personal API keys); the app also ignores a non-EU value. gitleaks allows DSNs and `phc_` keys by
 value, nothing else.

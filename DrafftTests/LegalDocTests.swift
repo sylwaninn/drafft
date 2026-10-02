@@ -9,36 +9,43 @@ final class LegalDocTests: XCTestCase {
             .terms: "https://getdrafft.com/terms?lang=en",
             .privacy: "https://getdrafft.com/privacy?lang=en",
             .community: "https://getdrafft.com/terms?lang=en#community",
+            .notice: "https://getdrafft.com/legal?lang=en",
         ],
         .fr: [
             .terms: "https://getdrafft.com/fr/terms?lang=fr",
             .privacy: "https://getdrafft.com/fr/privacy?lang=fr",
             .community: "https://getdrafft.com/fr/terms?lang=fr#community",
+            .notice: "https://getdrafft.com/fr/legal?lang=fr",
         ],
         .es: [
             .terms: "https://getdrafft.com/es/terms?lang=es",
             .privacy: "https://getdrafft.com/es/privacy?lang=es",
             .community: "https://getdrafft.com/es/terms?lang=es#community",
+            .notice: "https://getdrafft.com/es/legal?lang=es",
         ],
         .de: [
             .terms: "https://getdrafft.com/de/terms?lang=de",
             .privacy: "https://getdrafft.com/de/privacy?lang=de",
             .community: "https://getdrafft.com/de/terms?lang=de#community",
+            .notice: "https://getdrafft.com/de/legal?lang=de",
         ],
         .it: [
             .terms: "https://getdrafft.com/it/terms?lang=it",
             .privacy: "https://getdrafft.com/it/privacy?lang=it",
             .community: "https://getdrafft.com/it/terms?lang=it#community",
+            .notice: "https://getdrafft.com/it/legal?lang=it",
         ],
         .pt: [
             .terms: "https://getdrafft.com/pt/terms?lang=pt",
             .privacy: "https://getdrafft.com/pt/privacy?lang=pt",
             .community: "https://getdrafft.com/pt/terms?lang=pt#community",
+            .notice: "https://getdrafft.com/pt/legal?lang=pt",
         ],
         .nl: [
             .terms: "https://getdrafft.com/nl/terms?lang=nl",
             .privacy: "https://getdrafft.com/nl/privacy?lang=nl",
             .community: "https://getdrafft.com/nl/terms?lang=nl#community",
+            .notice: "https://getdrafft.com/nl/legal?lang=nl",
         ],
     ]
 

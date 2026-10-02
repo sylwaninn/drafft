@@ -8,7 +8,7 @@ struct TelemetryConfig: Sendable, Equatable {
     var postHogKey: String
     /// PostHog's EU cloud (`https://eu.i.posthog.com`): the data stays in the EU, like the backend.
     var postHogHost: String
-    /// "production", "staging" or "local" (`environmentID` never gives anything else).
+    /// "production" or "staging" (`environmentID` never gives anything else).
     var environment: String
     /// "0.1.0"
     var version: String
@@ -23,7 +23,7 @@ struct TelemetryConfig: Sendable, Equatable {
     /// Off without a key, and with a host that isn't exactly PostHog's EU cloud.
     var hasPostHog: Bool { !postHogKey.isEmpty && Self.isEUPostHogHost(postHogHost) }
 
-    /// Share of traces kept (performance): every one in staging and local, where traffic is small and
+    /// Share of traces kept (performance): every one in staging, where traffic is small and
     /// each slow request matters; 20% in production, enough for percentiles at a fraction of the quota.
     var tracesSampleRate: Double { environment == "production" ? 0.2 : 1.0 }
 
@@ -47,10 +47,10 @@ struct TelemetryConfig: Sendable, Equatable {
         return url.query == nil && url.fragment == nil
     }
 
-    /// The three environments a build can be. Anything else (a missing or unexpanded `APP_ENVIRONMENT`,
+    /// The two environments a build can be. Anything else (a missing or unexpanded `APP_ENVIRONMENT`,
     /// a typo) is "unknown": a misconfigured build never counts as production in the dashboards.
     static func environmentID(_ raw: String) -> String {
-        ["production", "staging", "local"].contains(raw) ? raw : "unknown"
+        ["production", "staging"].contains(raw) ? raw : "unknown"
     }
 
     /// From the app's Info.plist (`SentryDSN`, `PostHogAPIKey`, `PostHogHost`, `AppEnvironment`).

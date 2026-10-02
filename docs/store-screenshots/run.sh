@@ -48,17 +48,15 @@ print(sorted(rts, key=lambda r: [int(x) for x in r['version'].split('.')])[-1]['
 
 build() {
   local wt=$WORK/app id
-  [[ -f $REPO/Local.private.xcconfig ]] || { echo "Local.private.xcconfig missing: run scripts/local-backend.sh first"; exit 1; }
   git -C "$REPO" worktree remove --force "$wt" 2>/dev/null || true
   git -C "$REPO" worktree add --detach "$wt" HEAD >/dev/null
-  cp "$REPO/Local.private.xcconfig" "$wt/"
   git -C "$wt" apply "$HERE/store-shots.patch"
   id=$(simulator)
-  (cd "$wt" && xcodegen generate --quiet && xcodebuild -quiet -project Drafft.xcodeproj -scheme "Drafft Local" -configuration Local \
+  (cd "$wt" && xcodegen generate --quiet && xcodebuild -quiet -project Drafft.xcodeproj -scheme "Drafft Staging" -configuration Staging \
     -destination "platform=iOS Simulator,id=$id" -derivedDataPath "$WORK/dd" \
     SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) STORE_SHOTS' build)
-  local app=$WORK/dd/Build/Products/Local-iphonesimulator/Drafft.app
-  # Always the local configuration (AGENTS.md); the harness itself never calls a backend.
+  local app=$WORK/dd/Build/Products/Staging-iphonesimulator/Drafft.app
+  # Always the staging configuration (AGENTS.md); the harness itself never calls a backend.
   /usr/libexec/PlistBuddy -c "Print :SupabaseURL" "$app/Info.plist"
   xcrun simctl install "$id" "$app"
   xcrun simctl privacy "$id" grant location $BUNDLE

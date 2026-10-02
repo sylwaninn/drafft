@@ -62,9 +62,9 @@ tests fail on it.
   wording (within WORDING.md) and say what you chose in the summary, instead of a round of questions.
   Lean modern: rich motion and micro-interactions.
 - **Never check screens yourself**: no screenshots, no visual review by a subagent.
-  Build, install and launch the app on the Simulator (`Drafft Local`), then hand over.
+  Build, install and launch the app on the Simulator (`Drafft Staging`, see "Environments"), then hand over.
   The user checks the result themselves.
-- **On the user's iPhone, launch only on their go.** Install the build (`-configuration Local`, which is
+- **On the user's iPhone, launch only on their go.** Install the build (`-configuration Staging`, which is
   optimised: Debug builds stall for up to a second on device and get reported as bugs), then stop.
   Launch or relaunch only once the user says "ok" or "prêt": they set the phone up first (Network Link
   Conditioner, for instance). On the go, reset what the run needs (swipes, `-deckPhotoReset`), then launch.
@@ -118,9 +118,12 @@ reads.
 
 ### Environments
 
-Apps an agent installs or launches always target the local Supabase. Never build, install, deploy or run
-mutations against staging or production unless the user asks for that environment in the current
-request. Compile-only checks are the exception.
+The user works against staging only. Apps an agent installs or launches (Simulator or iPhone) target
+**staging**: `-scheme "Drafft Staging" -configuration Staging` ("drafft β"). Production (`Drafft`,
+`-configuration Release`) only when the user asks for it in the current request; never build, install,
+deploy or run mutations against production otherwise. Compile-only checks (the verify command below, no
+install, no launch) are the exception and run on any scheme. See "This repository" for the
+bundle id and the check before installing.
 
 ### Work that spans repositories
 
@@ -160,16 +163,12 @@ full list is in CONTRIBUTING.md, "Quality gates". SwiftLint fails on new violati
 `// design-lint: allow <rule> - <why>`.
 
 Environments: scheme **Drafft** (production backend) and **Drafft Staging** ("drafft β", staging
-backend), from `Config/*.xcconfig`. **Drafft Local** ("drafft local") runs on the local Supabase of
-drafft-backend with its staging services: `supabase start` there, then `scripts/local-backend.sh` (add
-`--device` for an iPhone on the same Wi-Fi) writes the machine's URL and key to the gitignored
-`Local.private.xcconfig`. Never put a secret in the app: only public keys go there.
+backend), from `Config/*.xcconfig`. Never put a secret in the app: only public keys go there.
 
-**Run the app on the local backend, always.** Every build an agent installs or launches (Simulator
-or iPhone) is `-scheme "Drafft Local" -configuration Local`. NEVER build, install or launch against
-production or staging (`Drafft`, `Drafft Staging`, `-configuration Release`, `Debug` or `Staging`)
-unless the user explicitly asks for that environment in the current request. All schemes share the
-bundle id `so.drafft.app`, so any other build silently replaces the local app and sends real actions
-(sign-ups, likes, messages) to that backend. Before installing, check the built app's
-`Info.plist`: `SupabaseURL` must be the local machine's address. Compile-only checks (the verify
-command above, no install, no launch) are the one exception.
+**Run the app on staging, always.** Every build an agent installs or launches (Simulator or iPhone)
+is `-scheme "Drafft Staging" -configuration Staging`. NEVER build, install or launch against production
+(`Drafft`, `-configuration Release`) unless the user explicitly asks for it in the current request. Both
+schemes share the bundle id `so.drafft.app`, so a production build silently replaces the staging app and
+sends real actions (sign-ups, likes, messages) to production. Before installing, check the built app's
+`Info.plist`: `SupabaseURL` must be the staging project's (`Config/Staging.xcconfig`). Compile-only checks
+(the verify command above, no install, no launch) are the one exception.

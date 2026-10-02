@@ -11,6 +11,13 @@ enum ServerMessage {
     /// A code is one word (`media_limit`); anything with a space is a sentence from the server.
     static func isCode(_ message: String) -> Bool { !message.isEmpty && !message.contains(" ") }
 
+    /// The request never reached the server (no connection, a timeout): the only time "check your
+    /// connection" is the right advice. A server that answered with an error is not a connection problem.
+    static func isOffline(_ error: Error) -> Bool {
+        guard let error = error as? URLError else { return false }
+        return error.code != .cancelled
+    }
+
     // swiftlint:disable:next cyclomatic_complexity
     static func text(forCode code: String) -> String? {
         switch code {
