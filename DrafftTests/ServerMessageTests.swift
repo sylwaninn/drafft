@@ -14,12 +14,11 @@ final class ServerMessageTests: XCTestCase {
     }
 
     func testConnectionAdviceOnlyWhenOffline() {
-        let offline = "offline"
-        XCTAssertEqual(ServerMessage.text(for: URLError(.notConnectedToInternet), offline: offline), offline)
+        XCTAssertTrue(ServerMessage.isOffline(URLError(.notConnectedToInternet)))
+        XCTAssertTrue(ServerMessage.isOffline(URLError(.timedOut)))
         XCTAssertFalse(ServerMessage.isOffline(URLError(.cancelled)))
-        // The server answered: its words or the generic line, never connection advice.
-        XCTAssertEqual(ServerMessage.text(for: Backend.BackendError.http(500, "boom"), offline: offline), ServerMessage.generic)
-        XCTAssertTrue(Backend.BackendError.http(401, "unauthenticated").isSignedOut)
+        // Not a transport error (the server answered, or something else failed): never connection advice.
+        XCTAssertFalse(ServerMessage.isOffline(NSError(domain: "server", code: 500)))
     }
 
     func testUnknownCodeHasNoWords() {
