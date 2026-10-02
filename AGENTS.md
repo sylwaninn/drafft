@@ -13,6 +13,21 @@ present a match as turning into something. New editorial decisions go into WORDI
 canonical copy; the workspace's `scripts/sync-docs.sh` copies it to drafft-backend, drafft-web and
 drafft-android, with DESIGN.md).
 
+## Telemetry (Sentry and PostHog)
+
+[docs/telemetry.md](docs/telemetry.md) is the plan; the code is `Drafft/Services/Telemetry/`, the same
+events and rules as the Android app.
+- A new feature comes with its events: a factory in `AnalyticsEvent` (`object_action`, past tense,
+  typed properties), `Telemetry.track(...)` where it happened (in the model when it can tell whether it
+  worked), a row in the doc's table, the event in `TelemetryTests`. Never rename an event or a property.
+- A new pushed screen, sheet or cover gets `.trackScreen(.x)` (a paywall `.trackPaywall(kind)`).
+- A `catch` that swallows or rethrows an error the code didn't expect calls
+  `Telemetry.unexpected(error, area, action)`: it only alerts on what needs a fix (not offline, not a
+  refusal the screen explains). Log with `AppLog`, never `os.Logger` directly.
+- Never put what people typed, their sensitive answers (gender, who they want to meet, lifestyle),
+  their location or another person's id in an event, a tag or a log line. `PrivacyGuard` drops it
+  anyway, and unit tests fail on it.
+
 ## Workspace rules
 
 This repository lives in the drafft workspace (the parent folder, see `../AGENTS.md`), which holds what
