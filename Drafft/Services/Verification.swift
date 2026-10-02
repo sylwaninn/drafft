@@ -215,7 +215,7 @@ final class PhoneVerificationModel {
             Haptics.success()
         } catch {
             let failure = error as? VerificationError ?? .sendFailed
-            Telemetry.track(.phoneCodeFailed(during: during, reason: failure.reason))
+            Telemetry.track(.phoneCodeFailed(during: during, reason: Telemetry.reason(error)))
             Telemetry.unexpected(error, "phone", "send_code")
             self.error = failure.message
             // Nothing to fix on the number there: waiting, or confirming the email, is the way.
@@ -253,14 +253,14 @@ final class PhoneVerificationModel {
             Haptics.warning()
         } catch let failure as VerificationError where failure != .wrongCode {
             // Not the code's fault (offline, a server error): no try used up, the same code can go again.
-            Telemetry.track(.phoneVerificationFailed(during: during, reason: failure.reason))
+            Telemetry.track(.phoneVerificationFailed(during: during, reason: Telemetry.reason(failure)))
             Telemetry.unexpected(failure, "phone", "verify")
             error = failure == .network ? failure.message : L("Something went wrong. Try again in a moment.")
             needsHelp = failure != .network
             Haptics.warning()
         } catch {
-            if let failure = error as? VerificationError {
-                Telemetry.track(.phoneVerificationFailed(during: during, reason: failure.reason))
+            if error is VerificationError {
+                Telemetry.track(.phoneVerificationFailed(during: during, reason: Telemetry.reason(error)))
             } else {
                 Telemetry.track(.phoneVerificationFailed(during: during, reason: Telemetry.reason(error)))
                 Telemetry.unexpected(error, "phone", "verify")

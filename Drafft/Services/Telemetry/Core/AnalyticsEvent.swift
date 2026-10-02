@@ -1,6 +1,6 @@
 import Foundation
 
-// The catalog mirrors the Android app's event by event: some events carry many properties.
+// Some events carry many properties, each one typed in its factory (the Android catalog has the same).
 // swiftlint:disable discouraged_optional_boolean function_parameter_count
 
 /// Every product event the app sends, in one place: the tracking plan (docs/telemetry.md) as code.
@@ -16,7 +16,8 @@ struct AnalyticsEvent: Sendable {
     let name: String
     let properties: TelemetryProperties
 
-    init(_ name: String, _ properties: TelemetryProperties = [:]) {
+    /// Only the factories below make events: a name or a property can't be typed anywhere else.
+    fileprivate init(_ name: String, _ properties: TelemetryProperties = [:]) {
         self.name = name
         self.properties = properties
     }

@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Foundation
 
 /// What kind of failure an error is, for `Telemetry.unexpected`. Only the `reportable` kinds become
@@ -39,12 +40,29 @@ enum ErrorKind: String, Sendable, CaseIterable {
     }
 
     /// What every error can tell without knowing the app's types: cancelled, or never reached a server.
+    /// A URL error that isn't the connection (a certificate, an unsupported URL, a response that can't
+    /// be read) is a bug or an attack, not a phone going offline.
     static func basic(_ error: Error) -> ErrorKind? {
         if error is CancellationError { return .cancelled }
-        if let url = error as? URLError { return url.code == .cancelled ? .cancelled : .offline }
+        if let url = error as? URLError { return connection(url.code) }
         let ns = error as NSError
-        if ns.domain == NSURLErrorDomain { return ns.code == NSURLErrorCancelled ? .cancelled : .offline }
-        return nil
+        switch ns.domain {
+        case NSURLErrorDomain: return connection(URLError.Code(rawValue: ns.code))
+        // The person closed a system sheet (a file picker, Sign in with Apple).
+        case NSCocoaErrorDomain: return ns.code == NSUserCancelledError ? .cancelled : nil
+        case ASAuthorizationError.errorDomain: return ns.code == ASAuthorizationError.canceled.rawValue ? .cancelled : nil
+        default: return nil
+        }
+    }
+
+    /// Only the connection itself is offline.
+    private static func connection(_ code: URLError.Code) -> ErrorKind {
+        switch code {
+        case .cancelled: .cancelled
+        case .notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotConnectToHost, .cannotFindHost,
+             .dnsLookupFailed, .internationalRoamingOff, .dataNotAllowed: .offline
+        default: .unexpected
+        }
     }
 }
 

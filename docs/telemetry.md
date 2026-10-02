@@ -3,7 +3,7 @@
 What the app sends about how it behaves and how it's used, why, and the rules that keep it lawful for
 an app that holds sensitive data. The code is in `Drafft/Services/Telemetry/`: `Core/` holds the rules
 (no SDK, unit-tested in `DrafftTests/TelemetryTests.swift`), the rest plugs in the two SDKs. The Android
-app follows the same plan with the same names (drafft-android `docs/telemetry.md`, PR #44).
+app follows the same plan with the same names (drafft-android `docs/telemetry.md`).
 
 ## Two services, two jobs
 
@@ -32,7 +32,8 @@ email or phone number ever goes with it.
 - **PostHog** gets it only once the person agreed to usage analytics (`identify`). Before that, events
   carry a random id of this install (`personProfiles = .identifiedOnly`: no person profile is created),
   which a sign-out renews. Funnels and retention still work per install.
-- A refusal (`denied`) opts PostHog out entirely, persisted by the SDK. Sentry keeps working.
+- A refusal (`denied`) opts PostHog out entirely, persisted by the SDK. Sentry keeps its crash reports,
+  errors and performance data, but no usage: no product event and no screen goes in its breadcrumbs.
 - Withdrawing consent resets PostHog to a fresh anonymous id: nothing that follows links back.
 
 Why consent for PostHog: identified, per-person product analytics reads an identifier from the phone
@@ -50,17 +51,23 @@ long as the privacy policy says so and people can object.
   orientation, health or beliefs), what people write or record (`bio`, `message`, `text`, `note`,
   `prompt`, `answer`), location (`latitude`, `neighborhood`...), another person (`target_id`,
   `match_id`...) and secrets.
-- Values must be numbers, booleans, or short codes (`^[a-z0-9][a-z0-9_.:-]*$`): a sentence someone
-  typed never passes. Enums go as their raw value, a snake_case code.
+- Values must be numbers, booleans, or short codes (`^[a-z0-9][a-z0-9_.:-]{0,79}$`: 80 characters at
+  most, and a list holds 20 at most): a sentence someone typed never passes, nor does a UUID (another
+  person's id) or a run of 7 digits or more (a phone number). Enums go as their raw value, a snake_case
+  code.
 - Free text that must go (log lines, error messages, breadcrumbs) is scrubbed of emails, phone
-  numbers, UUIDs (another person's id), tokens, JWTs and coordinates, and URLs lose their query string.
+  numbers, UUIDs (another person's id), tokens, JWTs and coordinates. `scrub` leaves query strings
+  alone: the request labels (spans, response log lines) and the breadcrumbs' urls lose theirs
+  separately (`PrivacyGuard.path`).
 - A dropped property is a Sentry log line. Unit tests run every event of the catalog through
   `PrivacyGuard.check` and fail on any drop.
 - Discover filters send distance and the number of sports, never who someone wants to meet. Sign-up
   sends counts and yes/no (photos, sports, prompts, "answered lifestyle"), never the answers. Reports
   send the category, never the details. Profile edits send which fields changed, never their content.
-- PostHog's `beforeSend` and Sentry's `beforeSend`, `beforeBreadcrumb` and `beforeSendLog` apply the
-  same rules a last time on the way out.
+- PostHog's `beforeSend` and Sentry's `beforeSend`, `beforeBreadcrumb` and `beforeSendLog` are a last
+  pass on the way out: they drop the forbidden property names and scrub message texts and the user's
+  fields. They don't check the shape of values again: `PrivacyGuard.properties` did, where each one
+  was set.
 
 ## Errors: what alerts and what doesn't
 
@@ -70,7 +77,8 @@ is not reported. It classifies the error (`ErrorKind`, read by `AppErrorClassifi
 
 | Kind | Sentry issue? | Example |
 |---|---|---|
-| `cancelled`, `offline`, `signed_out` | No (breadcrumb) | Airplane mode, a task cancelled, an expired token |
+| `cancelled` | No, nothing at all (not even a breadcrumb) | A task cancelled, a system sheet closed |
+| `offline`, `signed_out` | No (breadcrumb) | Airplane mode, an expired token |
 | `refused` | No (breadcrumb) | `daily_like_limit`, a wrong password, a wrong SMS code |
 | `rate_limited`, `store_declined` | No (breadcrumb) | HTTP 429, a purchase waiting for a parent |
 | `client_contract` | **Yes** | A 4xx without a code: app and server disagree |
@@ -81,13 +89,24 @@ is not reported. It classifies the error (`ErrorKind`, read by `AppErrorClassifi
 So an issue in Sentry means something needs a fix. A 4xx with a one-word code (`not_found`,
 `already_swiped`) is a refusal the server meant, even when the app has no words for it; a 401 is the
 session's business. Every non-2xx response from `Backend` is also a Sentry log line (searchable, not
-an issue). RevenueCat and Stream unreachable count as offline.
+an issue). Offline is the connection itself: no network, a lost or timed out one, a host or DNS that
+can't be reached, roaming or mobile data off. A certificate, URL or response error is a bug (or an
+attack), so `unexpected`. RevenueCat and Stream unreachable count as offline.
+
+A cancelled task is never a failure: it leaves no breadcrumb, a request or upload cancelled finishes
+its span as cancelled, and `Telemetry.track` drops any event whose `reason` is `cancelled`.
+
+An error is sent to Sentry at most once every 5 minutes per `area`, `action` and kind (the grouping
+too: fingerprint `[area, action, kind]`), so a loop that keeps failing can't use up the quota; the
+others stay breadcrumbs. The kind is the `error_kind` tag and extra (`kind` stays the caller's own).
+Messages from `Telemetry.problem` aren't limited. A final refusal of the safety outbox (a block or an
+unblock the server will never take) is reported before the entry is dropped, and a `purchase-sync`
+throttled (429) or down for the store (503) is a breadcrumb: the webhook credits the purchase anyway.
 
 The app's own log lines (`AppLog`, which replaces `os.Logger` and still writes to the device log), by
-level: `info` and `notice` are breadcrumbs (they come with the next error report), `error` is a Sentry
-log line (searchable, never an issue), `fault` is a Sentry issue (something that should never happen,
-like a backend that isn't deployed). `debug` stays on the phone. A cancelled task is never a failure:
-`Telemetry.track` drops any event whose `reason` is `cancelled`.
+level: `info` and `notice` are breadcrumbs (they come with the next error report), `error` is a
+breadcrumb and a Sentry log line (searchable, never an issue), `fault` is a Sentry issue (something
+that should never happen, like a backend that isn't deployed). `debug` stays on the phone.
 
 Performance: every `Backend` request is a span (`http.client`, `POST rest/v1/rpc/discover`) with its
 status and duration, a child of the running trace or a trace of its own. Lone requests are the most
@@ -108,9 +127,14 @@ properties: `app_environment` (`production`, `staging`, `local`), `app_language`
 (`welcome`, `onboarding`, `main`), `is_premium`. PostHog adds the app version, OS, device model and
 its lifecycle events (`Application Installed`, `Updated`, `Opened`, `Backgrounded`).
 
+Events fire when the person acts, before the server has answered (a like is counted when it's
+swiped); a `*_failed` or `*_refused` event follows when it didn't work (`swipe_refused`,
+`message_failed`, `purchase_failed`...). Successes are the event minus its failures.
+
 Screens (`Screen`, PostHog `$screen`): the tabs, sign-up and the welcome screen (set by `RootView` from
-the phase and the tab; it stays on Discover while the tabs are built invisibly under the splash), the gates (location, terms, hold), and every pushed screen and sheet that
-matters (`profile_detail`, `chat`, `paywall`, `extras`, `edit_profile`...). `.trackScreen(.x)` on a
+the phase and the tab; it stays on Discover while the tabs are built invisibly under the splash), the
+gates (location, terms, hold), and every pushed screen and sheet that matters (`profile_detail`,
+`chat`, `paywall`, `extras`, `edit_profile`...). `.trackScreen(.x)` on a
 view counts it while it's on screen (not while the tabs are hidden); `.trackPaywall(kind)` also sends
 `paywall_viewed` (with `from_screen`) and `paywall_dismissed` (with `purchased`).
 
@@ -126,7 +150,7 @@ view counts it while it's on screen (not while the tabs are hidden); `.trackPayw
 | Purchases | `paywall_viewed` (kind, `from_screen`), `paywall_dismissed`, `products_load_failed`, `purchase_started`, `purchase_completed`, `purchase_cancelled`, `purchase_failed`, `purchase_credited` (`seconds_to_credit`), `purchases_restored`, `restore_failed`, `subscription_manage_opened` |
 | Own profile | `profile_edited` (`fields`), `profile_edit_failed`, `photo_upload_started` (`retry`), `photo_upload_failed`, `photo_removed`, `photo_moderated` (`approved`, `refused`, `in_review`), `photo_review_requested`, `voice_intro_recorded` (`duration_seconds`, `where`), `profile_paused`, `selfie_verification_started`, `selfie_verification_submitted`, `selfie_verification_failed` |
 | Safety | `user_blocked`, `user_unblocked`, `user_reported` (category), `report_failed` |
-| Settings and system | `language_changed`, `permission_requested` (permission, result, during; sent when the system asked or the person is blocked, never for a permission already granted), `notification_setting_changed`, `push_received`, `push_opened`, `legal_doc_opened`, `support_contacted`, `share_tapped` (`what`: `photo` or `video`, from the media viewer) |
+| Settings and system | `language_changed`, `permission_requested` (permission, result, during; sent when the system asked or the person is blocked, never for a permission already granted), `notification_setting_changed`, `push_received` (only while the app is on screen: `in_foreground` is always true), `push_opened`, `legal_doc_opened`, `support_contacted`, `share_tapped` (`what`: `photo` or `video`, from the media viewer) |
 
 Revenue is not computed on the phone: turn on RevenueCat's PostHog integration (purchases, renewals,
 cancellations and refunds with their real amounts, under event names like `rc_initial_purchase_event`,
@@ -150,7 +174,7 @@ keyed by the same app user id).
 | `SENTRY_DSN` | Sentry › Project `drafft-ios` › Settings › Client Keys (DSN). EU organisation. Write `https:/$()/...` (an xcconfig reads `//` as a comment) |
 | `POSTHOG_API_KEY` | PostHog › Project settings › Project API key (`phc_...`) |
 | `POSTHOG_HOST` | `https:/$()/eu.i.posthog.com` |
-| `APP_ENVIRONMENT` | `production`, `staging` or `local` (already set) |
+| `APP_ENVIRONMENT` | `production`, `staging` or `local` (set in each xcconfig) |
 
 Empty values turn the service off. Production and staging share the Sentry project (the `environment`
 tag separates them); PostHog uses one project per environment so tests never pollute real numbers.
@@ -189,17 +213,18 @@ the same from a `ci_scripts/ci_post_xcodebuild.sh` with the token as a secret en
 
 ### App Store
 
-`Drafft/PrivacyInfo.xcprivacy` declares crash data, performance data and product interaction, and
-the analytics purpose of the user id and the device id (the install id). The App Privacy answers in
-App Store Connect must say the same: crash data, performance data, other diagnostic data and product
-interaction, collected, not used for tracking, linked to the account.
+`Drafft/PrivacyInfo.xcprivacy` declares crash data, performance data, other diagnostic data (the
+iPhone model, iOS and app version, locale and time zone sent with each app opening) and product
+interaction, and the analytics purpose of the user id and the device id (the install id). The App
+Privacy answers in App Store Connect must say the same: crash data, performance data, other
+diagnostic data and product interaction, collected, not used for tracking, linked to the account.
 
 ## What remains to do outside this repository
 
-- **Consent switch (first, in the iPhone app):** a switch in You › Privacy & data ("Share usage analytics", off by
-  default, with one line on what it means), and optionally a one-time question after sign-up. Its
-  words go in the catalog first (WORDING.md), then `TelemetrySession.setConsent` wires it. Until then
-  everyone is in anonymous mode.
+- **Consent switch (first, in the iPhone app):** a switch in You › Privacy & data ("Share usage
+  analytics", off by default, with one line on what it means), and optionally a one-time question
+  after sign-up. Its words go in the catalog first (WORDING.md), then `TelemetrySession.setConsent`
+  wires it. Until then everyone is in anonymous mode.
 - **Privacy policy (drafft-web):** add PostHog (EU) to `/privacy#data` with the purpose, the anonymous
   mode, the consent for linking to the account, and how to object; Sentry is already listed.
 - **Account deletion (drafft-backend, `delete-account`):** delete the PostHog person and its events

@@ -9,7 +9,8 @@ import Synchronization
 ///   always on in a build that has a DSN, tied to the account's id, never to a name, an email or a number.
 /// - **PostHog** (`Analytics`): how the app is used, as the events of `AnalyticsEvent`, nothing typed by
 ///   people. Linked to the account only with the person's consent (`AnalyticsConsent`); without it the
-///   events stay anonymous (a random id of this install), and a refusal sends nothing at all.
+///   events stay anonymous (a random id of this install), and a refusal sends no usage at all: nothing to
+///   PostHog, and no product or navigation breadcrumb with Sentry's crash reports.
 ///
 /// Both engines are installed at launch (`TelemetrySession.start`). Until then, in unit tests and in a build
 /// without keys, every call does nothing. `PrivacyGuard` checks everything sent. The Android app has the
@@ -47,8 +48,11 @@ enum Telemetry {
 
     protocol Span: Sendable {
         func setData(_ key: String, _ value: TelemetryValue)
-        func finish(ok: Bool)
+        func finish(_ status: SpanStatus)
     }
+
+    /// How a timed operation ended. A task that went away is `cancelled`, never a failure.
+    enum SpanStatus: Sendable { case ok, cancelled, failed }
 
     enum Level: String, Sendable { case debug, info, warning, error, fatal }
 
@@ -68,6 +72,8 @@ enum Telemetry {
         /// What it was doing: "swipe", "load_deck"... (Sentry tag `action`).
         var action: String?
         var extra: [String: TelemetryValue] = [:]
+        /// Searchable on their own (Sentry tags), besides the area and the action.
+        var tags: [String: String] = [:]
         /// Groups events that are the same problem whatever the message says.
         var fingerprint: [String]?
     }
@@ -88,7 +94,15 @@ enum Telemetry {
         var person: [String: TelemetryValue] = [:]
         /// The screen on show, for the next error report and the events' `screen` property.
         var screen: Screen?
+        /// When each kind of error was last sent to Sentry (`floodWindow`), by `area|action|kind`.
+        var lastCaptured: [String: Date] = [:]
+        /// Replaced by a unit test's clock.
+        var now: @Sendable () -> Date = { Date() }
     }
+
+    /// One error report per place and kind in this time: a loop that fails over and over would
+    /// otherwise use up Sentry's quota in minutes. The breadcrumbs keep the count.
+    private static let floodWindow: TimeInterval = 5 * 60
 
     private static let state = Mutex(State())
 
@@ -97,11 +111,12 @@ enum Telemetry {
 
     /// Installs the engines (launch, or a unit test's fakes). Nil leaves that side as it is.
     static func install(crashes: (any CrashReporter)? = nil, analytics: (any Analytics)? = nil,
-                        classifier: (any ErrorClassifier)? = nil) {
+                        classifier: (any ErrorClassifier)? = nil, now: (@Sendable () -> Date)? = nil) {
         state.withLock { s in
             if let crashes { s.crashes = crashes }
             if let analytics { s.analytics = analytics }
             if let classifier { s.classifier = classifier }
+            if let now { s.now = now }
         }
     }
 
@@ -123,8 +138,9 @@ enum Telemetry {
         if event.properties["reason"]??.telemetryValue == .string(ErrorKind.cancelled.rawValue) { return }
         let properties = PrivacyGuard.properties(event.name, event.properties)
         let (crashes, analytics, consent, screen) = state.withLock { ($0.crashes, $0.analytics, $0.consent, $0.screen) }
-        crashes.breadcrumb(Breadcrumb(category: "product", message: event.name, data: properties))
+        // A refusal carries no usage at all: Sentry keeps the crash reports, without the steps before them.
         guard consent != .denied else { return }
+        crashes.breadcrumb(Breadcrumb(category: "product", message: event.name, data: properties))
         var withScreen = properties
         if let screen { withScreen["screen"] = .string(screen.id) }
         analytics.capture(event.name, withScreen)
@@ -141,9 +157,9 @@ enum Telemetry {
             }
         guard let changed else { return }
         changed.crashes.setTag("screen", screen.id)
+        guard changed.consent != .denied else { return }
         changed.crashes.breadcrumb(Breadcrumb(category: "navigation", message: screen.id,
                                               data: changed.from.map { ["from": .string($0.id)] } ?? [:]))
-        guard changed.consent != .denied else { return }
         changed.analytics.screen(screen.id, PrivacyGuard.properties(screen.id, properties))
     }
 
@@ -223,25 +239,40 @@ enum Telemetry {
         if !target.person.isEmpty { target.analytics.setPersonProperties(target.person) }
     }
 
-    /// Sends what's waiting (the app is about to go to the background).
+    /// Sends what's waiting. PostHog's SDK already does it when the app enters the background.
     static func flush() { analytics.flush() }
 
     // MARK: Errors and logs
 
     /// An error the code didn't expect. What's normal on a phone (offline, cancelled, a refusal the
     /// server explains to the person) only goes in the breadcrumbs: Sentry alerts on what needs a fix.
-    static func unexpected(_ error: Error, _ area: String, _ action: String? = nil, extra: TelemetryProperties = [:]) {
+    /// `kind`: what the caller knows about the failure better than the classifier (a purchase the store
+    /// may have charged). A reportable one is sent once per `area`, `action` and kind every 5 minutes.
+    static func unexpected(_ error: Error, _ area: String, _ action: String? = nil, extra: TelemetryProperties = [:],
+                           kind override: ErrorKind? = nil) {
         let (crashes, classifier) = state.withLock { ($0.crashes, $0.classifier) }
-        let kind = classifier.kind(of: error)
+        let kind = override ?? classifier.kind(of: error)
         if kind == .cancelled { return }
+        // `kind` stays the caller's to use in `extra`: the error's own is `error_kind`.
         var properties = extra
-        properties["kind"] = kind.rawValue
-        let report = ErrorReport(area: area, action: action, extra: PrivacyGuard.properties("error", properties))
-        if kind.reportable {
+        properties["error_kind"] = kind.rawValue
+        let report = ErrorReport(area: area, action: action, extra: PrivacyGuard.properties("error", properties),
+                                 tags: ["error_kind": kind.rawValue], fingerprint: [area, action ?? "", kind.rawValue])
+        if kind.reportable, allowCapture("\(area)|\(action ?? "")|\(kind.rawValue)") {
             crashes.capture(error, report)
         } else {
             let place = action.map { "\(area).\($0)" } ?? area
             crashes.breadcrumb(Breadcrumb(category: "error", message: "\(place): \(kind.rawValue)", level: .warning, data: report.extra))
+        }
+    }
+
+    /// Whether this kind of error may be sent now (the first in `floodWindow`), noting that it was.
+    private static func allowCapture(_ key: String) -> Bool {
+        state.withLock { s in
+            let now = s.now()
+            if let last = s.lastCaptured[key], now.timeIntervalSince(last) < floodWindow { return false }
+            s.lastCaptured[key] = now
+            return true
         }
     }
 
@@ -281,11 +312,17 @@ enum Telemetry {
                          isolation: isolated (any Actor)? = #isolation,
                          _ body: (any Span) async throws -> sending T) async rethrows -> sending T {
         let span = crashes.startSpan(operation, description)
-        var ok = false
-        defer { span.finish(ok: ok) }
-        let value = try await body(span)
-        ok = true
-        return value
+        var status = SpanStatus.failed
+        defer { span.finish(status) }
+        do {
+            let value = try await body(span)
+            status = .ok
+            return value
+        } catch {
+            // The screen going away isn't the operation failing.
+            if kind(of: error) == .cancelled { status = .cancelled }
+            throw error
+        }
     }
 }
 
@@ -314,5 +351,5 @@ private struct NoAnalytics: Telemetry.Analytics {
 
 private struct NoSpan: Telemetry.Span {
     func setData(_ key: String, _ value: TelemetryValue) {}
-    func finish(ok: Bool) {}
+    func finish(_ status: Telemetry.SpanStatus) {}
 }

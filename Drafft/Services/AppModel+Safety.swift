@@ -61,6 +61,9 @@ extension AppModel {
                 SafetyOutbox.remove(entry, for: id, user: user)
             } catch where Safety.isFinal(error) {
                 Self.safetyLog.error("\(entry.action.rawValue) refused: \(String(describing: error))")
+                // The entry is dropped for good: a refusal the server explains is a breadcrumb, a
+                // contract bug (a 4xx without a code) is reported, once, before it's forgotten.
+                Telemetry.unexpected(error, "safety", entry.action.rawValue)
                 SafetyOutbox.remove(entry, for: id, user: user)
             } catch {
                 Telemetry.unexpected(error, "safety", entry.action.rawValue)

@@ -24,7 +24,7 @@ enum TelemetrySession {
     static func setConsent(_ value: AnalyticsConsent) {
         guard value != Telemetry.consent else { return }
         AnalyticsConsent.save(value)
-        // Applied first: after a refusal not even the refusal goes to PostHog (Sentry's breadcrumbs keep it).
+        // Applied first: after a refusal not even the refusal is sent (PostHog gets nothing, Sentry no breadcrumb).
         Telemetry.applyConsent(value)
         Telemetry.track(.analyticsConsentChanged(value))
     }

@@ -54,6 +54,9 @@ final class PurchaseCredit {
     @ObservationIgnored private weak var app: AppModel?
     @ObservationIgnored private var sync: Task<Void, Never>?
     @ObservationIgnored private var hideCredited: Task<Void, Never>?
+    /// The pending purchases read back from the phone: the app may have been away for days, so how
+    /// long they took to credit says nothing about the server.
+    @ObservationIgnored private var restored: [Pending] = []
 
     private static let buttonWait: Duration = .seconds(8)
     private static let backoff: [Duration] = [.seconds(2), .seconds(5), .seconds(15), .seconds(60)]
@@ -110,7 +113,7 @@ final class PurchaseCredit {
         guard let app, !pending.isEmpty else { return }
         let before = pending.count
         let credited = pending.filter { $0.isCredited(in: app) }
-        for purchase in credited { Self.trackCredited(purchase) }
+        for purchase in credited { trackCredited(purchase) }
         pending.removeAll { credited.contains($0) }
         guard pending.count != before else { return }
         save()
@@ -134,6 +137,7 @@ final class PurchaseCredit {
         if let userID { UserDefaults.standard.removeObject(forKey: Self.key(userID)) }
         userID = nil
         pending = []
+        restored = []
         banner = nil
         dismissedThisLaunch = false
     }
@@ -146,6 +150,7 @@ final class PurchaseCredit {
         sync?.cancel()
         userID = id
         pending = Self.load(id)
+        restored = pending
         banner = nil
     }
 
@@ -196,12 +201,14 @@ final class PurchaseCredit {
             }
             return nil
         } catch {
-            Telemetry.unexpected(error, "purchase", "purchase_sync")
             await app.loadWallet()
-            // Too many asks, or the store is slow to answer: the webhook credits it meanwhile.
+            // Too many asks, or the store is slow to answer: the webhook credits it meanwhile. Expected,
+            // so not an error report.
             if case Backend.BackendError.http(let status, _) = error, status == 429 || status == 503 {
+                Telemetry.breadcrumb("purchase", "purchase_sync throttled: \(status)", level: .warning)
                 return Self.throttledRetry
             }
+            Telemetry.unexpected(error, "purchase", "purchase_sync")
             return nil
         }
     }
@@ -225,7 +232,7 @@ final class PurchaseCredit {
 
     /// The server credited `purchase`: it leaves the list, whatever the balances say.
     private func markCredited(_ purchase: Pending) {
-        if pending.contains(purchase) { Self.trackCredited(purchase) }
+        if pending.contains(purchase) { trackCredited(purchase) }
         pending.removeAll { $0 == purchase }
         walletChanged()
         save()
@@ -235,11 +242,12 @@ final class PurchaseCredit {
         }
     }
 
-    private static func trackCredited(_ purchase: Pending) {
+    private func trackCredited(_ purchase: Pending) {
         let seconds = max(0, Int(Date.now.timeIntervalSince(purchase.date)))
         Telemetry.track(.purchaseCredited(seconds: seconds))
-        // Paid and only credited long after: the webhook or purchase-sync is late, worth a look.
-        if TimeInterval(seconds) > slowAfter {
+        // Paid and only credited long after: the webhook or purchase-sync is late, worth a look. Not for
+        // one read back from the phone after the app was closed: that wait is the person's.
+        if TimeInterval(seconds) > Self.slowAfter, !restored.contains(purchase) {
             Telemetry.problem("purchase credited late", "purchase", extra: ["seconds_to_credit": seconds])
         }
     }

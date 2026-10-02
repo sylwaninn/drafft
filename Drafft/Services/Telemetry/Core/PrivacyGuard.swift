@@ -6,9 +6,10 @@ import Foundation
 ///
 /// - Property names on the `forbidden` list are dropped, whatever the event.
 /// - Values are numbers, booleans, or short codes (`like`, `so.drafft.app.boost.5`, `discover`): a
-///   string with spaces, capitals or punctuation is something a person typed and is dropped.
+///   string with spaces, capitals or punctuation other than `_ . : -` is something a person typed and is
+///   dropped, and so is a code that is an id (a UUID) or a phone number (only digits, 7 or more).
 /// - Free text that must go (a log line, an error message) is `scrub`bed of emails, phone numbers,
-///   ids, tokens and exact coordinates.
+///   ids, tokens and exact coordinates. Request labels and breadcrumb urls lose their query (`path`).
 ///
 /// A dropped property is logged (and so reaches Sentry's logs); unit tests run every event through
 /// `check`, so the mistake shows where it's made. The Android app applies the same rules.
@@ -73,18 +74,26 @@ enum PrivacyGuard {
     /// A short code (`daily_like_limit`), not words.
     static func isCode(_ text: String) -> Bool { matches(slug, text) }
 
+    /// A code that may go as a property's value: not another person's id (a UUID) or a phone number
+    /// (digits only, 7 or more), which `isCode` would let through.
+    static func isValueCode(_ text: String) -> Bool {
+        isCode(text) && !matches(exactUUID, text) && !matches(digits, text)
+    }
+
     private static func allowed(_ value: TelemetryValue) -> TelemetryValue? {
         switch value {
         case .bool, .int: value
         case let .double(d): d.isFinite ? value : nil
-        case let .string(s): isCode(s) ? value : nil
-        case let .strings(list): list.count <= 20 && list.allSatisfy(isCode) ? value : nil
+        case let .string(s): isValueCode(s) ? value : nil
+        case let .strings(list): list.count <= 20 && list.allSatisfy(isValueCode) ? value : nil
         }
     }
 
     // MARK: Free text
 
     private static let slug = regex(#"^[a-z0-9][a-z0-9_.:\-]{0,79}\z"#)
+    private static let exactUUID = regex(#"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z"#)
+    private static let digits = regex(#"^[0-9]{7,}\z"#)
     private static let email = regex(#"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"#)
     /// International (+33 6 12 34 56 78) and national (06 12 34 56 78) forms; not timestamps or ids.
     private static let phone = regex(#"\+\d[\d .()-]{6,18}\d|\b0\d(?:[ .-]?\d{2}){4}\b"#)
@@ -94,7 +103,7 @@ enum PrivacyGuard {
     private static let uuid = regex(#"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"#)
     private static let query = regex(#"\?[^\s]*"#)
 
-    /// Free text with what identifies someone taken out. Query strings go too (they carry ids and filters).
+    /// Free text with what identifies someone taken out (a query string isn't: `path` takes those out).
     static func scrub(_ text: String) -> String {
         var out = replace(jwt, in: text, with: "[token]")
         out = replace(bearer, in: out, with: "$1[token]")

@@ -13,7 +13,7 @@ struct AppErrorClassifier: ErrorClassifier {
         case let error as Backend.BackendError:
             if case let .http(status, message) = error { return ErrorKind.http(status: status, message: message) }
             return .signedOut
-        case is Backend.EmailAlreadyRegistered:
+        case is Backend.EmailAlreadyRegistered, is ChatService.SendRefused:
             return .refused
         case let error as ProfileSync.SyncError:
             // The server's refusal, or a step that failed with its own reason (a photo, the voice intro).
@@ -48,8 +48,11 @@ struct AppErrorClassifier: ErrorClassifier {
         if let store = error as? RevenueCat.ErrorCode {
             // RevenueCat or the App Store unreachable is the phone's connection, not a bug.
             if store == .networkError || store == .offlineConnectionError { return .offline }
-            guard let problem = Store.PurchaseProblem(error) else { return .cancelled }
-            return problem == .unconfirmed ? .storeUnconfirmed : .storeDeclined
+            if store == .purchaseCancelledError { return .cancelled }
+            // The store's own outcomes are only ever the purchase's. Any other code is unexpected here
+            // (`link`, `load_offerings`, `restore`); the purchase itself says when the store may have
+            // charged without confirming (`Store.purchase`).
+            return Store.PurchaseProblem(code: store) == nil ? .unexpected : .storeDeclined
         }
         if ServerMessage.code(of: error) != nil { return .refused }
         // An SDK's error around the real cause (Stream's client errors): offline when that cause is.

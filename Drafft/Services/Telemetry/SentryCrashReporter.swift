@@ -69,15 +69,21 @@ struct SentryCrashReporter: Telemetry.CrashReporter {
 
         func setData(_ key: String, _ value: TelemetryValue) { span.setData(value: value.raw, key: key) }
 
-        func finish(ok: Bool) {
+        func finish(_ status: Telemetry.SpanStatus) {
             guard !span.isFinished else { return }
-            span.finish(status: ok ? .ok : .internalError)
+            let sentry: SentrySpanStatus = switch status {
+            case .ok: .ok
+            case .cancelled: .cancelled
+            case .failed: .internalError
+            }
+            span.finish(status: sentry)
         }
     }
 
     private static func apply(_ report: Telemetry.ErrorReport, to scope: Scope) {
         scope.setTag(value: report.area, key: "area")
         if let action = report.action { scope.setTag(value: action, key: "action") }
+        for (key, value) in report.tags { scope.setTag(value: value, key: key) }
         for (key, value) in report.extra { scope.setExtra(value: value.description, key: key) }
         if let fingerprint = report.fingerprint { scope.setFingerprint(fingerprint) }
     }
@@ -149,6 +155,8 @@ struct SentryCrashReporter: Telemetry.CrashReporter {
 
             options.beforeSend = { event in scrubbed(event) }
             options.beforeBreadcrumb = { crumb in
+                // Touches name the view they landed on: the app names its screens itself.
+                if crumb.category == "touch" { return nil }
                 crumb.message = crumb.message.map(PrivacyGuard.scrub)
                 if let url = crumb.data?["url"] as? String { crumb.data?["url"] = PrivacyGuard.path(url) }
                 return crumb
@@ -165,7 +173,10 @@ struct SentryCrashReporter: Telemetry.CrashReporter {
         return SentryCrashReporter()
     }
 
-    /// The last pass over an event: what an error's message may carry, and the user's id only.
+    /// The pass over an event before it leaves: scrubs the texts an SDK adds on its own (messages,
+    /// exception values, breadcrumbs), drops the NSError's user info (it carries URLs and messages),
+    /// and keeps the user's id only. It doesn't look at tags or extras: `PrivacyGuard.properties`
+    /// already did, where they were set.
     private static func scrubbed(_ event: Event) -> Event {
         if let message = event.message {
             let clean = SentryMessage(formatted: PrivacyGuard.scrub(message.formatted))
@@ -181,6 +192,8 @@ struct SentryCrashReporter: Telemetry.CrashReporter {
             user.ipAddress = nil
             user.geo = nil
         }
+        // An NSError's whole `userInfo`: failing URLs, localized messages.
+        event.context?["user info"] = nil
         event.request = nil
         return event
     }

@@ -38,8 +38,9 @@ packages:
     url: https://github.com/RevenueCat/purchases-ios
     from: 5.91.0
   # Crashes, hangs, errors, performance and the app's logs (docs/telemetry.md), EU region. Pinned: its
-  # options decide what leaves the phone. 9.21 and later depend on a KSCrash commit, which SwiftPM (6.1 at
-  # least) refuses under a version requirement: move up once that's gone.
+  # options decide what leaves the phone. When it was pinned, 9.21 and later depended on a KSCrash commit,
+  # which SwiftPM (6.1 at least) refuses under a version requirement: try a newer one when bumping (the
+  # resolved revision is in Package.resolved).
   Sentry:
     url: https://github.com/getsentry/sentry-cocoa
     exactVersion: 9.20.0

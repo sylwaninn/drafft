@@ -1,19 +1,21 @@
+import AuthenticationServices
 import XCTest
 
 // The same cases as the Android app's TelemetryTest.kt: the rules hold on both platforms.
 
+/// Records every call, even while disabled: what `Telemetry` must not send is its own guard's to stop,
+/// not the fake's.
 private final class FakeAnalytics: Telemetry.Analytics, @unchecked Sendable {
     private let lock = NSLock()
     private var _calls: [String] = []
     private var _events: [(String, [String: TelemetryValue])] = []
-    private var sending = true
+    private var _enabled = true
 
     var calls: [String] { lock.withLock { _calls } }
     var events: [(String, [String: TelemetryValue])] { lock.withLock { _events } }
+    var enabled: Bool { lock.withLock { _enabled } }
 
-    func capture(_ name: String, _ properties: [String: TelemetryValue]) {
-        lock.withLock { if sending { _events.append((name, properties)) } }
-    }
+    func capture(_ name: String, _ properties: [String: TelemetryValue]) { lock.withLock { _events.append((name, properties)) } }
     func screen(_ name: String, _ properties: [String: TelemetryValue]) { lock.withLock { _calls.append("screen:\(name)") } }
     func identify(_ id: String) { lock.withLock { _calls.append("identify:\(id)") } }
     func setPersonProperties(_ properties: [String: TelemetryValue]) {
@@ -21,7 +23,7 @@ private final class FakeAnalytics: Telemetry.Analytics, @unchecked Sendable {
     }
     func register(_ key: String, _ value: TelemetryValue) { lock.withLock { _calls.append("register:\(key)=\(value)") } }
     func reset() { lock.withLock { _calls.append("reset") } }
-    func setEnabled(_ enabled: Bool) { lock.withLock { sending = enabled } }
+    func setEnabled(_ enabled: Bool) { lock.withLock { _enabled = enabled } }
     func flush() {}
 }
 
@@ -33,6 +35,7 @@ private final class FakeCrashes: Telemetry.CrashReporter, @unchecked Sendable {
     private var _messages: [String] = []
     private var _reports: [Telemetry.ErrorReport] = []
     private var _logs: [String] = []
+    private var _spans: [Telemetry.SpanStatus] = []
 
     var userID: String? { lock.withLock { _userID } }
     var captured: [(Error, Telemetry.ErrorReport)] { lock.withLock { _captured } }
@@ -40,6 +43,7 @@ private final class FakeCrashes: Telemetry.CrashReporter, @unchecked Sendable {
     var messages: [String] { lock.withLock { _messages } }
     var reports: [Telemetry.ErrorReport] { lock.withLock { _reports } }
     var logs: [String] { lock.withLock { _logs } }
+    var spans: [Telemetry.SpanStatus] { lock.withLock { _spans } }
 
     func setUser(_ id: String?) { lock.withLock { _userID = id } }
     func setTag(_ key: String, _ value: String?) {}
@@ -49,11 +53,14 @@ private final class FakeCrashes: Telemetry.CrashReporter, @unchecked Sendable {
         lock.withLock { _messages.append(text); _reports.append(report) }
     }
     func log(_ level: Telemetry.Level, _ text: String, _ attributes: [String: TelemetryValue]) { lock.withLock { _logs.append(text) } }
-    func startSpan(_ operation: String, _ description: String) -> any Telemetry.Span { NoopSpan() }
+    func startSpan(_ operation: String, _ description: String) -> any Telemetry.Span {
+        RecordedSpan { status in self.lock.withLock { self._spans.append(status) } }
+    }
 
-    private struct NoopSpan: Telemetry.Span {
+    private struct RecordedSpan: Telemetry.Span {
+        let done: @Sendable (Telemetry.SpanStatus) -> Void
         func setData(_ key: String, _ value: TelemetryValue) {}
-        func finish(ok: Bool) {}
+        func finish(_ status: Telemetry.SpanStatus) { done(status) }
     }
 }
 
@@ -94,6 +101,14 @@ private struct TestClassifier: ErrorClassifier {
 
 private struct Bug: Error {}
 
+/// A clock a test moves by hand.
+private final class Clock: @unchecked Sendable {
+    private let lock = NSLock()
+    private var time = Date(timeIntervalSince1970: 1_700_000_000)
+    var now: Date { lock.withLock { time } }
+    func advance(_ seconds: TimeInterval) { lock.withLock { time = time.addingTimeInterval(seconds) } }
+}
+
 final class TelemetryTests: XCTestCase {
     private var analytics = FakeAnalytics()
     private var crashes = FakeCrashes()
@@ -129,8 +144,40 @@ final class TelemetryTests: XCTestCase {
         Telemetry.signedIn("a")
         Telemetry.applyConsent(.denied)
         XCTAssertTrue(analytics.calls.contains("reset"))
+        XCTAssertFalse(analytics.enabled)
+        // The fake takes events whatever the switch says: `Telemetry.track` itself must not send one.
         Telemetry.track(.loggedOut)
         XCTAssertTrue(analytics.events.isEmpty)
+    }
+
+    func testSigningInAgainAsTheSameAccountIsOneIdentifyAndNoReset() {
+        Telemetry.applyConsent(.granted)
+        Telemetry.signedIn("a")
+        Telemetry.signedIn("a")
+        Telemetry.signedIn("a")
+        XCTAssertEqual(analytics.calls.filter { $0.hasPrefix("identify") }, ["identify:a"])
+        XCTAssertFalse(analytics.calls.contains("reset"))
+    }
+
+    func testSwitchingStraightToAnotherAccountResetsThenIdentifies() {
+        Telemetry.applyConsent(.granted)
+        Telemetry.signedIn("a")
+        Telemetry.signedIn("b")
+        XCTAssertEqual(analytics.calls.filter { $0 == "reset" || $0.hasPrefix("identify") }, ["identify:a", "reset", "identify:b"])
+        XCTAssertEqual(crashes.userID, "b")
+    }
+
+    func testRefusingThenAgreeingAgainWhileSignedInIdentifiesAgain() {
+        Telemetry.applyConsent(.granted)
+        Telemetry.signedIn("a")
+        Telemetry.applyConsent(.denied)
+        Telemetry.track(.loggedOut)
+        XCTAssertTrue(analytics.events.isEmpty)
+        Telemetry.applyConsent(.granted)
+        XCTAssertTrue(analytics.enabled)
+        XCTAssertEqual(analytics.calls.filter { $0 == "reset" || $0.hasPrefix("identify") }, ["identify:a", "reset", "identify:a"])
+        Telemetry.track(.loggedOut)
+        XCTAssertEqual(analytics.events.map(\.0), ["logged_out"])
     }
 
     func testSigningOutResetsTheAnonymousID() {
@@ -174,11 +221,27 @@ final class TelemetryTests: XCTestCase {
         XCTAssertEqual(analytics.calls.filter { $0.hasPrefix("person") }, ["person:[\"language\"]"])
     }
 
-    func testARefusalStillKeepsBreadcrumbsForCrashReports() {
+    func testARefusalSendsNoUsageToAnyone() {
         Telemetry.applyConsent(.denied)
         Telemetry.track(.matchCreated(.mySwipe))
+        Telemetry.screen(.chats)
         XCTAssertTrue(analytics.events.isEmpty)
-        XCTAssertTrue(crashes.crumbs.contains { $0.message == "match_created" })
+        XCTAssertFalse(analytics.calls.contains { $0.hasPrefix("screen") })
+        // Nor a product or navigation breadcrumb in Sentry's crash reports.
+        XCTAssertFalse(crashes.crumbs.contains { $0.category == "product" || $0.category == "navigation" }, "\(crashes.crumbs)")
+        // What the code needs to fix still reaches Sentry, and what led up to it as errors.
+        Telemetry.unexpected(Bug(), "chat", "send")
+        Telemetry.unexpected(URLError(.timedOut), "chat", "load")
+        XCTAssertEqual(crashes.captured.count, 1)
+        XCTAssertEqual(crashes.crumbs.filter { $0.category == "error" }.count, 1)
+    }
+
+    func testBeforeARefusalUsageIsABreadcrumb() {
+        Telemetry.applyConsent(.unknown)
+        Telemetry.track(.matchCreated(.mySwipe))
+        Telemetry.screen(.chats)
+        XCTAssertEqual(crashes.crumbs.filter { $0.category == "product" }.map(\.message), ["match_created"])
+        XCTAssertEqual(crashes.crumbs.filter { $0.category == "navigation" }.map(\.message), ["chats"])
     }
 
     func testConsentIsKeptOnThePhone() throws {
@@ -225,6 +288,7 @@ final class TelemetryTests: XCTestCase {
     @MainActor
     func testTheNewestScreenOnTopIsTheOneOnShow() {
         ScreenTracker.reset()
+        defer { ScreenTracker.reset() }
         ScreenTracker.base(.chats)
         let chat = ScreenTracker.enter(.chat)
         let profile = ScreenTracker.enter(.profileDetail)
@@ -236,7 +300,43 @@ final class TelemetryTests: XCTestCase {
         XCTAssertEqual(ScreenTracker.current, .chats)
         XCTAssertEqual(analytics.calls.filter { $0.hasPrefix("screen") },
                        ["screen:chats", "screen:chat", "screen:profile_detail", "screen:chat", "screen:chats"])
+    }
+
+    @MainActor
+    func testLeavingWithATokenThatIsNotThereSendsNothing() {
         ScreenTracker.reset()
+        defer { ScreenTracker.reset() }
+        ScreenTracker.base(.chats)
+        let chat = ScreenTracker.enter(.chat)
+        ScreenTracker.leave(chat + 100)
+        XCTAssertEqual(ScreenTracker.current, .chat)
+        ScreenTracker.leave(chat)
+        // The same token twice (a view's disappear after its tab's): the second changes nothing.
+        ScreenTracker.leave(chat)
+        XCTAssertEqual(analytics.calls.filter { $0.hasPrefix("screen") }, ["screen:chats", "screen:chat", "screen:chats"])
+    }
+
+    @MainActor
+    func testANewBaseUnderAScreenOnTopSendsNothingUntilItLeaves() {
+        ScreenTracker.reset()
+        defer { ScreenTracker.reset() }
+        ScreenTracker.base(.chats)
+        let chat = ScreenTracker.enter(.chat)
+        // The tab changed under a pushed screen: the screen on show is still the pushed one.
+        ScreenTracker.base(.likes)
+        XCTAssertEqual(ScreenTracker.current, .chat)
+        XCTAssertEqual(analytics.calls.filter { $0.hasPrefix("screen") }, ["screen:chats", "screen:chat"])
+        ScreenTracker.leave(chat)
+        XCTAssertEqual(analytics.calls.filter { $0.hasPrefix("screen") }, ["screen:chats", "screen:chat", "screen:likes"])
+    }
+
+    @MainActor
+    func testResettingTheTrackerForgetsEverything() {
+        ScreenTracker.base(.chats, ["tab": "x"])
+        _ = ScreenTracker.enter(.chat)
+        ScreenTracker.reset()
+        XCTAssertNil(ScreenTracker.current)
+        XCTAssertEqual(ScreenTracker.currentID, "unknown")
     }
 
     func testEveryEventPassesThePrivacyGuardUntouched() {
@@ -339,6 +439,20 @@ final class TelemetryTests: XCTestCase {
         XCTAssertFalse(PrivacyGuard.properties("x", ["reason": "ok\n"]).keys.contains("reason"))
     }
 
+    func testAnotherPersonsIDOrAPhoneNumberIsNotAValue() {
+        // A UUID or a long run of digits passes as a "code" for a name, never as a value.
+        XCTAssertTrue(PrivacyGuard.isCode("4f2c0e0a-0000-4000-8000-000000000001"))
+        let out = PrivacyGuard.properties("x", [
+            "reason": "4f2c0e0a-0000-4000-8000-000000000001", "call": "0612345678", "digits": "1234567",
+            "short": "123456", "mixed": "v12345678", "version": "2", "product_id": "so.drafft.app.boost.5"
+        ])
+        XCTAssertEqual(out, ["short": .string("123456"), "mixed": .string("v12345678"), "version": .string("2"),
+                             "product_id": .string("so.drafft.app.boost.5")])
+        XCTAssertEqual(PrivacyGuard.check("x", ["ids": ["a_code", "4f2c0e0a-0000-4000-8000-000000000001"]]).problems.count, 1)
+        // The server's own codes keep the looser check (`ErrorKind.http`).
+        XCTAssertEqual(ErrorKind.http(status: 400, message: "1234567"), .refused)
+    }
+
     func testPathsLoseTheirQuery() {
         XCTAssertEqual(PrivacyGuard.path("rest/v1/profiles?id=eq.4f2c&select=paused"), "rest/v1/profiles")
     }
@@ -360,11 +474,102 @@ final class TelemetryTests: XCTestCase {
         Telemetry.unexpected(HTTPFailure(status: 400, message: "column x does not exist"), "discover")
         Telemetry.unexpected(Bug(), "chat")
         Telemetry.unexpected(StoreFailure.unconfirmed, "purchase")
-        XCTAssertEqual(crashes.captured.map { $0.1.extra["kind"] },
+        XCTAssertEqual(crashes.captured.map { $0.1.extra["error_kind"] },
                        [.string("server"), .string("client_contract"), .string("unexpected"), .string("store_unconfirmed")])
         XCTAssertEqual(crashes.captured.first?.1.action, "load_deck")
         // What wasn't reported is still in the breadcrumbs, by kind (cancelled leaves nothing).
         XCTAssertEqual(crashes.crumbs.filter { $0.category == "error" }.count, 6)
+    }
+
+    func testHTTPBoundaries() {
+        XCTAssertEqual(ErrorKind.http(status: 428, message: "some words here"), .clientContract)
+        XCTAssertEqual(ErrorKind.http(status: 429, message: "daily_like_limit"), .rateLimited)
+        XCTAssertEqual(ErrorKind.http(status: 499, message: "some words here"), .clientContract)
+        XCTAssertEqual(ErrorKind.http(status: 500, message: "not_found"), .server)
+        XCTAssertEqual(ErrorKind.http(status: 600, message: ""), .server)
+        // A 401 is the session's business, with a code or without.
+        XCTAssertEqual(ErrorKind.http(status: 401, message: "not_authenticated"), .signedOut)
+        XCTAssertEqual(ErrorKind.http(status: 401, message: ""), .signedOut)
+        // Codes are read in lowercase; no message is no code.
+        XCTAssertEqual(ErrorKind.http(status: 400, message: "DAILY_LIKE_LIMIT"), .refused)
+        XCTAssertEqual(ErrorKind.http(status: 400, message: ""), .clientContract)
+        XCTAssertEqual(ErrorKind.http(status: 400, message: "Duplicate key value"), .clientContract)
+    }
+
+    func testOnlyTheConnectionIsOffline() {
+        for code in [URLError.Code.notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotConnectToHost, .cannotFindHost,
+                     .dnsLookupFailed, .internationalRoamingOff, .dataNotAllowed] {
+            XCTAssertEqual(ErrorKind.basic(URLError(code)), .offline, "\(code)")
+            XCTAssertEqual(ErrorKind.basic(NSError(domain: NSURLErrorDomain, code: code.rawValue)), .offline, "\(code)")
+        }
+        // A certificate, a bad URL or an unreadable response is a bug (or an attack), not a phone offline.
+        for code in [URLError.Code.secureConnectionFailed, .serverCertificateUntrusted, .appTransportSecurityRequiresSecureConnection,
+                     .badURL, .unsupportedURL, .cannotParseResponse, .badServerResponse, .unknown] {
+            XCTAssertEqual(ErrorKind.basic(URLError(code)), .unexpected, "\(code)")
+            XCTAssertEqual(ErrorKind.basic(NSError(domain: NSURLErrorDomain, code: code.rawValue)), .unexpected, "\(code)")
+        }
+        XCTAssertEqual(BasicErrorClassifier().kind(of: URLError(.serverCertificateUntrusted)), .unexpected)
+        XCTAssertNil(ErrorKind.basic(Bug()))
+    }
+
+    func testWhatThePersonClosedIsCancelled() {
+        XCTAssertEqual(ErrorKind.basic(CancellationError()), .cancelled)
+        XCTAssertEqual(ErrorKind.basic(URLError(.cancelled)), .cancelled)
+        XCTAssertEqual(ErrorKind.basic(NSError(domain: NSURLErrorDomain, code: NSURLErrorCancelled)), .cancelled)
+        XCTAssertEqual(ErrorKind.basic(CocoaError(.userCancelled)), .cancelled)
+        XCTAssertEqual(ErrorKind.basic(ASAuthorizationError(.canceled)), .cancelled)
+        // Another Sign in with Apple failure isn't the person's choice.
+        XCTAssertNil(ErrorKind.basic(ASAuthorizationError(.failed)))
+        XCTAssertEqual(Telemetry.reason(URLError(.cancelled)), "cancelled")
+        Telemetry.unexpected(URLError(.cancelled), "discover")
+        XCTAssertTrue(crashes.crumbs.isEmpty)
+    }
+
+    func testTheSameErrorIsReportedOnceEveryFiveMinutes() {
+        let clock = Clock()
+        Telemetry.install(now: { clock.now })
+        for _ in 0..<5 { Telemetry.unexpected(Bug(), "chat", "send") }
+        XCTAssertEqual(crashes.captured.count, 1)
+        // The others are still steps leading to the next report.
+        XCTAssertEqual(crashes.crumbs.filter { $0.category == "error" }.map(\.message), Array(repeating: "chat.send: unexpected", count: 4))
+        // Another place, another action or another kind is another problem.
+        Telemetry.unexpected(Bug(), "chat", "load")
+        Telemetry.unexpected(Bug(), "discover", "send")
+        Telemetry.unexpected(HTTPFailure(status: 500, message: "boom"), "chat", "send")
+        XCTAssertEqual(crashes.captured.count, 4)
+        clock.advance(299)
+        Telemetry.unexpected(Bug(), "chat", "send")
+        XCTAssertEqual(crashes.captured.count, 4)
+        clock.advance(1)
+        Telemetry.unexpected(Bug(), "chat", "send")
+        XCTAssertEqual(crashes.captured.count, 5)
+        // Grouped by where and what, whatever the error says.
+        XCTAssertEqual(crashes.captured.first?.1.fingerprint, ["chat", "send", "unexpected"])
+        XCTAssertEqual(crashes.captured.last?.1.fingerprint, ["chat", "send", "unexpected"])
+    }
+
+    func testProblemsAndWhatIsNotReportedAreNotLimited() {
+        for _ in 0..<3 {
+            Telemetry.problem("purchase credited late", "purchase")
+            Telemetry.unexpected(URLError(.timedOut), "chat", "send")
+        }
+        XCTAssertEqual(crashes.messages.count, 3)
+        XCTAssertEqual(crashes.crumbs.filter { $0.category == "error" }.count, 3)
+    }
+
+    func testTheErrorKindDoesNotReplaceTheCallersKind() throws {
+        Telemetry.unexpected(Bug(), "chat", "send", extra: ["kind": "voice"])
+        let report = try XCTUnwrap(crashes.captured.first?.1)
+        XCTAssertEqual(report.extra["kind"], .string("voice"))
+        XCTAssertEqual(report.extra["error_kind"], .string("unexpected"))
+        XCTAssertEqual(report.tags["error_kind"], "unexpected")
+    }
+
+    func testTheCallerCanSayWhatTheClassifierCannot() throws {
+        Telemetry.unexpected(Bug(), "purchase", "purchase", kind: .storeUnconfirmed)
+        XCTAssertEqual(crashes.captured.first?.1.extra["error_kind"], .string("store_unconfirmed"))
+        Telemetry.unexpected(Bug(), "purchase", "restore", kind: .cancelled)
+        XCTAssertEqual(crashes.captured.count, 1)
     }
 
     func testReasonIsTheServerCodeOrTheKind() {
@@ -415,6 +620,20 @@ final class TelemetryTests: XCTestCase {
             _ = try await Telemetry.trace("media.upload", "profile photo") { _ -> Int in throw Bug() }
             XCTFail("the error goes through")
         } catch is Bug {}
+        XCTAssertEqual(crashes.spans, [.ok, .failed])
+    }
+
+    func testACancelledTraceIsNotAFailure() async {
+        do {
+            _ = try await Telemetry.trace("http.client", "GET a") { _ -> Int in throw CancellationError() }
+        } catch {}
+        do {
+            _ = try await Telemetry.trace("http.client", "GET b") { _ -> Int in throw URLError(.cancelled) }
+        } catch {}
+        do {
+            _ = try await Telemetry.trace("http.client", "GET c") { _ -> Int in throw URLError(.timedOut) }
+        } catch {}
+        XCTAssertEqual(crashes.spans, [.cancelled, .cancelled, .failed])
     }
 
     // MARK: Config

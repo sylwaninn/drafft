@@ -65,8 +65,9 @@ struct PostHogAnalytics: Telemetry.Analytics {
         // Small batches: a session is short and the app may be killed in the background.
         options.flushAt = 10
         options.flushIntervalSeconds = 30
-        // The last guard on the way out, whatever called capture. PostHog's own `$` events carry its
-        // device and app properties, nothing of the person's.
+        // On the way out, whatever called capture: drops the properties whose names are forbidden. It
+        // doesn't look at values (`Telemetry` already did, through `PrivacyGuard.properties`). PostHog's
+        // own `$` events carry its device and app properties, nothing of the person's.
         let privacyGuard: BeforeSendBlock = { event in
             guard !event.event.hasPrefix("$"),
                   event.properties.keys.contains(where: { PrivacyGuard.forbidden.contains($0) }) else { return event }

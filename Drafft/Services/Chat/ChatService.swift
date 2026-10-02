@@ -30,7 +30,7 @@ final class ChatService {
     static let messagesPage = 25
 
     /// A media message that can't be sent: not the account's own objects, or the chat is gone.
-    private struct SendRefused: Error {}
+    struct SendRefused: Error {}
 
     weak var app: AppModel?
     var client: ChatClient?

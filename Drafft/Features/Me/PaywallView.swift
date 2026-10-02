@@ -417,7 +417,7 @@ struct PaywallView: View {
                     receipt = PurchaseReceipt(item: .tempo(sub))
                 }
             } catch {
-                guard let problem = Store.PurchaseProblem(error) else { return }
+                guard let problem = Store.PurchaseProblem(purchaseError: error) else { return }
                 Haptics.warning()
                 say(problem.message(restorable: true))
             }

@@ -491,7 +491,7 @@ extension ExtrasSheet {
                 transactionID = id
                 bought = true
             } catch {
-                guard let problem = Store.PurchaseProblem(error) else { return }
+                guard let problem = Store.PurchaseProblem(purchaseError: error) else { return }
                 Haptics.warning()
                 failure = problem.message(restorable: false)
                 return

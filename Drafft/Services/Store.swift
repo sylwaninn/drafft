@@ -54,7 +54,7 @@ final class Store {
         do {
             if Purchases.shared.appUserID != id { _ = try await Purchases.shared.logIn(id) }
         } catch {
-            Self.report(error, "link")
+            Telemetry.unexpected(error, "purchase", "link")
             linkedUserID = nil
             return false
         }
@@ -94,9 +94,11 @@ final class Store {
                 boosts = Self.packs(offerings.offering(identifier: "boosts"))
                 superLikes = Self.packs(offerings.offering(identifier: "super_likes"))
             } catch {
+                // The screen went away: nothing failed, the next load starts afresh.
+                guard Telemetry.kind(of: error) != .cancelled else { state = .idle; return }
                 state = .failed
                 Telemetry.track(.productsLoadFailed)
-                Self.report(error, "load_offerings")
+                Telemetry.unexpected(error, "purchase", "load_offerings")
                 return
             }
         }
@@ -117,7 +119,7 @@ final class Store {
         do {
             outcome = try await purchaseLinked(package)
         } catch {
-            if let problem = PurchaseProblem(error) {
+            if let problem = PurchaseProblem(purchaseError: error) {
                 Telemetry.track(.purchaseFailed(kind, productID: productID, problem: problem.code))
             } else if (error as? RevenueCat.ErrorCode) == .purchaseCancelledError {
                 // RevenueCat reports the person's cancel as an error too.
@@ -125,7 +127,10 @@ final class Store {
             } else if !(error is CancellationError) {
                 Telemetry.track(.purchaseFailed(kind, productID: productID, problem: "unknown"))
             }
-            Telemetry.unexpected(error, "purchase", "purchase", extra: ["product_id": productID])
+            // A purchase that failed in a way nothing else explains may have been charged: reported as such.
+            let unconfirmed = PurchaseProblem(purchaseError: error) == .unconfirmed && Telemetry.kind(of: error) == .unexpected
+            Telemetry.unexpected(error, "purchase", "purchase", extra: ["product_id": productID],
+                                 kind: unconfirmed ? .storeUnconfirmed : nil)
             throw error
         }
         switch outcome {
@@ -144,18 +149,10 @@ final class Store {
         return .purchased(result.customerInfo, transactionID: result.transaction?.transactionIdentifier)
     }
 
-    /// RevenueCat unreachable (offline) is a breadcrumb; anything else is reported.
-    private static func report(_ error: Error, _ action: String) {
-        let code = error as? RevenueCat.ErrorCode
-        if code == .networkError || code == .offlineConnectionError {
-            Telemetry.breadcrumb("purchase", "\(action) offline", level: .warning)
-        } else {
-            Telemetry.unexpected(error, "purchase", action)
-        }
-    }
-
     /// Why a purchase didn't complete, in words that stay true whatever the App Store did. Nil: the
-    /// person cancelled (nothing to say).
+    /// person cancelled (nothing to say). Only the purchase path builds one (`init?(purchaseError:)`):
+    /// `link`, `load_offerings` and `restore` errors are reported as they are (`Telemetry.unexpected`:
+    /// RevenueCat unreachable is offline, a breadcrumb; anything else is an issue).
     enum PurchaseProblem: Equatable {
         /// Waiting for a parent's approval (Ask to Buy) or the bank's: RevenueCat gets the purchase
         /// once it goes through, and the server credits it then.
@@ -172,19 +169,29 @@ final class Store {
         /// The account couldn't be linked (offline): nothing was asked of the App Store.
         case notLinked
 
-        init?(_ error: Error) {
+        /// A purchase's failure. Nil: the person cancelled, or the task went away (nothing to say).
+        /// Only for the purchase path: a code the store gave that isn't known here is `unconfirmed`
+        /// (the App Store may have charged), which doesn't hold for loading offerings or restoring.
+        init?(purchaseError error: Error) {
             if case StoreError.notLinked = error { self = .notLinked; return }
             // The task was cancelled (the screen went away): not a purchase that failed.
             if error is CancellationError { return nil }
-            switch error as? RevenueCat.ErrorCode {
-            case .purchaseCancelledError: return nil
+            guard let code = error as? RevenueCat.ErrorCode else { self = .unconfirmed; return }
+            if code == .purchaseCancelledError { return nil }
+            self = Self(code: code) ?? .unconfirmed
+        }
+
+        /// What RevenueCat's own code says the store did, when it says: nil for the codes that don't
+        /// tell (and for the cancel).
+        init?(code: RevenueCat.ErrorCode) {
+            switch code {
             case .paymentPendingError: self = .pending
             case .purchaseNotAllowedError: self = .notAllowed
             case .productAlreadyPurchasedError: self = .alreadyOwned
             case .purchaseInvalidError, .productNotAvailableForPurchaseError, .ineligibleError,
                  .invalidPromotionalOfferError, .operationAlreadyInProgressForProductError:
                 self = .notCharged
-            default: self = .unconfirmed
+            default: return nil
             }
         }
 
@@ -221,8 +228,10 @@ final class Store {
             Telemetry.track(.purchasesRestored(found: info.entitlements[Self.tempoEntitlement]?.isActive == true))
             return info
         } catch {
-            Telemetry.track(.restoreFailed)
-            Self.report(error, "restore")
+            if Telemetry.kind(of: error) != .cancelled {
+                Telemetry.track(.restoreFailed)
+                Telemetry.unexpected(error, "purchase", "restore")
+            }
             throw error
         }
     }
