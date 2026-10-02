@@ -64,32 +64,42 @@ actor Backend {
     /// email is typed in (`confirmSignUp`). `language` starts the
     /// profile in it, so the confirmation email (backend auth-email) is already in that language.
     func signUp(email: String, password: String, language: AppLanguage) async throws -> SignUpResult {
-        let response = try await client.auth.signUp(
-            email: email, password: password, data: ["language": .string(language.rawValue)]
-        )
-        // An address that already has an account: Supabase doesn't say so (that would tell who's signed up),
-        // it answers like a new sign-up with no identity and sends nothing. The app says it plainly.
-        if response.session == nil, response.user.identities?.isEmpty == true { throw EmailAlreadyRegistered() }
-        return response.session == nil ? .confirmEmail : .signedIn
+        try await tracked(.accountCreated(.email), failed: AnalyticsEvent.signUpFailed) {
+            let response = try await client.auth.signUp(
+                email: email, password: password, data: ["language": .string(language.rawValue)]
+            )
+            // An address that already has an account: Supabase doesn't say so (that would tell who's signed up),
+            // it answers like a new sign-up with no identity and sends nothing. The app says it plainly.
+            if response.session == nil, response.user.identities?.isEmpty == true { throw EmailAlreadyRegistered() }
+            return response.session == nil ? .confirmEmail : .signedIn
+        }
     }
 
     func signIn(email: String, password: String) async throws {
-        try await client.auth.signIn(email: email, password: password)
+        try await tracked(.loggedIn(.email), failed: AnalyticsEvent.logInFailed) {
+            try await client.auth.signIn(email: email, password: password)
+        }
     }
 
     /// The 6-digit code from the sign-up email: the account is confirmed and signed in.
     func confirmSignUp(_ email: String, code: String) async throws {
-        try await client.auth.verifyOTP(email: email, token: code, type: .signup)
+        try await tracked(.emailConfirmed) {
+            try await client.auth.verifyOTP(email: email, token: code, type: .signup)
+        }
     }
 
     func resendConfirmation(to email: String) async throws {
-        try await client.auth.resend(email: email, type: .signup)
+        try await tracked(.emailCodeResent) {
+            try await client.auth.resend(email: email, type: .signup)
+        }
     }
 
     /// Emails a 6-digit code to reset the password (backend auth-email, recovery). Auth answers the same
     /// whether or not the address has an account.
     func sendPasswordReset(to email: String) async throws {
-        try await client.auth.resetPasswordForEmail(email)
+        try await tracked(.passwordResetRequested) {
+            try await client.auth.resetPasswordForEmail(email)
+        }
     }
 
     /// The code from `sendPasswordReset`: signs in, so the new password can be set (`updatePassword(_:)`).
@@ -104,7 +114,9 @@ actor Backend {
 
     /// The code from `updateEmail`: the address switches once it checks out.
     func confirmEmailChange(_ email: String, code: String) async throws {
-        try await client.auth.verifyOTP(email: email, token: code, type: .emailChange)
+        try await tracked(.emailChanged) {
+            try await client.auth.verifyOTP(email: email, token: code, type: .emailChange)
+        }
     }
 
     /// Emails a 6-digit code to the current address, to prove it's them before a password change.
@@ -114,12 +126,32 @@ actor Backend {
 
     /// After a password reset code (the code proved it's them).
     func updatePassword(_ password: String) async throws {
-        try await client.auth.update(user: UserAttributes(password: password))
+        try await tracked(.passwordResetCompleted) {
+            try await client.auth.update(user: UserAttributes(password: password))
+        }
     }
 
     /// A new password, with the code from `sendReauthenticationCode`.
     func updatePassword(_ password: String, code: String) async throws {
-        try await client.auth.update(user: UserAttributes(password: password, nonce: code))
+        try await tracked(.passwordChanged) {
+            try await client.auth.update(user: UserAttributes(password: password, nonce: code))
+        }
+    }
+
+    /// An account action, counted: `done` once it went through, `failed` (with the reason) when it
+    /// didn't. An error that isn't a refusal the screen explains goes to Sentry.
+    private func tracked<T>(_ done: AnalyticsEvent, failed: ((String) -> AnalyticsEvent)? = nil,
+                            _ body: () async throws -> T) async throws -> T {
+        let value: T
+        do {
+            value = try await body()
+        } catch {
+            if let failed { Telemetry.track(failed(Telemetry.reason(error))) }
+            Telemetry.unexpected(error, "auth")
+            throw error
+        }
+        Telemetry.track(done)
+        return value
     }
 
     /// Texts a 6-digit code to the number: the phone-code function checks the account (email confirmed),
@@ -197,6 +229,16 @@ actor Backend {
 
     private func request(_ method: String, _ path: String, json: [String: Any]?,
                          requiresSession: Bool = true) async throws -> Data {
+        // Named without the query (ids, filters): `POST rest/v1/rpc/discover`.
+        let label = "\(method) \(PrivacyGuard.path(path))"
+        return try await Telemetry.trace("http.client", label) { span in
+            try await send(method, path, json: json, requiresSession: requiresSession, span: span)
+        }
+    }
+
+    private func send(_ method: String, _ path: String, json: [String: Any]?, requiresSession: Bool,
+                      span: any Telemetry.Span) async throws -> Data {
+        let label = "\(method) \(PrivacyGuard.path(path))"
         var request = URLRequest(url: URL(string: path, relativeTo: BackendConfig.url)!)
         request.httpMethod = method
         request.setValue(BackendConfig.publishableKey, forHTTPHeaderField: "apikey")
@@ -205,9 +247,14 @@ actor Backend {
             request.setValue("Bearer \(try await accessToken())", forHTTPHeaderField: "Authorization")
         }
         if let json { request.httpBody = try JSONSerialization.data(withJSONObject: json) }
+        let started = ContinuousClock.now
         let (data, response) = try await URLSession.shared.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-        guard (200..<300).contains(status) else {
+        let millis = Int((ContinuousClock.now - started) / .milliseconds(1))
+        span.setData("http.response.status_code", .int(status))
+        let ok = (200..<300).contains(status)
+        Telemetry.breadcrumb("http", label, level: ok ? .info : .warning, data: ["status_code": status, "duration_ms": millis])
+        guard ok else {
             let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             // PostgREST sends `"hint": null` when there's no code (NSNull here): skip it, not stop at it.
             let message = ["hint", "msg", "message", "code"].lazy.compactMap { body?[$0] as? String }.first
@@ -217,7 +264,12 @@ actor Backend {
             } else if Self.saysPaused(status: status, body: body) {
                 await MainActor.run { NotificationCenter.default.post(name: .profilePausedByServer, object: nil) }
             }
-            throw BackendError.http(status, message ?? String(decoding: data.prefix(200), as: UTF8.self))
+            // swiftlint:disable:next optional_data_string_conversion
+            let error = BackendError.http(status, message ?? String(decoding: data.prefix(200), as: UTF8.self))
+            // Every refusal is searchable in Sentry's logs; the callers decide what is an issue.
+            Telemetry.log(status >= 500 ? .error : .warning, "\(label) failed: \(status)",
+                          attributes: ["status_code": status, "reason": Telemetry.reason(error), "duration_ms": millis])
+            throw error
         }
         return data
     }

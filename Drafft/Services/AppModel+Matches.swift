@@ -24,6 +24,7 @@ extension AppModel {
         do { data = try await Backend.shared.rpc("liked_me", ["p_limit": Self.likesPage]) } catch {
             _ = readLanded(read, ok: false)
             guard read.session == sessionID else { return }
+            Telemetry.unexpected(error, "likes", "load")
             if isPremium == premium { likesFailed(error) }
             return
         }
@@ -103,6 +104,7 @@ extension AppModel {
         } catch {
             _ = readLanded(read, ok: false)
             guard read.session == sessionID else { return }
+            Telemetry.unexpected(error, "matches", "load")
             if matchesLoad != .loaded { matchesLoad = .failed(offline: ServerMessage.isOffline(error)) }
         }
     }
@@ -128,6 +130,7 @@ extension AppModel {
         // Someone liked you back (your own swipe shows the match screen instead).
         guard announce, let first = new.first(where: { !discovery.swiped.contains($0.profile.id) }),
               matchScreen?.id != first.profile.id else { return }
+        Telemetry.track(.matchCreated(.theirLike))
         Haptics.success()
         if UIApplication.shared.applicationState == .active {
             withAnimation(Motion.bouncy) { banner = MatchBanner(profile: first.profile) }
@@ -138,7 +141,10 @@ extension AppModel {
     /// `match_ended` on the channel (an unmatch or a block, either side): the match and its chat go.
     func matchEnded(_ matchID: String) async {
         let id = matchID.lowercased()
-        if let ended = matches.first(where: { $0.id == id }) { endLocally(ended) }
+        if let ended = matches.first(where: { $0.id == id }) {
+            Telemetry.track(.matchEnded)
+            endLocally(ended)
+        }
         await loadMatches()
     }
 
@@ -156,6 +162,7 @@ extension AppModel {
     /// the server refuses.
     func unmatch(_ profile: Profile) {
         guard let match = matches.first(where: { $0.profile.id == profile.id }) else { return }
+        Telemetry.track(.unmatched)
         endLocally(match)
         Task { [self] in
             do {
@@ -163,6 +170,7 @@ extension AppModel {
             } catch where ServerMessage.code(of: error) == "not_found" {
                 // Already over (the other person unmatched or blocked meanwhile).
             } catch {
+                Telemetry.unexpected(error, "matches", "unmatch")
                 withAnimation(Motion.snappy) {
                     if !matches.contains(where: { $0.id == match.id }) { matches.insert(match, at: 0) }
                 }

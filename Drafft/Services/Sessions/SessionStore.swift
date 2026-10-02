@@ -48,8 +48,7 @@ final class SessionStore {
     func refresh() async {
         guard let me = await Backend.shared.userID else { return }
         self.me = me
-        guard let data = try? await Backend.shared.rpc("upcoming_sessions", [:]),
-              let rows = try? JSONDecoder().decode([SessionRecord].self, from: data) else { return }
+        guard let rows = await read({ try await Backend.shared.rpc("upcoming_sessions", [:]) }) else { return }
         let returned = Set(rows.map(\.id))
         ledger.merge(rows)
         // Listed before and not now: closed since (cancelled, declined, passed) or gone with its match.
@@ -64,8 +63,7 @@ final class SessionStore {
         guard !ids.isEmpty else { return }
         if me == nil { me = await Backend.shared.userID }
         let list = ids.map { $0.uuidString.lowercased() }.sorted().joined(separator: ",")
-        guard let data = try? await Backend.shared.select("sessions?id=in.(\(list))&select=*"),
-              let rows = try? JSONDecoder().decode([SessionRecord].self, from: data) else { return }
+        guard let rows = await read({ try await Backend.shared.select("sessions?id=in.(\(list))&select=*") }) else { return }
         ledger.merge(rows)
         if dropMissing { ledger.remove(ids.subtracting(rows.map(\.id))) }
     }
@@ -102,7 +100,7 @@ final class SessionStore {
             ledger.settle(token, with: [row])
             return true
         } catch {
-            fail(token, error)
+            fail(token, error, action: "propose")
             return false
         }
     }
@@ -120,7 +118,7 @@ final class SessionStore {
             await SessionCalendar.shared.sessionChanged(id, status: row.status.rawValue)
             return true
         } catch {
-            fail(token, error)
+            fail(token, error, action: accept ? "accept" : "decline")
             return false
         }
     }
@@ -144,7 +142,7 @@ final class SessionStore {
             await SessionCalendar.shared.sessionChanged(id, status: countered.status.rawValue)
             return true
         } catch {
-            fail(token, error)
+            fail(token, error, action: "counter")
             return false
         }
     }
@@ -160,7 +158,7 @@ final class SessionStore {
             await SessionCalendar.shared.sessionChanged(id, status: row.status.rawValue)
             return true
         } catch {
-            fail(token, error)
+            fail(token, error, action: "cancel")
             return false
         }
     }
@@ -180,9 +178,22 @@ final class SessionStore {
         return try JSONDecoder().decode(SessionRecord.self, from: data)
     }
 
+    /// Rows read from the server, or nil when the read fails (nothing changes then).
+    private func read(_ request: () async throws -> Data) async -> [SessionRecord]? {
+        do {
+            let data = try await request()
+            return try JSONDecoder().decode([SessionRecord].self, from: data)
+        } catch {
+            Telemetry.unexpected(error, "sessions", "read")
+            return nil
+        }
+    }
+
     /// Refused or unreachable: the change is undone and the reason said. A refusal also means this
     /// phone's copy may be behind (answered elsewhere, cancelled by the other person): read again.
-    private func fail(_ token: UUID, _ error: Error) {
+    private func fail(_ token: UUID, _ error: Error, action: String) {
+        Telemetry.track(.sessionActionFailed(action, reason: Telemetry.reason(error)))
+        Telemetry.unexpected(error, "sessions", action)
         ledger.fail(token)
         Haptics.warning()
         SessionFailureNotice.shared.show(error)

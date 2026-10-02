@@ -63,6 +63,7 @@ struct LocationRequiredView: View {
         .nightSurface()
         .safeAreaInset(edge: .bottom, spacing: 0) { action }
         .background(Color.black.ignoresSafeArea())
+        .trackScreen(.locationRequired)
         .animation(Motion.snappy, value: location.servicesOff)
         .animation(Motion.snappy, value: location.status)
         .onAppear { appeared = true }

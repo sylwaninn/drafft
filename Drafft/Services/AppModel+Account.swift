@@ -117,6 +117,7 @@ extension AppModel {
             if session == sessionID { await endSession() }
         } catch {
             // Offline, or Auth not answering: the saved session is the best we know.
+            Telemetry.unexpected(error, "account", "load_account")
         }
     }
 
@@ -187,6 +188,7 @@ extension AppModel {
             // However the session ended, the next sign-in registers this device's token again.
             NotificationService.shared.forgetPushTokenRegistration()
             guard phase != .welcome, !leavingOnPurpose else { continue }
+            Telemetry.track(.sessionEnded("not_authenticated"))
             resetAccountState()
             sessionEndedNotice = true
         }
@@ -211,6 +213,7 @@ extension AppModel {
     }
 
     func signOut() {
+        Telemetry.track(.loggedOut)
         leavingOnPurpose = true
         sessionEndedNotice = false
         Task {
@@ -231,8 +234,11 @@ extension AppModel {
             _ = try await Backend.shared.function("delete-account", [:])
         } catch {
             leavingOnPurpose = false
+            Telemetry.track(.accountDeleteFailed(Telemetry.reason(error)))
+            Telemetry.unexpected(error, "account", "delete")
             throw error
         }
+        Telemetry.track(.accountDeleted)
         await Store.shared.unlink()
         OnboardingStore.clear()
         resetAccountState()

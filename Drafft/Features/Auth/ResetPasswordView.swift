@@ -71,6 +71,7 @@ struct ResetPasswordView: View {
             }
             .animation(Motion.snappy, value: flow.stage)
         }
+        .trackScreen(.passwordReset)
         .onChange(of: email) { if flow.stage == .form { flow.error = nil } }
         .onChange(of: password) { problem = nil }
         // The code signed in only to set the password: leaving before it's saved leaves no session behind.

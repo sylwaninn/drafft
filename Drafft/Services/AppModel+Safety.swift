@@ -8,6 +8,7 @@ extension AppModel {
     /// can't bring them back.
     func block(_ profile: Profile) {
         guard !blocked.contains(where: { $0.id == profile.id }) else { return }
+        Telemetry.track(.userBlocked)
         hide(profile)
         queueSafety(.block, profile)
     }
@@ -15,6 +16,7 @@ extension AppModel {
     /// Unblocking lets them back into Discover (the server forgets the old swipe; they come with a
     /// next batch); the old chat doesn't come back.
     func unblock(_ profile: Profile) {
+        Telemetry.track(.userUnblocked)
         withAnimation(Motion.snappy) { blocked.removeAll { $0.id == profile.id } }
         discovery.swiped.remove(profile.id)
         queueSafety(.unblock, profile)
@@ -58,9 +60,13 @@ extension AppModel {
                 try await Safety.send(entry.action, id)
                 SafetyOutbox.remove(entry, for: id, user: user)
             } catch where Safety.isFinal(error) {
-                Self.safetyLog.error("\(entry.action.rawValue, privacy: .public) refused: \(String(describing: error), privacy: .public)")
+                Self.safetyLog.error("\(entry.action.rawValue) refused: \(String(describing: error))")
+                // The entry is dropped for good: a refusal the server explains is a breadcrumb, a
+                // contract bug (a 4xx without a code) is reported, once, before it's forgotten.
+                Telemetry.unexpected(error, "safety", entry.action.rawValue)
                 SafetyOutbox.remove(entry, for: id, user: user)
             } catch {
+                Telemetry.unexpected(error, "safety", entry.action.rawValue)
                 if announce {
                     let text = entry.action == .block
                         ? L("Couldn't reach drafft. The block goes through as soon as you're back online.")
@@ -74,7 +80,7 @@ extension AppModel {
         safetyAttempts = 0
     }
 
-    private static let safetyLog = Logger(subsystem: "so.drafft.app", category: "safety")
+    private static let safetyLog = AppLog("safety")
 
     private func hide(_ profile: Profile) {
         withAnimation(Motion.snappy) {

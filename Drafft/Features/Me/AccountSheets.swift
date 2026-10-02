@@ -19,6 +19,8 @@ struct AccountSheet<Content: View>: View {
     var finished = false
     /// Something typed that closing would lose: Close asks before discarding it.
     var hasChanges = false
+    /// What it counts as in telemetry: a sheet built on this one (report, support) names itself.
+    var screen: Screen = .account
     let action: () -> Void
     @ViewBuilder var content: Content
 
@@ -84,6 +86,7 @@ struct AccountSheet<Content: View>: View {
         }
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled(hasChanges)
+        .trackScreen(screen)
     }
 }
 
@@ -392,10 +395,12 @@ struct ExportDataSheet: View {
                 do {
                     // The server keeps one open request and says when it was made.
                     _ = try await Backend.shared.rpc("request_data_export", [:])
+                    Telemetry.track(.dataExportRequested)
                     Haptics.success()
                     withAnimation(Motion.bouncy) { app.dataExportRequestedAt = .now }
                 } catch {
                     Haptics.warning()
+                    Telemetry.unexpected(error, "account", "data_export")
                     exportError = ServerMessage.text(
                         for: error, offline: L("Your request couldn't be sent. Check your connection and try again."))
                 }

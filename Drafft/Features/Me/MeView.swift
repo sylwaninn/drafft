@@ -120,7 +120,7 @@ struct MeView: View {
             .sheet(item: $sheet) { s in
                 Group {
                     switch s {
-                    case .edit: EditProfileView(profile: app.me)
+                    case .edit: EditProfileView(profile: app.me).trackScreen(.editProfile)
                     case .preview:
                         NavigationStack {
                             ProfileDetailView(profile: app.publicMe, mode: .me)

@@ -79,6 +79,7 @@ struct MediaViewer: View {
         .animation(Motion.snappy, value: chromeHidden)
         .statusBarHidden()
         .onChange(of: current) { _, _ in zoomed = false }
+        .trackScreen(.mediaViewer)
     }
 
     @ViewBuilder
@@ -130,6 +131,8 @@ struct MediaViewer: View {
                         .frame(width: 44, height: 44)
                         .glassEffect(.regular.interactive(), in: .circle)
                 }
+                // ShareLink has no tap hook: the share sheet opens either way, this only counts it.
+                .simultaneousGesture(TapGesture().onEnded { Telemetry.track(.shareTapped("photo")) })
                 .accessibilityLabel("Share")
             } else if case .video(let url) = items.first(where: { $0.id == current })?.kind {
                 ShareLink(item: url) {
@@ -139,6 +142,8 @@ struct MediaViewer: View {
                         .frame(width: 44, height: 44)
                         .glassEffect(.regular.interactive(), in: .circle)
                 }
+                // ShareLink has no tap hook: the share sheet opens either way, this only counts it.
+                .simultaneousGesture(TapGesture().onEnded { Telemetry.track(.shareTapped("video")) })
                 .accessibilityLabel("Share")
             } else {
                 Color.clear.frame(width: 44, height: 44)

@@ -78,6 +78,7 @@ struct OnboardingView: View {
     private var current: Step { steps[step] }
     @State private var restored = false
     @State private var confirmLeave = false
+    @State private var funnel = OnboardingFunnel()
 
     var body: some View {
         ZStack {
@@ -284,6 +285,7 @@ struct OnboardingView: View {
         withAnimation(Motion.snappy) { step = target }
         furthest = max(furthest, target)
         save()
+        funnel.shown(current, index: step)
     }
 
     // MARK: Resume
@@ -314,7 +316,7 @@ struct OnboardingView: View {
 
     /// Back where they stopped: the first mandatory step not done yet (usually the SMS), otherwise the furthest step reached.
     private func restore() {
-        guard !restored, let p = OnboardingStore.load() else { restored = true; return }
+        guard !restored, let p = OnboardingStore.load() else { restored = true; funnel.shown(current, index: step); return }
         name = p.name
         if let l = p.language.flatMap(AppLanguage.init(rawValue:)) { language = l; app.language = l }
         birthday = p.birthday
@@ -343,10 +345,12 @@ struct OnboardingView: View {
         forward = true
         // Clamped: a saved step from an older, longer flow must not index past the steps.
         step = min(max(0, target), steps.count - 1)
+        funnel.resumed(current, index: step)
     }
 
     private func advance() {
         if current == .rules, !TermsConsent.isCurrent(recordedTerms) { recordConsent(); return }
+        funnel.completed(current, index: step, skipped: !complete(current))
         guard step < steps.count - 1 else { finish(); return }
         if steps[step + 1].chapter != current.chapter { Haptics.success() } else { Haptics.tap() }
         go(to: step + 1)
@@ -360,7 +364,7 @@ struct OnboardingView: View {
         Task {
             defer { recordingConsent = false }
             do {
-                try await TermsConsent.accept()
+                try await TermsConsent.accept(during: "sign_up")
                 recordedTerms = TermsConsent.version
                 advance()
             } catch {
@@ -413,7 +417,7 @@ struct OnboardingView: View {
             } catch ProfileSync.SyncError.refused("terms_required") {
                 // The server has no consent on record (the one noted on this phone was lost there):
                 // back to the rules step, unticked, to record it again.
-                TermsConsent.log.error("complete_onboarding: terms_required although the sign-up recorded them")
+                TermsConsent.log.fault("complete_onboarding: terms_required although the sign-up recorded them")
                 Haptics.warning()
                 recordedTerms = nil
                 consent = ConsentDraft()
@@ -426,6 +430,7 @@ struct OnboardingView: View {
                 return
             }
             Haptics.success()
+            funnel.finished(signUp)
             app.finishOnboarding(p)
         }
     }
@@ -455,11 +460,6 @@ struct OnboardingView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .bottomBar { footer.padding(.top, DS.Space.md) }
-    }
-
-    /// Field label, same everywhere in the flow (matches DrafftField's title).
-    private func label(_ text: String) -> some View {
-        Text(text).font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.ink)
     }
 
     /// Hint or error under a field, same everywhere in the flow.
@@ -518,8 +518,8 @@ struct OnboardingView: View {
     /// Typed in three boxes (no wheel, no made-up starting date), then the age it gives, or why not.
     private var birthdayField: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
-            label(L("Birthday"))
-            BirthdateField(date: $birthday, oldest: Self.oldestBirthday)
+            FieldLabel(L("Birthday"))
+            BirthdateField(date: $birthday, oldest: BirthdateField.oldestBirthday)
 
             if let age, birthday != nil {
                 if isAdult { hint(L("Your profile will show \(age).")) }
@@ -597,8 +597,6 @@ struct OnboardingView: View {
         }
     }
 
-    static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now)! }
-
     private var genderStep: some View {
         page {
             stepTitle(L("Which describes you best?"), L("You can't change it later. If it's ever wrong, write to the help center in You."))
@@ -665,7 +663,7 @@ struct OnboardingView: View {
         page {
             stepTitle(L("Where do you train?"), L("drafft needs your location to show people near you. We show your area, never your address."))
             VStack(alignment: .leading, spacing: DS.Space.xs + 2) {
-                label(L("Your area"))
+                FieldLabel(L("Your area"))
                 HStack(spacing: DS.Space.md) {
                     Group {
                         if let area {
@@ -823,8 +821,6 @@ struct OnboardingView: View {
         .onChange(of: photos) { photoError = nil }
     }
 
-    private var photosCheck: PhotoSetCheck { .of(photos, face: mainFace) }
-
     private func checkMainFace() async {
         mainFace = nil
         let face = await PhotoSetCheck.face(of: photos.first)
@@ -858,7 +854,7 @@ struct OnboardingView: View {
             VoiceIntroRecorder(result: $voice)
             // In a block, like every text on the page (no loose text on the canvas).
             VStack(alignment: .leading, spacing: DS.Space.md) {
-                label(L("Stuck? Talk about"))
+                FieldLabel(L("Stuck? Talk about"))
                 // One symbol per idea (never the same one repeated down a list).
                 ForEach([("sun", L("What your perfect Sunday session looks like")),
                          ("flag-2", L("The race you'd love to finish")),
@@ -1006,6 +1002,10 @@ struct OnboardingView: View {
             IcebreakerEditor(icebreaker: $icebreaker)
         }
     }
+}
+
+extension OnboardingView {
+    private var photosCheck: PhotoSetCheck { .of(photos, face: mainFace) }
 }
 
 /// Compact − n× a week + control.

@@ -22,7 +22,8 @@ struct ReportSheet: View {
                      enabled: reason != nil && !sending,
                      loading: sending,
                      error: error,
-                     hasChanges: reason != nil || !details.isEmpty) {
+                     hasChanges: reason != nil || !details.isEmpty,
+                     screen: .report) {
             Task { await send() }
         } content: {
             VStack(alignment: .leading, spacing: DS.Space.md) {

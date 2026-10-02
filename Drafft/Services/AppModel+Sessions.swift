@@ -10,6 +10,7 @@ extension AppModel {
     /// Sends an invite in a chat (`chatID` is the match's id).
     func proposeSession(_ proposal: SessionProposal, in chatID: String) {
         Haptics.tap()
+        Telemetry.track(.sessionProposed(sport: proposal.sport.telemetryID, options: proposal.options.count))
         ChatService.shared.showPending(proposal, in: chatID)
         Task {
             guard await !SessionStore.shared.propose(proposal, in: chatID) else { return }
@@ -20,6 +21,7 @@ extension AppModel {
     /// Other times for an invite: the old card turns to "Other times suggested", the new one follows.
     func counterSession(_ sessionID: UUID, in chatID: String, with proposal: SessionProposal) {
         Haptics.tap()
+        Telemetry.track(.sessionCountered(options: proposal.options.count))
         ChatService.shared.showPending(proposal, in: chatID)
         Task {
             guard await !SessionStore.shared.counter(sessionID, with: proposal) else { return }
@@ -30,12 +32,14 @@ extension AppModel {
     /// Accept one of the proposed times, or decline.
     func respondToSession(_ sessionID: UUID, accept: Bool, pick: Date? = nil) {
         if accept { Haptics.success() } else { Haptics.tap() }
+        Telemetry.track(.sessionResponded(accept ? .accepted : .declined))
         Task { await SessionStore.shared.respond(sessionID, accept: accept, pick: pick) }
     }
 
     /// Calls a pending or confirmed session off, for both people.
     func cancelSession(_ sessionID: UUID) {
         Haptics.tap()
+        Telemetry.track(.sessionCancelled)
         Task { await SessionStore.shared.cancel(sessionID) }
     }
 

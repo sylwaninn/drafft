@@ -217,6 +217,11 @@ final class LocationGate: NSObject, CLLocationManagerDelegate {
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let s = manager.authorizationStatus
         MainActor.assumeIsolated {
+            // The system prompt answered (here or from sign-up's area step: the authorization is the app's).
+            if status == .notDetermined, s != .notDetermined {
+                let granted = s == .authorizedWhenInUse || s == .authorizedAlways
+                Telemetry.track(.permissionRequested(.location, result: granted ? .granted : .denied, during: ScreenTracker.currentID))
+            }
             status = s
             readServices()
         }

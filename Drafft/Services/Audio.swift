@@ -229,9 +229,15 @@ final class VoiceRecorder {
 
     func start() async -> Bool {
         // Already allowed (the usual case): no round trip through the permission API.
-        let granted = AVAudioApplication.shared.recordPermission == .granted
+        let permission = AVAudioApplication.shared.recordPermission
+        let granted = permission == .granted
             ? true
             : await AVAudioApplication.requestRecordPermission()
+        if permission != .granted {
+            // Asked now, or refused before (iOS doesn't ask again: only Settings can turn it on).
+            let result: AnalyticsEvent.PermissionResult = permission == .undetermined ? (granted ? .granted : .denied) : .blocked
+            Telemetry.track(.permissionRequested(.microphone, result: result, during: ScreenTracker.currentID))
+        }
         guard granted else {
             state = .denied
             return false

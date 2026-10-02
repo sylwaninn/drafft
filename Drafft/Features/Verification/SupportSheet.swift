@@ -49,7 +49,8 @@ struct SupportSheet: View {
                      loading: sending,
                      error: error,
                      finished: reference != nil,
-                     hasChanges: reference == nil && hasMessage) {
+                     hasChanges: reference == nil && hasMessage,
+                     screen: .support) {
             if reference != nil { dismiss(); return }
             Task { await send() }
         } content: {
@@ -209,10 +210,13 @@ struct SupportSheet: View {
         do {
             let data = try await Backend.shared.publicFunction("support", body)
             let answer = try JSONDecoder().decode([String: String].self, from: data)
+            // The topic is a sentence in the person's language: only where it was asked from goes.
+            Telemetry.track(.supportContacted(topic: isHelpCenter ? "help_center" : "in_context", signedIn: session == .signedIn))
             Haptics.success()
             withAnimation(Motion.bouncy) { reference = answer["reference"] ?? "" }
         } catch {
             Haptics.warning()
+            Telemetry.unexpected(error, "support", "send")
             if case Backend.BackendError.http(_, "invalid_email") = error {
                 emailError = L("That doesn't look like an email address. Check for typos.")
             } else {

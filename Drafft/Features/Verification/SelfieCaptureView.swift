@@ -36,8 +36,10 @@ struct SelfieCaptureView: View {
         .nightSurface()
         .background(DS.Palette.night.ignoresSafeArea())
         .task { await model.start() }
+        .onAppear { Telemetry.track(.selfieVerificationStarted) }
         .onDisappear { model.stop() }
         .onChange(of: model.sent) { _, sent in if sent { dismiss() } }
+        .trackScreen(.selfieVerification)
     }
 
     /// The camera, or the photo taken, in a 3:4 frame with the oval to put the face in. The frame's size
@@ -178,6 +180,8 @@ final class SelfieCaptureModel {
     /// Made when first used: the view's `@State` default is rebuilt each time its parent re-renders,
     /// and a capture session isn't free.
     @ObservationIgnored lazy var camera = SelfieCamera()
+    /// The camera permission is counted once per visit (a retake checks it again).
+    @ObservationIgnored private var permissionTracked = false
 
     var isCaptured: Bool { if case .captured = stage { true } else { false } }
     var isSending: Bool { if case .sending = stage { true } else { false } }
@@ -197,9 +201,16 @@ final class SelfieCaptureModel {
         error = nil
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
-            guard await AVCaptureDevice.requestAccess(for: .video) else { stage = .denied; return }
+            let granted = await AVCaptureDevice.requestAccess(for: .video)
+            trackPermission(granted ? .granted : .denied)
+            guard granted else { stage = .denied; return }
+        // Already allowed (the usual case): nothing was asked, so nothing to count.
         case .authorized: break
-        default: stage = .denied; return
+        default:
+            // iOS doesn't prompt again: only Settings can turn it on.
+            trackPermission(.blocked)
+            stage = .denied
+            return
         }
         camera.onFraming = { [weak self] framing in
             guard let self else { return }
@@ -211,6 +222,12 @@ final class SelfieCaptureModel {
     }
 
     func stop() { camera.stop() }
+
+    private func trackPermission(_ result: AnalyticsEvent.PermissionResult) {
+        guard !permissionTracked else { return }
+        permissionTracked = true
+        Telemetry.track(.permissionRequested(.camera, result: result, during: ScreenTracker.currentID))
+    }
 
     /// Takes the photo, then checks it again: what's sent must show the face as the live check saw it.
     func shoot() async {
@@ -241,17 +258,22 @@ final class SelfieCaptureModel {
         stage = .sending(image)
         error = nil
         do {
-            try await SelfieUpload.send(image)
+            try await Telemetry.trace("media.upload", "selfie") { _ in try await SelfieUpload.send(image) }
+            Telemetry.track(.selfieVerificationSubmitted)
             Haptics.success()
             // The hold turns to review first: the camera closes onto the review screen, never back onto
             // the selfie request.
             await AccountModeration.shared.load()
             sent = true
         } catch where ServerMessage.code(of: error) == "not_requested" {
+            Telemetry.track(.selfieVerificationFailed(Telemetry.reason(error)))
+            Telemetry.unexpected(error, "verification", "selfie")
             // The team decided meanwhile (the hold was lifted or changed): nothing left to send here.
             await AccountModeration.shared.load()
             sent = true
         } catch {
+            Telemetry.track(.selfieVerificationFailed(Telemetry.reason(error)))
+            Telemetry.unexpected(error, "verification", "selfie")
             self.error = error is URLError ? L("Couldn't connect. Check your connection and try again.")
                 : L("Your selfie couldn't be sent. Try again.")
             Haptics.warning()

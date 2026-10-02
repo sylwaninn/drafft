@@ -3,6 +3,11 @@
 useDefault = true
 
 [[allowlists]]
-description = "Public client keys: Supabase publishable keys and RevenueCat public SDK keys"
+description = "Public client keys: Supabase publishable keys, RevenueCat public SDK keys, Sentry DSNs and PostHog project keys"
 regexTarget = "match"
-regexes = ['''sb_publishable_[A-Za-z0-9_-]+''', '''appl_[A-Za-z0-9]+''']
+regexes = [
+    '''sb_publishable_[A-Za-z0-9_-]+''',
+    '''appl_[A-Za-z0-9]+''',
+    '''https:/(\$\(\))?/[0-9a-f]+@o[0-9]+\.ingest\.de\.sentry\.io/[0-9]+''',
+    '''phc_[A-Za-z0-9]+''',
+]

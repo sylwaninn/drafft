@@ -64,6 +64,7 @@ struct SwipeCard: View {
             let playing = audio.isCurrent(url) && audio.isPlaying
             Button {
                 Haptics.tap()
+                if !playing { Telemetry.track(.voiceIntroPlayed(where: ScreenTracker.currentID)) }
                 audio.toggle(url)
             } label: {
                 HStack(spacing: 6) {

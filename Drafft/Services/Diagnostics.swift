@@ -1,19 +1,19 @@
 import Foundation
 import MetricKit
-import os
 
 /// What the system measures of the app on people's iPhones (MetricKit): launch time, hangs, memory,
 /// and crash or hang diagnostics. Apple sends the day's payloads about once a day, and diagnostics
 /// right away (iOS 15 and later).
 ///
-/// For now they're written to the device log (subsystem `so.drafft.app`, category `metrics`) and
-/// kept as JSON files in Application Support/Diagnostics (the last 30), readable from Xcode's
-/// Devices window or a sysdiagnose. Nothing leaves the phone yet: sending them (Sentry or the
-/// backend) comes with that service.
+/// They're written to the device log (subsystem `so.drafft.app`, category `metrics`) and kept as JSON
+/// files in Application Support/Diagnostics (the last 30), readable from Xcode's Devices window or a
+/// sysdiagnose. The daily summary is also a Sentry log line, searchable by release. Sentry receives
+/// the crash and hang diagnostics on its own (its MetricKit integration), so here they're a log line
+/// too, never a second issue.
 final class Diagnostics: NSObject, MXMetricManagerSubscriber, @unchecked Sendable {
     static let shared = Diagnostics()
 
-    private static let log = Logger(subsystem: "so.drafft.app", category: "metrics")
+    private static let log = AppLog("metrics")
     private static let kept = 30
 
     /// Once, at launch.
@@ -23,7 +23,9 @@ final class Diagnostics: NSObject, MXMetricManagerSubscriber, @unchecked Sendabl
 
     func didReceive(_ payloads: [MXMetricPayload]) {
         for payload in payloads {
-            Self.log.info("\(Self.summary(payload), privacy: .public)")
+            let summary = Self.summary(payload)
+            Self.log.info(summary)
+            Telemetry.log(.info, summary, attributes: ["logger": "metrics"])
             Self.keep(payload.jsonRepresentation(), kind: "metrics")
         }
     }

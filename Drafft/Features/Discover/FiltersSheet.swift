@@ -70,6 +70,7 @@ struct FiltersSheet: View {
             .bottomBar { footer }
         }
         .presentationDragIndicator(.visible)
+        .trackScreen(.filters)
     }
 
     private var footer: some View {

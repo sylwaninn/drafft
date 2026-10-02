@@ -72,6 +72,9 @@ final class AppModel {
     var language: AppLanguage {
         get { Localization.shared.language }
         set {
+            if newValue != Localization.shared.language {
+                Telemetry.track(.languageChanged(newValue.rawValue, during: TelemetrySession.phaseID(phase)))
+            }
             Localization.shared.language = newValue
             NotificationService.shared.language = newValue
         }
@@ -177,7 +180,7 @@ final class AppModel {
     /// One per active match (`matches`), with its Stream channel (`ChatService`): never sample data.
     var conversations: [Conversation] = [] { didSet { refreshBadges() } }
     /// The chat currently on screen (its messages count as read).
-    var openChatID: String?
+    var openChatID: String? { didSet { if let openChatID, openChatID != oldValue { trackChatOpened(openChatID) } } }
     /// A request to show a chat from the Chats tab (match screen, banner); consumed by ConversationsView.
     var chatRequest: String?
     /// Bumped each time a chat is opened from outside it (notification, match banner): the chat
@@ -216,6 +219,7 @@ final class AppModel {
     func toggleMute(_ id: String) {
         guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
         conversations[i].muted.toggle()
+        Telemetry.track(.chatMuted(conversations[i].muted))
         ChatService.shared.toggleMute(id)
     }
 
@@ -260,32 +264,71 @@ final class AppModel {
     func markUnread(_ id: String) {
         guard let i = conversations.firstIndex(where: { $0.id == id }) else { return }
         conversations[i].markedUnread = true
+        Telemetry.track(.chatMarkedUnread)
         ChatService.shared.markUnread(id)
     }
 
     /// Sent at once: the bubble shows before the server has it, the ticks catch up.
     func send(_ content: MessageContent, in id: String, replyTo: String? = nil) {
-        guard conversation(id) != nil else { return }
+        guard let conversation = conversation(id) else { return }
         Haptics.tap()
+        let duration: Int? = switch content {
+        case let .voice(_, seconds, _): Int(seconds)
+        case let .video(_, _, seconds): Int(seconds)
+        default: nil
+        }
+        Telemetry.track(.messageSent(AnalyticsEvent.MessageKind(content), isReply: replyTo != nil,
+                                     isFirst: Self.isFirstMessage(in: conversation), durationSeconds: duration))
         ChatService.shared.send(content, in: id, replyTo: replyTo)
+    }
+
+    /// Whether this is the person's first message in the chat. Only the latest messages are on the
+    /// phone: with a full page and none of theirs, it can't be told (nil).
+    private static func isFirstMessage(in conversation: Conversation) -> Bool? { // swiftlint:disable:this discouraged_optional_boolean
+        if conversation.messages.contains(where: \.fromMe) { return false }
+        return conversation.messages.count < ChatService.messagesPage ? true : nil
     }
 
     /// Your reaction on one of their messages (never on your own: WhatsApp-style, minus self-reactions).
     func react(_ emoji: String?, to messageID: String, in id: String) {
         guard let message = conversation(id)?.messages.first(where: { $0.id == messageID }), !message.fromMe else { return }
         Haptics.select()
+        Telemetry.track(.messageReacted(removed: emoji == nil))
         ChatService.shared.react(emoji, to: messageID, current: message.reaction, in: id)
     }
 
     func delete(_ messageID: String, in id: String) {
         guard conversation(id)?.messages.first(where: { $0.id == messageID })?.fromMe == true else { return }
+        Telemetry.track(.messageDeleted)
         ChatService.shared.delete(messageID, in: id)
+    }
+
+    /// A chat came on screen: counted before it's marked read (`chat_opened`).
+    private func trackChatOpened(_ id: String) {
+        guard let convo = conversation(id) else { return }
+        Telemetry.track(.chatOpened(unread: convo.unread, messages: convo.messages.count))
     }
 
     /// A message that couldn't be sent, tapped: sent again.
     func retry(_ messageID: String, in id: String) {
         Haptics.tap()
+        Telemetry.track(.messageRetried)
         ChatService.shared.retry(messageID, in: id)
+    }
+}
+
+private extension AnalyticsEvent.MessageKind {
+    init(_ content: MessageContent) {
+        self = switch content {
+        case .text: .text
+        case .photo: .photo
+        case .video: .video
+        case .voice: .voice
+        case .file: .file
+        case .session: .session
+        case .icebreakerReply: .icebreakerReply
+        case .photoReply: .photoReply
+        }
     }
 }
 
