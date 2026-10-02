@@ -68,20 +68,31 @@ final class MediaUploader: NSObject, URLSessionTaskDelegate, @unchecked Sendable
     static let shared = MediaUploader()
     static let sessionIdentifier = "so.drafft.app.uploads"
 
+    private static let log = AppLog("uploads")
+
     private let lock = NSLock()
     private var waiting: [Int: CheckedContinuation<Void, Error>] = [:]
     private var progressHandlers: [Int: @Sendable (Double) -> Void] = [:]
     /// Set by the app delegate when iOS relaunches the app to deliver background upload events.
     private var backgroundCompletion: (@Sendable () -> Void)?
 
-    private lazy var session: URLSession = {
-        let configuration = URLSessionConfiguration.background(withIdentifier: Self.sessionIdentifier)
-        // The person is waiting on this upload: start now, don't wait for Wi-Fi or charging.
-        configuration.isDiscretionary = false
-        configuration.sessionSendsLaunchEvents = true
-        configuration.timeoutIntervalForResource = 60 * 60
-        return URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
-    }()
+    private var backgroundSession: URLSession?
+
+    /// Made on first use, once: two sessions with one identifier lose events. The lock makes the first use
+    /// safe from any thread (an upload task, or the app delegate on main). Never call it while holding `lock`.
+    private var session: URLSession {
+        lock.withLock {
+            if let backgroundSession { return backgroundSession }
+            let configuration = URLSessionConfiguration.background(withIdentifier: Self.sessionIdentifier)
+            // The person is waiting on this upload: start now, don't wait for Wi-Fi or charging.
+            configuration.isDiscretionary = false
+            configuration.sessionSendsLaunchEvents = true
+            configuration.timeoutIntervalForResource = 60 * 60
+            let created = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+            backgroundSession = created
+            return created
+        }
+    }
 
     /// PUTs a file to a ticket's URL, retrying transient failures twice (after 1 s, then 2 s).
     /// A 403 means the ticket expired: ask for a new one and call again.
@@ -101,8 +112,14 @@ final class MediaUploader: NSObject, URLSessionTaskDelegate, @unchecked Sendable
         }
     }
 
+    /// iOS waits for `completion` before it suspends the app again. One still pending (the app was relaunched
+    /// twice before the session finished its events) is answered now: iOS gets its "done" for each.
     func handleEventsForBackgroundSession(completion: @escaping @Sendable () -> Void) {
-        lock.withLock { backgroundCompletion = completion }
+        let previous = lock.withLock { () -> (@Sendable () -> Void)? in
+            defer { backgroundCompletion = completion }
+            return backgroundCompletion
+        }
+        if let previous { DispatchQueue.main.async { previous() } }
         _ = session
     }
 
@@ -142,8 +159,12 @@ final class MediaUploader: NSObject, URLSessionTaskDelegate, @unchecked Sendable
             progressHandlers[task.taskIdentifier] = nil
             return waiting.removeValue(forKey: task.taskIdentifier)
         }
-        // No continuation: an upload from a previous launch, finished in the background.
-        guard let continuation else { return }
+        // No continuation: an upload from a previous launch, finished in the background. Nobody is waiting
+        // for it any more, so a failure is only logged (no file, URL or key, only the outcome).
+        guard let continuation else {
+            Self.logOrphan(task, error: error)
+            return
+        }
         if let error {
             continuation.resume(throwing: error)
             return
@@ -152,6 +173,15 @@ final class MediaUploader: NSObject, URLSessionTaskDelegate, @unchecked Sendable
         case 200..<300: continuation.resume()
         case 403: continuation.resume(throwing: MediaUploadError.ticketExpired)
         case let status: continuation.resume(throwing: MediaUploadError.http(status))
+        }
+    }
+
+    private static func logOrphan(_ task: URLSessionTask, error: Error?) {
+        if let error {
+            let failure = error as NSError
+            log.error("A background upload from an earlier launch failed: \(failure.domain) \(failure.code)")
+        } else if let status = (task.response as? HTTPURLResponse)?.statusCode, !(200..<300).contains(status) {
+            log.error("A background upload from an earlier launch was refused: HTTP \(status)")
         }
     }
 

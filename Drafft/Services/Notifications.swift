@@ -383,6 +383,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String,
                      completionHandler: @escaping () -> Void) {
         guard identifier == MediaUploader.sessionIdentifier else { return completionHandler() }
+        // Safe: iOS gives this handler to the main thread and the uploader only ever calls it there (the wrapper
+        // is what lets the compiler accept the conversion to a Sendable closure).
         nonisolated(unsafe) let completion = completionHandler
         MediaUploader.shared.handleEventsForBackgroundSession { completion() }
     }
