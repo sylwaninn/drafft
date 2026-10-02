@@ -11,6 +11,6 @@ APP_DISPLAY_NAME = drafft β
 // Telemetry (docs/telemetry.md): the same Sentry project as production (environment "staging" tells them
 // apart), the same PostHog project too (`app_environment` tells them apart in every insight). Empty: off.
 APP_ENVIRONMENT = staging
-SENTRY_DSN =
+SENTRY_DSN = https:/$()/7520d7d2870ca3520a3beb1c18452ea4@o4512185676070912.ingest.de.sentry.io/4512185728893008
 POSTHOG_API_KEY = phc_v7XkEKcLMvYaaNMfNANZBEidQwYKe4MjzugMQHyxur7W
 POSTHOG_HOST = https:/$()/eu.i.posthog.com
