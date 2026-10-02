@@ -262,11 +262,10 @@ struct LikeTile: View {
     }
 }
 
-/// The red disc of a super like, with its drafting heart.
+/// The red disc of a super like, with its heart.
 private struct SuperLikeDisc: View {
     var body: some View {
         SuperLikeMark(size: 11, color: .white)
-            .offset(x: -3)
             .frame(width: 30, height: 30)
             .background(DS.Palette.negative, in: .circle)
             .accessibilityHidden(true)

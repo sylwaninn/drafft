@@ -192,7 +192,7 @@ private struct FocusedPhoto: View {
 
 enum AuthRoute: Hashable { case signUpEmail, logIn }
 
-/// The logo: "drafft" set in the display face, solid. Never a drafting trail behind it.
+/// The logo: "drafft" set in the display face, solid.
 struct Wordmark: View {
     var size: CGFloat = 28
     var color: Color = DS.Palette.lime

@@ -1,41 +1,5 @@
 import SwiftUI
 
-// The drafting motif: a lead shape followed by fading ghost copies, like riders tucked in
-// behind each other. Under buttons only, never under the logo (Wordmark).
-
-extension View {
-    /// Draws `count` fading copies of `shape` behind the view, each shifted by `step`.
-    /// With no `color`, the trail takes the accent of the surface it sits on.
-    func draftTrail<S: Shape>(_ shape: S, color: Color? = nil, count: Int = 2,
-                              step: CGSize = CGSize(width: -7, height: 0)) -> some View {
-        modifier(DraftTrail(shape: shape, color: color, count: count, step: step))
-    }
-}
-
-private struct DraftTrail<S: Shape>: ViewModifier {
-    let shape: S
-    let color: Color?
-    let count: Int
-    let step: CGSize
-    @Environment(\.isNightSurface) private var onNight
-
-    func body(content: Content) -> some View {
-        let color = color ?? (onNight ? DS.Palette.accentOnNight : DS.Palette.lime)
-        return content.background {
-            ZStack {
-                ForEach((1...max(count, 1)).reversed(), id: \.self) { i in
-                    shape
-                        .fill(color.opacity(i == 1 ? 0.55 : 0.25))
-                        .offset(x: step.width * CGFloat(i), y: step.height * CGFloat(i))
-                }
-            }
-            // Decoration only: the ghosts reach past the button and must not eat taps there.
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
-        }
-    }
-}
-
 extension View {
     /// A night block: the rounded night fill, with its content marked as on night.
     func nightBlock(radius: CGFloat = DS.Radius.xl) -> some View {
@@ -43,7 +7,7 @@ extension View {
     }
 }
 
-/// Round icon badge carrying a bold SF Symbol. No trail: the drafting effect is reserved for buttons.
+/// Round icon badge carrying a bold SF Symbol.
 struct DraftGlyph: View {
     let symbol: String
     var size: CGFloat = 48
@@ -96,22 +60,14 @@ struct SparkPlus: Shape {
     }
 }
 
-/// Super like mark: a heart drafting forward, with fading ghost hearts behind it.
-/// The one icon allowed to carry the drafting trail (user request).
+/// Super like mark: a single heart.
 struct SuperLikeMark: View {
     var size: CGFloat = 20
     var color: Color = DS.Palette.lime
 
     var body: some View {
-        ZStack {
-            ForEach([2, 1], id: \.self) { i in
-                heart.foregroundStyle(color.opacity(i == 1 ? 0.55 : 0.25))
-                    .offset(x: -size * 0.24 * CGFloat(i))
-            }
-            heart.foregroundStyle(color)
-        }
-        .padding(.leading, size * 0.48)
-        .accessibilityHidden(true)
+        heart.foregroundStyle(color)
+            .accessibilityHidden(true)
     }
 
     private var heart: some View {
@@ -128,7 +84,6 @@ struct SuperLikeCountMark: View {
     var body: some View {
         VStack(spacing: 1) {
             SuperLikeMark(size: size * 0.3, color: .white)
-                .offset(x: -size * 0.07)
             if count > 0 {
                 Text("\(count)")
                     .font(.system(size: size * 0.21, weight: .heavy).monospacedDigit())

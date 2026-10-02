@@ -123,8 +123,6 @@ struct SessionsView: View {
                     Label("Open chat", image: "chat-round-line")
                 }
                 .buttonStyle(.drafftPrimary)
-                .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-                .padding(.leading, 12)
                 CalendarButton(session: s, partner: item.name, chatID: item.chatID, compact: true)
             }
         }

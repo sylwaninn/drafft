@@ -413,8 +413,6 @@ struct ProposeSessionSheet: View {
             }
             .buttonStyle(.drafftPrimary)
             .disabled(!canSend)
-            .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-            .padding(.leading, 12)
 
             // Keeps its height when empty, so the button never moves.
             Text(sendReason?.text ?? " ")

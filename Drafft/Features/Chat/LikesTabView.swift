@@ -123,8 +123,6 @@ struct LikesTabView: View {
             Label("See who likes you", image: "user-heart")
         }
         .buttonStyle(.drafftPrimary)
-        .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-        .padding(.leading, 12)
         .padding(.horizontal, DS.Space.lg)
         .padding(.vertical, DS.Space.md)
         .transition(.move(edge: .bottom).combined(with: .opacity))

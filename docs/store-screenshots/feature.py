@@ -41,8 +41,8 @@ DAY = {"en": "Saturday", "fr": "Samedi", "es": "Sábado", "de": "Samstag", "it":
 PAGE, NIGHT, WHITE, GRAPHITE = C.PAGE, C.NIGHT, C.WHITE, C.GRAPHITE
 
 
-def el(name, cx, cy, s=1.0, r=0.0, z=2, trail=None, tc=None, tk=1):
-    return dict(k="el", name=name, cx=cx, cy=cy, s=s, r=r, z=z, trail=trail, tc=tc, tk=tk)
+def el(name, cx, cy, s=1.0, r=0.0, z=2):
+    return dict(k="el", name=name, cx=cx, cy=cy, s=s, r=r, z=z)
 
 
 def tx(t, x, y, w, size, color=INK, align="left", mx=2, lh=.95, z=5, ls=-.024, key=True):
@@ -55,7 +55,7 @@ def raw(html, z=1):
 
 
 def wm(x, y, size, color=INK):
-    # The logo: the word alone, never a drafting trail (DESIGN.md).
+    # The logo: the word alone (DESIGN.md).
     return raw(f'<div class="wm" data-safe="wordmark" style="position:absolute;left:{x}px;top:{y}px;font-size:{size}px;color:{color};z-index:6"><span>drafft</span></div>', 6)
 
 
@@ -79,8 +79,6 @@ def burst(cx, cy, k=1.0):
 # The variant picked for the store (its name, e.g. "07-ticket"). None: render all ten to choose.
 CHOSEN = "01-deck"
 
-TR = (60, -28)
-LIT = dict(tc="brightness(0) invert(1)", tk=.5)
 
 
 def variants(lang):
@@ -111,7 +109,7 @@ def variants(lang):
                              el("malik_sports", 1270, 650, .5, -4, 4), el("like", 1680, 650, 1.1, 0, 5)]),
         # 7. The ticket: Maya's card and her time pinned together, the hour as the headline.
         "07-ticket": (PAGE, [tx(f"{day},\n{hour}.", 140, 220, 900, 190, mx=2, lh=.9), tx(t1, 150, 640, 900, 72, MUTE, mx=2, lh=1.05),
-                             el("card_maya", 1450, 500, .44, -6, 3), el("time1", 1720, 700, 1.15, 8, 5, trail=TR), wm(150, 820, 64)]),
+                             el("card_maya", 1450, 500, .44, -6, 3), el("time1", 1720, 700, 1.15, 8, 5), wm(150, 820, 64)]),
         # 8. The figure: a giant 9:00 in graphite, the card and the time over it.
         "08-chiffre": (PAGE, [raw(f'<div class="h" style="position:absolute;left:150px;top:150px;font-size:500px;line-height:.82;letter-spacing:-.05em;color:#111214;z-index:0">{hour}</div>', 0),
                               el("card_lea", 1520, 500, .37, -6, 3), el("time1", 1750, 680, 1.1, 8, 5),
@@ -123,7 +121,7 @@ def variants(lang):
         # 10. The start line: a white line across graphite, the time card sitting on it, the like.
         "10-depart": (GRAPHITE, [raw('<div style="position:absolute;left:0;top:760px;width:2048px;height:14px;background:#fff;z-index:1"></div>', 1),
                                  wm(150, 230, 110, WHITE), tx(t1, 140, 400, 1000, 124, WHITE, mx=3),
-                                 el("time1", 1500, 560, 1.3, -6, 4, trail=TR, **LIT), el("like", 1820, 640, 1.15, 0, 5)]),
+                                 el("time1", 1500, 560, 1.3, -6, 4), el("like", 1820, 640, 1.15, 0, 5)]),
     }
 
 

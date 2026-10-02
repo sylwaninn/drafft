@@ -310,7 +310,6 @@ struct ExtrasSheet: View {
         switch tab {
         case .superLike:
             SuperLikeMark(size: 13, color: .white)
-                .offset(x: -3)
                 .frame(width: 34, height: 34)
                 .background(DS.Palette.negative, in: .circle)
                 .shadow(color: .black.opacity(0.3), radius: 6, y: 3)

@@ -134,8 +134,6 @@ struct PromptPickerSheet: View {
             }
             .buttonStyle(.drafftPrimary)
             .disabled(selection == nil || selection == current)
-            .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-            .padding(.leading, 12)
             Text(selection.map { $0 == current ? L("That's your current prompt.") : L("“\(ProfilePrompt.text(for: $0))”") } ?? L("Tap a prompt to select it."))
                 .font(.footnote)
                 .foregroundStyle(DS.Palette.body)
