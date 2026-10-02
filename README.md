@@ -50,6 +50,12 @@ flowchart LR
   Push["Apple Push<br/>Notification service"] --> App
   App --> RevenueCat["RevenueCat<br/>App Store purchases"]
   App --> Telemetry["Sentry, PostHog<br/>crashes and events, EU"]
+  Supabase -. "presigns PUT,<br/>reads, deletes" .-> R2
+  Supabase -. "signs GET links" .-> Worker
+  Worker -.-> R2
+  Supabase <-. "token, channels,<br/>webhook" .-> Stream
+  Supabase -.-> Push
+  RevenueCat -. "webhook" .-> Supabase
 ```
 
 ### The app
