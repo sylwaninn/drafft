@@ -207,8 +207,10 @@ the same from a `ci_scripts/ci_post_xcodebuild.sh` with the token as a secret en
 - Person profiles: identified only (also set in the SDK).
 - Feature flags are not preloaded (each preload is a billed request): turn `preloadFeatureFlags` on
   with the first experiment.
-- Data retention: within the CNIL's audience measurement guidance (an identifier lives 13 months at
-  most, the data 25 months at most).
+- Data retention: not a setting. PostHog Cloud keeps events 1 year on the free plan and 7 years on a paid
+  plan, and a shorter period isn't available. The CNIL's audience measurement guidance (an identifier
+  lives 13 months at most, the data 25 months at most) holds on the free plan; on a paid plan, delete the
+  older data (persons or batch deletion) or change the privacy policy first.
 - Dashboards to start with: the sign-up funnel (`onboarding_step_viewed` by `step_index`), activation
   (`onboarding_completed` → `profile_swiped` → `match_created` → `message_sent` → `session_proposed`),
   monetisation (`paywall_viewed` by `from_screen` → `purchase_completed`), retention by first week.
