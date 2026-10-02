@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/sticker.png" alt="drafft-ios" width="140">
+
 # drafft for iOS
 
 **Meet someone who gets your rhythm.**
