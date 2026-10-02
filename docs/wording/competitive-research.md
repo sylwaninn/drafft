@@ -141,7 +141,7 @@ Research date: 2026-09-29. All quotes come from live pages fetched on that date 
 - "Skip the awkward drink / plus de premiers rendez-vous gênants / pas de small talk": used by bpm, Breeze and Timeleft.
 - "100% sportifs / exclusivement pour": bpm, FitVybe, Woddy.
 - "Real / authentique / vraies connexions": everywhere.
-- FR: **tu** is the norm for dating apps (Tinder, Bumble, happn store, Breeze, Timeleft, bpm, Leets, Partners). **vous** marks Hinge FR, Once, PuLs, older sites and Playtomic. drafft should use **tu**, since that matches the category and its audience. **vous** would place it alongside Hinge/Once (premium but distant), or alongside the old SEO sites.
+- FR: **tu** is the norm for dating apps (Tinder, Bumble, happn store, Breeze, Timeleft, bpm, Leets, Partners). **vous** marks Hinge FR, Once, PuLs, older sites and Playtomic. drafft should use **tu**, since that matches the category and drafft's audience (PRODUCT.md). **vous** would place it alongside Hinge/Once (premium but distant), or alongside the old SEO sites.
 - FR anglicisms are accepted: "un date", "matcher", "crush", "run", "small talk".
 
 ### Clichés to avoid
