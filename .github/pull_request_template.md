@@ -1,6 +1,7 @@
 <!--
 Title: type(scope): lowercase description, no final period. It becomes the squash commit on staging.
-  types: feat, fix, docs, style, refactor, test, chore. `type!:` for a breaking change.
+  types: feat, fix, docs, style, refactor, test, chore; scope `mobile` (`ci` for workflows), required.
+  A breaking change: `type(scope)!:` in the title. 70 characters at most.
 Base: staging. Never main (main only moves through the release workflow).
 No AI attribution line in the description or in any commit (CI refuses it, scripts/ci/pr_check.sh).
 Delete these comments and any section that doesn't apply.

@@ -1,6 +1,6 @@
 #!/bin/sh
-# Enforces the workspace rules (.claude/rules/commits.md) for everyone (agents and humans): one line,
-# `type(scope): description`, no Co-Authored-By. Enabled by `git config core.hooksPath .agents/git-hooks`.
+# Enforces the commit rules (CONTRIBUTING.md, "Commits"; AGENTS.md, "Repository rules") for everyone,
+# agents and humans: one line, `type(scope): description`, no Co-Authored-By. Enabled by `git config core.hooksPath .agents/git-hooks`.
 msg_file=$1
 # The message as git will store it: comment lines and trailing blank lines dropped.
 lines=$(grep -v '^#' "$msg_file" | sed -e :a -e '/^[[:space:]]*$/{$d;N;ba' -e '}')
@@ -12,7 +12,7 @@ esac
 
 fail() {
   echo "commit-msg: $1" >&2
-  echo "  Format: type(scope): description   (see .claude/rules/commits.md in the drafft workspace)" >&2
+  echo "  Format: type(scope): description   (see CONTRIBUTING.md, Commits)" >&2
   exit 1
 }
 

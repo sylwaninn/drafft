@@ -1,5 +1,5 @@
-# Checks every change to the iOS app on Linux runners (cheap and fast). Building, testing and
-# shipping to TestFlight belong to Xcode Cloud, which has the toolchain and the signing.
+# Checks every change to the iOS app on Linux runners (cheap and fast). Building, testing and archiving
+# happen in Xcode (store builds are archived by hand from the release tag), which has the toolchain and the signing.
 name: app
 
 on:

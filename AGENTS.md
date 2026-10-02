@@ -13,7 +13,7 @@ reference copy; see "Shared docs" for the other repositories' copies).
 
 ## Telemetry (Sentry and PostHog): part of every change
 
-[docs/telemetry.md](docs/telemetry.md) is the plan (events, screens, errors, alerts); the code is
+[docs/telemetry.md](docs/telemetry.md) is the reference (events, screens, errors, alerts); the code is
 `Drafft/Services/Telemetry/`, the same events and rules as the Android app.
 
 **Every feature, change or task finishes with a telemetry pass. The pull request's "Notes" says what was
@@ -50,6 +50,10 @@ tests fail on it.
   product, way of working) goes into the document it belongs to, in the same change: DESIGN.md,
   PRODUCT.md, this file, or WORDING.md (in drafft-ios, its source). Never save it to Claude Code's auto
   memory: a cloud session, another machine or another agent would never see it.
+- **Who drafft is for stays in PRODUCT.md.** The audience (age above all, city, how often people train) is
+  never written in a README or any other doc. A README never details what a session proposal holds.
+- **Two standalone apps.** Never describe drafft for Android as a port, a copy, a mirror or a translation of
+  this app (or the reverse), in code, comments, docs, commits or pull requests.
 - **Industry-grade solutions.** Every fix or feature takes the robust, secure, scalable solution the
   industry already uses (proven libraries and patterns: idempotency keys, retries with backoff,
   dead-letter queues and redrive, circuit breakers, stale-while-revalidate), never a quick patch.
@@ -97,7 +101,7 @@ git guard, skills). Claude Code loads the same files on this machine and on the 
 
 - Open them with the `create-pr` skill (`.claude/skills/create-pr/`), into `staging`. Title in
   conventional commit format, English, 70 characters at most (it becomes the squash commit and feeds
-  the release version: `type!:` major, any `feat` minor, else patch). Every section of the body filled,
+  the release version: `type(scope)!:` major, any `feat` minor, else patch). Every section of the body filled,
   no AI attribution. Squash-merge.
 - Never merge a pull request whose checks are red or still running, never with admin rights.
 - A merge into `staging` runs CI only. A release (Actions > release, started by hand on GitHub) fast-forwards `main` to `staging`, tags `vX.Y.Z` and publishes a GitHub release; store builds are made by hand from that tag.
@@ -120,9 +124,9 @@ request. Compile-only checks are the exception.
 
 ### Work that spans repositories
 
-A product feature usually runs backend, then iOS, then Android (then the website for legal or marketing
+A product feature usually runs backend, then the two apps (then the website for legal or marketing
 copy): one session and one pull request per repository, backend first since the apps call its RPCs and
-functions. iOS is the reference; Android ports it with the same names, behaviour and strings. The first
+functions. Both apps ship it with the same names, behaviour and strings. The first
 pull request states the contract (RPCs, payloads, event names) and the next ones link it. Another
 repository is read on GitHub (`gh repo clone sylwaninn/<repo>` into a temporary folder), never edited
 from here, except the shared docs below when the user agrees.
@@ -142,7 +146,7 @@ drafft-ios, and `--check` lists those that differ.
 `staging` (the default branch) takes every pull request; `main` is production and only moves through
 the release workflow (Actions > release: staging's new commits onto `main`, a `vX.Y.Z` tag and a GitHub
 release, see `scripts/ci/release.sh`). Store builds are made by hand, from the release tag. "Verify" in these rules
-(`pnpm verify`) means, in this repository:
+means, in this repository (the same as CONTRIBUTING.md, "Verify locally"):
 
 ```sh
 xcodegen generate && xcodebuild -project Drafft.xcodeproj -scheme Drafft -destination 'generic/platform=iOS Simulator' build
@@ -150,14 +154,10 @@ swiftlint lint --strict --baseline .swiftlint-baseline.json
 python3 scripts/ci/design_lint.py && python3 scripts/ci/i18n_lint.py
 ```
 
-CI (`.github/workflows/app.yml`) runs the last two lines plus gitleaks and actionlint on every pull
-request; `.github/workflows/pr.yml` checks the pull request itself (base never `main`, title format, a
-filled-in description, allowed commit authors, no attribution trailer). SwiftLint fails on new violations only (existing debt is in `.swiftlint-baseline.json`). The
-design lint encodes DESIGN.md's rules (no gradients but photo scrims, no '·', no '…' on copy, lowercase
-brand, palette colours only, a surface on every sheet); a deliberate exception carries its reason:
-`// design-lint: allow <rule> - <why>`. The i18n lint wants all 7 languages, matching placeholders,
-a catalog in sync with the code, and none of the wording WORDING.md forbids (its `wording-forbidden`
-block, also applied to `Services/NotificationText.swift`).
+CI runs the lints, gitleaks and actionlint on every pull request, and checks the pull request itself: the
+full list is in CONTRIBUTING.md, "Quality gates". SwiftLint fails on new violations only (existing debt is in
+`.swiftlint-baseline.json`). A deliberate exception to a design rule carries its reason:
+`// design-lint: allow <rule> - <why>`.
 
 Environments: scheme **Drafft** (production backend) and **Drafft Staging** ("drafft β", staging
 backend), from `Config/*.xcconfig`. **Drafft Local** ("drafft local") runs on the local Supabase of
