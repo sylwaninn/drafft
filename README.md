@@ -4,8 +4,7 @@
 
 **Meet someone who gets your rhythm.**
 
-The iPhone app of drafft, the dating app for people who train.<br>
-Profiles lead with how someone moves, and a match is an invitation to propose a session together.
+The iPhone app of drafft, the dating app for people who train.
 
 [![app](https://github.com/sylwaninn/drafft-ios/actions/workflows/app.yml/badge.svg?branch=staging)](https://github.com/sylwaninn/drafft-ios/actions/workflows/app.yml)
 [![pr](https://github.com/sylwaninn/drafft-ios/actions/workflows/pr.yml/badge.svg)](https://github.com/sylwaninn/drafft-ios/actions/workflows/pr.yml)
@@ -15,7 +14,7 @@ Profiles lead with how someone moves, and a match is an invitation to propose a 
 ![Languages](https://img.shields.io/badge/languages-7-2EA44F)
 ![License](https://img.shields.io/badge/license-proprietary-lightgrey)
 
-[Product](#product) · [How it works](#how-it-works) · [Getting started](#getting-started) · [Release](#release) · [Docs](#documentation)
+[Product](#product) | [How it works](#how-it-works) | [Getting started](#getting-started) | [Release](#release) | [Docs](#documentation)
 
 </div>
 
@@ -34,9 +33,6 @@ step, and the people decide.
 | **Chat** | Text, photos, videos, voice messages, replies and reactions |
 | **drafft tempo** | The paid tier (undo, see who likes you); boosts and super likes in packs |
 | **Safety** | Report and block, moderation, selfie check, help center |
-
-Users, principles and legal rules: [PRODUCT.md](PRODUCT.md). Visual system: [DESIGN.md](DESIGN.md).
-Every word people read: [WORDING.md](WORDING.md).
 
 ## How it works
 
@@ -60,60 +56,65 @@ flowchart LR
 
 - **Start.** `DrafftApp` starts telemetry, diagnostics (MetricKit), the image pipeline and RevenueCat, then
   `RootView` shows welcome, sign-up or the five tabs (Discover, Likes, Sessions, Chats, You). The tabs are built
-  once, ahead of time, under the splash.
-- **State.** One `@MainActor @Observable` `AppModel`, split by domain into `AppModel+*.swift` (account,
-  Discover, matches, likes, wallet, sessions, safety), passed to every screen through the environment. The
-  account hold and the location request each cover the app in their own window.
+  once, ahead of time, out of sight.
+- **State.** One `@MainActor @Observable` `AppModel`, split by domain into `AppModel+*.swift` files, passed to
+  every screen through the environment. The account hold and the location request each cover the app in their
+  own window.
 - **Folders.** `Drafft/App` (entry), `Features/` (screens by area), `DesignSystem/` (DESIGN.md in code),
   `Services/` (model and services), `Models/` (value types), `Resources/` (catalogs, fonts, assets).
 
 ### Backend link
 
-- **Client.** supabase-swift for Auth (the session in the Keychain) and Realtime; RPCs, table reads and Edge
-  Functions are plain `URLSession` calls with the publishable key and the session's token.
+- **Client.** supabase-swift for Auth (the session in the Keychain), Realtime and Storage (the selfie upload);
+  RPCs, table reads and Edge Functions are plain `URLSession` calls made as the signed-in person.
 - **Errors.** The backend answers a stable code (`hint` for database functions, `code` for Edge Functions);
-  `ServerMessage` turns it into words, never the raw reply. `moderated` opens the hold screen.
+  `ServerMessage` turns it into words, never the raw reply. `moderated` reads the account again (a hold covers
+  the app); `paused` locks Discover.
 - **Edge Functions called.** `media-upload-url`, `stream-token`, `chat-media`, `phone-code`, `purchase-sync`,
   `delete-account`, `device-check` (DeviceCheck token, at launch and sign-in), `support` (Turnstile when signed
   out), `app-config`.
 
 ### Live updates
 
-The app joins the private Realtime topic `user:<id>`, rejoins with a backoff of 2 to 60 s, and rebuilds the
-channel after 15 s down.
+The app joins the private Realtime topic `user:<id>`. A failed join is retried with a growing pause, and a
+channel that stays down is rebuilt (`UserChannel`).
 
 | Event | What the app does |
 |---|---|
 | `like`, `match`, `match_ended` | reads likes or matches again, closes an ended match |
 | `session` | updates the session, its chat card and its calendar event |
 | `media` | applies a photo's moderation verdict |
-| `wallet` | reads the balance again (boosts, super likes, drafft tempo) |
-| `profile`, `moderation` | reads the account again; a hold covers the app |
+| `wallet` | reads the balance (boosts, super likes, drafft tempo) and the likes again |
+| `profile`, `moderation` | reads the account again (the deck too when preferences changed); a hold covers the app |
 | `session_revoked` | signs out if this device's session ended elsewhere |
 
-On each join and each return to the foreground, it also reads the account, the wallet, sessions and Discover
-again, and resumes any purchase still being credited.
+On each join and each return to the foreground, it also reads the account, the wallet and sessions again,
+re-checks photos waiting for a verdict, reads Discover again when what it shows has grown old
+(`DiscoveryFreshness`), and resumes any purchase still being credited.
 
 ### Media
 
 - **Upload.** `media-upload-url` returns a ticket, then the file goes straight to Cloudflare R2 with a presigned
-  PUT from a background `URLSession` (two retries; a new ticket on 403). Photos are resized to 2048 px, stripped
-  of EXIF and GPS, and get a ThumbHash; videos are re-encoded to HEVC 720p.
+  PUT from a background `URLSession` (two retries; a new ticket on 403). Photos are at most 2048 px on the long
+  edge, stripped of EXIF and GPS, and get a ThumbHash; videos are re-encoded to HEVC 720p.
 - **Profile photos.** A picked photo is a draft (`add_profile_media`), checked by the backend; its verdict
   arrives as a `media` event. Save publishes the set (`save_profile_media`); unsaved drafts are deleted.
-- **Display.** Cards carry signed links of about an hour; Nuke renews a link about to expire through
-  `media_urls`, asks the media Worker for the width it draws (`&w=` among 160, 320, 640, 1080, 1440), decodes at
-  frame size and shows the ThumbHash meanwhile. Caches: 300 MB on disk, up to 256 MB in memory, keyed by photo
-  and width, never by signature. Six downloads at once, two on a slow network.
+- **Display.** Cards carry signed links of about an hour. drafft's loader in front of Nuke renews a link about
+  to expire through `media_urls` and asks the media Worker for the width a photo is drawn at (`&w=`, the
+  steps in `Renditions.swift`). Nuke decodes at frame size and shows the ThumbHash meanwhile. Memory and disk
+  caches are keyed by photo and width, never by signature; fewer downloads run at once on a slow or constrained
+  network (sizes and limits in `Images.swift`).
 - **Chat media.** Photos and videos sent in a chat are delivered first, then checked silently (`chat-media`).
 - **Blurred likes.** Without drafft tempo, Likes shows a ThumbHash, then a blurred copy made by the server.
+- **Selfie check**, only when moderation asks: the front camera with Vision face detection, the photo goes to
+  the backend's `verification-selfies` storage, then `submit_selfie`.
 
 ### Chat
 
 Stream Chat's low-level client, every screen drafft's own, with Stream's offline store. `stream-token` gives the
 token (asked again whenever Stream needs one). One `messaging` channel per match, named by the match id; the
-list shows the person's channels that aren't frozen. Photos, videos, voice messages and files are attachments
-that carry a media key, never a link. Session cards, super like notes and replies to an icebreaker or a photo
+list shows the person's channels that aren't frozen. Photos, videos and voice messages are attachments that
+carry a media key, never a link. Session cards, super like notes and replies to an icebreaker or a photo
 come from the backend as messages. Texts written offline wait for the connection.
 
 ### Push notifications
@@ -122,43 +123,44 @@ come from the backend as messages. Texts written offline wait for the connection
   production environment) and with Stream (push provider `drafft-apn`, or `drafft-apn-dev` in the sandbox).
 - **Senders.** The backend pushes likes, matches, sessions and reminders, photo refusals, account notices and
   the weekly boost; Stream pushes chat messages. While the app is open, a message from another chat shows as a
-  local notification, and a photo refusal or account notice applies live instead of showing a banner.
+  local notification, a photo refusal shows drafft's own banner instead of the system's, and an account notice
+  shows nothing (the screen already changed live).
 - **Taps.** A tap opens the chat, Discover (a boost), Sessions or the refused photo. Notification settings
   (`notify_*`) are saved on the profile, which the backend reads before sending.
 
 ### Purchases
 
-RevenueCat on the App Store, logged in with the Supabase user id. Offerings: `default` (drafft tempo), `boosts`,
-`super_likes`; entitlement `drafft_tempo`. Once the App Store confirms, `purchase-sync` credits the purchase on
-the server and returns the new balance; until it answers, the app retries (2, 5, 15, 60 s, then every 5 minutes)
-and keeps the purchase pending for the account. Nothing is credited on the phone. The **Drafft** scheme runs
-with a local StoreKit configuration (`StoreKit/Drafft.storekit`).
+RevenueCat on the App Store, logged in with the Supabase user id. Offerings: the current one (`default`, drafft
+tempo), `boosts`, `super_likes`; entitlement `drafft_tempo`. Once the App Store confirms, `purchase-sync` asks the
+server to credit the purchase (RevenueCat's webhook does too) and returns the new balance. The app keeps the
+purchase pending for the account and asks again, with a growing pause, until the server reports it credited.
+Nothing is credited on the phone. The **Drafft** scheme runs with a local StoreKit configuration
+(`StoreKit/Drafft.storekit`).
 
 ### Location and calendar
 
 - **Location.** Reduced accuracy, while in use, required to use the app. A reading is blurred to the centre of a
   cell of about 1 km before `set_location` or `area_at`. Outside France or offline, the app names the area
   itself.
-- **Calendar.** With access granted, a session becomes an event that follows it (moved, removed when
-  cancelled) and never overwrites what the person edited.
+- **Calendar.** "Add to calendar" adds a session as an event. With full calendar access the event follows the
+  session (moved, removed when cancelled), never overwriting what the person edited; with add-only access it is
+  added and left as is.
 
 ### Telemetry
 
-- **Sentry** (EU only): crashes, hangs, MetricKit, unexpected errors and traces (20 % in production). No
-  screenshots, view hierarchy, replay, personal data or IP. dSYMs upload when a store build is archived.
-- **PostHog** (EU only): the app's own events and screens, no autocapture or replay. Events stay anonymous
-  until the person grants analytics consent, and stop if they refuse.
+- **Sentry** (EU only): crashes, hangs, MetricKit, unexpected errors and sampled traces. No screenshots, view
+  hierarchy, replay, personal data or IP.
+- **PostHog** (EU only): the app's own events and screens, plus PostHog's app lifecycle events; no autocapture or
+  replay. Events stay anonymous until the person grants analytics consent, and stop if they refuse.
 - **PrivacyGuard** drops what people typed, sensitive answers, locations and other people's ids before anything
   leaves the phone. Events and rules: [docs/telemetry.md](docs/telemetry.md).
 
 ### On the phone
 
 - **Cache.** `LocalCache` (GRDB): one SQLite file per account, excluded from backups: profile, matches, likes
-  (with drafft tempo), the Discover deck (under 45 minutes old, same filters). Shown first, then replaced by
-  the server's answer. Erased at sign-out and account deletion.
+  (with drafft tempo) and the Discover deck (while recent and under the same filters, `DeckCache`). Shown first,
+  then replaced by the server's answer. Erased at sign-out and account deletion.
 - **Stream's offline store** for chats; Nuke's disk cache for images.
-- **Selfie check**, only when moderation asks: the front camera with Vision face detection, the photo goes to
-  the backend's `verification-selfies` storage, then `submit_selfie`.
 
 ### Built with
 
@@ -173,11 +175,13 @@ with a local StoreKit configuration (`StoreKit/Drafft.storekit`).
 | Phone numbers | [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) |
 | Telemetry | [Sentry](https://github.com/getsentry/sentry-cocoa), [PostHog](https://github.com/PostHog/posthog-ios) |
 
-Dependencies are pinned in `project.yml`, with the reason next to each one.
+Dependencies are declared in `project.yml` (most pinned to an exact version, with the reason); the resolved
+versions are in `Drafft.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
 
 ## Getting started
 
-Needs Xcode 26, `brew install xcodegen swiftlint`, and for the local backend Docker and the Supabase CLI.
+Needs Xcode 26, `brew install xcodegen swiftlint`, Python 3 for the lints, and for the local backend Docker and
+the Supabase CLI.
 
 ```sh
 git clone git@github.com:sylwaninn/drafft-ios.git      # next to drafft-backend
@@ -198,14 +202,15 @@ xcodegen generate && open Drafft.xcodeproj             # scheme "Drafft Local", 
 | **Drafft Staging** | Supabase branch `staging` | drafft β | `staging` |
 | **Drafft** | production | drafft | `production` |
 
-Each scheme reads `Config/<Name>.xcconfig`: public client keys only, CI refuses anything shaped like a secret.
-Branches, commits, checks and pull requests: [CONTRIBUTING.md](CONTRIBUTING.md).
+The three schemes read `Config/Local.xcconfig`, `Staging.xcconfig` and `Production.xcconfig`; Local also
+includes the gitignored `Local.private.xcconfig` that `scripts/local-backend.sh` writes. Branches, commits, checks
+and pull requests: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Release
 
 `main` is production and moves only through **Actions > release**: with `staging` green, it fast-forwards
 `main`, tags the next `vX.Y.Z` from the pull request titles and publishes a GitHub release. Store builds are
-archived by hand from the tag, with the Sentry upload token set for dSYMs
+archived by hand from the tag; with `sentry-cli` and its upload token set, the archive uploads its dSYMs
 ([docs/telemetry.md](docs/telemetry.md#readable-stack-traces-dsyms)).
 
 ## Localization
@@ -217,7 +222,7 @@ built in code goes through `L("…")`. Any change to what people read starts wit
 ## Security
 
 No secret in this repository: `Config/` holds public client keys only, allowlisted by value in
-[`.gitleaks.toml`](.gitleaks.toml). The privacy manifest is [`Drafft/PrivacyInfo.xcprivacy`](Drafft/PrivacyInfo.xcprivacy).
+[`.gitleaks.toml`](.gitleaks.toml), and CI refuses anything shaped like a secret. The privacy manifest is [`Drafft/PrivacyInfo.xcprivacy`](Drafft/PrivacyInfo.xcprivacy).
 Report a vulnerability privately through
 [security advisories](https://github.com/sylwaninn/drafft-ios/security/advisories/new), never in an issue.
 
