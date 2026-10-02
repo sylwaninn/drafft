@@ -183,6 +183,9 @@ final class AppModel {
     var openChatID: String? { didSet { if let openChatID, openChatID != oldValue { trackChatOpened(openChatID) } } }
     /// A request to show a chat from the Chats tab (match screen, banner); consumed by ConversationsView.
     var chatRequest: String?
+    /// The chat a tapped notification is about to open (`follow`), while its match is read: no "It's
+    /// mutual" banner for it on the way.
+    @ObservationIgnored var pushChatTarget: String?
     /// Bumped each time a chat is opened from outside it (notification, match banner): the chat
     /// jumps to its latest message even if it was already open and scrolled up.
     var latestRequest: LatestRequest?

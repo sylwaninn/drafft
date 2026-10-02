@@ -234,6 +234,18 @@ struct MainTabs: View {
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
     @State private var location = LocationGate.shared
+    /// The walk through the tabs is over (`prebuildTabs`): a tapped notification can change tabs.
+    @State private var walked = false
+
+    /// A tapped notification is followed only once the tabs are on screen, signed in, with no hold, and
+    /// done being walked (which would put the tab back).
+    private struct PushGate: Equatable {
+        let ready: Bool
+        let pending: UUID?
+    }
+    private var pushGate: PushGate {
+        PushGate(ready: isActive && !mayPrebuild && walked, pending: NotificationService.shared.pendingRoute?.id)
+    }
 
     /// Line icon when the tab is idle, its Solar bold twin ("<name>-bold") when it's the current one.
     private func tabLabel(_ title: String, _ symbol: String, _ tab: AppModel.Tab) -> some View {
@@ -268,6 +280,7 @@ struct MainTabs: View {
             // Back where it started, unless something else picked a tab meanwhile.
             if app.tab == shown || app.tab == start { app.tab = start }
             onBuilt()
+            walked = true
         }
         let tabs: [AppModel.Tab] = [.discover, .likes, .sessions, .chats, .me]
         for t in tabs where t != start {
@@ -325,7 +338,7 @@ struct MainTabs: View {
                 app.subscription = Store.shared.subscription(from: info)
             }
         }
-        // Notifications: keep the status fresh, open tapped chats. Session reminders are the server's
+        // Notifications: keep the status fresh. Session reminders are the server's
         // pushes (`session.reminder`), so a cancelled session never leaves one behind.
         .task(id: isActive) {
             guard isActive else { return }
@@ -339,14 +352,11 @@ struct MainTabs: View {
             guard new == .discover, old != .discover, isActive, !mayPrebuild else { return }
             app.refreshDiscovery(.tabShown)
         }
-        .onChange(of: NotificationService.shared.openChatID) { _, id in
-            if let id { app.openChat(id); NotificationService.shared.openChatID = nil }
-        }
-        .onChange(of: NotificationService.shared.openBoost) { _, open in
-            if open { app.tab = .discover; NotificationService.shared.openBoost = false }
-        }
-        .onChange(of: NotificationService.shared.openSessions) { _, open in
-            if open { app.tab = .sessions; NotificationService.shared.openSessions = false }
+        // A tapped notification: kept by NotificationService until now (a cold launch taps before any
+        // screen exists), then followed to its page (`AppModel.follow`).
+        .onChange(of: pushGate, initial: true) { _, gate in
+            guard gate.ready, let pending = NotificationService.shared.takePendingRoute() else { return }
+            Task { await app.follow(pending) }
         }
         // Location is required: while it's off (or never answered), a screen in its own window blocks
         // everything, sheets included, until it's back on. Read again at each return to the app.

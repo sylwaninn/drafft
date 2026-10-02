@@ -375,7 +375,7 @@ final class TelemetryTests: XCTestCase {
             .selfieVerificationSubmitted, .selfieVerificationFailed(code),
             .userBlocked, .userUnblocked, .userReported(code), .reportFailed(code),
             .languageChanged(code, during: code), .permissionRequested(.location, result: .granted, during: code),
-            .notificationSettingChanged(code, enabled: true), .pushOpened(code), .pushReceived(code, inForeground: true),
+            .notificationSettingChanged(code, enabled: true), .pushOpened(code, routed: true), .pushReceived(code, inForeground: true),
             .legalDocOpened(code), .supportContacted(topic: code, signedIn: true), .shareTapped(code)
         ]
         let names = all.map(\.name)

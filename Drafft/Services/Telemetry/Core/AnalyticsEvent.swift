@@ -241,7 +241,11 @@ struct AnalyticsEvent: Sendable {
     static func notificationSettingChanged(_ setting: String, enabled: Bool) -> Self {
         .init("notification_setting_changed", ["setting": setting, "enabled": enabled])
     }
-    static func pushOpened(_ kind: String) -> Self { .init("push_opened", ["kind": kind]) }
+    /// A tapped notification, sent once it's followed (the tabs on screen): `routed` whether it reached
+    /// its page (false: its chat couldn't be found and the list shows, or it waited too long).
+    static func pushOpened(_ kind: String, routed: Bool) -> Self {
+        .init("push_opened", ["kind": kind, "routed": routed])
+    }
     static func pushReceived(_ kind: String, inForeground: Bool) -> Self {
         .init("push_received", ["kind": kind, "in_foreground": inForeground])
     }

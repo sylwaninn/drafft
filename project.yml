@@ -161,6 +161,7 @@ targets:
       - path: DrafftTests
       - path: Drafft/Services/Cache/LocalCache.swift
       - path: Drafft/Services/PushTokenRegistration.swift
+      - path: Drafft/Services/PushRoute.swift
       - path: Drafft/Services/Media/ThumbHash.swift
       - path: Drafft/Services/Media/Renditions.swift
       - path: Drafft/Services/DeckPace.swift
