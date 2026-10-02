@@ -68,7 +68,8 @@ python3 scripts/ci/design_lint.py && python3 scripts/ci/i18n_lint.py
 ```
 
 CI (`.github/workflows/app.yml`) runs the last two lines plus gitleaks and actionlint on every pull
-request. SwiftLint fails on new violations only (existing debt is in `.swiftlint-baseline.json`). The
+request; `.github/workflows/pr.yml` checks the pull request itself (base never `main`, title format, a
+filled-in description, allowed commit authors, no attribution trailer). SwiftLint fails on new violations only (existing debt is in `.swiftlint-baseline.json`). The
 design lint encodes DESIGN.md's rules (no gradients but photo scrims, no '·', no '…' on copy, lowercase
 brand, palette colours only, a surface on every sheet); a deliberate exception carries its reason:
 `// design-lint: allow <rule> - <why>`. The i18n lint wants all 7 languages, matching placeholders,
