@@ -1,12 +1,10 @@
 <div align="center">
 
-<img src="docs/sticker.png" alt="drafft-ios" width="140">
-
-# drafft for iOS
+<img src="docs/sticker.png" alt="drafft for iOS" width="480">
 
 **Meet someone who gets your rhythm.**
 
-The iPhone app of drafft, the dating app for people who train.
+The iPhone app of drafft, the dating app for people who train.<br>
 Profiles lead with how someone moves, and a match is an invitation to propose a session together.
 
 [![app](https://github.com/sylwaninn/drafft-ios/actions/workflows/app.yml/badge.svg?branch=staging)](https://github.com/sylwaninn/drafft-ios/actions/workflows/app.yml)
@@ -14,275 +12,214 @@ Profiles lead with how someone moves, and a match is an invitation to propose a 
 ![iOS](https://img.shields.io/badge/iOS-26%2B-000000?logo=apple&logoColor=white)
 ![Swift](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)
 ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-0A84FF?logo=swift&logoColor=white)
-![XcodeGen](https://img.shields.io/badge/project-XcodeGen-1575F9)
 ![Languages](https://img.shields.io/badge/languages-7-2EA44F)
-![Telemetry](https://img.shields.io/badge/telemetry-EU%20only-003399)
 ![License](https://img.shields.io/badge/license-proprietary-lightgrey)
 
-[Product](#product) | [Architecture](#architecture) | [Getting started](#getting-started) | [Development](#development) | [Release](#release) | [Docs](#documentation)
+[Product](#product) · [How it works](#how-it-works) · [Getting started](#getting-started) · [Release](#release) · [Docs](#documentation)
 
 </div>
 
----
-
-## Contents
-
-1. [Product](#product)
-2. [Architecture](#architecture)
-3. [Repository layout](#repository-layout)
-4. [Getting started](#getting-started)
-5. [Environments](#environments)
-6. [Development](#development)
-7. [Quality gates](#quality-gates)
-8. [Release](#release)
-9. [Localization](#localization)
-10. [Privacy and security](#privacy-and-security)
-11. [Documentation](#documentation)
-12. [Related repositories](#related-repositories)
-13. [License](#license)
-
 ## Product
 
-drafft is for active urban singles, 25 to 40, who train two to five times a week. Their week already
-runs on sessions, so the app starts there: sports and how often come first on a profile, and when two
-people like each other, drafft invites them to propose a session (sport, day, time, a short note).
-A match promises nothing on its own; the proposal is the next step, and the people decide.
+drafft is the dating app for people who train. Sports come first on a profile, and when two people like each
+other, drafft invites them to propose a session. A match promises nothing on its own: the proposal is the next
+step, and the people decide.
 
 | Area | What the app does |
 |---|---|
-| **Sign up and sign in** | Email and password, phone verification by SMS code, explicit consents recorded on the server |
+| **Sign up** | Email and password, phone check by SMS code, consents recorded on the server |
 | **Profile** | Photos, sports with how often, a voice intro, an icebreaker others can react to |
-| **Discover** | A deck of nearby profiles filtered by sport, likes, super likes, boosts |
-| **Matches and sessions** | Mutual likes, session invites with times to pick, calendar events that follow the session |
-| **Chat** | Text, photos, videos, voice messages, replies and reactions, sent optimistically |
-| **drafft tempo** | The paid tier (undo, see who likes you); boosts and super likes come in packs, all through the App Store |
-| **Safety** | Report and block, moderation holds, selfie check when moderation asks, support form |
+| **Discover** | Nearby profiles filtered by sport, likes, super likes, boosts |
+| **Matches and sessions** | Mutual likes, session invites, calendar events |
+| **Chat** | Text, photos, videos, voice messages, replies and reactions |
+| **drafft tempo** | The paid tier (undo, see who likes you); boosts and super likes in packs |
+| **Safety** | Report and block, moderation, selfie check, help center |
 
-Product principles, users and constraints: [PRODUCT.md](PRODUCT.md). Visual system: [DESIGN.md](DESIGN.md).
+Users, principles and legal rules: [PRODUCT.md](PRODUCT.md). Visual system: [DESIGN.md](DESIGN.md).
 Every word people read: [WORDING.md](WORDING.md).
 
-## Architecture
+## How it works
 
-A SwiftUI app with one observable model (`AppModel`, split by domain into `AppModel+*.swift`) over a
-set of services. The server is the source of truth; the app keeps a per-account cache so it opens
-without the network, and a Realtime channel keeps every screen live.
+A native iPhone app on the drafft backend. The server is the source of truth: the app shows what it last knew
+at once, then reads the server again and listens to the account's Realtime channel, so every screen stays live.
 
 ```mermaid
 flowchart LR
-  subgraph app["iPhone app"]
-    UI["Features<br/>(SwiftUI screens)"] --> Model["AppModel<br/>(state per domain)"]
-    Model --> Services["Services<br/>(Backend, Chat, Media, Store, Telemetry)"]
-    Services --> Cache[("LocalCache<br/>GRDB, per account")]
-  end
-  Services -- "Auth, Postgres RPC, Realtime,<br/>Edge Functions" --> Supabase["Supabase<br/>(drafft-backend)"]
-  Services -- "chat client" --> Stream["Stream Chat"]
-  Services -- "purchases" --> RevenueCat["RevenueCat / App Store"]
-  Services -- "signed media links" --> Media["Media worker"]
-  Services -- "crashes, errors (EU)" --> Sentry["Sentry"]
-  Services -- "product events (EU)" --> PostHog["PostHog"]
-  Supabase -- "APNs pushes" --> app
+  App["iPhone app<br/>SwiftUI screens,<br/>AppModel, services"]
+  App --> Cache[("Local cache<br/>per account, on the phone")]
+  App <--> Supabase["Supabase, drafft-backend<br/>Auth, RPCs,<br/>Edge Functions, Realtime"]
+  App --> R2[("Cloudflare R2<br/>uploads, presigned PUT")]
+  App --> Worker["media Worker<br/>photos and videos,<br/>signed GET"]
+  App <--> Stream["Stream Chat<br/>messages, reactions"]
+  Push["Apple Push<br/>Notification service"] --> App
+  App --> RevenueCat["RevenueCat<br/>App Store purchases"]
+  App --> Telemetry["Sentry, PostHog<br/>crashes and events, EU"]
 ```
 
-| Layer | Choice | Why |
-|---|---|---|
-| UI | SwiftUI, iOS 26 (Liquid Glass) | Native conventions first, brand in colour, type and motion |
-| Language | Swift 6, strict concurrency | Data races caught at compile time |
-| Project | [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`project.yml`) | The Xcode project is generated, reviewed as YAML |
-| Backend | [supabase-swift](https://github.com/supabase/supabase-swift) | Auth, database, Realtime, Edge Functions |
-| Chat | [Stream Chat](https://github.com/GetStream/stream-chat-swift) (low-level client) | Offline store and delivery; every screen is drafft's own |
-| Purchases | [RevenueCat](https://github.com/RevenueCat/purchases-ios) | Subscriptions and packs, synced to the backend by webhook |
-| Images | [Nuke](https://github.com/kean/Nuke), ThumbHash | Decoding at display size, previews while photos load |
-| Cache | [GRDB](https://github.com/groue/GRDB.swift) | SQLite cache of the last known state, excluded from backups |
-| Phone numbers | [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) | Parsing and validation for every country |
-| Telemetry | [Sentry](https://github.com/getsentry/sentry-cocoa), [PostHog](https://github.com/PostHog/posthog-ios) | EU regions only, behind a `PrivacyGuard` |
+### The app
 
-Dependencies are pinned in `project.yml` (exact versions, with the reason next to each one); the
-resolved graph is in `Drafft.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
+- **Start.** `DrafftApp` starts telemetry, diagnostics (MetricKit), the image pipeline and RevenueCat, then
+  `RootView` shows welcome, sign-up or the five tabs (Discover, Likes, Sessions, Chats, You). The tabs are built
+  once, ahead of time, under the splash.
+- **State.** One `@MainActor @Observable` `AppModel`, split by domain into `AppModel+*.swift` (account,
+  Discover, matches, likes, wallet, sessions, safety), passed to every screen through the environment. The
+  account hold and the location request each cover the app in their own window.
+- **Folders.** `Drafft/App` (entry), `Features/` (screens by area), `DesignSystem/` (DESIGN.md in code),
+  `Services/` (model and services), `Models/` (value types), `Resources/` (catalogs, fonts, assets).
 
-## Repository layout
+### Backend link
 
-```text
-drafft-ios/
-├── Drafft/
-│   ├── App/              entry point and root view
-│   ├── DesignSystem/     tokens, components, icons (DESIGN.md in code)
-│   ├── Features/         screens by area: Auth, Discover, Matches, Chat, Profile, Me, Verification
-│   ├── Models/           value types: sports, filters, languages
-│   ├── Services/         AppModel and its domains, Backend, Chat, Media, Cache, Telemetry
-│   └── Resources/        assets, fonts, Localizable.xcstrings, InfoPlist.xcstrings
-├── DrafftTests/          unit tests (pure logic, no network)
-├── Config/               one .xcconfig per environment (public keys only)
-├── StoreKit/             local StoreKit configuration for the Simulator
-├── scripts/
-│   ├── ci/               design and i18n lints, pull request checks, release
-│   ├── icons/            icon generator (SVG to symbol sets)
-│   └── local-backend.sh  points Drafft Local at a local Supabase
-├── docs/                 telemetry, wording research, store screenshots
-├── project.yml           XcodeGen source of the Xcode project
-├── PRODUCT.md            product brief
-├── DESIGN.md             design system
-├── WORDING.md            voice, lexicon, forbidden wording (canonical copy)
-└── AGENTS.md             rules for coding agents
-```
+- **Client.** supabase-swift for Auth (the session in the Keychain) and Realtime; RPCs, table reads and Edge
+  Functions are plain `URLSession` calls with the publishable key and the session's token.
+- **Errors.** The backend answers a stable code (`hint` for database functions, `code` for Edge Functions);
+  `ServerMessage` turns it into words, never the raw reply. `moderated` opens the hold screen.
+- **Edge Functions called.** `media-upload-url`, `stream-token`, `chat-media`, `phone-code`, `purchase-sync`,
+  `delete-account`, `device-check` (DeviceCheck token, at launch and sign-in), `support` (Turnstile when signed
+  out), `app-config`.
+
+### Live updates
+
+The app joins the private Realtime topic `user:<id>`, rejoins with a backoff of 2 to 60 s, and rebuilds the
+channel after 15 s down.
+
+| Event | What the app does |
+|---|---|
+| `like`, `match`, `match_ended` | reads likes or matches again, closes an ended match |
+| `session` | updates the session, its chat card and its calendar event |
+| `media` | applies a photo's moderation verdict |
+| `wallet` | reads the balance again (boosts, super likes, drafft tempo) |
+| `profile`, `moderation` | reads the account again; a hold covers the app |
+| `session_revoked` | signs out if this device's session ended elsewhere |
+
+On each join and each return to the foreground, it also reads the account, the wallet, sessions and Discover
+again, and resumes any purchase still being credited.
+
+### Media
+
+- **Upload.** `media-upload-url` returns a ticket, then the file goes straight to Cloudflare R2 with a presigned
+  PUT from a background `URLSession` (two retries; a new ticket on 403). Photos are resized to 2048 px, stripped
+  of EXIF and GPS, and get a ThumbHash; videos are re-encoded to HEVC 720p.
+- **Profile photos.** A picked photo is a draft (`add_profile_media`), checked by the backend; its verdict
+  arrives as a `media` event. Save publishes the set (`save_profile_media`); unsaved drafts are deleted.
+- **Display.** Cards carry signed links of about an hour; Nuke renews a link about to expire through
+  `media_urls`, asks the media Worker for the width it draws (`&w=` among 160, 320, 640, 1080, 1440), decodes at
+  frame size and shows the ThumbHash meanwhile. Caches: 300 MB on disk, up to 256 MB in memory, keyed by photo
+  and width, never by signature. Six downloads at once, two on a slow network.
+- **Chat media.** Photos and videos sent in a chat are delivered first, then checked silently (`chat-media`).
+- **Blurred likes.** Without drafft tempo, Likes shows a ThumbHash, then a blurred copy made by the server.
+
+### Chat
+
+Stream Chat's low-level client, every screen drafft's own, with Stream's offline store. `stream-token` gives the
+token (asked again whenever Stream needs one). One `messaging` channel per match, named by the match id; the
+list shows the person's channels that aren't frozen. Photos, videos, voice messages and files are attachments
+that carry a media key, never a link. Session cards, super like notes and replies to an icebreaker or a photo
+come from the backend as messages. Texts written offline wait for the connection.
+
+### Push notifications
+
+- **Tokens.** The APNs token is registered with the backend (`register_push_token`, with the build's sandbox or
+  production environment) and with Stream (push provider `drafft-apn`, or `drafft-apn-dev` in the sandbox).
+- **Senders.** The backend pushes likes, matches, sessions and reminders, photo refusals, account notices and
+  the weekly boost; Stream pushes chat messages. While the app is open, a message from another chat shows as a
+  local notification, and a photo refusal or account notice applies live instead of showing a banner.
+- **Taps.** A tap opens the chat, Discover (a boost), Sessions or the refused photo. Notification settings
+  (`notify_*`) are saved on the profile, which the backend reads before sending.
+
+### Purchases
+
+RevenueCat on the App Store, logged in with the Supabase user id. Offerings: `default` (drafft tempo), `boosts`,
+`super_likes`; entitlement `drafft_tempo`. Once the App Store confirms, `purchase-sync` credits the purchase on
+the server and returns the new balance; until it answers, the app retries (2, 5, 15, 60 s, then every 5 minutes)
+and keeps the purchase pending for the account. Nothing is credited on the phone. The **Drafft** scheme runs
+with a local StoreKit configuration (`StoreKit/Drafft.storekit`).
+
+### Location and calendar
+
+- **Location.** Reduced accuracy, while in use, required to use the app. A reading is blurred to the centre of a
+  cell of about 1 km before `set_location` or `area_at`. Outside France or offline, the app names the area
+  itself.
+- **Calendar.** With access granted, a session becomes an event that follows it (moved, removed when
+  cancelled) and never overwrites what the person edited.
+
+### Telemetry
+
+- **Sentry** (EU only): crashes, hangs, MetricKit, unexpected errors and traces (20 % in production). No
+  screenshots, view hierarchy, replay, personal data or IP. dSYMs upload when a store build is archived.
+- **PostHog** (EU only): the app's own events and screens, no autocapture or replay. Events stay anonymous
+  until the person grants analytics consent, and stop if they refuse.
+- **PrivacyGuard** drops what people typed, sensitive answers, locations and other people's ids before anything
+  leaves the phone. Events and rules: [docs/telemetry.md](docs/telemetry.md).
+
+### On the phone
+
+- **Cache.** `LocalCache` (GRDB): one SQLite file per account, excluded from backups: profile, matches, likes
+  (with drafft tempo), the Discover deck (under 45 minutes old, same filters). Shown first, then replaced by
+  the server's answer. Erased at sign-out and account deletion.
+- **Stream's offline store** for chats; Nuke's disk cache for images.
+- **Selfie check**, only when moderation asks: the front camera with Vision face detection, the photo goes to
+  the backend's `verification-selfies` storage, then `submit_selfie`.
+
+### Built with
+
+| Layer | Choice |
+|---|---|
+| UI | SwiftUI, iOS 26 (Liquid Glass), iPhone only |
+| Language, project | Swift 6 with strict concurrency; [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`project.yml`) |
+| Backend | [supabase-swift](https://github.com/supabase/supabase-swift) |
+| Chat | [Stream Chat](https://github.com/GetStream/stream-chat-swift), low-level client |
+| Purchases | [RevenueCat](https://github.com/RevenueCat/purchases-ios) |
+| Images, cache | [Nuke](https://github.com/kean/Nuke), ThumbHash; [GRDB](https://github.com/groue/GRDB.swift) |
+| Phone numbers | [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) |
+| Telemetry | [Sentry](https://github.com/getsentry/sentry-cocoa), [PostHog](https://github.com/PostHog/posthog-ios) |
+
+Dependencies are pinned in `project.yml`, with the reason next to each one.
 
 ## Getting started
 
-### Prerequisites
-
-| Tool | Version | Install |
-|---|---|---|
-| macOS and Xcode | Xcode 26 (iOS 26 SDK) | App Store |
-| XcodeGen | latest | `brew install xcodegen` |
-| SwiftLint | 0.65.1 (the baseline's version) | `brew install swiftlint` |
-| Python | 3.10+ | ships with the Xcode command line tools |
-| Supabase CLI and Docker | latest | `brew install supabase/tap/supabase`, for the local backend |
-
-### First run
+Needs Xcode 26, `brew install xcodegen swiftlint`, and for the local backend Docker and the Supabase CLI.
 
 ```sh
-# 1. Clone next to drafft-backend (the local backend script looks for ../drafft-backend)
-git clone git@github.com:sylwaninn/drafft-ios.git
-cd drafft-ios
-git config core.hooksPath .agents/git-hooks   # commit message and push rules
+git clone git@github.com:sylwaninn/drafft-ios.git      # next to drafft-backend
+cd drafft-ios && git config core.hooksPath .agents/git-hooks
 
-# 2. Start the backend and point the app at it
-(cd ../drafft-backend && supabase start)
-scripts/local-backend.sh            # Simulator; add --device for an iPhone on the same Wi-Fi
-
-# 3. Generate the project and open it
-xcodegen generate
-open Drafft.xcodeproj               # scheme "Drafft Local", then Run
+(cd ../drafft-backend && supabase start)               # local backend
+scripts/local-backend.sh                               # --device for an iPhone on the same Wi-Fi
+xcodegen generate && open Drafft.xcodeproj             # scheme "Drafft Local", then Run
 ```
-
-`scripts/local-backend.sh` writes the machine's Supabase URL and publishable key to
-`Local.private.xcconfig` (gitignored). Without it the app stops at launch and says what is missing.
 
 > [!IMPORTANT]
-> Build and run on **Drafft Local** for day-to-day work. Every scheme shares the bundle id
-> `so.drafft.app`, so installing another one replaces the local app and sends real actions
-> (sign-ups, likes, messages) to staging or production.
+> Work on **Drafft Local**. Every scheme shares the bundle id `so.drafft.app`: installing another one replaces
+> the local app and sends real actions to staging or production.
 
-## Environments
+| Scheme | Backend | Home screen name | Telemetry |
+|---|---|---|---|
+| **Drafft Local** | Supabase on your Mac, staging services | drafft local | off |
+| **Drafft Staging** | Supabase branch `staging` | drafft β | `staging` |
+| **Drafft** | production | drafft | `production` |
 
-| Scheme | Configuration | Backend | Home screen name | Telemetry |
-|---|---|---|---|---|
-| **Drafft Local** | `Local` | Supabase on your Mac, staging services | drafft local | off |
-| **Drafft Staging** | `Staging` | Supabase branch `staging` | drafft β | on, `environment: staging` |
-| **Drafft** | `Release` | production | drafft | on, `environment: production` |
-
-Each configuration reads `Config/<Name>.xcconfig`. Those files hold public client keys only
-(Supabase publishable key, RevenueCat public SDK key, Sentry DSN, PostHog project key, Turnstile site
-key): row-level security and the server's own secrets do the rest. CI refuses anything shaped like a
-secret there.
-
-## Development
-
-### Branches
-
-| Branch | Role | Moves through |
-|---|---|---|
-| `staging` | default branch, integration | squash-merged pull requests only |
-| `main` | production | the release workflow only |
-| `feat/*`, `fix/*`, `chore/*`, `docs/*`, `refactor/*` | work | your pushes |
-
-Both `staging` and `main` are protected, and the `pre-push` hook refuses direct pushes to them.
-
-### Commits
-
-One line, [Conventional Commits](https://www.conventionalcommits.org/), lowercase, no final period, no body,
-no trailers:
-
-```text
-feat(mobile): show likes as a banner over an equal blurred grid
-fix(mobile): keep button labels on one line in every language
-```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore` (`type!:` for a breaking change).
-The `commit-msg` hook enforces it.
-
-### Signed commits
-
-Sign every commit with an SSH key registered on GitHub as a signing key, so each one shows as
-**Verified**:
-
-```sh
-git config --global gpg.format ssh
-git config --global user.signingkey ~/.ssh/id_ed25519.pub
-git config --global commit.gpgsign true
-git config --global tag.gpgsign true
-```
-
-Squash merges made on GitHub are signed by GitHub and keep you as the author.
-
-### Pull requests
-
-1. Branch from `staging`, commit, push, open a pull request **into `staging`**.
-2. The title follows the commit format: it becomes the squash commit.
-3. Fill in the [template](.github/pull_request_template.md): summary, changes, testing, and the notes on
-   telemetry, wording, privacy and companion pull requests.
-4. Run the checks below before asking for a merge. Squash and merge, then delete the branch.
-
-### Verify locally
-
-```sh
-xcodegen generate && xcodebuild -project Drafft.xcodeproj -scheme Drafft \
-  -destination 'generic/platform=iOS Simulator' build
-swiftlint lint --strict --baseline .swiftlint-baseline.json
-python3 scripts/ci/design_lint.py && python3 scripts/ci/i18n_lint.py
-```
-
-Unit tests run from Xcode (`⌘U`) on the Drafft Local scheme.
-
-## Quality gates
-
-Every pull request runs two workflows on Linux runners. Building, testing and archiving belong to
-Xcode, which has the toolchain and the signing.
-
-| Workflow | Job | Checks |
-|---|---|---|
-| [`app.yml`](.github/workflows/app.yml) | swift | SwiftLint, strict, new violations only (debt in `.swiftlint-baseline.json`) |
-| | design | DESIGN.md rules: palette colours only, no gradient but photo scrims, a surface on every sheet, lowercase brand |
-| | i18n | 7 languages complete, matching placeholders, catalog in sync with the code, WORDING.md's forbidden patterns |
-| | hygiene | gitleaks over the whole history, actionlint, media files under 1 MB, public keys only, telemetry in the EU |
-| [`pr.yml`](.github/workflows/pr.yml) | pr | base is not `main`, title format, description filled in, commit authors, no attribution trailer, signatures |
-
-A deliberate exception to a design rule carries its reason in the code:
-`// design-lint: allow <rule> - <why>`.
+Each scheme reads `Config/<Name>.xcconfig`: public client keys only, CI refuses anything shaped like a secret.
+Branches, commits, checks and pull requests: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Release
 
-`main` is production and moves only through **Actions > release > Run workflow**
-([`release.yml`](.github/workflows/release.yml), [`scripts/ci/release.sh`](scripts/ci/release.sh)):
-
-1. `staging`'s head must have a green `app.yml` push run.
-2. `main` fast-forwards to it (it never holds a commit `staging` lacks).
-3. The commit gets the next `vX.Y.Z` tag and a GitHub release listing its pull requests.
-   `auto` reads the titles: `type!:` gives a major, any `feat` a minor, anything else a patch.
-
-Store builds are archived by hand from the release tag. Before an archive, the Sentry upload token
-must be set so the dSYMs upload ([docs/telemetry.md](docs/telemetry.md#readable-stack-traces-dsyms)).
+`main` is production and moves only through **Actions > release**: with `staging` green, it fast-forwards
+`main`, tags the next `vX.Y.Z` from the pull request titles and publishes a GitHub release. Store builds are
+archived by hand from the tag, with the Sentry upload token set for dSYMs
+([docs/telemetry.md](docs/telemetry.md#readable-stack-traces-dsyms)).
 
 ## Localization
 
-English (source), French, Spanish, German, Italian, European Portuguese and Dutch. People pick the
-language in the app, not from the phone. Strings live in `Drafft/Resources/Localizable.xcstrings`; text
-built in code goes through `L("…")`. Any user-facing change starts with [WORDING.md](WORDING.md) and
-ends with its review checklist (section 10).
+English (source), French, Spanish, German, Italian, European Portuguese and Dutch, picked in the app, not from
+the phone. Strings live in `Drafft/Resources/Localizable.xcstrings`, the catalog both drafft apps share; text
+built in code goes through `L("…")`. Any change to what people read starts with [WORDING.md](WORDING.md).
 
-## Privacy and security
+## Security
 
-- **Data on the phone:** the session in the Keychain, one SQLite cache per account (excluded from
-  backups), the chat's offline copy. Signing out or deleting the account removes them. The exact
-  location never leaves the phone: it is blurred to a cell of about 1 km first.
-- **Telemetry:** Sentry and PostHog in their EU regions only, no screenshots, replay or autocapture.
-  `PrivacyGuard` drops free text, sensitive answers, locations and other people's ids, and unit tests fail
-  on them. Details and the event catalogue: [docs/telemetry.md](docs/telemetry.md).
-- **Secrets:** none in this repository. Only public client keys live in `Config/`, allowlisted by value
-  in [`.gitleaks.toml`](.gitleaks.toml). Server secrets stay in drafft-backend's environments.
-- **Privacy manifest:** [`Drafft/PrivacyInfo.xcprivacy`](Drafft/PrivacyInfo.xcprivacy), updated with any
-  new data type or required-reason API.
-- **Reporting a vulnerability:** write privately to the maintainer through GitHub's
-  [security advisories](https://github.com/sylwaninn/drafft-ios/security/advisories/new). No public issue.
+No secret in this repository: `Config/` holds public client keys only, allowlisted by value in
+[`.gitleaks.toml`](.gitleaks.toml). The privacy manifest is [`Drafft/PrivacyInfo.xcprivacy`](Drafft/PrivacyInfo.xcprivacy).
+Report a vulnerability privately through
+[security advisories](https://github.com/sylwaninn/drafft-ios/security/advisories/new), never in an issue.
 
 ## Documentation
 
@@ -291,19 +228,20 @@ ends with its review checklist (section 10).
 | [PRODUCT.md](PRODUCT.md) | need the users, the principles, the privacy and legal rules |
 | [DESIGN.md](DESIGN.md) | touch anything on screen |
 | [WORDING.md](WORDING.md) | write any text people read, in any language |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | open a pull request: branches, commits, signing, checks |
 | [docs/telemetry.md](docs/telemetry.md) | add an event, a screen, an error or an alert |
-| [docs/store-screenshots/README.md](docs/store-screenshots/README.md) | produce App Store screenshots |
-| [scripts/icons/README.md](scripts/icons/README.md) | add or change an icon |
+| [docs/store-screenshots](docs/store-screenshots/README.md) | produce App Store screenshots |
+| [scripts/icons](scripts/icons/README.md) | add or change an icon |
 | [AGENTS.md](AGENTS.md) | run a coding agent on this repository |
 
 ## Related repositories
 
 | Repository | Role |
 |---|---|
-| `drafft-backend` | Supabase schema, Edge Functions, pushes, moderation, data retention |
-| `drafft-android` | the Android app, same events, wording and design rules |
-| `drafft-web` | getdrafft.com, the legal pages the app opens |
-| `drafft-sophros` | the back office: moderation, support, account actions |
+| [drafft-android](https://github.com/sylwaninn/drafft-android) | Android app |
+| [drafft-backend](https://github.com/sylwaninn/drafft-backend) | Supabase, Edge Functions, media and support Workers |
+| [drafft-web](https://github.com/sylwaninn/drafft-web) | getdrafft.com and the legal pages the app opens |
+| [drafft-sophros](https://github.com/sylwaninn/drafft-sophros) | moderation and support dashboard |
 
 ## License
 
