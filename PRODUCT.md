@@ -62,6 +62,7 @@ No real users, testimonials, photos, or metrics. All people, photos, and convers
 6. Never leave people guessing what to do next: the validate action is always on screen, disabled until it can run (the screen itself says what's missing, not a line under the button).
 7. Always live: whatever the server changes (balance, holds, photo decisions, likes, matches, sessions) reaches the screen at once, over the account's Realtime channel, and is read again on return to the foreground or after a reconnection. Nothing waits for a relaunch or a pull to refresh.
 8. One language per person: everything sent to someone (push, email, SMS, support reply, cancellation) is in their app's language (the 7 languages of the app), with the same phrases as the app.
+9. A photo goes public only on Save: picking one uploads and moderates it as a draft. It reaches the profile, the card and Discover only when the person saves (Edit profile) or finishes sign-up; leaving without saving deletes the drafts, on the server too (a server purge covers a killed app). Only the server's verdict settles a photo: a lost connection keeps it "checking" and the verdict is read again on reconnect, foreground and Realtime rejoin.
 
 ## Accessibility & Inclusion
 

@@ -602,6 +602,16 @@ Rules agreed while building the Drafft app. They apply on top of the tokens abov
 - Gender is picked from a fixed list (Woman, Man, Non-binary); there is never a free-text way to describe a gender.
 - No height anywhere: Drafft never asks for or shows how tall someone is.
 - Labels and tags never wrap: one line, always (`lineLimit(1)` + `fixedSize`), shorten the text instead.
+- Never pre-select an answer for the person (identity, who to meet, birthday, photos). Empty until they choose.
+- On an optional step, Continue stays disabled until something is filled in; Skip is the way past it.
+- Multi-step flows move only with Back / Continue / Skip: no swipe between steps.
+- One question per step: when a step asks two things (sports, then how often), split it.
+- A field takes touches on its whole box, padding included: the text field fills the box and a tap anywhere on it focuses it.
+- Never focus a field on arrival: the page opens whole, keyboard down, so the person sees everything first. The keyboard comes up when they tap a field.
+- Forms scroll with `FocusScrollView`: a field that gets focus scrolls itself to the upper third, clear of the keyboard and the pinned button. A pinned button never sits on top of the field being typed in. Any field that isn't a `DrafftField` gets `.revealsOnFocus(…)`; the scroll content always ends with a margin, so even the last field never touches the keyboard.
+- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). Every input uses `DS.Palette.field`, the lifted white, on a page and in a sheet. Sheets group their content in `SheetBlock`s, sage wells on the white sheet (like Language, Phone number and Get help), so the white fields always stand out of what's around them: never a field the colour of its background. A value that can't be changed (the birthday in Edit profile) is a `LockedField`: same label and box as a field, but greyed (ink at 6 %, mute text) with a lock and the reason under it. A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
+- One icon per meaning: never reuse the same symbol for two different items in a list or a switcher.
+- **The SMS code field stays plainly visible.** iOS only autofills the code into a field it judges visible: a plain SwiftUI `TextField` with `.textContentType(.oneTimeCode)`, opaque digits drawn on top of the boxes (spaced with `.tracking`), the caret tinted with the box colour. Never hide it (opacity, clear text, `.tint(.clear)`) and never wrap a UIKit `UITextField`: autofill then inserts nothing, silently. Focus it 0.4 s after the step appears (after its fade-in), keyboard kept up.
 - Logo: the word "drafft" in Inter Display Black, solid, and nothing else. **Never a drafting trail (ghost copies) under or behind the logo**, anywhere: app (iPhone and Android), website, emails, store screenshots. App icon: white word on solid anthracite #1C1E21, no relief (Resources/Assets.xcassets/AppIcon). `Wordmark` in the app draws the word alone and takes no trail.
 - Brand accent in the app: **graphite**, near-black `#111214` in light mode and off-white `#F2F3F5` in dark mode (token names keep "lime" for the role), with white text and icons on it in light mode, ink in dark mode. Pale `#E4E6E9` (dark `#26292C`), pressed `#3A3E42` (dark `#D9DBDE`). A monochrome palette: light grey page, white blocks, black pills. Switch in `Tokens.swift` (`DS.Palette.accent`: `.lime`, `.plum`, `.tangerine`, `.violet`, `.graphite`); the previous accent was orange `#FF6B1A`.
 - `accentInk` is the accent as text or a glyph on neutral surfaces. With graphite it is the accent itself (`#111214` light, `#F2F3F5` dark); with orange it was `#B84600` in light mode (never the old brown `#7A3300`) and `#FF8A45` in dark mode. It is the app tint, so it drives the selected tab, links, date pickers and "Typing".
@@ -615,7 +625,7 @@ One job per colour, everywhere:
 
 ### Brand name
 - The product is **drafft**, always lowercase, in copy and as the app name on the home screen. In running text it is set one weight above the sentence (semibold in regular text, heavy in semibold text) so it reads as a name: use `Text(branded:font:)`, which does it for every occurrence.
-- The paid tier is **drafft tempo**: both words lowercase, same face and weight, "tempo" in the accent colour so the pair reads as one name. `Text(branded:)` colours it: `accentInk` on light surfaces, `accentOnNight` on night, `tierOnAccent` on an accent fill (the tier card on You; a light grey with graphite), `night` on the paywall button (white on night with graphite). Never "Plus", "plus" or "+". The paywall lockup is the wordmark followed by "tempo" in Inter Display Black at the same size, in the accent. The spark stays the tier's icon.
+- The paid tier is **drafft tempo**: both words lowercase, same face and weight, "tempo" in the accent colour so the pair reads as one name. `Text(branded:)` colours it: `accentInk` on light surfaces, `accentOnNight` on night, `tierOnAccent` on an accent fill (the tier card on You; a light grey with graphite), `night` on the paywall button (white on night with graphite). Never "Plus", "plus", "+" or "club" (sounds elitist). The paywall lockup is the wordmark followed by "tempo" in Inter Display Black at the same size, in the accent. The spark stays the tier's icon.
 - **"tempo" is never the exact colour of "drafft".** The pair only reads as a name with a tier if the second word is visibly another tone. With the colour accents (orange, violet, lime) the accent does that on its own. With graphite it doesn't: `accentInk` #111214 next to ink #0E0F0C is 1.03:1, and `accentOnNight` is the same white as the word. So "tempo" takes a tier tone, one step lighter or darker than "drafft", on every surface:
 
   | Surface | "drafft" | "tempo" | tempo on surface | drafft vs tempo |
@@ -629,15 +639,6 @@ One job per colour, everywhere:
   Rules behind the table: "tempo" keeps 4.5:1 on its surface (3:1 where the brand name is bold, which it always is in running text), and stays at least 1.5:1 away from "drafft" so the two tones are told apart at a glance. Same weight, same size, only the tone changes. A new surface picks its "tempo" tone by those two numbers before shipping.
   Today the app breaks it with graphite wherever it passes `accentInk` or `accentOnNight` as `tierColor` (PurchaseConfirmation, PaywallView pitch and lockup, ExtrasSheet): those need a `tier` token resolved per surface as above. Night blocks have theirs: `tierOnNight` (the Likes banner uses it).
 - Liking stays green (`like`, `#9fe870`) whatever the brand accent: like buttons, the heart pop, "Send like", "Like with this answer" and the like markers in chat.
-- Never pre-select an answer for the person (identity, who to meet, birthday, photos). Empty until they choose.
-- On an optional step, Continue stays disabled until something is filled in; Skip is the way past it.
-- Multi-step flows move only with Back / Continue / Skip: no swipe between steps.
-- One question per step: when a step asks two things (sports, then how often), split it.
-- A field takes touches on its whole box, padding included: the text field fills the box and a tap anywhere on it focuses it.
-- Never focus a field on arrival: the page opens whole, keyboard down, so the person sees everything first. The keyboard comes up when they tap a field.
-- Forms scroll with `FocusScrollView`: a field that gets focus scrolls itself to the upper third, clear of the keyboard and the pinned button. A pinned button never sits on top of the field being typed in. Any field that isn't a `DrafftField` gets `.revealsOnFocus(…)`; the scroll content always ends with a margin, so even the last field never touches the keyboard.
-- Fields share one pattern: label above (subheadline semibold), white bordered field (52 pt, radius md), hint or error below (footnote). Every input uses `DS.Palette.field`, the lifted white, on a page and in a sheet. Sheets group their content in `SheetBlock`s, sage wells on the white sheet (like Language, Phone number and Get help), so the white fields always stand out of what's around them: never a field the colour of its background. A value that can't be changed (the birthday in Edit profile) is a `LockedField`: same label and box as a field, but greyed (ink at 6 %, mute text) with a lock and the reason under it. A date the person knows by heart (birthday) is typed, not scrolled: day, month, year boxes in the language's order, number pad, auto-advance (`BirthdateField`); never a wheel with a made-up starting date.
-- One icon per meaning: never reuse the same symbol for two different items in a list or a switcher.
 
 ### Verification & support
 - Sign-up runs in four chapters, never mixed, one question per step: Account (language, preselected from the phone or English; ground rules + the two consents; phone), About you (first name, birthday, gender, who to meet, lifestyle, area), Sports (sports, then how often), Profile (photos, bio, voice, written prompts, interactive prompt, notifications). 17 steps. No "looking for" question: drafft doesn't ask it, show it or filter by it. Lifestyle is one step (rhythm, food, drinking, smoking, each optional, tap again to clear) shared with Edit profile (`LifestylePicker`).
@@ -696,7 +697,7 @@ One job per colour, everywhere:
 
 ### Chat gestures
 - Swipe a bubble right to reply; long press lifts it (page blurs, bubble stays in place) with a glass reaction bar above and Reply / Copy / Unsend below; double tap a text bubble for ❤️.
-- A chat always opens scrolled to the latest message. Exception: opened from Sessions, it centres the session card and flashes it.
+- **Scrolling behaves exactly like WhatsApp.** A chat always opens at the latest message, from a notification or a banner too. Exception: opened from Sessions, it centres the session card and flashes it. Sending scrolls to the end. The other person's new message or typing only follows when you are already at the end; otherwise nothing moves and a ↓ button shows how many you haven't seen. Replying (swipe or long press) and the keyboard opening or closing never scroll: the visible bottom stays put above the keyboard. Coming back from the background keeps the exact place. Use native anchors (`defaultScrollAnchor(.bottom, for: .sizeChanges)`), never manual pixel offsets, which fight the keyboard animation.
 - No delivery states ("Sent", "Delivered", "Read") under messages.
 - Voice: hold the mic (0.15 s, a light haptic on touch-down, a firmer one when recording starts) to record; a glass rail with a padlock rises above it, drag up into it to lock, left to cancel.
 
@@ -705,8 +706,8 @@ One job per colour, everywhere:
 - A screen that opens a chat (Sessions, profile) pushes it in its own stack; switching tabs is only for match moments (match screen, banner).
 
 ### Actions & forms
-- **A validate button is always visible.** Every screen that edits or submits something (forms, editors, sheets, onboarding steps, sub-pages) keeps its primary action pinned at the bottom (`safeAreaInset(edge: .bottom)`), never scrolled away.
-- **Disabled, not hidden.** When the action can't run yet (nothing changed, required field missing), the button stays visible in its disabled state, with one short line under it saying why ("Make a change to save it.", "Add at least one sport.").
+- **A validate button is always visible.** Every screen that edits or submits something (forms, editors, sheets, onboarding steps, sub-pages) keeps its primary action pinned at the bottom (`.bottomBar { … }`), never scrolled away. Never rely on going back alone to confirm a change.
+- **Disabled, not hidden.** When the action can't run yet (nothing changed, required field missing), the button stays visible in its disabled state. No line under it saying why: the screen already says what's missing. Only a real error goes there, in red.
 - **Button labels fit on one line.** Never let a button wrap: shorten the label, give it the full width, or stack buttons vertically.
 - **Close is top-right** on every sheet and modal. Back navigation stays top-left (system).
 - **One way out, never two.** No two controls on a screen do the same thing. When a sheet's only action just closes it ("Got it" on Meet safely, "Done" once an email, password, phone number or help message is through, "Keep swiping"), that pinned button is the way out and there is no close button (the swipe down stays). An editing sheet keeps both: Close leaves without saving, the pinned button saves.
@@ -715,6 +716,7 @@ One job per colour, everywhere:
 
 ### Motion & speed
 - Everything answers fast. Standard springs: `snappy` (response 0.22 s), `bouncy` (0.3 s), fades 0.18 s. Swipe fly-out 0.26 s.
+- A label whose words change ("All" ↔ "2 selected") uses `.rollingDigits(wording:)`, never bare `.contentTransition(.numericText())`: the old, longer label would slide out past its block's edge.
 - Selection (chip, tile, disc, plan) uses `Motion.select`: a 0.1 s ease-out on the colour, never a spring, and never a whole-sheet `.animation` on the edited value.
 - Screens open on their first frame: anything expensive is computed once and cached (picked photos decoded once, `FlowLayout` measures each chip once per pass). Long chip lists in sheets start collapsed (`SportPicker(collapsedCount: 16)` plus "All N sports"); search always covers the full catalog.
 - Haptics come from generators kept warm (`Haptics` re-prepares after each use), so the tick lands with the visual change.
@@ -737,7 +739,7 @@ One job per colour, everywhere:
 - Photos shown small pass their size (`Photo(name:side:)`, `Avatar` does it): a downsampled copy is drawn, never a 1400 px JPEG for a 56 pt avatar. Blurred photos (locked likes) pass `blur:` and get the blur baked into a small copy, never a live `.blur` on each card. `ImageStore` prepares, in the background at launch, the welcome photos, the top of the deck, every avatar size and the locked-like copies, so a tab's first visit draws without decoding and the tab bar answers at once.
 
 ### Layout
-- **No loose text on the sage canvas.** Section titles and their content live inside a block (white card, or night/lime feature block). Exceptions the user asked for: Discover's empty stack, and on You the build line ("drafft 1.0 (12)", the environment in the name off production) as a small mute caption under the Log out / Delete account block.
+- **No loose text on the sage canvas.** Section titles and their content live inside a block (white card, or night/lime feature block). Exceptions the user asked for: Discover's empty stack, the profile detail's intro (name, age, area, bio) straight on the page, and on You the build line ("drafft 1.0 (12)", the environment in the name off production) as a small mute caption under the Log out / Delete account block.
 - Long settings are split into categories that push sub-pages, not one endless page.
 - Icons sit in round badges, never squares. Glyphs keep padding and never touch their badge's edge.
 - Nothing hangs off a block: counts, dots and badges sit inside their button, chip or card (the filter count is inside the filter pill, the super-like count inside its disc, the "new" dot inside the likes chip).
@@ -765,10 +767,15 @@ One job per colour, everywhere:
 - Location shows an area only ("Lyon 4", "Paris 11", or the city elsewhere), never a street. Distances are rounded to the km ("Less than 1 km" below 1). The position is blurred to a ~1 km cell before it leaves the device, and the area is resolved on the device (`OnDeviceAreaResolver`: arrondissement centres, otherwise the system geocoder's city) until the server does it behind `AreaResolving`, identical on iOS and Android.
 - No location pin icon next to the neighborhood on the deck card or the profile detail; the place name stands on its own.
 - Sport names are never truncated with an ellipsis. Show as many as fit, then "+X" (`SportsLine`, `SportChipsPreview`).
-- Interface copy is never cut with "…" in any of the 7 languages. In order: wrap (buttons take up to 2 centred lines), reflow (`AdaptiveRow`: a trailing value moves under its label; `ViewThatFits`: a pill switches to its short wording or its icon, a link row stacks), then scale (never below 0.9). Only excerpts of people's content (message previews, bios, pitches) end with "…".
+- Interface copy is never cut with "…" in any of the 7 languages. Button labels stay on one line (see Actions & forms): shorten the wording in that language, or let `ViewThatFits` drop a detail. Elsewhere, in order: wrap, reflow (`AdaptiveRow`: a trailing value moves under its label; `ViewThatFits`: a pill switches to its short wording or its icon, a link row stacks), then scale (never below 0.9). Only excerpts of people's content (message previews, bios, pitches) end with "…". Titles in rows take `.fixedSize(horizontal: false, vertical: true)`; never `lineLimit(1).fixedSize()` outside a `FlowLayout` (chips in one may). When a translation is too long, shortening it is often the cleaner fix.
 - On your profile card (You tab), your name and age read as on your profile page (`NameAgeLine`: display name, the age apart without a comma, lighter), and your sports show as named chips under them on **one line, never two** (`SportChipsLine`): as many as fit, then "+X"; when not even one chip and its "+X" fit, the shortest sport leads and only its name is cut short. Never icon-only discs.
 - No training days or moments of the day on profiles. A profile shows sports and how often ("3× a week"); a session invite carries an exact date and time ("Tue 30 Sep, 18:30").
 
 ### The drafting motif
 - The drafting trail (fading offset copies) goes **under buttons** (primary CTAs, play, like hearts), not on cards, icons, body text or the logo (never under the "drafft" wordmark).
-- Exception by explicit request: the "No one here." headline of the Discover empty state, whose ghosts use the same ink as the text.
+- Exceptions by explicit request: the "No one here." headline of the Discover empty state, whose ghosts use the same ink as the text, and the super like heart (`SuperLikeMark`).
+
+### Block texture
+- Blocks are plain for now: the contour lines ("relief") were removed on 2026-09-28 (unclear, read as hiking only), auth pages and empty states included.
+- Its replacement is still open. Shortlist: **Jacquard** (knitted V-stitches, two yarns zigzag into diamonds), **Maille** (laser-cut jersey mesh, two vent zones overlap in the accent), **Pavage** (Truchet quarter-arc tiles, the two longest paths in the accent). Also explored: a sports-shoe outsole print bleeding off the block, two prints for the meeting.
+- What a candidate must be: tied to sport in general and to two people meeting; a dense grid of small repeated units (stitch, hole, tile) from which two coloured elements emerge; flat solid colours (no gradient); never icons or pictograms.
