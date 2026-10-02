@@ -16,3 +16,7 @@ Drafft.xcodeproj/-Xcc/
 
 # Machine-specific local backend (scripts/local-backend.sh)
 /Local.private.xcconfig
+
+# Claude Code: personal and per-session files
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
