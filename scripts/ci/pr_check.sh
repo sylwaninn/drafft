@@ -3,19 +3,22 @@
 # reaches GitHub (a commit made without the hooks, a pull request opened from the web, a body pasted
 # from a tool). Run by .github/workflows/pr.yml on every pull request, the same script in every repository.
 #
-#   - base: never main (main only moves through the release workflow, scripts/ci/release.sh);
+#   - base: never main (main only moves through the release workflow, scripts/ci/release.sh), except in
+#     drafft-web, which has no staging: its pr.yml sets ALLOW_MAIN_BASE=true;
 #   - title: `type(scope): description`, lowercase, no final period: it becomes the squash commit;
 #   - body: not empty, no AI attribution line;
 #   - commits: authored by an allowed address, no Co-Authored-By or AI attribution in any message;
 #   - signatures: unverified commits are listed (a warning, an error with REQUIRE_SIGNED=true).
 #
 # Needs BASE_REF, BASE_SHA, HEAD_SHA, PR_TITLE, PR_BODY and ALLOWED_EMAILS (space-separated).
+# ALLOW_MAIN_BASE=true lets pull requests target main (drafft-web only).
 # With GH_TOKEN, GITHUB_REPOSITORY and PR_NUMBER it also reads GitHub's signature verification.
 set -euo pipefail
 
 : "${BASE_REF:?}" "${BASE_SHA:?}" "${HEAD_SHA:?}" "${PR_TITLE:?}" "${ALLOWED_EMAILS:?}"
 PR_BODY=${PR_BODY:-}
 REQUIRE_SIGNED=${REQUIRE_SIGNED:-false}
+ALLOW_MAIN_BASE=${ALLOW_MAIN_BASE:-false}
 # The squash commit's committer when a pull request is merged or updated from GitHub's interface.
 GITHUB_COMMITTER="noreply@github.com"
 # Attribution lines tools add to commits and pull requests. Naming a tool in prose stays allowed.
@@ -31,7 +34,7 @@ allowed() {
   case " $ALLOWED_EMAILS " in *" $1 "*) return 0 ;; *) return 1 ;; esac
 }
 
-[ "$BASE_REF" != main ] ||
+[ "$BASE_REF" != main ] || [ "$ALLOW_MAIN_BASE" = true ] ||
   error "This pull request targets main. Every pull request goes into staging; main only moves through the release workflow."
 
 grep -qE "$TITLE" <<<"$PR_TITLE" ||
