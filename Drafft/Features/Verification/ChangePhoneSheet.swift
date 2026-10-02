@@ -13,7 +13,8 @@ struct ChangePhoneSheet: View {
                      enabled: model.primaryEnabled,
                      loading: model.busy,
                      error: model.stage == .enterNumber && model.isSameAsCurrent ? L("That's already your number.") : nil,
-                     finished: model.stage == .verified) {
+                     finished: model.stage == .verified,
+                     screen: .phoneVerification) {
             switch model.stage {
             case .enterNumber: Task { await model.sendCode() }
             case .enterCode: Task { await model.verify() }

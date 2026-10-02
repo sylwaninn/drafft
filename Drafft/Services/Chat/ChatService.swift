@@ -25,7 +25,9 @@ extension ChatPayload.Media: AttachmentPayload {
 @MainActor
 final class ChatService {
     static let shared = ChatService()
-    let log = Logger(subsystem: "so.drafft.app", category: "chat")
+    let log = AppLog("chat")
+    /// Messages read at a time with each chat: a chat opens on its latest ones.
+    static let messagesPage = 25
 
     weak var app: AppModel?
     var client: ChatClient?
@@ -61,7 +63,19 @@ final class ChatService {
         var message: Message
         let matchID: String
         let source: Source
-        enum Source { case text(String), photo(Data), video(URL), voice(URL, TimeInterval, [Float]) }
+        enum Source {
+            case text(String), photo(Data), video(URL), voice(URL, TimeInterval, [Float])
+
+            /// What kind of message it makes, for analytics.
+            var telemetryKind: AnalyticsEvent.MessageKind {
+                switch self {
+                case .text: .text
+                case .photo: .photo
+                case .video: .video
+                case .voice: .voice
+                }
+            }
+        }
     }
 
     // MARK: Connection
@@ -119,7 +133,8 @@ final class ChatService {
                 try await watchChannels(client, me: me)
                 if let deviceToken { addDevice(deviceToken) }
             } catch {
-                log.error("chat connect failed: \(error.localizedDescription, privacy: .public)")
+                log.error("chat connect failed: \(error.localizedDescription)")
+                Telemetry.unexpected(error, "chat", "connect")
                 try? await Task.sleep(for: pause)
                 pause = min(pause * 2, .seconds(60))
             }
@@ -133,7 +148,7 @@ final class ChatService {
         config.isLocalStorageEnabled = true
         config.staysConnectedInBackground = true
         // Enough of each chat for the list and the first screen of a thread.
-        config.localCaching.chatChannel.latestMessagesLimit = 25
+        config.localCaching.chatChannel.latestMessagesLimit = Self.messagesPage
         let made = ChatClient(config: config)
         client = made
         apiKey = key
@@ -173,7 +188,7 @@ final class ChatService {
             filter: .and([.containMembers(userIds: [me]), .equal(.frozen, to: false)]),
             sort: [.init(key: .lastMessageAt, isAscending: false)],
             pageSize: 30,
-            messagesLimit: 25
+            messagesLimit: Self.messagesPage
         )
         // Local filter for channels arriving by events: a frozen one (match ended) or one left leaves the list.
         let list = client.makeChannelList(with: query) { !$0.isFrozen && $0.membership != nil }
@@ -210,7 +225,7 @@ final class ChatService {
         guard let client else { return }
         let provider = PushEnvironment.current == "sandbox" ? "drafft-apn-dev" : "drafft-apn"
         client.currentUserController().addDevice(.apn(token: token, providerName: provider)) { [log] error in
-            if let error { log.error("chat push device: \(error.localizedDescription, privacy: .public)") }
+            if let error { log.error("chat push device: \(error.localizedDescription)") }
         }
     }
 
@@ -328,24 +343,29 @@ final class ChatService {
             sendText(text, upload)
             return
         }
+        let kind = upload.source.telemetryKind
         Task {
             do {
-                let media: ChatPayload.Media
-                switch upload.source {
-                case .text: return
-                case .photo(let data):
-                    let sent = try await MediaUploads.photo(data, purpose: .chatPhoto, tickets: tickets)
-                    media = .init(kind: .photo, key: sent.key, width: sent.width, height: sent.height,
-                                  thumbhash: sent.thumbHash)
-                case .video(let url):
-                    let sent = try await MediaUploads.video(url, purpose: .chatVideo, settings: .chat,
-                                                            posterPurpose: .chatPhoto, tickets: tickets)
-                    media = .init(kind: .video, key: sent.key, width: sent.width, height: sent.height,
-                                  duration: sent.duration, posterKey: sent.posterKey, thumbhash: sent.thumbHash)
-                case let .voice(url, duration, levels):
-                    let key = try await MediaUploads.voice(url, purpose: .chatVoice, tickets: tickets)
-                    media = .init(kind: .voice, key: key, duration: duration, levels: Self.compact(levels))
+                // Timed (Sentry Performance): compression and upload, the slow part of a media message.
+                let uploaded: ChatPayload.Media? = try await Telemetry.trace("media.upload", "chat \(kind.rawValue)") { _ in
+                    switch upload.source {
+                    case .text: return nil
+                    case .photo(let data):
+                        let sent = try await MediaUploads.photo(data, purpose: .chatPhoto, tickets: tickets)
+                        return ChatPayload.Media(kind: .photo, key: sent.key, width: sent.width, height: sent.height,
+                                                 thumbhash: sent.thumbHash)
+                    case .video(let url):
+                        let sent = try await MediaUploads.video(url, purpose: .chatVideo, settings: .chat,
+                                                                posterPurpose: .chatPhoto, tickets: tickets)
+                        return ChatPayload.Media(kind: .video, key: sent.key, width: sent.width, height: sent.height,
+                                                 duration: sent.duration, posterKey: sent.posterKey, thumbhash: sent.thumbHash)
+                    case let .voice(url, duration, levels):
+                        let key = try await MediaUploads.voice(url, purpose: .chatVoice, tickets: tickets)
+                        return ChatPayload.Media(kind: .voice, key: key, duration: duration,
+                                                 levels: Self.compact(levels))
+                    }
                 }
+                guard let media = uploaded else { return }
                 // Only the person's own chat objects are ever sent (keys, never links).
                 guard let me = userID, ChatPayload.Media.isOwnChatKey(media.key, userID: me),
                       media.posterKey.map({ ChatPayload.Media.isOwnChatKey($0, userID: me) }) ?? true,
@@ -357,7 +377,9 @@ final class ChatService {
                 // Photos and videos get the silent check (flagged ones are only recorded server-side).
                 if media.kind != .voice { Task { await ChatMediaCheck.check(key: media.key, posterKey: media.posterKey) } }
             } catch {
-                log.error("media send failed: \(error.localizedDescription, privacy: .public)")
+                log.error("media send failed: \(error.localizedDescription)")
+                Telemetry.track(.messageFailed(kind, reason: Telemetry.reason(error)))
+                Telemetry.unexpected(error, "chat", "send_media", extra: ["kind": kind])
                 if let i = uploads[upload.matchID]?.firstIndex(where: { $0.message.id == upload.message.id }) {
                     uploads[upload.matchID]?[i].message.state = .failed
                     publish()
@@ -376,7 +398,9 @@ final class ChatService {
                 uploads[upload.matchID]?.removeAll { $0.message.id == upload.message.id }
             } catch {
                 // Stream's copy (same id) shows as failed with its retry; without one, this bubble does.
-                log.error("send failed: \(error.localizedDescription, privacy: .public)")
+                log.error("send failed: \(error.localizedDescription)")
+                Telemetry.track(.messageFailed(.text, reason: Telemetry.reason(error)))
+                Telemetry.unexpected(error, "chat", "send_text")
                 if let i = uploads[upload.matchID]?.firstIndex(where: { $0.message.id == upload.message.id }) {
                     uploads[upload.matchID]?[i].message.state = .failed
                 }

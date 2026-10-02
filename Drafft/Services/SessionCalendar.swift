@@ -64,19 +64,29 @@ final class SessionCalendar {
 
     /// Asked before the "New Event" sheet opens: full access is requested the first time.
     func requestAccess() async -> Access {
-        if EKEventStore.authorizationStatus(for: .event) == .notDetermined {
+        let before = EKEventStore.authorizationStatus(for: .event)
+        if before == .notDetermined {
             _ = try? await store.requestFullAccessToEvents()
         }
-        switch EKEventStore.authorizationStatus(for: .event) {
-        case .fullAccess: return .full
-        case .writeOnly: return .addOnly
-        default: return .refused
+        let access: Access = switch EKEventStore.authorizationStatus(for: .event) {
+        case .fullAccess: .full
+        case .writeOnly: .addOnly
+        default: .refused
         }
+        let result: AnalyticsEvent.PermissionResult = switch (before, access) {
+        case (.notDetermined, .refused): .denied
+        case (.notDetermined, _): .granted
+        case (_, .refused): .blocked
+        default: .alreadyGranted
+        }
+        Telemetry.track(.permissionRequested(.calendar, result: result, during: ScreenTracker.currentID))
+        return access
     }
 
     /// The person saved the event from the sheet: remembered, with what drafft wrote in it.
     func added(_ event: EKEvent, session: UUID, chatID: String, partner: String) {
         guard let id = event.eventIdentifier, !id.isEmpty else { return }
+        Telemetry.track(.sessionAddedToCalendar)
         links[session] = Link(eventID: id, externalID: event.calendarItemExternalIdentifier, chatID: chatID,
                               partner: partner, title: event.title ?? "", start: event.startDate)
         save()
@@ -104,9 +114,14 @@ final class SessionCalendar {
         let followed = links.filter { ids?.contains($0.key) ?? true }
         guard canFollow, !followed.isEmpty else { return }
         let list = followed.keys.map { $0.uuidString.lowercased() }.joined(separator: ",")
-        guard let data = try? await Backend.shared.select(
-            "sessions?id=in.(\(list))&select=id,status,chosen_at,options,title,sport_id"),
-            let rows = try? Self.decoder.decode([Row].self, from: data) else { return }
+        let rows: [Row]
+        do {
+            let data = try await Backend.shared.select("sessions?id=in.(\(list))&select=id,status,chosen_at,options,title,sport_id")
+            rows = try Self.decoder.decode([Row].self, from: data)
+        } catch {
+            Telemetry.unexpected(error, "sessions", "calendar_refresh")
+            return
+        }
         let byID = Dictionary(rows.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         for (id, link) in followed {
             guard let row = byID[id], row.status == "accepted" || row.status == "pending" else {

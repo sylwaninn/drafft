@@ -131,7 +131,7 @@ struct ConversationsView: View {
                 }
             }
             .navigationDestination(for: String.self) { id in
-                ChatView(conversationID: id)
+                ChatView(conversationID: id).trackScreen(.chat)
             }
             .animation(Motion.snappy, value: app.conversations.map(\.id))
         }

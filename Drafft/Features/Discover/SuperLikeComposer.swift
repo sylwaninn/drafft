@@ -121,6 +121,7 @@ struct SuperLikeComposer: View {
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             withAnimation(Motion.snappy) { keyboard = 0 }
         }
+        .trackScreen(.superLikeComposer)
     }
 
     /// Their photo fills the whole profile block; toward the bottom it turns into a progressive

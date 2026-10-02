@@ -21,6 +21,8 @@ struct PaywallView: View {
     /// Outcome of a purchase or restore that didn't unlock anything, said plainly.
     @State private var notice: String?
     @State private var receipt: PurchaseReceipt?
+    /// The App Store confirmed a purchase here (for analytics: the receipt is gone by the time this closes).
+    @State private var bought = false
     private var store: Store { .shared }
 
     enum Plan: CaseIterable, Identifiable {
@@ -163,6 +165,7 @@ struct PaywallView: View {
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled(purchasing || receipt != nil)
         .task { await store.load() }
+        .trackPaywall(.tempo) { bought }
         // Over the paywall; closing it closes both, then the unlocked action runs.
         // design-lint: allow sheet-surface - PurchaseConfirmation sets its raised surface itself
         .sheet(item: $receipt, onDismiss: {
@@ -315,11 +318,11 @@ struct PaywallView: View {
             }
             .disabled(restoring || purchasing || !store.isLinked)
             .accessibilityLabel(restoring ? "Restoring purchases" : "Restore purchases")
-            let termsLink = Button { openURL(LegalDoc.terms.url(), prefersInApp: true) } label: {
+            let termsLink = Button { open(.terms) } label: {
                 Text("Terms").frame(minHeight: 44).contentShape(.rect)
             }
             .accessibilityLabel(LegalDoc.terms.title)
-            let privacyLink = Button { openURL(LegalDoc.privacy.url(), prefersInApp: true) } label: {
+            let privacyLink = Button { open(.privacy) } label: {
                 Text("Privacy").frame(minHeight: 44).contentShape(.rect)
             }
             .accessibilityLabel(LegalDoc.privacy.title)
@@ -346,6 +349,11 @@ struct PaywallView: View {
 
     private func say(_ text: String) {
         withAnimation(Motion.snappy) { notice = text }
+    }
+
+    private func open(_ doc: LegalDoc) {
+        Telemetry.track(.legalDocOpened(String(describing: doc)))
+        openURL(doc.url(), prefersInApp: true)
     }
 
     /// A restore that failed: the account not linked (nothing was asked of the App Store), or the
@@ -395,6 +403,7 @@ struct PaywallView: View {
                 case .cancelled:
                     break
                 case .purchased(let info, let transactionID):
+                    bought = true
                     // Confirmed by the App Store: the server is asked to turn drafft tempo on at once
                     // (it also credits the first weekly boost); slow, a banner at the top takes over.
                     // Nothing is unlocked on the device's word alone.
@@ -468,6 +477,7 @@ struct SubscriptionSheet: View {
             // Back from Apple's sheet: read what the App Store now says (cancelled, another length).
             .onChange(of: managing) { _, open in if !open { Task { await app.refreshSubscription(apply: apply) } } }
         }
+        .trackScreen(.subscription)
         .presentationDragIndicator(.visible)
         .onDisappear { if endedOnClose { withAnimation(Motion.snappy) { app.subscription = nil } } }
     }
@@ -562,10 +572,10 @@ struct SubscriptionSheet: View {
             }
             .disabled(restoring)
             .accessibilityLabel(restoring ? "Restoring purchases" : "Restore purchases")
-            let termsLink = Button("Terms") { openURL(LegalDoc.terms.url(), prefersInApp: true) }
+            let termsLink = Button("Terms") { open(.terms) }
                 .frame(minHeight: 44)
                 .accessibilityLabel(LegalDoc.terms.title)
-            let privacyLink = Button("Privacy") { openURL(LegalDoc.privacy.url(), prefersInApp: true) }
+            let privacyLink = Button("Privacy") { open(.privacy) }
                 .frame(minHeight: 44)
                 .accessibilityLabel(LegalDoc.privacy.title)
             ViewThatFits(in: .horizontal) {
@@ -593,6 +603,7 @@ struct SubscriptionSheet: View {
             Button {
                 Haptics.tap()
                 managing = true
+                Telemetry.track(.subscriptionManageOpened)
             } label: {
                 Text("Manage subscription")
             }
@@ -608,6 +619,11 @@ struct SubscriptionSheet: View {
     }
 
     // MARK: Actions
+
+    private func open(_ doc: LegalDoc) {
+        Telemetry.track(.legalDocOpened(String(describing: doc)))
+        openURL(doc.url(), prefersInApp: true)
+    }
 
     private func restore() {
         Haptics.tap()

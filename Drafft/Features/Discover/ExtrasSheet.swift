@@ -17,6 +17,8 @@ struct ExtrasSheet: View {
     /// Boosts only: the store pushed from the launch page ("Get more boosts").
     @State private var showStore = false
     @State private var receipt: PurchaseReceipt?
+    /// The App Store confirmed a purchase here (for analytics: the receipt is gone by the time this closes).
+    @State private var bought = false
     /// Set by the confirmation's "Boost now": launch once it has closed.
     @State private var boostAfterReceipt = false
     /// A purchase that didn't go through, said plainly under the button.
@@ -69,6 +71,15 @@ struct ExtrasSheet: View {
     private var blockFill: Color { isSuper ? DS.Palette.negative : DS.Palette.night }
     private var accent: Color { isSuper ? .white : DS.Palette.accentOnNight }
 
+    /// What this sheet sells, for analytics.
+    private var productKind: AnalyticsEvent.ProductKind {
+        switch tab {
+        case .boost: .boost
+        case .superLike: .superLike
+        case .likes: .tempo
+        }
+    }
+
     /// Boosts keep buying and launching apart: with boosts in hand (or one running) the sheet
     /// opens on the launch page, whose only action is "Boost now"; the store is a separate page
     /// behind "Get more boosts". With none left, the sheet opens straight on the store, and once
@@ -92,6 +103,7 @@ struct ExtrasSheet: View {
             receiptView(r)
         }
         .task { await store.load() }
+        .trackPaywall(productKind, screen: .extras) { bought }
         .onAppear {
             if reduceMotion { lifted = true } else {
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.7).delay(0.1)) { lifted = true }
@@ -477,6 +489,7 @@ extension ExtrasSheet {
             do {
                 guard case .purchased(_, let id) = try await store.purchase(pack.package) else { return }
                 transactionID = id
+                bought = true
             } catch {
                 guard let problem = Store.PurchaseProblem(error) else { return }
                 Haptics.warning()

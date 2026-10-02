@@ -109,7 +109,9 @@ final class PurchaseCredit {
     func walletChanged() {
         guard let app, !pending.isEmpty else { return }
         let before = pending.count
-        pending.removeAll { $0.isCredited(in: app) }
+        let credited = pending.filter { $0.isCredited(in: app) }
+        for purchase in credited { Self.trackCredited(purchase) }
+        pending.removeAll { credited.contains($0) }
         guard pending.count != before else { return }
         save()
         if pending.isEmpty {
@@ -193,12 +195,13 @@ final class PurchaseCredit {
                 walletChanged()
             }
             return nil
-        } catch Backend.BackendError.http(let status, _) where status == 429 || status == 503 {
-            // Too many asks, or the store is slow to answer: the webhook credits it meanwhile.
-            await app.loadWallet()
-            return Self.throttledRetry
         } catch {
+            Telemetry.unexpected(error, "purchase", "purchase_sync")
             await app.loadWallet()
+            // Too many asks, or the store is slow to answer: the webhook credits it meanwhile.
+            if case Backend.BackendError.http(let status, _) = error, status == 429 || status == 503 {
+                return Self.throttledRetry
+            }
             return nil
         }
     }
@@ -222,12 +225,22 @@ final class PurchaseCredit {
 
     /// The server credited `purchase`: it leaves the list, whatever the balances say.
     private func markCredited(_ purchase: Pending) {
+        if pending.contains(purchase) { Self.trackCredited(purchase) }
         pending.removeAll { $0 == purchase }
         walletChanged()
         save()
         if pending.isEmpty {
             sync?.cancel()
             if banner == .adding { show(.credited) }
+        }
+    }
+
+    private static func trackCredited(_ purchase: Pending) {
+        let seconds = max(0, Int(Date.now.timeIntervalSince(purchase.date)))
+        Telemetry.track(.purchaseCredited(seconds: seconds))
+        // Paid and only credited long after: the webhook or purchase-sync is late, worth a look.
+        if TimeInterval(seconds) > slowAfter {
+            Telemetry.problem("purchase credited late", "purchase", extra: ["seconds_to_credit": seconds])
         }
     }
 

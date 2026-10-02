@@ -79,6 +79,7 @@ struct MediaViewer: View {
         .animation(Motion.snappy, value: chromeHidden)
         .statusBarHidden()
         .onChange(of: current) { _, _ in zoomed = false }
+        .trackScreen(.mediaViewer)
     }
 
     @ViewBuilder

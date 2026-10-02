@@ -85,6 +85,13 @@ extension VerificationError {
     }
 }
 
+private extension VerificationError {
+    /// The case's name as a code (`tooManyCodes` is `too_many_codes`), for analytics.
+    var reason: String {
+        String(describing: self).replacingOccurrences(of: "([a-z])([A-Z])", with: "$1_$2", options: .regularExpression).lowercased()
+    }
+}
+
 // MARK: - Phone
 
 /// Front-end state machine for phone verification: number, code, verified, or locked.
@@ -198,14 +205,18 @@ final class PhoneVerificationModel {
             Haptics.success()
             return
         }
+        let resend = stage == .enterCode
         do {
             try await service.sendCode(to: e164)
             code = ""
             stage = .enterCode
             startResendTimer()
+            Telemetry.track(.phoneCodeSent(during: during, resend: resend))
             Haptics.success()
         } catch {
             let failure = error as? VerificationError ?? .sendFailed
+            Telemetry.track(.phoneCodeFailed(during: during, reason: failure.reason))
+            Telemetry.unexpected(error, "phone", "send_code")
             self.error = failure.message
             // Nothing to fix on the number there: waiting, or confirming the email, is the way.
             needsHelp = ![.tooManyCodes, .emailUnconfirmed, .network, .checkUnavailable].contains(failure)
@@ -227,22 +238,33 @@ final class PhoneVerificationModel {
             verifiedNumber = e164
             stage = .verified
             timer?.cancel()
+            Telemetry.track(.phoneVerified(during: during))
             Haptics.success()
         } catch VerificationError.expired {
+            Telemetry.track(.phoneVerificationFailed(during: during, reason: VerificationError.expired.reason))
             error = L("This code has expired. Send a new one.")
             code = ""
             Haptics.warning()
         } catch VerificationError.numberTaken {
             // Verified on another account meanwhile: no code fixes that, the number has to change.
+            Telemetry.track(.phoneVerificationFailed(during: during, reason: VerificationError.numberTaken.reason))
             changeNumber()
             error = VerificationError.numberTaken.message
             Haptics.warning()
         } catch let failure as VerificationError where failure != .wrongCode {
             // Not the code's fault (offline, a server error): no try used up, the same code can go again.
+            Telemetry.track(.phoneVerificationFailed(during: during, reason: failure.reason))
+            Telemetry.unexpected(failure, "phone", "verify")
             error = failure == .network ? failure.message : L("Something went wrong. Try again in a moment.")
             needsHelp = failure != .network
             Haptics.warning()
         } catch {
+            if let failure = error as? VerificationError {
+                Telemetry.track(.phoneVerificationFailed(during: during, reason: failure.reason))
+            } else {
+                Telemetry.track(.phoneVerificationFailed(during: during, reason: Telemetry.reason(error)))
+                Telemetry.unexpected(error, "phone", "verify")
+            }
             attemptsLeft -= 1
             code = ""
             Haptics.warning()
@@ -277,6 +299,9 @@ final class PhoneVerificationModel {
         error = nil
         needsHelp = false
     }
+
+    /// Where the check runs (`onboarding`, `phone_verification`), for analytics.
+    private var during: String { ScreenTracker.currentID }
 
     /// A code just went out: its lifetime and the Resend countdown start now.
     private func startResendTimer() {

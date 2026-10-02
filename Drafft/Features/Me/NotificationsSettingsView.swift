@@ -54,6 +54,7 @@ struct NotificationsSettingsView: View {
                 }
             }
         }
+        .trackScreen(.notificationSettings)
     }
 
     @ViewBuilder

@@ -67,7 +67,7 @@ struct SessionsView: View {
             .background(DS.Palette.canvasSoft)
             .toolbarVisibility(.hidden, for: .navigationBar)
             .navigationDestination(for: ChatRoute.self) { r in
-                ChatView(conversationID: r.chatID, focusSession: r.sessionID)
+                ChatView(conversationID: r.chatID, focusSession: r.sessionID).trackScreen(.chat)
             }
             .topBar {
                 TabHeader(offset: scrollOffset) { TabTitle(text: L("Sessions")) }

@@ -13,6 +13,8 @@ struct LikesTabView: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var open: Profile?
     @State private var showPaywall = false
+    @Environment(\.tabsOnScreen) private var onScreen
+    @State private var shown = false
 
     private var locked: Bool { !app.isPremium && !app.blurredLikes.isEmpty }
 
@@ -96,6 +98,20 @@ struct LikesTabView: View {
                 .sheetSurface()
             }
         }
+        // Each time the tab is shown (not during the walk under the splash): how many likes waited,
+        // and whether they could be seen.
+        .onAppear {
+            shown = true
+            if onScreen { trackViewed() }
+        }
+        .onChange(of: onScreen) { _, now in
+            if now && shown { trackViewed() }
+        }
+        .onDisappear { shown = false }
+    }
+
+    private func trackViewed() {
+        Telemetry.track(.likesViewed(count: app.likedMeCount, premium: app.isPremium))
     }
 
     /// The one action without drafft tempo, always on screen above the tab bar.

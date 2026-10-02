@@ -34,7 +34,8 @@ extension AppModel {
                 return account
             } catch {
                 guard session == sessionID else { return nil }
-                Self.accountLog.error("The account couldn't be read: \(String(describing: error), privacy: .public)")
+                Telemetry.unexpected(error, "account", "refresh")
+                Self.accountLog.error("The account couldn't be read: \(String(describing: error))")
                 if profileLoad != .loaded {
                     profileLoadFailure = ServerMessage.text(for: error, offline: L("Check your connection and try again."))
                     profileLoad = .failed
@@ -60,7 +61,7 @@ extension AppModel {
         return account
     }
 
-    private static let accountLog = Logger(subsystem: "so.drafft.app", category: "account")
+    private static let accountLog = AppLog("account")
 
     /// The gate from a fresh read. A backend without the consent columns leaves it as it was
     /// (ProfileSync logs that).

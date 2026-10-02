@@ -33,6 +33,7 @@ struct TermsConsentView: View {
         .bottomBar { footer }
         .background { Rectangle().fill(DS.Palette.canvasSoft).ignoresSafeArea() }
         .interactiveDismissDisabled()
+        .trackScreen(.termsConsent)
         .sheet(isPresented: $deleting) { DeleteAccountSheet().sheetSurface() }
     }
 
@@ -66,7 +67,7 @@ struct TermsConsentView: View {
         Task {
             defer { saving = false }
             do {
-                try await TermsConsent.accept()
+                try await TermsConsent.accept(during: "gate")
                 Haptics.success()
                 app.termsConsent = .accepted
             } catch {

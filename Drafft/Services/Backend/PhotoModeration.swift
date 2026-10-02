@@ -58,6 +58,8 @@ final class PhotoModeration {
     /// Picked photos on the server whose verdict couldn't be read (no connection): still being checked,
     /// never taken as approved, read again as soon as the connection is back (`recheck`).
     private var unresolved: Set<String> = []
+    /// Photos whose upload started in this launch: another start is a retry.
+    @ObservationIgnored private var attempted: Set<String> = []
     private let network = NWPathMonitor()
 
     private init() {
@@ -148,6 +150,7 @@ final class PhotoModeration {
                 submit(path)
             }
         } catch {
+            Telemetry.unexpected(error, "photos", "verdict")
             unresolved.insert(path)
         }
     }
@@ -191,6 +194,8 @@ final class PhotoModeration {
     func submit(_ path: String) {
         guard states[slot(path)] == nil else { return }
         states[slot(path)] = .uploading
+        Telemetry.track(.photoUploadStarted(where: ScreenTracker.currentID, retry: attempted.contains(path)))
+        attempted.insert(path)
         Task {
             do {
                 let data = try await Task.detached(priority: .userInitiated) {
@@ -199,7 +204,10 @@ final class PhotoModeration {
                 let tickets = EdgeFunctionTicketProvider(functionsURL: BackendConfig.functionsURL) {
                     try await Backend.shared.accessToken()
                 }
-                let uploaded = try await MediaUploads.photo(data, tickets: tickets)
+                let uploaded = try await Telemetry.trace("media.upload", "profile photo") { span in
+                    span.setData("bytes", .int(data.count))
+                    return try await MediaUploads.photo(data, tickets: tickets)
+                }
                 // The session exists now: this device can receive the "refused" push.
                 await NotificationService.shared.syncPushToken()
                 states[slot(path)] = .checking
@@ -219,6 +227,8 @@ final class PhotoModeration {
                 mediaIDs[path] = id
                 await follow(path, id: id)
             } catch {
+                Telemetry.track(.photoUploadFailed(Telemetry.reason(error)))
+                Telemetry.unexpected(error, "photos", "upload")
                 states[slot(path)] = .failed(Self.failure(error))
             }
         }
@@ -247,12 +257,14 @@ final class PhotoModeration {
         // Not uploaded (yet): nothing the team could look at, so never say it was sent.
         guard let id = id(for: path) else { throw Backend.BackendError.http(404, "not_found") }
         _ = try await Backend.shared.rpc("request_media_review", ["p_media": id])
+        Telemetry.track(.photoReviewRequested)
         states[slot(path)] = .inReview
     }
 
     /// Takes a refused photo off the profile: from the grid, and from the server. Its state stays
     /// refused while a screen still holds it (a photo that's gone never passes for an approved one).
     func remove(_ path: String) {
+        Telemetry.track(.photoRemoved)
         removeRequest = path
         if let id = id(for: path) {
             Task { await Self.deleteOnServer(id) }
@@ -305,6 +317,14 @@ final class PhotoModeration {
     private func settle(_ path: String, _ state: State, announce: Bool = true) {
         let was = states[slot(path)]
         states[slot(path)] = state
+        if was != state {
+            switch state {
+            case .approved: Telemetry.track(.photoModerated("approved"))
+            case .refused: Telemetry.track(.photoModerated("refused"))
+            case .inReview: Telemetry.track(.photoModerated("in_review"))
+            default: break
+            }
+        }
         if state == .refused && was != .refused && announce { announceRefusal(path) }
     }
 

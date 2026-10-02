@@ -67,6 +67,17 @@ enum ProfileSync {
 
     /// Everything sign-up collected, then `complete_onboarding`, which checks the essentials.
     static func finish(_ s: SignUp) async throws {
+        do {
+            try await finishSignUp(s)
+        } catch {
+            // A refusal goes with its code (`terms_required`, `photo_required`), anything else with its kind.
+            Telemetry.track(.onboardingFailed(Telemetry.reason(error)))
+            Telemetry.unexpected(error, "onboarding", "finish")
+            throw error
+        }
+    }
+
+    private static func finishSignUp(_ s: SignUp) async throws {
         var fields: [String: Any] = [
             "name": s.name,
             "birthdate": Self.day.string(from: s.birthday),
@@ -97,6 +108,26 @@ enum ProfileSync {
 
     /// Saves Edit profile's changes (the birthday stays as set at sign-up).
     static func save(_ p: Profile, previous: Profile, voice: (url: URL, duration: TimeInterval, levels: [Float])?) async throws {
+        // Which parts changed, by name only, for analytics.
+        let parts: [(String, Bool)] = [
+            ("name", p.name != previous.name), ("bio", p.bio != previous.bio), ("goal", p.goal != previous.goal),
+            ("favorite_spot", p.favoriteSpot != previous.favoriteSpot), ("icebreaker", p.icebreaker != previous.icebreaker),
+            ("lifestyle", p.vitals != previous.vitals), ("voice_intro", voice != nil), ("sports", p.sports != previous.sports),
+            ("prompts", p.prompts != previous.prompts), ("photos", p.allPhotos != previous.allPhotos)
+        ]
+        let changed = parts.filter { $0.1 }.map { $0.0 }
+        do {
+            try await saveChanges(p, previous: previous, voice: voice)
+        } catch {
+            Telemetry.track(.profileEditFailed(Telemetry.reason(error)))
+            Telemetry.unexpected(error, "profile", "save")
+            throw error
+        }
+        if !changed.isEmpty { Telemetry.track(.profileEdited(fields: changed)) }
+    }
+
+    private static func saveChanges(_ p: Profile, previous: Profile,
+                                    voice: (url: URL, duration: TimeInterval, levels: [Float])?) async throws {
         try await requireLoaded()
         var fields: [String: Any] = [
             "name": p.name,
@@ -236,7 +267,7 @@ enum ProfileSync {
         } catch Backend.BackendError.http(400, let message) where consentColumns.contains(where: { message.contains($0) }) {
             // A backend from before the consent columns (42703, the column doesn't exist): the
             // account is read without them, and the consent stays unknown until it has them.
-            TermsConsent.log.error("The profile has no consent columns (drafft-backend #48 not deployed): \(message, privacy: .public)")
+            TermsConsent.log.fault("The profile has no consent columns (drafft-backend #48 not deployed): \(message)")
             data = try await read(withConsent: false)
         }
         let keys = mediaKeys(in: data)

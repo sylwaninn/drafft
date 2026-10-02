@@ -66,6 +66,16 @@ jobs:
           if [ -n "$big" ]; then echo "error: files over 1 MB:"; echo "$big"; exit 1; fi
       - name: Only public keys in build settings
         run: |
-          if grep -nE 'sb_secret_|service_role|PRIVATE KEY' Config/*.xcconfig project.yml; then
+          # Supabase secret keys, Sentry auth tokens (sntrys_/sntryu_), PostHog personal API keys (phx_).
+          if grep -nE 'sb_secret_|service_role|PRIVATE KEY|sntrys_|sntryu_|phx_' Config/*.xcconfig project.yml; then
             echo "error: a secret in the build settings: only publishable/public keys belong there"; exit 1
+          fi
+      - name: Telemetry stays in the EU
+        run: |
+          # Sentry's EU region and PostHog's EU cloud only (docs/telemetry.md); the app also ignores any other.
+          if grep -hE '^[[:space:]]*SENTRY_DSN[[:space:]]*=[[:space:]]*[^[:space:]]' Config/*.xcconfig | grep -vE '@o[0-9]+\.ingest\.de\.sentry\.io/'; then
+            echo "error: SENTRY_DSN must be a DSN of Sentry's EU region (ingest.de.sentry.io)"; exit 1
+          fi
+          if grep -hE '^[[:space:]]*POSTHOG_HOST[[:space:]]*=' Config/*.xcconfig | grep -vE '=[[:space:]]*https:/(\$\(\))?/eu\.i\.posthog\.com[[:space:]]*$'; then
+            echo "error: POSTHOG_HOST must be PostHog's EU cloud (https://eu.i.posthog.com)"; exit 1
           fi

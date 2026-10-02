@@ -26,6 +26,7 @@ struct MeInfoSheet<Content: View>: View {
             .blurredNavigationEdge()
         }
         .presentationDragIndicator(.visible)
+        .trackScreen(.info)
     }
 }
 
@@ -360,6 +361,7 @@ struct LegalDocsListSheet: View {
                         if index > 0 { RowSeparator() }
                         Button {
                             Haptics.tap()
+                            Telemetry.track(.legalDocOpened(String(describing: doc)))
                             openURL(doc.url(), prefersInApp: true)
                         } label: {
                             HStack(spacing: DS.Space.md) {

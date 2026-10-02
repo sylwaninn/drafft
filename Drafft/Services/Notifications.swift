@@ -82,8 +82,16 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     /// The system prompt. Returns whether notifications are on.
     @discardableResult
     func requestPermission() async -> Bool {
+        let before = await center.notificationSettings().authorizationStatus
         let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
         await refresh()
+        let result: AnalyticsEvent.PermissionResult = switch before {
+        case .notDetermined: granted ? .granted : .denied
+        // iOS doesn't prompt again: only Settings can turn it on.
+        case .denied: .blocked
+        default: .alreadyGranted
+        }
+        Telemetry.track(.permissionRequested(.notifications, result: result, during: ScreenTracker.currentID))
         return granted
     }
 
@@ -166,10 +174,22 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     /// changes are sent, never the defaults at launch.
     private func changed() {
         guard !applying else { return }
+        trackChanges(to: current)
         if let data = try? JSONEncoder().encode(current) { UserDefaults.standard.set(data, forKey: Self.settingsKey) }
         guard let account = Backend.shared.client.auth.currentUser?.id.uuidString else { return }
         unsentFor = account
         send(current, for: account)
+    }
+
+    /// Each switch the person flipped (`notify_matches` off...); the language has its own event.
+    private func trackChanges(to now: NotificationSettings) {
+        guard let data = UserDefaults.standard.data(forKey: Self.settingsKey),
+              let before = try? JSONDecoder().decode(NotificationSettings.self, from: data) else { return }
+        let was = before.fields
+        for (key, value) in now.fields where key != "language" {
+            guard let enabled = value as? Bool, was[key] as? Bool != enabled else { continue }
+            Telemetry.track(.notificationSettingChanged(key, enabled: enabled))
+        }
     }
 
     /// The switch stays as the person set it: a save that fails is sent again at the next account
@@ -266,6 +286,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
         // A refused photo while the app is open: its own banner says it, not the system's (shown once,
         // whether the push or the live `media` event comes first).
         let info = notification.request.content.userInfo
+        Telemetry.track(.pushReceived(Self.pushKind(info), inForeground: true))
         if info["kind"] as? String == "photo_refused" {
             if let media = info["media"] as? String {
                 await MainActor.run { PhotoModeration.shared.apply(mediaID: media, status: "rejected") }
@@ -285,6 +306,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         let info = response.notification.request.content.userInfo
+        Telemetry.track(.pushOpened(Self.pushKind(info)))
         if info["kind"] as? String == "photo_refused", let media = info["media"] as? String {
             await MainActor.run { PhotoModeration.shared.openRefusal(mediaID: media) }
             return
@@ -306,6 +328,14 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
             }
         }
         await MainActor.run { self.openChatID = chatID }
+    }
+
+    /// The push's kind as a code (`new_message` for Stream's chat pushes, `local` for the app's own).
+    nonisolated private static func pushKind(_ info: [AnyHashable: Any]) -> String {
+        if let kind = info["kind"] as? String { return kind.lowercased() }
+        if info["sender"] as? String == "stream.chat" { return "new_message" }
+        if info["chatID"] != nil { return "local" }
+        return "unknown"
     }
 }
 

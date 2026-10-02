@@ -21,6 +21,8 @@ struct ProfileDetailView: View {
     @State private var pendingLike: LikeTarget?
     @State private var superLiking = false
     @State private var showExtras = false
+    /// The profile `profile_viewed` was sent for: once per profile, not on each return to it.
+    @State private var viewedID: String?
 
     /// Written prompts that have an answer: a skipped prompt never shows as an empty card.
     private var prompts: [ProfilePrompt] {
@@ -164,6 +166,20 @@ struct ProfileDetailView: View {
             }
         }
         .onDisappear { AudioPlayback.shared.stop() }
+        .onAppear { trackViewed() }
+        .onChange(of: profile.id) { trackViewed() }
+        .trackScreen(.profileDetail)
+    }
+
+    private func trackViewed() {
+        guard viewedID != profile.id else { return }
+        viewedID = profile.id
+        let source = switch mode {
+        case .discover: "discover"
+        case .sheet: "sheet"
+        case .me: "me"
+        }
+        Telemetry.track(.profileViewed(source: source, hasVoice: profile.voiceIntro != nil, photos: profile.allPhotos.count))
     }
 
     // MARK: Pieces

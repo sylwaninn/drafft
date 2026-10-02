@@ -30,9 +30,19 @@ packages:
   PhoneNumberKit:
     url: https://github.com/marmelroy/PhoneNumberKit
     exactVersion: 4.3.0
+  # Product analytics (docs/telemetry.md), EU cloud: only the app's own events, nothing autocaptured.
+  PostHog:
+    url: https://github.com/PostHog/posthog-ios
+    exactVersion: 3.87.0
   RevenueCat:
     url: https://github.com/RevenueCat/purchases-ios
     from: 5.91.0
+  # Crashes, hangs, errors, performance and the app's logs (docs/telemetry.md), EU region. Pinned: its
+  # options decide what leaves the phone. 9.21 and later depend on a KSCrash commit, which SwiftPM (6.1 at
+  # least) refuses under a version requirement: move up once that's gone.
+  Sentry:
+    url: https://github.com/getsentry/sentry-cocoa
+    exactVersion: 9.20.0
   # Chat: Stream's low-level client only (connection, offline store, channels, messages, reactions,
   # typing, reads); every screen is drafft's own. Pinned: the client and the Stream app evolve together.
   StreamChat:
@@ -65,12 +75,34 @@ targets:
         product: NukeUI
       - package: PhoneNumberKit
         product: PhoneNumberKit
+      - package: PostHog
+        product: PostHog
       - package: RevenueCat
         product: RevenueCat
+      - package: Sentry
+        product: Sentry
       - package: StreamChat
         product: StreamChat
       - package: Supabase
         product: Supabase
+    postBuildScripts:
+      # Readable stack traces in Sentry: an archive uploads its dSYMs (and source context) with sentry-cli,
+      # when it's installed and finds its token (SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT in the
+      # environment, or ~/.sentryclirc). Without them the archive works and nothing is uploaded; the
+      # dSYMs can be uploaded later (docs/telemetry.md).
+      - name: Upload dSYMs to Sentry
+        basedOnDependencyAnalysis: false
+        inputFiles:
+          - ${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}
+        script: |
+          [ "$ACTION" = "install" ] || exit 0
+          export PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+          if ! command -v sentry-cli >/dev/null 2>&1; then
+            echo "warning: sentry-cli isn't installed: the dSYMs weren't uploaded to Sentry (docs/telemetry.md)"
+            exit 0
+          fi
+          sentry-cli debug-files upload --include-sources "$DWARF_DSYM_FOLDER_PATH" \
+            || echo "warning: the dSYMs couldn't be uploaded to Sentry (docs/telemetry.md)"
     configFiles:
       Debug: Config/Staging.xcconfig
       Release: Config/Production.xcconfig
@@ -114,6 +146,11 @@ targets:
         RevenueCatAPIKey: $(REVENUECAT_API_KEY)
         SmsCodeLifetime: $(SMS_CODE_LIFETIME)
         TurnstileSiteKey: $(TURNSTILE_SITE_KEY)
+        # Telemetry (TelemetryConfig): public keys, empty turns the service off.
+        AppEnvironment: $(APP_ENVIRONMENT)
+        SentryDSN: $(SENTRY_DSN)
+        PostHogAPIKey: $(POSTHOG_API_KEY)
+        PostHogHost: $(POSTHOG_HOST)
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [en, fr, es, de, it, pt, nl]
         NSLocationDefaultAccuracyReduced: true
@@ -140,6 +177,8 @@ targets:
       - path: Drafft/Services/OnboardingProgress.swift
       - path: Drafft/Services/PhoneCountry.swift
       - path: Drafft/Services/LikeAge.swift
+      # Telemetry's rules (privacy guard, consent, error kinds, events), without the Sentry and PostHog SDKs.
+      - path: Drafft/Services/Telemetry/Core
     dependencies:
       - package: GRDB
         product: GRDB

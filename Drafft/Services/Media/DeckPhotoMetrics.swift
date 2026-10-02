@@ -14,7 +14,7 @@ import UIKit
 /// Launched with `-deckPhotoReset`, the app starts from an empty photo cache (`Images.configure`).
 @MainActor
 enum DeckPhotoMetrics {
-    private static let log = Logger(subsystem: "so.drafft.app", category: "deck-photos")
+    private static let log = AppLog("deck-photos")
     private static let clock = ContinuousClock()
     private static let file = URL.documentsDirectory.appending(path: "deck-photos.log")
     /// Everything below is keyed by the object (`MediaURL.key`), whatever the link or width.
@@ -150,7 +150,7 @@ enum DeckPhotoMetrics {
 
     /// To the system log and to Documents/deck-photos.log.
     private static func say(_ line: String) {
-        log.notice("\(line, privacy: .public)")
+        log.notice("\(line)")
         let stamp = Date().formatted(.iso8601.time(includingFractionalSeconds: true))
         let data = Data("\(stamp) \(line)\n".utf8)
         if let handle = try? FileHandle(forWritingTo: file) {

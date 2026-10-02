@@ -156,6 +156,7 @@ struct SignUpView: View {
                 }
             }
         }
+        .trackScreen(.emailSignUp)
         .navigationDestination(isPresented: $confirming) { ConfirmEmailView(email: email) }
         .onChange(of: email) { if problem != .weakPassword { problem = nil } }
         .onChange(of: password) { if problem != .emailTaken && problem != .invalidEmail { problem = nil } }
@@ -217,6 +218,7 @@ struct ConfirmEmailView: View {
                                  onResend: { Task { await flow.resend() } })
             }
         }
+        .trackScreen(.emailCode)
         .onAppear {
             guard flow.stage == .form else { return }
             let email = email
@@ -279,6 +281,7 @@ struct LogInView: View {
                     }
             }
         }
+        .trackScreen(.emailLogIn)
         .onChange(of: email) { emailError = nil; formError = nil }
         .onChange(of: password) { passwordError = nil; formError = nil }
         // Its own page, pushed like the rest of the auth flow (not an alert).

@@ -8,3 +8,10 @@ REVENUECAT_API_KEY = appl_tGPiuiBrncvrUfYkkFAGQzOmQEF
 // How long an SMS code works, in seconds: Auth > Providers > Phone > SMS OTP Expiry.
 SMS_CODE_LIFETIME = 600
 APP_DISPLAY_NAME = drafft
+// Telemetry (docs/telemetry.md). Public by design: a DSN or a project key only lets an app send. Empty turns
+// the service off. Sentry: EU region, project "drafft-ios". PostHog: EU cloud, project "drafft". Never a
+// Sentry auth token or a PostHog personal API key (CI refuses both).
+APP_ENVIRONMENT = production
+SENTRY_DSN =
+POSTHOG_API_KEY =
+POSTHOG_HOST = https:/$()/eu.i.posthog.com

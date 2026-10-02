@@ -72,6 +72,7 @@ struct MatchView: View {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) { arrived = true }
             withAnimation(.easeOut(duration: 0.5).delay(0.15)) { trails = true }
         }
+        .trackScreen(.match)
     }
 
     private var subtitle: String {

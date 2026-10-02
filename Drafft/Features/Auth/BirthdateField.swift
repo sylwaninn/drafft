@@ -7,6 +7,8 @@ struct BirthdateField: View {
     @Binding var date: Date?
     /// Oldest accepted birthday; anything earlier (or in the future) reads as a typo.
     let oldest: Date
+    /// A hundred years ago: the oldest birthday sign-up accepts.
+    static var oldestBirthday: Date { Calendar.current.date(byAdding: .year, value: -100, to: .now) ?? .distantPast }
 
     @State private var digits = ""
     @State private var invalid = false

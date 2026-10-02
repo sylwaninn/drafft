@@ -6,11 +6,19 @@ enum Safety {
     /// blocks them: `report_user` does both.
     static func report(_ person: Profile, reason: ReportReason, details: String) async throws {
         guard UUID(uuidString: person.id) != nil else { return }
-        _ = try await Backend.shared.rpc("report_user", [
-            "p_target": person.id,
-            "p_reason": reason.rawValue,
-            "p_details": String(details.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1000))
-        ])
+        do {
+            _ = try await Backend.shared.rpc("report_user", [
+                "p_target": person.id,
+                "p_reason": reason.rawValue,
+                "p_details": String(details.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1000))
+            ])
+        } catch {
+            if Telemetry.kind(of: error) != .cancelled { Telemetry.track(.reportFailed(Telemetry.reason(error))) }
+            Telemetry.unexpected(error, "safety", "report")
+            throw error
+        }
+        // The category only: the details are the person's own words, for the safety team alone.
+        Telemetry.track(.userReported(reason.rawValue.lowercased()))
     }
 
     /// `block_user` / `unblock_user`. Both are idempotent: sending one again is harmless.

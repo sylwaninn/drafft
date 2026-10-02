@@ -111,6 +111,7 @@ extension AppModel {
             _ = readLanded(read, ok: ok)
             discovery.load = nil
             apply(outcome, filters: filters, asked: limit)
+            trackDeck(outcome, mode: mode, seconds: Self.clock - read.read.startedAt)
         }
     }
 
@@ -164,6 +165,21 @@ extension AppModel {
         }
     }
 
+    private func trackDeck(_ outcome: DeckOutcome, mode: DeckLoad, seconds: TimeInterval) {
+        let modeCode = String(describing: mode)
+        switch outcome {
+        case .cards:
+            let rounded = (seconds * 100).rounded() / 100
+            Telemetry.track(.deckLoaded(cards: queue.count, mode: modeCode, exhausted: discovery.exhausted, seconds: rounded))
+            if queue.isEmpty { Telemetry.track(.deckEmptyShown(exhausted: discovery.exhausted)) }
+        case .refused(let code):
+            Telemetry.track(.deckLoadFailed(code.lowercased()))
+        case .failed(let error):
+            Telemetry.track(.deckLoadFailed(Telemetry.reason(error)))
+            Telemetry.unexpected(error, "discover", "load_deck", extra: ["mode": modeCode])
+        }
+    }
+
     /// The deck on screen, for the next launch.
     private func saveDeck(_ filters: DiscoverFilters) {
         guard let data = DeckCache.encode(filters: DeckCache.key(filters), cards: queue.compactMap { discovery.raw[$0.id] })
@@ -173,6 +189,9 @@ extension AppModel {
 
     /// New filters: a new deck, from scratch.
     func filtersChanged() {
+        // Distance and sports only: who someone wants to meet is never sent.
+        Telemetry.track(.filtersChanged(maxDistanceKm: Int(filters.maxDistanceKm), sports: filters.sports.count,
+                                        sharedSportsOnly: filters.sharedSportsOnly))
         loadDeck(.restart)
     }
 
@@ -191,6 +210,8 @@ extension AppModel {
         let deckIndex = queue.firstIndex { $0.id == profile.id }
         let likesIndex = likedMe.firstIndex { $0.id == profile.id }
         guard deckIndex != nil || likesIndex != nil else { return }
+        Telemetry.track(.profileSwiped(Self.swipeAction(liked: liked, superLike: superLike), source: deckIndex != nil ? .deck : .likes,
+                                       withOpener: opener != nil, premium: isPremium, likesLeft: likesLeft, deckSize: queue.count))
         withAnimation(Motion.snappy) {
             queue.removeAll { $0.id == profile.id }
             likedMe.removeAll { $0.id == profile.id }
@@ -238,6 +259,16 @@ extension AppModel {
         Double(duration.components.seconds) + Double(duration.components.attoseconds) / 1e18
     }
 
+    nonisolated private static func swipeAction(liked: Bool, superLike: Bool) -> AnalyticsEvent.SwipeAction {
+        superLike ? .superLike : liked ? .like : .pass
+    }
+
+    private func trackSwipeFailure(_ action: AnalyticsEvent.SwipeAction, code: String?, error: Error) {
+        Telemetry.track(.swipeRefused(action, reason: Telemetry.reason(error)))
+        if code == "daily_like_limit" { Telemetry.track(.dailyLikeLimitReached) }
+        Telemetry.unexpected(error, "discover", "swipe")
+    }
+
     /// `swipe`'s parameters. A super like's text is its note (140 characters); any other opener is
     /// the first message.
     nonisolated private static func swipeBody(_ target: String, liked: Bool, superLike: Bool, opener: MessageContent?) -> [String: Any] {
@@ -255,6 +286,7 @@ extension AppModel {
     private func matched(_ profile: Profile, matchID: String) {
         if let i = history.lastIndex(where: { $0.profile.id == profile.id }) { history[i].matched = true }
         discovery.knownMatches.insert(matchID)
+        Telemetry.track(.matchCreated(.mySwipe))
         if !matches.contains(where: { $0.id == matchID }) {
             withAnimation(Motion.snappy) { matches.insert(Match(id: matchID, profile: profile, matchedAt: .now), at: 0) }
         }
@@ -267,6 +299,7 @@ extension AppModel {
     private func swipeFailed(_ swipe: Swiped, deckIndex: Int?, likesIndex: Int?, error: Error) {
         let (profile, liked, superLike) = (swipe.profile, swipe.liked, swipe.superLike)
         let code = ServerMessage.code(of: error)
+        trackSwipeFailure(Self.swipeAction(liked: liked, superLike: superLike), code: code, error: error)
         history.removeAll { $0.profile.id == profile.id }
         switch code {
         case "not_eligible", "not_found", "already_swiped":
@@ -302,6 +335,7 @@ extension AppModel {
     /// Brings the last swipe back (the server undoes its last one, within 10 minutes, without a match).
     func undo() {
         guard !profilePaused, canUndo, let last = history.popLast() else { return }
+        Telemetry.track(.swipeUndone(Self.swipeAction(liked: last.liked, superLike: last.superLike)))
         discovery.swiped.remove(last.profile.id)
         withAnimation(Motion.bouncy) {
             if last.fromLikes {
@@ -324,6 +358,7 @@ extension AppModel {
                     likedMe.removeAll { $0.id == last.profile.id }
                 }
                 let code = ServerMessage.code(of: error)
+                Telemetry.unexpected(error, "discover", "undo")
                 if code != "paused", code != "moderated" {
                     Haptics.warning()
                     say(error)
@@ -348,6 +383,7 @@ extension AppModel {
     /// A refusal or failure, above the tabs, in the person's language.
     func say(_ error: Error) {
         let text = ServerMessage.text(for: error, offline: L("Couldn't connect. Check your connection and try again."))
+        Telemetry.breadcrumb("ui", "notice shown", level: .warning, data: ["reason": Telemetry.reason(error)])
         withAnimation(Motion.bouncy) { notice = Notice(text: text) }
     }
 
@@ -373,6 +409,7 @@ extension AppModel {
         let before = (boosts: boosts, endsAt: boostEndsAt)
         boosts -= 1
         boostEndsAt = .now.addingTimeInterval(Self.boostDuration)
+        Telemetry.track(.boostStarted(left: boosts))
         Haptics.success()
         boostBanner = UUID()
         Task { [self] in
@@ -385,6 +422,8 @@ extension AppModel {
                 boosts = before.boosts
                 boostEndsAt = before.endsAt
                 boostBanner = nil
+                Telemetry.track(.boostFailed(Telemetry.reason(error)))
+                Telemetry.unexpected(error, "discover", "boost")
                 let code = ServerMessage.code(of: error)
                 if code != "paused", code != "moderated" {
                     Haptics.warning()

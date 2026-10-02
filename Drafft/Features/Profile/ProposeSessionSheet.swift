@@ -148,6 +148,7 @@ struct ProposeSessionSheet: View {
         }
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled(sending)
+        .trackScreen(.proposeSession)
     }
 
     // MARK: Sections
@@ -371,84 +372,6 @@ struct ProposeSessionSheet: View {
         .buttonStyle(PressScaleStyle(scale: 0.96))
     }
 
-    // MARK: Pitch (a one-line hook for the session)
-
-    private var titlePicker: some View {
-        VStack(alignment: .leading, spacing: DS.Space.md) {
-            // Placeholder drawn as wrapping text in the same stack, so the field grows to fit it
-            // (a vertical TextField would truncate a long prompt).
-            ZStack(alignment: .topLeading) {
-                if title.isEmpty {
-                    Text(pitchIdeas[0])
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(DS.Palette.mute)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                }
-                TextField("", text: $title, axis: .vertical)
-                    .lineLimit(1...3)
-                    .font(.body.weight(.semibold))
-                    .focused($focus, equals: .title)
-                    .revealsOnFocus(focus == .title)
-                    .submitLabel(.done)
-                    .accessibilityLabel("Pitch")
-            }
-                .padding(.horizontal, DS.Space.md)
-                .padding(.vertical, 13)
-                .background(DS.Palette.canvasSoft, in: .rect(cornerRadius: DS.Radius.md))
-                .overlay {
-                    RoundedRectangle(cornerRadius: DS.Radius.md)
-                        .strokeBorder(focus == .title ? DS.Palette.ink : .clear, lineWidth: 1.5)
-                }
-                .overlay(alignment: .topTrailing) {
-                    if !title.isEmpty {
-                        Button { withAnimation(Motion.snappy) { title = "" } } label: {
-                            Image("close-circle").foregroundStyle(DS.Palette.mute)
-                                .frame(width: 44, height: 44)
-                                .contentShape(.rect)
-                        }
-                        .accessibilityLabel("Clear pitch")
-                    }
-                }
-                .animation(Motion.snappy, value: focus)
-
-            Text("Or steal one of these")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(DS.Palette.mute)
-            VStack(alignment: .leading, spacing: DS.Space.sm) {
-                ForEach(pitchIdeas, id: \.self) { idea in
-                    let on = title == idea
-                    Button {
-                        Haptics.select()
-                        withAnimation(Motion.select) { title = on ? "" : idea }
-                    } label: {
-                        // Icon sits on the first line's baseline, even when the idea wraps.
-                        HStack(alignment: .firstTextBaseline, spacing: DS.Space.sm) {
-                            Image(on ? "check" : "stars")
-                                .font(.footnote.weight(.bold))
-                                .frame(width: 16)
-                                .contentTransition(.symbolEffect(.replace))
-                            Text(idea)
-                                .font(.subheadline.weight(.semibold))
-                                .multilineTextAlignment(.leading)
-                            Spacer(minLength: 0)
-                        }
-                        .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
-                        .padding(.horizontal, DS.Space.md)
-                        .padding(.vertical, DS.Space.md)
-                        .frame(minHeight: 44)
-                        .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvasSoft), in: .rect(cornerRadius: DS.Radius.md))
-                    }
-                    .buttonStyle(PressScaleStyle(scale: 0.98))
-                    .accessibilityAddTraits(on ? .isSelected : [])
-                }
-            }
-            .id("\(sport)-\(String(describing: discovery))") // fresh ideas when the sport or discovery changes
-            .transition(.opacity)
-        }
-    }
-
     /// Recap of exactly what will be sent, then the action.
     private var footer: some View {
         VStack(spacing: DS.Space.md) {
@@ -547,8 +470,90 @@ struct ProposeSessionSheet: View {
     }
 }
 
+// MARK: Pitch (a one-line hook for the session)
+
+extension ProposeSessionSheet {
+    private var titlePicker: some View {
+        VStack(alignment: .leading, spacing: DS.Space.md) {
+            // Placeholder drawn as wrapping text in the same stack, so the field grows to fit it
+            // (a vertical TextField would truncate a long prompt).
+            ZStack(alignment: .topLeading) {
+                if title.isEmpty {
+                    Text(pitchIdeas[0])
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(DS.Palette.mute)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .allowsHitTesting(false)
+                        .accessibilityHidden(true)
+                }
+                TextField("", text: $title, axis: .vertical)
+                    .lineLimit(1...3)
+                    .font(.body.weight(.semibold))
+                    .focused($focus, equals: .title)
+                    .revealsOnFocus(focus == .title)
+                    .submitLabel(.done)
+                    .accessibilityLabel("Pitch")
+            }
+                .padding(.horizontal, DS.Space.md)
+                .padding(.vertical, 13)
+                .background(DS.Palette.canvasSoft, in: .rect(cornerRadius: DS.Radius.md))
+                .overlay {
+                    RoundedRectangle(cornerRadius: DS.Radius.md)
+                        .strokeBorder(focus == .title ? DS.Palette.ink : .clear, lineWidth: 1.5)
+                }
+                .overlay(alignment: .topTrailing) {
+                    if !title.isEmpty {
+                        Button { withAnimation(Motion.snappy) { title = "" } } label: {
+                            Image("close-circle").foregroundStyle(DS.Palette.mute)
+                                .frame(width: 44, height: 44)
+                                .contentShape(.rect)
+                        }
+                        .accessibilityLabel("Clear pitch")
+                    }
+                }
+                .animation(Motion.snappy, value: focus)
+
+            Text("Or steal one of these")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(DS.Palette.mute)
+            VStack(alignment: .leading, spacing: DS.Space.sm) {
+                ForEach(pitchIdeas, id: \.self) { idea in
+                    let on = title == idea
+                    Button {
+                        Haptics.select()
+                        withAnimation(Motion.select) { title = on ? "" : idea }
+                    } label: {
+                        // Icon sits on the first line's baseline, even when the idea wraps.
+                        HStack(alignment: .firstTextBaseline, spacing: DS.Space.sm) {
+                            Image(on ? "check" : "stars")
+                                .font(.footnote.weight(.bold))
+                                .frame(width: 16)
+                                .contentTransition(.symbolEffect(.replace))
+                            Text(idea)
+                                .font(.subheadline.weight(.semibold))
+                                .multilineTextAlignment(.leading)
+                            Spacer(minLength: 0)
+                        }
+                        .foregroundStyle(on ? DS.Palette.onLime : DS.Palette.ink)
+                        .padding(.horizontal, DS.Space.md)
+                        .padding(.vertical, DS.Space.md)
+                        .frame(minHeight: 44)
+                        .background(on ? AnyShapeStyle(DS.Palette.lime) : AnyShapeStyle(DS.Palette.canvasSoft), in: .rect(cornerRadius: DS.Radius.md))
+                    }
+                    .buttonStyle(PressScaleStyle(scale: 0.98))
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
+            }
+            .id("\(sport)-\(String(describing: discovery))") // fresh ideas when the sport or discovery changes
+            .transition(.opacity)
+        }
+    }
+
+}
+
 /// Small overlapping portraits of who does a sport ("you both", "them", "you"), said without text.
 /// Each face sits in a ring of the tile's own colour, so an overlap reads as a cut, not a border.
+
 private struct Faces: View {
     let portraits: [String]
     let ringColor: AnyShapeStyle

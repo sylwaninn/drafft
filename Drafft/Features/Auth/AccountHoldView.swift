@@ -97,6 +97,7 @@ struct AccountHoldView: View {
         .nightSurface()
         .safeAreaInset(edge: .bottom, spacing: 0) { actions }
         .background(DS.Palette.night.ignoresSafeArea())
+        .trackScreen(.accountHold)
         .onAppear { appeared = true }
         .sheet(isPresented: $askingHelp) {
             SupportSheet(topic: hold == .banned ? L("Closed account") : L("Account check"))

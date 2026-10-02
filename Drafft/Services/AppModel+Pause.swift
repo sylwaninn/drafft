@@ -46,6 +46,7 @@ extension AppModel {
         defer { pauseSaves -= 1 }
         do {
             try await Backend.shared.updateMyProfile(["paused": paused])
+            Telemetry.track(.profilePaused(paused))
             // Resumed: discovery reads the deck again (nothing was read while paused). Only once
             // the server has it: asked sooner, it answers "paused" and the pause came back on.
             if !paused, edit == pauseEdits { refreshDiscovery(.entered) }
@@ -53,6 +54,7 @@ extension AppModel {
         } catch {
             // A later flip is on its way: it decides.
             guard edit == pauseEdits else { return nil }
+            Telemetry.unexpected(error, "account", "pause")
             Haptics.warning()
             applyServerPause(!paused)
             let text = if !(error is URLError) {
