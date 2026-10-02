@@ -154,7 +154,7 @@ struct MeView: View {
         }
     }
 
-    /// "drafft 1.0 (12)", with the environment in the name off production ("drafft β", "drafft local").
+    /// "drafft 1.0 (12)", with the environment in the name off production ("drafft β").
     private static let buildLabel: String = {
         let info = Bundle.main.infoDictionary ?? [:]
         let name = info["CFBundleDisplayName"] as? String ?? "drafft"

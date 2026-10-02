@@ -639,8 +639,8 @@ final class TelemetryTests: XCTestCase {
     // MARK: Config
 
     func testAnUnknownEnvironmentNeverCountsAsProduction() {
-        for known in ["production", "staging", "local"] { XCTAssertEqual(TelemetryConfig.environmentID(known), known) }
-        for odd in ["", "$(APP_ENVIRONMENT)", "Production", "prod", "debug"] {
+        for known in ["production", "staging"] { XCTAssertEqual(TelemetryConfig.environmentID(known), known) }
+        for odd in ["", "$(APP_ENVIRONMENT)", "Production", "prod", "debug", "local"] {
             XCTAssertEqual(TelemetryConfig.environmentID(odd), "unknown", odd)
         }
     }

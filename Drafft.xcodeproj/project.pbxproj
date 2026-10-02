@@ -261,7 +261,6 @@
 		15FF70419B1BEAA0702662B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		19730D08BD6D9A31A2AD6529 /* CalendarAccessBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarAccessBanner.swift; sourceTree = "<group>"; };
 		1A4F7981C6447537B079E3AB /* RenditionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenditionsTests.swift; sourceTree = "<group>"; };
-		1E69AE2A96A531F1ACEE40A1 /* Local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Local.xcconfig; sourceTree = "<group>"; };
 		201218E955E997711E0CBFFA /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		206A94BBDCB8F46CCAAA7937 /* LoadedPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadedPhoto.swift; sourceTree = "<group>"; };
 		20B74525F0A468F3258D52C2 /* NotificationText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationText.swift; sourceTree = "<group>"; };
@@ -532,7 +531,6 @@
 		205720B916BC29F5CCCCE782 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				1E69AE2A96A531F1ACEE40A1 /* Local.xcconfig */,
 				A42F9B18FCEEDFCA28CC2DBA /* Production.xcconfig */,
 				3B4A514CD1BBFE9780BF3B43 /* Staging.xcconfig */,
 			);
@@ -1345,97 +1343,6 @@
 			};
 			name = Debug;
 		};
-		54999237E7B1297540B457D7 /* Local */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1E69AE2A96A531F1ACEE40A1 /* Local.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Drafft/Drafft.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Drafft/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "$(APP_DISPLAY_NAME)";
-				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "drafft keeps the sessions you add to your calendar up to date, and removes them if they're cancelled.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "drafft uses your camera for photos in your profile and chats, and for the selfie that confirms it's you.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "drafft uses your location to show people near you. Others see your area and a rounded distance, never your address.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "drafft uses the microphone to record voice messages and your voice intro.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "drafft lets you share photos and videos in chat and add them to your profile.";
-				INFOPLIST_KEY_UILaunchStoryboardName = Launch;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = so.drafft.app;
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Local;
-		};
-		57C52E7677DD81DD41BA57C5 /* Local */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 4F4J2C4L9W;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 6.0;
-			};
-			name = Local;
-		};
 		66018B3A46B001EB76B4C361 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B4A514CD1BBFE9780BF3B43 /* Staging.xcconfig */;
@@ -1526,23 +1433,6 @@
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
-		};
-		B3FB18DEB6808FCAB793A65E /* Local */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = so.drafft.tests;
-				SDKROOT = iphoneos;
-				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Local;
 		};
 		B92C1A783BE23CFFF756CD5E /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1714,7 +1604,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				66018B3A46B001EB76B4C361 /* Debug */,
-				54999237E7B1297540B457D7 /* Local */,
 				D45DF9366A07816F96153CA1 /* Release */,
 				E28D22424CFD22FE43C763DE /* Staging */,
 			);
@@ -1725,7 +1614,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C64B8FEB5BD5B5F38BAB135E /* Debug */,
-				57C52E7677DD81DD41BA57C5 /* Local */,
 				8472D29F9B7E3527D2385FEA /* Release */,
 				2482A9B73DF513F3AC79CACF /* Staging */,
 			);
@@ -1736,7 +1624,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2E9469337523931D5E8A8C17 /* Debug */,
-				B3FB18DEB6808FCAB793A65E /* Local */,
 				B92C1A783BE23CFFF756CD5E /* Release */,
 				D637D0C3DB37440E019682D3 /* Staging */,
 			);

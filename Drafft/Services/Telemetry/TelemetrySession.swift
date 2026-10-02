@@ -9,7 +9,7 @@ enum TelemetrySession {
     static let config = TelemetryConfig.fromBundle()
 
     /// First thing at launch, before anything that could crash: Sentry, then PostHog with the person's
-    /// saved answer. Without keys (local builds) nothing is installed and every call does nothing.
+    /// saved answer. Without keys nothing is installed and every call does nothing.
     static func start() {
         Telemetry.install(crashes: SentryCrashReporter.start(config), classifier: AppErrorClassifier())
         let consent = AnalyticsConsent.load()

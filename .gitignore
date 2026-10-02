@@ -14,7 +14,7 @@ Drafft.xcodeproj/-Xcc/
 *.p12
 *.mobileprovision
 
-# Machine-specific local backend (scripts/local-backend.sh)
+# Machine-specific leftover of the removed local backend setup
 /Local.private.xcconfig
 
 # Claude Code: personal and per-session files
