@@ -32,6 +32,13 @@ final class RenditionsTests: XCTestCase {
         XCTAssertEqual(Renditions.candidates(covering: 72), [160, 320, 640, 1_080, 1_440, nil])
     }
 
+    func testEverydayPhotosStopAt1080AndAnOpenProfileGoesFurther() {
+        XCTAssertEqual(Renditions.asked(1_344, detail: false), 1_080)
+        XCTAssertEqual(Renditions.asked(1_344, detail: true), 1_344)
+        XCTAssertEqual(Renditions.asked(600, detail: false), 600)
+        XCTAssertEqual(Renditions.width(covering: Renditions.asked(1_344, detail: false)), 1_080)
+    }
+
     func testPreviewIsAQuarterOfTheWidth() {
         XCTAssertEqual(Renditions.previewWidth(covering: 1_344), 320)
         XCTAssertEqual(Renditions.previewWidth(covering: 300), 160)
