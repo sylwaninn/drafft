@@ -177,7 +177,9 @@ keyed by the same app user id).
 | `APP_ENVIRONMENT` | `production`, `staging` or `local` (set in each xcconfig) |
 
 Empty values turn the service off. Production and staging share the Sentry project (the `environment`
-tag separates them); PostHog uses one project per environment so tests never pollute real numbers.
+tag separates them) and the PostHog project too, with the Android app and the website: filter every
+insight, funnel, alert and experiment on `app_environment = production` (local builds send nothing:
+empty key). Staging events count in the same quota.
 CI refuses a non-EU host or DSN, and anything shaped like a secret (Sentry auth tokens, PostHog
 personal API keys); the app also ignores a non-EU value. gitleaks allows DSNs and `phc_` keys by
 value, nothing else.

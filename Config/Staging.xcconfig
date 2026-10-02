@@ -9,8 +9,8 @@ REVENUECAT_API_KEY = appl_nPDeedcmfhgYnAvrGnLpAoYIQkm
 SMS_CODE_LIFETIME = 600
 APP_DISPLAY_NAME = drafft β
 // Telemetry (docs/telemetry.md): the same Sentry project as production (environment "staging" tells them
-// apart), PostHog's staging project so tests never mix with real usage. Empty: off.
+// apart), the same PostHog project too (`app_environment` tells them apart in every insight). Empty: off.
 APP_ENVIRONMENT = staging
 SENTRY_DSN =
-POSTHOG_API_KEY =
+POSTHOG_API_KEY = phc_v7XkEKcLMvYaaNMfNANZBEidQwYKe4MjzugMQHyxur7W
 POSTHOG_HOST = https:/$()/eu.i.posthog.com

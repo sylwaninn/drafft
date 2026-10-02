@@ -13,5 +13,5 @@ APP_DISPLAY_NAME = drafft
 // Sentry auth token or a PostHog personal API key (CI refuses both).
 APP_ENVIRONMENT = production
 SENTRY_DSN =
-POSTHOG_API_KEY =
+POSTHOG_API_KEY = phc_v7XkEKcLMvYaaNMfNANZBEidQwYKe4MjzugMQHyxur7W
 POSTHOG_HOST = https:/$()/eu.i.posthog.com
