@@ -197,7 +197,7 @@ struct ProfileDetailView: View {
     private var gallery: some View {
         TabView(selection: $page) {
             ForEach(Array(profile.allPhotos.enumerated()), id: \.offset) { i, name in
-                Photo(name: name).tag(i)
+                Photo(name: name, detail: true).tag(i)
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))

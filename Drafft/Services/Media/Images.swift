@@ -69,15 +69,17 @@ enum Images {
     /// `blur`: a radius as a share of the photo's shorter side, applied once when it's decoded.
     /// `variant`: a rendition kept apart in the caches (the server's blurred copy of a like), so it can
     /// never be served for another rendition of the same object, or the other way round.
+    /// `detail`: an open profile's photo, which may take a copy wider than `Renditions.everydayWidth`.
     static func request(_ name: String, points: CGSize, scale: CGFloat = 3, priority: ImageRequest.Priority = .normal,
-                        blur: CGFloat = 0, variant: String? = nil) -> ImageRequest? {
+                        blur: CGFloat = 0, variant: String? = nil, detail: Bool = false) -> ImageRequest? {
         let pixels = CGSize(width: points.width * scale, height: points.height * scale)
         let decode = Renditions.decodeSize(for: pixels)
         let url: URL?
         if name.hasPrefix("/") {
             url = URL(fileURLWithPath: name)
         } else if name.hasPrefix("http") {
-            var needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
+            var needed = Renditions.asked(Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name)),
+                                          detail: detail)
             // A slow line gets a step lighter (a copy already here still wins): sooner beats sharper there.
             if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
             url = closest(name, covering: needed, variant: variant)
@@ -113,10 +115,11 @@ enum Images {
     /// larger one) is already on this phone. Only the object and width: the decode size and processors
     /// would make Nuke look the bytes up under a key it never stores them under, and download them again.
     static func download(_ name: String, points: CGSize, scale: CGFloat = 3, priority: ImageRequest.Priority,
-                         variant: String? = nil) -> ImageRequest? {
+                         variant: String? = nil, detail: Bool = false) -> ImageRequest? {
         guard name.hasPrefix("http") else { return nil }
         let pixels = CGSize(width: points.width * scale, height: points.height * scale)
-        var needed = Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name))
+        var needed = Renditions.asked(Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name)),
+                                      detail: detail)
         if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
         guard let url = closest(name, covering: needed, variant: variant) else { return nil }
         var request = ImageRequest(url: url, priority: priority)
