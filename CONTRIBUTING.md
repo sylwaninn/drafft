@@ -64,7 +64,7 @@ swiftlint lint --strict --baseline .swiftlint-baseline.json
 python3 scripts/ci/design_lint.py && python3 scripts/ci/i18n_lint.py
 ```
 
-Unit tests run from Xcode (`⌘U`) on the Drafft Local scheme.
+Unit tests run from Xcode (`⌘U`) on the Drafft Staging scheme.
 
 ## Quality gates
 

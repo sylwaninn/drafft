@@ -186,30 +186,25 @@ versions are in `Drafft.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Packa
 
 ## Getting started
 
-Needs Xcode 26, `brew install xcodegen swiftlint`, Python 3 for the lints, and for the local backend Docker and
-the Supabase CLI.
+Needs Xcode 26, `brew install xcodegen swiftlint`, and Python 3 for the lints.
 
 ```sh
 git clone git@github.com:sylwaninn/drafft-ios.git      # next to drafft-backend
 cd drafft-ios && git config core.hooksPath .agents/git-hooks
 
-(cd ../drafft-backend && supabase start)               # local backend
-scripts/local-backend.sh                               # --device for an iPhone on the same Wi-Fi
-xcodegen generate && open Drafft.xcodeproj             # scheme "Drafft Local", then Run
+xcodegen generate && open Drafft.xcodeproj             # scheme "Drafft Staging", then Run
 ```
 
 > [!IMPORTANT]
-> Work on **Drafft Local**. Every scheme shares the bundle id `so.drafft.app`: installing another one replaces
-> the local app and sends real actions to staging or production.
+> Work on **Drafft Staging**. Every scheme shares the bundle id `so.drafft.app`: installing another one replaces
+> the staging app and sends real actions to production.
 
 | Scheme | Backend | Home screen name | Telemetry |
 |---|---|---|---|
-| **Drafft Local** | Supabase on your Mac, staging services | drafft local | off |
 | **Drafft Staging** | Supabase branch `staging` | drafft β | `staging` |
 | **Drafft** | production | drafft | `production` |
 
-The three schemes read `Config/Local.xcconfig`, `Staging.xcconfig` and `Production.xcconfig`; Local also
-includes the gitignored `Local.private.xcconfig` that `scripts/local-backend.sh` writes. Branches, commits, checks
+The two schemes read `Config/Staging.xcconfig` and `Production.xcconfig`. Branches, commits, checks
 and pull requests: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Release

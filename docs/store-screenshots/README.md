@@ -6,8 +6,7 @@ Comment produire les captures des stores de drafft, et pourquoi elles sont faite
 
 ## Régénérer
 
-Prérequis : Xcode et xcodegen, Google Chrome dans `/Applications`, Python 3 avec Pillow et numpy,
-et `Local.private.xcconfig` à la racine du repo (`scripts/local-backend.sh`).
+Prérequis : Xcode et xcodegen, Google Chrome dans `/Applications`, Python 3 avec Pillow et numpy.
 
 ```sh
 docs/store-screenshots/run.sh            # tout : build, captures, détourage, composition (environ 20 min)
@@ -49,7 +48,7 @@ Sources : [Apple, Screenshot specifications](https://developer.apple.com/help/ap
    build publié. Le module remplit les vrais écrans avec les profils fictifs de démo, sans backend, et ouvre la
    scène demandée par `STORE_SCENE` dans la langue `STORE_LANG` (`STORE_TOP` isole un profil sur Découvrir,
    `STORE_SCROLL` fait défiler un profil ou une feuille). `run.sh` l'applique dans un worktree temporaire,
-   compile en configuration Local, et capture 9 écrans par langue sur un simulateur iPhone 6,9" dédié
+   compile en configuration Staging, et capture 9 écrans par langue sur un simulateur iPhone 6,9" dédié
    (« drafft store 6.9 », barre d'état à 9:41).
 2. **Détourage** (`extract.py`). Chaque élément est retrouvé à ses couleurs réelles (bloc sombre, bloc gris,
    cartes blanches sur fond gris, étiquettes grises), puis découpé au pixel natif avec son fond retiré et ses

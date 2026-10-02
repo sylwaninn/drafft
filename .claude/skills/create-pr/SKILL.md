@@ -26,7 +26,7 @@ logic, UI, i18n, refactors, config/CI, fixes. For each:
 
 ## 3. Verify
 
-Run `xcodegen generate && xcodebuild -project Drafft.xcodeproj -scheme "Drafft Local" -configuration Local -destination 'generic/platform=iOS Simulator' build`, then `swiftlint lint --strict --baseline .swiftlint-baseline.json`, then `python3 scripts/ci/design_lint.py && python3 scripts/ci/i18n_lint.py`. Zero errors. If a tool is missing (Android SDK, local Supabase not running,
+Run `xcodegen generate && xcodebuild -project Drafft.xcodeproj -scheme "Drafft Staging" -configuration Staging -destination 'generic/platform=iOS Simulator' build`, then `swiftlint lint --strict --baseline .swiftlint-baseline.json`, then `python3 scripts/ci/design_lint.py && python3 scripts/ci/i18n_lint.py`. Zero errors. If a tool is missing (Android SDK, local Supabase not running,
 no macOS on the web), run the rest and say in the pull request what was left to CI.
 
 ## 4. Docs, legal, parity

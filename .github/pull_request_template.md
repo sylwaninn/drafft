@@ -24,8 +24,8 @@ Delete these comments and any section that doesn't apply.
 - [ ] `xcodegen generate` and the compile-only build (`Drafft` scheme, generic iOS Simulator)
 - [ ] `swiftlint lint --strict --baseline .swiftlint-baseline.json`
 - [ ] `python3 scripts/ci/design_lint.py` and `python3 scripts/ci/i18n_lint.py`
-- [ ] Unit tests (`DrafftTests`, Drafft Local scheme)
-- [ ] Run on the local backend (`Drafft Local`), steps:
+- [ ] Unit tests (`DrafftTests`, Drafft Staging scheme)
+- [ ] Run on staging (`Drafft Staging`), steps:
   1.
 
 ## Screenshots
