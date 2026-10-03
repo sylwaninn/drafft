@@ -118,7 +118,6 @@ struct PushRoute: Equatable, Sendable {
             Self(kind: .photoRefused, destination: text(info["media"]).map { .photoRefusal(mediaID: $0) } ?? .current)
         case "moderation": Self(kind: .moderation, destination: .discover)
         case "weekly_boost": Self(kind: .weeklyBoost, destination: .discover)
-        // A kind newer than this build: its chat if it names one, its tab if it says it.
         default: unrecognised(chat: chat, info: info)
         }
     }
@@ -132,7 +131,8 @@ struct PushRoute: Equatable, Sendable {
 
     /// A chat push: its chat, or the chat list when no usable id came with it.
     private static func toChat(_ kind: Kind, _ chat: String?) -> Self {
-        chat.map { Self(kind: kind, destination: .chat($0)) } ?? Self(kind: kind, destination: .chats, fallsBack: true)
+        guard let chat else { return Self(kind: kind, destination: .chats, fallsBack: true) }
+        return Self(kind: kind, destination: .chat(chat))
     }
 
     /// A payload without a `kind`: Stream's messages, the app's own, session updates and reactions.
@@ -212,13 +212,12 @@ struct PushTapQueue {
 
     mutating func tap(_ route: PushRoute, account: String?, now: Date = .now) {
         let tap = PendingPushRoute(route: route, tappedAt: now, coldStart: !tabsSeen, account: account)
-        if let replaced = pending { skipped(replaced) }
-        pending = nil
+        drop()
         if account == nil, tabsSeen {
             skipped(tap)
-            return
+        } else {
+            pending = tap
         }
-        pending = tap
     }
 
     /// The tap to follow now, once (the tabs are on screen). One that waited too long is counted and dropped.
