@@ -15,11 +15,10 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     private(set) var status: UNAuthorizationStatus = .notDetermined
     /// APNs device token (hex), to send to the server once it exists.
     private(set) var deviceToken: String?
-    /// The last tapped notification, until the tabs are on screen to follow it (MainTabs takes it).
-    /// A cold launch sets it before any screen exists; a newer tap replaces it.
-    private(set) var pendingRoute: PendingPushRoute?
-    /// The tabs have been on screen once in this process: a tap before that launched the app.
-    @ObservationIgnored private var routedOnce = false
+    /// The tap queue (`PushTapQueue`): the last tapped notification, until the tabs are on screen to follow
+    /// it (MainTabs takes it). A cold launch sets it before any screen exists; a newer tap replaces it.
+    private var taps = PushTapQueue(skipped: AppModel.trackSkippedPush)
+    var pendingRoute: PendingPushRoute? { taps.pending }
 
     /// Language of the notification texts: the app's language (set by AppModel).
     var language: AppLanguage = Localization.shared.language {
@@ -138,21 +137,14 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     // MARK: Taps
 
     /// The tapped notification to follow now, once: the tabs are on screen (MainTabs).
-    func takePendingRoute() -> PendingPushRoute? {
-        routedOnce = true
-        defer { pendingRoute = nil }
-        return pendingRoute
-    }
+    /// One that waited over its lifetime is counted and dropped.
+    func takePendingRoute() -> PendingPushRoute? { taps.take() }
 
     /// Signed out: a tap meant for the account that left goes nowhere.
-    func dropPendingRoute() {
-        if let dropped = pendingRoute { AppModel.trackSkippedPush(dropped) }
-        pendingRoute = nil
-    }
+    func dropPendingRoute() { taps.drop() }
 
     private func queue(_ route: PushRoute) {
-        if let replaced = pendingRoute { AppModel.trackSkippedPush(replaced) }
-        pendingRoute = PendingPushRoute(route: route, tappedAt: .now, coldStart: !routedOnce)
+        taps.tap(route, account: Backend.shared.client.auth.currentUser?.id.uuidString)
     }
 
     private let registration = PushTokenRegistration()

@@ -329,10 +329,12 @@ final class PhotoModeration {
     }
 
     /// From the push: shows the explanation for that photo, once the app is on screen (a tap on a
-    /// push can launch it: its window takes a moment to exist).
-    func openRefusal(mediaID: String) {
+    /// push can launch it: its window takes a moment to exist). False when the photo isn't known
+    /// (nothing is shown).
+    @discardableResult
+    func openRefusal(mediaID: String) -> Bool {
         let paths = paths(of: mediaID)
-        guard let path = paths.first else { return }
+        guard let path = paths.first else { return false }
         paths.forEach { states[slot($0)] = .refused }
         refusalBanner = nil
         Task {
@@ -346,6 +348,7 @@ final class PhotoModeration {
                 try? await Task.sleep(for: .milliseconds(100))
             }
         }
+        return true
     }
 
     /// Open app: a banner. Closed or in the background: the server's push says it.

@@ -132,12 +132,13 @@ come from the backend as messages. Texts written offline wait for the connection
   local notification, a photo refusal shows drafft's own banner instead of the system's, and an account notice
   shows nothing (the screen already changed live).
 - **Taps.** One reading of every payload (`PushRoute`, unit-tested): a message, a reaction, a match, a session
-  update or reminder opens the chat; a like or a super like opens Likes; a session cancelled with its match opens
-  Sessions; the weekly boost, account notices and anything unknown open Discover; a refused photo shows why. The
+  update or reminder opens the chat; a like or a super like opens Likes; a session cancelled because its match ended
+  opens Sessions, as a reminder with no chat does; the weekly boost and account notices open Discover; a kind
+  this build doesn't know opens its chat or tab if it names one, else Discover; a refused photo shows why. The
   tap is kept (`NotificationService.pendingRoute`) until the tabs are on screen, signed in
   and past the launch (a tap that launched the app arrives before any of it), then followed by
   `AppModel.follow`: open sheets and covers close, and a chat not read yet waits for the matches (one fresh
-  read for a match just made), else the chat list shows. A tap waiting over ten minutes (a sign-in) is dropped.
+  read for a match just made), else the chat list shows. A tap waiting over ten minutes (a sign-in), replaced by a newer tap or left from another account is dropped.
   Notification settings (`notify_*`) are saved on the profile, which the backend reads before sending.
 
 ### Purchases

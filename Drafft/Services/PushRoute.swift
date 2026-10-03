@@ -9,9 +9,10 @@ import Foundation
 /// - match (`match.created`): `kind` `match`, `match`. Opens the chat.
 /// - session proposed, accepted, declined (`sessionEvent`): `match`, `session`, no `kind`. Opens the chat,
 ///   where its card is the latest message.
-/// - session cancelled: `kind` `session_cancelled`, `match`, `session`; cancelled with its match
+/// - session cancelled: `kind` `session_cancelled`, `match`, `session`; cancelled because its match ended
 ///   (`session.auto_cancelled`) carries no `match` (no chat any more): opens Sessions.
-/// - session reminder: `kind` `session_reminder`, `match`, `session`. Opens the chat.
+/// - session reminder: `kind` `session_reminder`, `match`, `session`. Opens the chat; without a usable
+///   `match`, Sessions.
 /// - reaction (`stream-webhook`): `match` only. Opens the chat.
 /// - message (Stream's own push, `scripts/stream-push.ts`): `match`, and `stream` (`type` `message.new`,
 ///   `cid` `messaging:<match>`). Opens the chat.
@@ -21,9 +22,15 @@ import Foundation
 /// - weekly boost: `kind` `weekly_boost`. Opens Discover, where it's used.
 /// - the app's own (a message from another chat while the app is open): `chatID`. Opens the chat.
 ///
-/// Anything else (a kind this build doesn't know) opens its chat when it names one, else Discover.
+/// Anything else (a kind this build doesn't know, or none with nothing else to go on) opens its chat when it
+/// names one, its `tab` (`likes`, `sessions`, `chats`, `discover`) when it says one, else Discover.
+///
+/// A chat push (match, message, the app's own) with no usable chat id (only a UUID is taken) still opens the
+/// chat list, but `fallsBack`: `push_opened` counts it `routed` false, as it does an unknown kind that
+/// ended on Discover with nothing to name it.
 struct PushRoute: Equatable, Sendable {
-    /// Sent as `push_opened`'s and `push_received`'s `kind` (the Android app's codes too): never renamed.
+    /// Event codes shared with the Android app's telemetry (`push_opened`'s and `push_received`'s `kind`):
+    /// never renamed. A server kind outside this set is `unknown`.
     enum Kind: String, CaseIterable, Sendable {
         case message = "new_message"
         case reaction, like
@@ -42,7 +49,8 @@ struct PushRoute: Equatable, Sendable {
     }
 
     enum Destination: Equatable, Sendable {
-        /// A chat, by its match id (lowercased, as `my_matches` gives it).
+        /// A chat, by its match id: always a lowercased UUID string, as `my_matches` gives it. Only
+        /// `PushRoute.init(userInfo:)` builds it, from a validated UUID; a hand-made value must follow it.
         case chat(String)
         /// The chat list: a chat push whose chat can't be named.
         case chats
@@ -53,7 +61,7 @@ struct PushRoute: Equatable, Sendable {
         /// Nowhere new: the screen already shows the account's state (a hold covers everything).
         case current
 
-        /// For the logs.
+        /// A fixed code for the logs (never the chat or media id).
         var code: String {
             switch self {
             case .chat: "chat"
@@ -78,10 +86,15 @@ struct PushRoute: Equatable, Sendable {
 
     let kind: Kind
     let destination: Destination
+    /// The tap shows something, but not what it was about (a chat push with no usable chat id opens the
+    /// chat list; an unknown kind with nothing to name opens Discover): `push_opened` is `routed` false.
+    let fallsBack: Bool
 
-    init(kind: Kind, destination: Destination) {
+    /// Internal (not public) for the tests; the app reads a payload with `init(userInfo:)`.
+    init(kind: Kind, destination: Destination, fallsBack: Bool = false) {
         self.kind = kind
         self.destination = destination
+        self.fallsBack = fallsBack
     }
 
     init(userInfo info: [AnyHashable: Any]) {
@@ -98,7 +111,7 @@ struct PushRoute: Equatable, Sendable {
         switch kind {
         case "like": Self(kind: .like, destination: .likes)
         case "super_like": Self(kind: .superLike, destination: .likes)
-        case "match": Self(kind: .match, destination: chat.map(Destination.chat) ?? .chats)
+        case "match": toChat(.match, chat)
         case "session_cancelled": Self(kind: .sessionCancelled, destination: chat.map(Destination.chat) ?? .sessions)
         case "session_reminder": Self(kind: .sessionReminder, destination: chat.map(Destination.chat) ?? .sessions)
         case "photo_refused":
@@ -106,16 +119,27 @@ struct PushRoute: Equatable, Sendable {
         case "moderation": Self(kind: .moderation, destination: .discover)
         case "weekly_boost": Self(kind: .weeklyBoost, destination: .discover)
         // A kind newer than this build: its chat if it names one, its tab if it says it.
-        default: Self(kind: .unknown, destination: chat.map(Destination.chat) ?? tab(info) ?? .discover)
+        default: unrecognised(chat: chat, info: info)
         }
+    }
+
+    /// Nothing this build knows: its chat if it names one, its tab if it says one, else Discover (a fallback).
+    private static func unrecognised(chat: String?, info: [AnyHashable: Any]) -> Self {
+        if let chat { return Self(kind: .unknown, destination: .chat(chat)) }
+        if let tab = tab(info) { return Self(kind: .unknown, destination: tab) }
+        return Self(kind: .unknown, destination: .discover, fallsBack: true)
+    }
+
+    /// A chat push: its chat, or the chat list when no usable id came with it.
+    private static func toChat(_ kind: Kind, _ chat: String?) -> Self {
+        chat.map { Self(kind: kind, destination: .chat($0)) } ?? Self(kind: kind, destination: .chats, fallsBack: true)
     }
 
     /// A payload without a `kind`: Stream's messages, the app's own, session updates and reactions.
     private static func unnamed(chat: String?, info: [AnyHashable: Any]) -> Self {
-        let toChat = chat.map(Destination.chat) ?? .chats
-        if info["stream"] is [AnyHashable: Any] { return Self(kind: .message, destination: toChat) }
-        if info["chatID"] != nil { return Self(kind: .local, destination: toChat) }
-        guard let chat else { return Self(kind: .unknown, destination: tab(info) ?? .discover) }
+        if info["stream"] is [AnyHashable: Any] { return toChat(.message, chat) }
+        if info["chatID"] != nil { return toChat(.local, chat) }
+        guard let chat else { return unrecognised(chat: nil, info: info) }
         return Self(kind: info["session"] != nil ? .sessionUpdate : .reaction, destination: .chat(chat))
     }
 
@@ -154,13 +178,64 @@ struct PushRoute: Equatable, Sendable {
 struct PendingPushRoute: Equatable, Sendable {
     let route: PushRoute
     let tappedAt: Date
-    /// The tap came before the app's first screen was up (it launched the app).
+    /// The tap came before the tabs were first on screen in this process (it launched the app).
     let coldStart: Bool
+    /// The signed-in account (its auth user id) when the tap came; nil when the session wasn't read yet (a
+    /// cold launch). Followed only for that same account.
+    let account: String?
     let id = UUID()
 
     /// How long a tap may wait (a sign-in that takes a while) before taking the person somewhere is a
     /// surprise rather than an answer.
     static let lifetime: TimeInterval = 10 * 60
 
+    /// Waited longer than `lifetime`: exactly at it still counts.
     func isExpired(at now: Date = .now) -> Bool { now.timeIntervalSince(tappedAt) > Self.lifetime }
+}
+
+/// The one tapped notification waiting for the tabs (`NotificationService` holds it), with the rules of
+/// its queue, free of the app so they are unit-tested: a newer tap replaces the waiting one, it's taken
+/// once, one that waited too long is dropped, and every tap that is never followed is counted through
+/// `skipped` (`push_opened`, `routed` false).
+///
+/// Taps and accounts: a tap while a person is signed in is bound to that account (followed only for it). A
+/// tap before the session is read (the one that launched the app, `account` nil) is bound to whoever the
+/// session turns out to be. A tap while signed out in a running app is dropped: the push was for an
+/// account that left (its token is unregistered at sign-out), never for the next one to sign in.
+struct PushTapQueue {
+    private(set) var pending: PendingPushRoute?
+    /// The tabs have been on screen once in this process: a tap before that launched the app.
+    private var tabsSeen = false
+    private let skipped: (PendingPushRoute) -> Void
+
+    init(skipped: @escaping (PendingPushRoute) -> Void) { self.skipped = skipped }
+
+    mutating func tap(_ route: PushRoute, account: String?, now: Date = .now) {
+        let tap = PendingPushRoute(route: route, tappedAt: now, coldStart: !tabsSeen, account: account)
+        if let replaced = pending { skipped(replaced) }
+        pending = nil
+        if account == nil, tabsSeen {
+            skipped(tap)
+            return
+        }
+        pending = tap
+    }
+
+    /// The tap to follow now, once (the tabs are on screen). One that waited too long is counted and dropped.
+    mutating func take(now: Date = .now) -> PendingPushRoute? {
+        tabsSeen = true
+        defer { pending = nil }
+        guard let taken = pending else { return nil }
+        guard !taken.isExpired(at: now) else {
+            skipped(taken)
+            return nil
+        }
+        return taken
+    }
+
+    /// Signed out: a tap meant for the account that left goes nowhere.
+    mutating func drop() {
+        if let dropped = pending { skipped(dropped) }
+        pending = nil
+    }
 }

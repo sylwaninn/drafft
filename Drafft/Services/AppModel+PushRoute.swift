@@ -8,32 +8,52 @@ extension AppModel {
     static let pushChatWait: Duration = .seconds(8)
     private static let pushLog = AppLog("push")
 
-    func follow(_ pending: PendingPushRoute) async {
+    /// Follows a tap, the newest one winning: a tap still being followed is cancelled (counted `replaced`).
+    func followPush(_ pending: PendingPushRoute) {
+        pushFollow?.cancel()
+        pushFollow = Task { await follow(pending) }
+    }
+
+    private func follow(_ pending: PendingPushRoute) async {
         let route = pending.route
-        let outcome: Outcome
-        if pending.isExpired() {
-            outcome = .expired
-        } else {
-            if route.destination.clearsPresentedScreens {
-                // App-level screens through their state, then whatever sheet or cover is still up.
-                matchScreen = nil
-                banner = nil
-                // The terms gate stays: the destination waits under it until they're accepted.
-                if termsConsent != .required { await PresentedScreens.dismissAll() }
-            }
-            outcome = await go(to: route.destination)
-        }
+        let outcome = await run(pending)
         let launch = pending.coldStart ? "launched the app" : "app running"
         Self.pushLog.info("Tapped \(route.kind.rawValue) push (\(launch)), to \(route.destination.code): \(outcome.rawValue)")
         Telemetry.track(.pushOpened(route.kind.rawValue, routed: outcome == .opened))
     }
 
-    /// Where the tap ended up: its page, the list or tab around it (the page couldn't be found), nowhere
-    /// (it waited too long, or the account changed meanwhile).
-    private enum Outcome: String { case opened, fallback, expired, cancelled }
+    private func run(_ pending: PendingPushRoute) async -> Outcome {
+        let route = pending.route
+        if pending.isExpired() { return .expired }
+        // Bound to the account that tapped (nil: the session wasn't read yet, the person who signed in).
+        let account = Backend.shared.client.auth.currentUser?.id.uuidString
+        let session = sessionID
+        func stale() -> Bool {
+            session != sessionID || (pending.account != nil && pending.account != account)
+        }
+        if stale() { return .cancelled }
+        if route.destination.clearsPresentedScreens {
+            // App-level screens through their state, then whatever sheet or cover is still up.
+            matchScreen = nil
+            banner = nil
+            // The terms gate stays: its sheet isn't dismissed; the destination is set under it and shows
+            // once the terms are accepted.
+            if termsConsent != .required { await PresentedScreens.dismissAll() }
+            if Task.isCancelled { return .replaced }
+            if stale() { return .cancelled }
+        }
+        let outcome = await go(to: route.destination)
+        // A destination that isn't what the tap was about (no usable chat id, nothing to name) is a fallback.
+        return outcome == .opened && route.fallsBack ? .fallback : outcome
+    }
 
-    /// A tap replaced by a newer one before the tabs were up: counted, not followed.
-    static func trackSkippedPush(_ pending: PendingPushRoute) {
+    /// Where the tap ended up: its page (`opened`), the list or tab around it (`fallback`: the page couldn't
+    /// be found or the payload named none), nowhere (`expired`: it waited too long; `cancelled`: the account
+    /// changed or signed out meanwhile; `replaced`: a newer tap took over).
+    private enum Outcome: String { case opened, fallback, expired, cancelled, replaced }
+
+    /// A tap that is never followed (replaced by a newer one, expired while waiting, or dropped on sign-out): counted `routed` false.
+    nonisolated static func trackSkippedPush(_ pending: PendingPushRoute) {
         Telemetry.track(.pushOpened(pending.route.kind.rawValue, routed: false))
     }
 
@@ -52,7 +72,7 @@ extension AppModel {
         case .discover:
             tab = .discover
         case .photoRefusal(let media):
-            PhotoModeration.shared.openRefusal(mediaID: media)
+            return PhotoModeration.shared.openRefusal(mediaID: media) ? .opened : .fallback
         case .current:
             break
         }
@@ -69,10 +89,13 @@ extension AppModel {
         tab = .chats
         let clock = ContinuousClock()
         let deadline = clock.now.advanced(by: Self.pushChatWait)
-        while conversation(id) == nil, matchesLoad == .loading, session == sessionID, clock.now < deadline {
+        while conversation(id) == nil, matchesLoad == .loading, session == sessionID, !Task.isCancelled,
+              clock.now < deadline {
             try? await Task.sleep(for: .milliseconds(150))
         }
+        if Task.isCancelled { return .replaced }
         if conversation(id) == nil, session == sessionID { await loadMatches() }
+        if Task.isCancelled { return .replaced }
         guard session == sessionID else { return .cancelled }
         guard conversation(id) != nil else { return .fallback }
         openChat(id)

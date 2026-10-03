@@ -356,7 +356,7 @@ struct MainTabs: View {
         // screen exists), then followed to its page (`AppModel.follow`).
         .onChange(of: pushGate, initial: true) { _, gate in
             guard gate.ready, let pending = NotificationService.shared.takePendingRoute() else { return }
-            Task { await app.follow(pending) }
+            app.followPush(pending)
         }
         // Location is required: while it's off (or never answered), a screen in its own window blocks
         // everything, sheets included, until it's back on. Read again at each return to the app.
