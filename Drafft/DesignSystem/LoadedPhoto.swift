@@ -20,7 +20,7 @@ struct LoadedPhoto: View {
     /// would cancel the download and start over).
     @State private var task: ImageTask?
     /// The stand-in, once drawn: kept (the same request, so it isn't loaded again) under the sharp copy until
-    /// that one has faded in, then let go, so memory never holds both.
+    /// that one has faded in, then let go: the view holds one copy, and the memory cache may evict the other.
     @State private var keptStandIn: ImageRequest?
     /// The sharp copy is drawn: a stand-in finishing after it is never kept.
     @State private var sharp = false
