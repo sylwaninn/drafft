@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Full-screen match moment: two portraits slide into drafting formation, one tucked behind the other.
+/// Full-screen match moment: two portraits slide in, one tucked behind the other.
 struct MatchView: View {
     let profile: Profile
     let me: Profile
@@ -9,7 +9,6 @@ struct MatchView: View {
     let onClose: () -> Void
 
     @State private var arrived = false
-    @State private var trails = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var shared: Sport? {
@@ -66,11 +65,9 @@ struct MatchView: View {
         .onAppear {
             if reduceMotion {
                 arrived = true
-                trails = true
                 return
             }
             withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) { arrived = true }
-            withAnimation(.easeOut(duration: 0.5).delay(0.15)) { trails = true }
         }
         .trackScreen(.match)
     }
@@ -84,15 +81,6 @@ struct MatchView: View {
 
     private var formation: some View {
         ZStack {
-            // Ghost trails behind the lead card: the drafting motif.
-            ForEach(1...3, id: \.self) { i in
-                RoundedRectangle(cornerRadius: DS.Radius.xl)
-                    .fill(DS.Palette.accentOnNight.opacity(0.22 / Double(i)))
-                    .frame(width: 170, height: 230)
-                    .rotationEffect(.degrees(-6))
-                    .offset(x: -40 - CGFloat(i) * (trails ? 26 : 0), y: -10)
-            }
-
             portrait(me.portrait)
                 .rotationEffect(.degrees(-6))
                 .offset(x: arrived ? -48 : -260, y: -10)

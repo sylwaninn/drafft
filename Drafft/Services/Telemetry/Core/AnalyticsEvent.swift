@@ -241,7 +241,14 @@ struct AnalyticsEvent: Sendable {
     static func notificationSettingChanged(_ setting: String, enabled: Bool) -> Self {
         .init("notification_setting_changed", ["setting": setting, "enabled": enabled])
     }
-    static func pushOpened(_ kind: String) -> Self { .init("push_opened", ["kind": kind]) }
+    /// A tapped notification, sent once it's followed (the tabs on screen) or dropped: `routed` whether it
+    /// reached its own destination. False when its chat wasn't found after loading, a chat push had no
+    /// usable chat id (the chat list shows) or an unknown kind named nothing (Discover shows), it waited over
+    /// ten minutes, a newer tap replaced it, or the account signed out or changed first. `kind` is a fixed
+    /// code shared with Android: a kind this build doesn't know is `unknown`.
+    static func pushOpened(_ kind: String, routed: Bool) -> Self {
+        .init("push_opened", ["kind": kind, "routed": routed])
+    }
     static func pushReceived(_ kind: String, inForeground: Bool) -> Self {
         .init("push_received", ["kind": kind, "in_foreground": inForeground])
     }

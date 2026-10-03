@@ -43,7 +43,7 @@ struct ProfileSectionCard<Content: View>: View {
 
 // MARK: - Voice
 
-/// Night block: big lime play button with drafting trail, full-width waveform, playback speed.
+/// Night block: big lime play button, full-width waveform, playback speed.
 struct VoiceBlock: View {
     let profile: Profile
     @State private var audio = AudioPlayback.shared
@@ -69,8 +69,6 @@ struct VoiceBlock: View {
                         .foregroundStyle(DS.Palette.onAccentOnNight)
                         .frame(width: 64, height: 64)
                         .background(DS.Palette.accentOnNight, in: .circle)
-                        .draftTrail(Circle(), step: CGSize(width: -10, height: 0))
-                        .padding(.leading, 20)
                 }
                 .buttonStyle(PressScaleStyle())
                 .accessibilityLabel(playing ? "Pause voice intro" : "Play \(profile.name)'s voice intro")
@@ -297,7 +295,7 @@ struct PromptCard: View {
     var onLike: (() -> Void)?
 
     var body: some View {
-        // Heart sits in the layout (not an overlay) so the text always keeps a gap from it and its trail.
+        // Heart sits in the layout (not an overlay) so the text always keeps a gap from it.
         HStack(alignment: .bottom, spacing: DS.Space.lg) {
             VStack(alignment: .leading, spacing: DS.Space.md) {
                 Text(prompt.questionText)
@@ -312,7 +310,6 @@ struct PromptCard: View {
 
             if let onLike {
                 LikeHeartButton(label: L("Like this answer"), action: onLike)
-                    .padding(.leading, 14) // room for the trail
             }
         }
         .padding(DS.Space.xl)
@@ -322,7 +319,7 @@ struct PromptCard: View {
 
 // MARK: - Likes
 
-/// Green like heart with the drafting trail (liking stays green whatever the brand accent).
+/// Green like heart (liking stays green whatever the brand accent).
 struct LikeHeartButton: View {
     var label = L("Like")
     var size: CGFloat = 52
@@ -338,7 +335,6 @@ struct LikeHeartButton: View {
                 .foregroundStyle(DS.Palette.onLike)
                 .frame(width: size, height: size)
                 .background(DS.Palette.like, in: .circle)
-                .draftTrail(Circle(), color: DS.Palette.like, step: CGSize(width: -size * 0.14, height: 0))
         }
         .buttonStyle(PressScaleStyle())
         .accessibilityLabel(label)

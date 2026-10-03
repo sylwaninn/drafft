@@ -67,8 +67,6 @@ struct LikeComposer: View {
                             .contentTransition(.opacity)
                     }
                     .buttonStyle(DrafftButtonStyle(kind: .like))
-                    .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), color: DS.Palette.like, step: CGSize(width: -6, height: 0))
-                    .padding(.leading, 12)
                     Text("\(name) only sees it if you match.")
                         .font(.footnote)
                         .foregroundStyle(.white.opacity(0.75))

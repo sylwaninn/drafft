@@ -67,9 +67,6 @@ struct SuperLikeComposer: View {
                         .background(DS.Palette.negative, in: .rect(cornerRadius: DS.Radius.xl))
                     }
                     .buttonStyle(PressScaleStyle(scale: 0.97))
-                    .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), color: DS.Palette.negative,
-                                step: CGSize(width: -6, height: 0))
-                    .padding(.leading, 12)
                 }
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared || reduceMotion ? 0 : 12)

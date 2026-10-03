@@ -83,8 +83,6 @@ struct FiltersSheet: View {
                 Text("Apply filters")
             }
             .buttonStyle(.drafftPrimary)
-            .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-            .padding(.leading, 12)
 
             Button("Clear filters") {
                 Haptics.tap()

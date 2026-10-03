@@ -553,8 +553,6 @@ struct EditProfileView: View {
             }
             .buttonStyle(.drafftPrimary)
             .disabled((!canSave && !saved) || saving)
-            .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-            .padding(.leading, 12)
             if let footerHint {
                 Text(footerHint)
                     .font(.footnote)

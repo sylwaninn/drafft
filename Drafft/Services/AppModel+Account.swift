@@ -256,6 +256,8 @@ extension AppModel {
         clearDiscovery()
         openChatID = nil
         chatRequest = nil
+        // A tapped notification meant for the account that left goes nowhere.
+        NotificationService.shared.dropPendingRoute()
         matchScreen = nil
         banner = nil
         boostBanner = nil

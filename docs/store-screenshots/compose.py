@@ -26,7 +26,7 @@ def _b64(p):
     return base64.b64encode(pathlib.Path(p).read_bytes()).decode()
 
 
-# The app's display face, embedded (Inter Display Black / ExtraBold), and the wordmark: the word alone, never a trail.
+# The app's display face, embedded (Inter Display Black / ExtraBold), and the wordmark: the word alone.
 CSS = f"""
 @font-face {{ font-family: 'Inter Display'; font-weight: 900; src: url(data:font/ttf;base64,{_b64(FONTS / 'InterDisplay-Black.ttf')}) format('truetype'); }}
 @font-face {{ font-family: 'Inter Display'; font-weight: 800; src: url(data:font/ttf;base64,{_b64(FONTS / 'InterDisplay-ExtraBold.ttf')}) format('truetype'); }}
@@ -46,7 +46,6 @@ def frt(s):
 W, N, MIN = 1320, 5, 80
 INK, MUTE, MUTE_N = "#0E0F0C", "#55595E", "#B8BCC2"
 NB = " "
-TR = (70, -34)
 HEART = ("M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 "
          "19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z")
 
@@ -106,8 +105,8 @@ def items(lang, M):
     k, Y = M.k, M.y
     L = LIB / lang
 
-    def el(name, cx, cy, s=1.0, r=0.0, z=2, trail=None, tc=None, tk=1):
-        return dict(k="el", name=name, cx=cx, cy=Y(cy), s=s * k, r=r, z=z, trail=(trail[0] * k, trail[1] * k) if trail else None, tc=tc, tk=tk)
+    def el(name, cx, cy, s=1.0, r=0.0, z=2):
+        return dict(k="el", name=name, cx=cx, cy=Y(cy), s=s * k, r=r, z=z)
 
     def tx(t, x, y, w, size, color=INK, align="left", mx=3, lh=.96, z=5, ls=-.024):
         return dict(k="tx", t=t, x=x, y=Y(y), w=w, size=size * k, color=color, align=align, mx=mx, lh=lh, z=z, ls=ls)
@@ -143,7 +142,6 @@ def items(lang, M):
                     f'height:{size:.0f}px;z-index:8;transform:rotate({rot}deg);filter:drop-shadow(0 12px 22px rgba(0,0,0,.4))"><path d="{HEART}" fill="{col}"/></svg>')
         return raw(out, 8)
 
-    lit = dict(tc="brightness(0) invert(1)", tk=.5)
     return [
         # 1. Grey. The hour huge, real Discover cards, the like.
         tx(c["s1a"], X(0, 96), 190, 1128, 212, mx=2, lh=.9),
@@ -200,15 +198,8 @@ def render_item(it, lang):
     w, h = w0 * it["s"], h0 * it["s"]
     left, top = it["cx"] - w / 2, it["cy"] - h / 2
     uri = src.as_uri()
-    out = ""
-    if it["trail"]:
-        dx, dy = it["trail"]
-        for n, op in ((2, .2), (1, .45)):
-            out += (f'<img src="{uri}" style="position:absolute;left:{left - dx * n:.0f}px;top:{top - dy * n:.0f}px;width:{w:.0f}px;height:{h:.0f}px;z-index:{it["z"]};'
-                    f'transform:rotate({it["r"]}deg);filter:{it["tc"] or "brightness(0)"};opacity:{op * it["tk"]}">')
-    out += (f'<img src="{uri}" style="position:absolute;left:{left:.0f}px;top:{top:.0f}px;width:{w:.0f}px;height:{h:.0f}px;z-index:{it["z"]};'
+    return (f'<img src="{uri}" style="position:absolute;left:{left:.0f}px;top:{top:.0f}px;width:{w:.0f}px;height:{h:.0f}px;z-index:{it["z"]};'
             f'transform:rotate({it["r"]}deg);filter:drop-shadow(0 34px 44px rgba(14,15,12,.26)) drop-shadow(0 6px 10px rgba(14,15,12,.10))">')
-    return out
 
 
 def page(lang, its, Hd):

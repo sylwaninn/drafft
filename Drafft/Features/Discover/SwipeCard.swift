@@ -11,10 +11,6 @@ struct SwipeCard: View {
     var photoPriority: ImageRequest.Priority = .normal
     let onOpen: () -> Void
 
-    @State private var audio = AudioPlayback.shared
-
-    private var voiceURL: URL? { profile.voiceIntro.flatMap(AudioPlayback.url(for:)) }
-
     var body: some View {
         ZStack(alignment: .bottom) {
             Photo(name: profile.portrait, priority: photoPriority)
@@ -38,7 +34,9 @@ struct SwipeCard: View {
             VStack(spacing: 0) {
                 HStack(alignment: .top, spacing: DS.Space.md) {
                     identity
-                    voicePill
+                    if profile.superLikedMe {
+                        SuperLikeCornerBadge(active: isTop)
+                    }
                 }
                 .padding(.leading, DS.Space.xl)
                 .padding([.top, .trailing], DS.Space.md)
@@ -58,40 +56,9 @@ struct SwipeCard: View {
 
     // MARK: Pieces
 
-    @ViewBuilder
-    private var voicePill: some View {
-        if let url = voiceURL {
-            let playing = audio.isCurrent(url) && audio.isPlaying
-            Button {
-                Haptics.tap()
-                if !playing { Telemetry.track(.voiceIntroPlayed(where: ScreenTracker.currentID)) }
-                audio.toggle(url)
-            } label: {
-                HStack(spacing: 6) {
-                    Image(playing ? "pause" : "soundwave")
-                        .symbolEffect(.variableColor.iterative, isActive: playing)
-                        .contentTransition(.symbolEffect(.replace))
-                    Text(playing ? audio.elapsed.clock : profile.voiceDuration.clock)
-                        .monospacedDigit()
-                        .contentTransition(.numericText())
-                }
-                .font(.footnote.weight(.bold))
-                .foregroundStyle(playing ? DS.Palette.onAccentOnNight : .white)
-                .padding(.horizontal, DS.Space.md)
-                .frame(minHeight: 36)
-                // Glass over the photo; a dark tint keeps the white legible on bright shots.
-                // Accent while playing, so the active state reads at a glance.
-                .glassEffect(playing ? .regular.tint(DS.Palette.accentOnNight)
-                                     : .regular.tint(.black.opacity(0.3)), in: .capsule)
-                .frame(minHeight: 44)
-            }
-            .buttonStyle(PressScaleStyle())
-            .accessibilityLabel(playing ? "Pause voice intro" : "Play \(profile.name)'s voice intro")
-        }
-    }
-
     private var identity: some View {
-        ProfileIdentity(profile: profile, showsSuperLike: true, superLikeActive: isTop)
+        // The super like has the card's top-right corner (`SuperLikeCornerBadge`); the name still says it.
+        ProfileIdentity(profile: profile, announcesSuperLike: true)
             .padding(.top, DS.Space.sm)
     }
 
@@ -225,16 +192,18 @@ struct ProfileIdentity: View {
     let profile: Profile
     var nameSize: CGFloat = 34
     var showsLocation = true
-    /// Deck only: a red super like disc right after the age when they super liked you.
+    /// Likes tiles only: a red super like disc before the name when they super liked you (the deck card
+    /// draws it in its corner and passes `announcesSuperLike`).
     var showsSuperLike = false
-    /// The super like disc pops in when this turns true (the card reaching the top of the deck).
-    var superLikeActive = true
+    /// The disc is drawn elsewhere (the deck card's corner): the line only says it to VoiceOver.
+    var announcesSuperLike = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
             NameAgeLine(profile: profile, nameSize: nameSize,
                         nameColor: .white, ageColor: .white.opacity(0.8),
-                        showsBadge: showsSuperLike && profile.superLikedMe, badgeActive: superLikeActive)
+                        showsBadge: showsSuperLike && profile.superLikedMe,
+                        announcesBadge: announcesSuperLike && profile.superLikedMe)
             if showsLocation {
                 Text("\(profile.neighborhood), \(LocationPrivacy.rounded(km: profile.distanceKm))")
                     .font(.subheadline.weight(.medium))
@@ -258,6 +227,8 @@ struct NameAgeLine: View {
     var ageColor: Color
     var showsBadge = false
     var badgeActive = true
+    /// "Super liked you" in the spoken label without the inline disc (shown elsewhere on the card).
+    var announcesBadge = false
 
     @State private var width: CGFloat = 0
     @State private var popped = false
@@ -294,7 +265,8 @@ struct NameAgeLine: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
             .accessibilityElement()
-            .accessibilityLabel(showsBadge ? L("\(profile.name), \(profile.age), super liked you") : L("\(profile.name), \(profile.age)"))
+            .accessibilityLabel(showsBadge || announcesBadge ? L("\(profile.name), \(profile.age), super liked you")
+                                                             : L("\(profile.name), \(profile.age)"))
             .onAppear { if badgeActive { pop() } }
             .onChange(of: badgeActive) { _, on in if on { pop() } }
     }
@@ -389,7 +361,37 @@ struct BadgePopRenderer: TextRenderer, Animatable {
     }
 }
 
-/// The super like disc rendered once per size, for use inline in text.
+/// The deck card's super like: the red disc in the card's top-right corner, 44 pt (about twice the inline
+/// disc, which stood at the name's cap height), so it reads from arm's length on any photo. It pops in
+/// when the card reaches the top of the deck. Spoken by the name line (`announcesSuperLike`).
+struct SuperLikeCornerBadge: View {
+    /// The card is the one in play: the disc pops in.
+    var active = true
+
+    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 44
+    @State private var popped = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Image(uiImage: SuperLikeBadgeImage.image(size: size))
+            .resizable()
+            .frame(width: size, height: size)
+            .scaleEffect(popped ? 1 : 0.3)
+            .opacity(popped ? 1 : 0)
+            .accessibilityHidden(true)
+            .onAppear { if active { pop() } }
+            .onChange(of: active) { _, on in if on { pop() } }
+    }
+
+    private func pop() {
+        guard !popped else { return }
+        if reduceMotion { popped = true; return }
+        withAnimation(.spring(response: 0.34, dampingFraction: 0.55).delay(0.12)) { popped = true }
+    }
+}
+
+/// The super like disc rendered once per size (inline in text, and the deck card's corner): one heart,
+/// centred, at about half the disc.
 @MainActor
 enum SuperLikeBadgeImage {
     private static var cache: [Int: UIImage] = [:]
@@ -397,8 +399,7 @@ enum SuperLikeBadgeImage {
     static func image(size: CGFloat) -> UIImage {
         let key = Int(size.rounded())
         if let img = cache[key] { return img }
-        let view = SuperLikeMark(size: size * 0.38, color: .white)
-            .offset(x: -size * 0.09)
+        let view = SuperLikeMark(size: size * 0.46, color: .white)
             .frame(width: size, height: size)
             .background(DS.Palette.negative, in: .circle)
         let renderer = ImageRenderer(content: view)

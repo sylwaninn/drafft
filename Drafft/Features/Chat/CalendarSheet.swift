@@ -82,8 +82,6 @@ struct CalendarButton: View {
                     Label("Add to calendar", image: "calendar-add")
                 }
                 .buttonStyle(.drafftPrimary)
-                .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-                .padding(.leading, 12)
             }
         }
         .accessibilityLabel(added ? "In your calendar. Add again" : "Add to calendar")

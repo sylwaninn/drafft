@@ -131,6 +131,8 @@ extension AppModel {
         guard announce, let first = new.first(where: { !discovery.swiped.contains($0.profile.id) }),
               matchScreen?.id != first.profile.id else { return }
         Telemetry.track(.matchCreated(.theirLike))
+        // Its chat is open, or being opened from its notification: no haptic or banner to cover it.
+        guard first.id != openChatID, first.id != pushChatTarget else { return }
         Haptics.success()
         if UIApplication.shared.applicationState == .active {
             withAnimation(Motion.bouncy) { banner = MatchBanner(profile: first.profile) }

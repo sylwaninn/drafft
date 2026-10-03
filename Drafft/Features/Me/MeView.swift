@@ -265,8 +265,6 @@ struct MeView: View {
                     Label("Edit profile", image: "pen")
                 }
                 .buttonStyle(.drafftPrimary)
-                .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-                .padding(.leading, 12)
                 Button { sheet = .preview } label: {
                     Image("eye")
                         .font(.body.weight(.bold))

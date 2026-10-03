@@ -5,7 +5,8 @@ import Observation
 /// Notifications: permission, the per-type preferences, and the push plumbing (device token). Session
 /// reminders are the server's pushes (`session.reminder`, following `notify_session_*`): checked against
 /// the session when they're sent, so a cancelled or changed one never reminds anyone. Tapping a
-/// notification opens its chat.
+/// notification opens its page (`PushRoute`): the tap is kept until the tabs are on screen, then
+/// `AppModel.follow` takes it there.
 @MainActor
 @Observable
 final class NotificationService: NSObject, UNUserNotificationCenterDelegate, SystemPermission {
@@ -14,12 +15,10 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     private(set) var status: UNAuthorizationStatus = .notDetermined
     /// APNs device token (hex), to send to the server once it exists.
     private(set) var deviceToken: String?
-    /// A chat to open, set when a notification is tapped.
-    var openChatID: String?
-    /// Set when the weekly-boost notification is tapped: Discover opens, where the boost is used.
-    var openBoost = false
-    /// Set when a session's cancellation without a chat is tapped: the Sessions tab opens.
-    var openSessions = false
+    /// The tap queue (`PushTapQueue`): the last tapped notification, until the tabs are on screen to follow
+    /// it (MainTabs takes it). A cold launch sets it before any screen exists; a newer tap replaces it.
+    private var taps = PushTapQueue(skipped: AppModel.trackSkippedPush)
+    var pendingRoute: PendingPushRoute? { taps.pending }
 
     /// Language of the notification texts: the app's language (set by AppModel).
     var language: AppLanguage = Localization.shared.language {
@@ -134,6 +133,19 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
     }
 
     func forgetPushTokenRegistration() { registration.forget() }
+
+    // MARK: Taps
+
+    /// The tapped notification to follow now, once: the tabs are on screen (MainTabs).
+    /// One that waited over its lifetime is counted and dropped.
+    func takePendingRoute() -> PendingPushRoute? { taps.take() }
+
+    /// Signed out: a tap meant for the account that left goes nowhere.
+    func dropPendingRoute() { taps.drop() }
+
+    private func queue(_ route: PushRoute) {
+        taps.tap(route, account: Backend.shared.client.auth.currentUser?.id.uuidString)
+    }
 
     private let registration = PushTokenRegistration()
 
@@ -284,59 +296,43 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate, Sys
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async
         -> UNNotificationPresentationOptions {
-        // A refused photo while the app is open: its own banner says it, not the system's (shown once,
-        // whether the push or the live `media` event comes first).
         let info = notification.request.content.userInfo
-        Telemetry.track(.pushReceived(Self.pushKind(info), inForeground: true))
-        if info["kind"] as? String == "photo_refused" {
-            if let media = info["media"] as? String {
+        let route = PushRoute(userInfo: info)
+        Telemetry.track(.pushReceived(route.kind.rawValue, inForeground: true))
+        switch route.kind {
+        case .photoRefused:
+            // A refused photo while the app is open: its own banner says it, not the system's (shown
+            // once, whether the push or the live `media` event comes first).
+            if case .photoRefusal(let media) = route.destination {
                 await MainActor.run { PhotoModeration.shared.apply(mediaID: media, status: "rejected") }
             }
             return []
-        }
-        // Moderation news (a hold lifted, a selfie asked for): the open app's screen already changed
-        // live (Realtime `moderation`), so the system banner would say it twice.
-        if info["kind"] as? String == "moderation" { return [] }
-        // A session changed while the app is open: the push says it, the cards follow (the Realtime event
-        // usually got there first; this read catches a missed one).
-        if let kind = info["kind"] as? String, kind == "session_cancelled" || kind == "session_reminder" {
+        case .moderation:
+            // Moderation news (a hold lifted, a selfie asked for): the open app's screen already changed
+            // live (Realtime `moderation`), so the system banner would say it twice.
+            return []
+        case .sessionCancelled, .sessionReminder:
+            // A session changed while the app is open: the push says it, the cards follow (the Realtime
+            // event usually got there first; this read catches a missed one).
             await SessionStore.shared.refresh()
+        default:
+            break
         }
         return [.banner, .sound]
     }
 
+    /// A tap on a notification (the app open, in the background, or launched by the tap). Read here,
+    /// followed by MainTabs once the tabs are on screen (`AppModel.follow`): on a cold launch the
+    /// session, the matches and the screens aren't there yet.
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-        let info = response.notification.request.content.userInfo
-        Telemetry.track(.pushOpened(Self.pushKind(info)))
-        if info["kind"] as? String == "photo_refused", let media = info["media"] as? String {
-            await MainActor.run { PhotoModeration.shared.openRefusal(mediaID: media) }
-            return
+        guard response.actionIdentifier != UNNotificationDismissActionIdentifier else { return }
+        let route = PushRoute(userInfo: response.notification.request.content.userInfo)
+        // `push_opened` is sent once it's followed (`AppModel.follow`), with whether it got there.
+        await MainActor.run {
+            // A cancelled session: read again (its card, its calendar event), without holding the route.
+            if route.kind == .sessionCancelled { Task { await SessionStore.shared.refresh() } }
+            self.queue(route)
         }
-        // Opening the app is enough: it shows the screen of the account's current state.
-        if info["kind"] as? String == "moderation" { return }
-        if info["kind"] as? String == "weekly_boost" {
-            await MainActor.run { self.openBoost = true }
-            return
-        }
-        // Server pushes name the match (its chat); the app's own name the chat.
-        let chatID = (info["chatID"] as? String) ?? (info["match"] as? String)?.lowercased()
-        if let kind = info["kind"] as? String, kind == "session_cancelled" {
-            // Cancelled with its match (no chat any more): the Sessions tab, read again.
-            await SessionStore.shared.refresh()
-            if chatID == nil {
-                await MainActor.run { self.openSessions = true }
-                return
-            }
-        }
-        await MainActor.run { self.openChatID = chatID }
-    }
-
-    /// The push's kind as a code (`new_message` for Stream's chat pushes, `local` for the app's own).
-    nonisolated private static func pushKind(_ info: [AnyHashable: Any]) -> String {
-        if let kind = info["kind"] as? String { return kind.lowercased() }
-        if info["sender"] as? String == "stream.chat" { return "new_message" }
-        if info["chatID"] != nil { return "local" }
-        return "unknown"
     }
 }
 
@@ -368,8 +364,17 @@ struct NotificationSettings: Codable {
     }
 }
 
-/// Receives the APNs device token, and the background upload events iOS relaunches the app for.
+/// Receives the APNs device token, sets the notification delegate at launch, and gets the background upload
+/// events iOS relaunches the app for.
 final class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // The delegate must be set before launch ends, or the tap that launched the app is never
+        // delivered (`userNotificationCenter(_:didReceive:)`): `shared` sets it.
+        MainActor.assumeIsolated { _ = NotificationService.shared }
+        return true
+    }
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         MainActor.assumeIsolated { NotificationService.shared.didRegister(token: deviceToken) }
     }

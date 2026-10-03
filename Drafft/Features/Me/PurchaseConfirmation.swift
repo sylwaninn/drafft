@@ -55,8 +55,6 @@ struct PurchaseConfirmation: View {
                     Text(primaryTitle)
                 }
                 .buttonStyle(.drafftPrimary)
-                .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl), step: CGSize(width: -6, height: 0))
-                .padding(.leading, 12)
 
                 if let secondaryTitle {
                     Button {
@@ -107,8 +105,6 @@ struct PurchaseConfirmation: View {
                 .frame(width: 32, height: 23)
                 .frame(width: 72, height: 72)
                 .background(DS.Palette.lime, in: .circle)
-                .draftTrail(Circle(), step: CGSize(width: -9, height: 0))
-                .padding(.leading, 18)
                 .accessibilityHidden(true)
         case .boosts:
             Image("bolt")
@@ -116,16 +112,11 @@ struct PurchaseConfirmation: View {
                 .foregroundStyle(DS.Palette.onLime)
                 .frame(width: 72, height: 72)
                 .background(DS.Palette.lime, in: .circle)
-                .draftTrail(Circle(), step: CGSize(width: -9, height: 0))
-                .padding(.leading, 18)
                 .accessibilityHidden(true)
         case .superLikes:
             SuperLikeMark(size: 26, color: .white)
-                .offset(x: -5)
                 .frame(width: 72, height: 72)
                 .background(DS.Palette.negative, in: .circle)
-                .draftTrail(Circle(), color: DS.Palette.negative, step: CGSize(width: -9, height: 0))
-                .padding(.leading, 18)
                 .accessibilityHidden(true)
         }
     }

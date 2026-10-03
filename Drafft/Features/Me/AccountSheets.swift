@@ -66,10 +66,6 @@ struct AccountSheet<Content: View>: View {
                     }
                     .buttonStyle(DestructiveAwareStyle(destructive: destructive))
                     .disabled(!enabled || loading)
-                    .draftTrail(RoundedRectangle(cornerRadius: DS.Radius.xl),
-                                color: destructive ? DS.Palette.negative : DS.Palette.lime,
-                                step: CGSize(width: -6, height: 0))
-                    .padding(.leading, 12)
                     if let error {
                         Text(error)
                             .font(.footnote.weight(.medium))
