@@ -252,7 +252,9 @@ struct Photo: View {
             .overlay {
                 if name.hasPrefix("http") || name.hasPrefix("/") {
                     // Blurred at decode time, never a live blur (locked likes).
+                    // One view per photo: its loading state never carries over to another at the same place.
                     LoadedPhoto(name: name, blur: blur / max(side ?? 200, 1), priority: priority, detail: detail)
+                        .id(name)
                 } else if let img = blur > 0
                             ? ImageStore.blurred(name, fraction: blur / max(side ?? 200, 1))
                             : side == nil ? ImageStore.preparedFull(name) : ImageStore.image(name, side: side) {

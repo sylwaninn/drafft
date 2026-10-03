@@ -47,6 +47,27 @@ enum Renditions {
         return ladder.filter { $0 >= start }.map(Optional.some) + [nil]
     }
 
+    /// The width to download for `pixels` of a photo `aspect` wide: what the frame needs, at most
+    /// `everydayWidth` unless it's an open profile's photo (`detail`), then a step lighter on a slow line
+    /// (`limitedShare`; a copy already here still wins): sooner beats sharper there.
+    static func wanted(for pixels: CGSize, aspect: CGFloat?, detail: Bool, slow: Bool) -> CGFloat {
+        let needed = asked(neededWidth(for: pixels, aspect: aspect), detail: detail)
+        return slow ? needed * limitedShare : needed
+    }
+
+    /// The narrowest copy worth standing in for a sharper one (`standIn`): below it, stretched 3 to 4 times
+    /// over a large frame, it isn't worth a decode from disk.
+    static let standInMinimum = 640
+
+    /// The copy to show while the one covering `needed` downloads: the widest already on this phone (`here`,
+    /// nil for the original), at least `standInMinimum` wide. nil when a copy covering it, the original
+    /// included, is already here (it decodes as fast), or no narrower one is.
+    static func standIn(covering needed: CGFloat, here: (Int?) -> Bool) -> Int? {
+        if candidates(covering: needed).contains(where: here) { return nil }
+        // Every copy here is narrower than the one covering `needed`: the widest of them.
+        return ladder.reversed().first { $0 >= standInMinimum && here($0) }
+    }
+
     /// A small copy shown first on a slow connection, sharpened when the right one arrives: a quarter of
     /// the width needed, at least 160 px.
     static func previewWidth(covering width: CGFloat) -> Int {

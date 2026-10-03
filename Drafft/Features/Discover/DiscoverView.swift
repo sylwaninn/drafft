@@ -153,7 +153,7 @@ struct DiscoverView: View {
                     let d = depth(i)
                     SwipeCard(profile: p, me: app.me, progress: isTop ? progress : 0, isTop: isTop,
                               photoPriority: photoPriority(i)) {
-                        detail = p
+                        open(p)
                     }
                     .frame(width: geo.size.width, height: geo.size.height - 28)
                     // Cards behind are veiled in sage so the top card reads as the one in play.
@@ -173,7 +173,7 @@ struct DiscoverView: View {
                         Button("Like") { commit(p, liked: true) }
                         Button("Super like") { askSuperLike(p) }
                         Button("Pass") { commit(p, liked: false) }
-                        Button("Open profile") { detail = p }
+                        Button("Open profile") { open(p) }
                     }
                     // Undo brings a card back on top with a soft scale-in.
                     .transition(.asymmetric(insertion: .scale(scale: 0.92).combined(with: .opacity), removal: .identity))
@@ -190,6 +190,15 @@ struct DiscoverView: View {
                                      points: CGSize(width: geo.size.width, height: geo.size.height - 28), scale: displayScale)
             }
             .onDisappear { PhotoWindow.deck.clear() }
+            // A card looked at for a while is likelier to be opened: its profile's first photo starts, level
+            // with the window's next portraits (.low), under the cards on screen. A swipe cancels it; never on
+            // a limited line, never ahead of every card: most are never opened.
+            .task(id: app.deck.first?.id) {
+                guard let top = app.deck.first else { return }
+                try? await Task.sleep(for: .seconds(1.5))
+                guard !Task.isCancelled, !NetworkQuality.shared.isLimited else { return }
+                await Images.warm(top.portrait, scale: displayScale, priority: .low)
+            }
             #if DECK_PHOTO_METRICS
             .onChange(of: app.deck.first?.portrait, initial: true) { _, top in
                 DeckPhotoMetrics.track(app.deck.prefix(4).map(\.portrait))
@@ -211,6 +220,13 @@ struct DiscoverView: View {
         .frame(maxWidth: .infinity, alignment: .top)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+
+    /// Opens a profile, its first photo already downloading at the gallery's size (`Images.warm`): the
+    /// sheet's rise gives it a head start, and the card's own copy stands in until it's there.
+    private func open(_ p: Profile) {
+        Task { await Images.warm(p.portrait, scale: displayScale, priority: .high) }
+        detail = p
     }
 
     /// The card in play's photo first. On a limited connection every small copy of the window comes
