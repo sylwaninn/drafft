@@ -83,7 +83,10 @@ struct LoadedPhoto: View {
                 DeckPhotoMetrics.finished(name, result)
                 #endif
                 guard case .success = result else { return }
-                guard case .kept = standInPhase else { return standInPhase = .done }
+                guard case .kept = standInPhase else {
+                    standInPhase = .done
+                    return
+                }
                 // Past the sharp copy's 0.2 s fade, the stand-in under it goes.
                 Task {
                     try? await Task.sleep(for: .milliseconds(300))
