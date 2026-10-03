@@ -102,11 +102,51 @@ enum Images {
         return make(url, decode: decode, priority: .veryHigh, blur: 0, variant: nil)
     }
 
+    /// An open profile's gallery (`ProfileDetailView.gallery`): `galleryHeight` high, the sheet's width
+    /// (measured there once it's open; the screen's until then).
+    static let galleryHeight: CGFloat = 440
+    @MainActor static var galleryWidth: CGFloat = UIApplication.shared.connectedScenes
+        .compactMap { ($0 as? UIWindowScene)?.screen.bounds.width }.first ?? 393
+    @MainActor static var galleryFrame: CGSize { CGSize(width: galleryWidth, height: galleryHeight) }
+
+    /// Starts downloading the gallery copy of a profile's first photo, to disk: on the tap that opens it (the
+    /// sheet's rise gives it a head start), or once its card has been looked at for a while. Never ahead of
+    /// every card: most are swiped, never opened. A second call for the same photo joins the first download;
+    /// cancelling the caller stops it, unless another caller still waits for it.
+    @MainActor static func warm(_ name: String, scale: CGFloat, priority: ImageRequest.Priority) async {
+        guard let request = download(name, points: galleryFrame, scale: scale, priority: priority, detail: true) else { return }
+        // A failure is the gallery's to show (it asks again): nothing to report here.
+        _ = try? await ImagePipeline.shared.data(for: request)
+    }
+
+    /// A copy already on this phone, smaller than the one an open profile's photo will download for the same
+    /// frame (`Renditions.standIn`): shown at once, decoded in the background from disk and cropped alike,
+    /// while the right copy arrives. The deck card's everyday copy, typically, when the gallery wants a wider one.
+    static func standIn(_ name: String, points: CGSize, scale: CGFloat = 3) -> ImageRequest? {
+        guard name.hasPrefix("http") else { return nil }
+        let pixels = CGSize(width: points.width * scale, height: points.height * scale)
+        var needed = Renditions.asked(Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name)),
+                                      detail: true)
+        if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
+        let cache = ImagePipeline.shared.cache
+        func onDisk(_ width: Int) -> URL? {
+            guard let url = sized(name, width: width) else { return nil }
+            var probe = ImageRequest(url: url)
+            probe.imageID = cacheID(url, variant: nil)
+            return cache.containsData(for: probe) ? url : nil
+        }
+        guard let width = Renditions.standIn(covering: needed, here: { onDisk($0) != nil }),
+              let url = onDisk(width) else { return nil }
+        return make(url, decode: Renditions.decodeSize(for: pixels), priority: .veryHigh, blur: 0, variant: nil)
+    }
+
     /// Starts downloading photos that are about to show, to disk: they're decoded at their display size
     /// once they're drawn. `points` is the frame they'll be drawn in, so the right copy is fetched. The deck
-    /// has its own window (`PhotoWindow`); this is for the rest (blurred likes).
-    static func prefetch(_ names: [String], points: CGSize, variant: String? = nil) {
-        let requests = names.compactMap { download($0, points: points, priority: .low, variant: variant) }
+    /// has its own window (`PhotoWindow`); this is for the rest (blurred likes, an open profile's next photos).
+    static func prefetch(_ names: [String], points: CGSize, scale: CGFloat = 3, variant: String? = nil, detail: Bool = false) {
+        let requests = names.compactMap {
+            download($0, points: points, scale: scale, priority: .low, variant: variant, detail: detail)
+        }
         guard !requests.isEmpty else { return }
         prefetcher.startPrefetching(with: requests)
     }

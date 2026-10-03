@@ -6,7 +6,9 @@ import SwiftUI
 /// needs, decoded in the background at the frame's size, shared downloads, capped caches. A copy already
 /// in memory shows on the first frame; otherwise its ThumbHash preview (`MediaPreviews`), or a sage tile,
 /// stands in until it's there. On a slow connection a large frame first shows a small copy
-/// (`Images.preview`), sharp enough to read the photo, while the right one arrives.
+/// (`Images.preview`), sharp enough to read the photo, while the right one arrives. An open profile's photo
+/// (`detail`) wider than the copy already on this phone shows that copy at once (`Images.standIn`, the deck
+/// card's, typically) while the wider one arrives, instead of a loader.
 struct LoadedPhoto: View {
     let name: String
     /// Blur radius as a share of the photo's shorter side (0: sharp).
@@ -17,6 +19,11 @@ struct LoadedPhoto: View {
     /// The running load: its priority follows the card's place without restarting it (a changed request
     /// would cancel the download and start over).
     @State private var task: ImageTask?
+    /// The stand-in, once drawn: kept (the same request, so it isn't loaded again) under the sharp copy until
+    /// that one has faded in, then let go, so memory never holds both.
+    @State private var keptStandIn: ImageRequest?
+    /// The sharp copy is drawn: a stand-in finishing after it is never kept.
+    @State private var sharp = false
     /// Decoded once per view (a few microseconds, then cached by key).
     private var preview: UIImage? { MediaPreviews.image(for: name) }
 
@@ -33,7 +40,17 @@ struct LoadedPhoto: View {
                     if let preview {
                         fill(Image(uiImage: preview).interpolation(.medium), size)
                     }
-                    if large, let small = smallCopy(size, sharp: state.image != nil) {
+                    if large, let stand = standIn(size, sharp: state.image != nil) {
+                        LazyImage(request: stand, transaction: Transaction(animation: .easeOut(duration: 0.2))) { copy in
+                            if let image = copy.image {
+                                fill(image, size).transition(.opacity)
+                            }
+                        }
+                        .onCompletion { result in
+                            if case .success = result, !sharp { keptStandIn = stand }
+                        }
+                        .frame(width: size.width, height: size.height)
+                    } else if large, let small = smallCopy(size, sharp: state.image != nil) {
                         LazyImage(request: small, transaction: Transaction(animation: .easeOut(duration: 0.2))) { copy in
                             if let image = copy.image {
                                 fill(image, size).transition(.opacity)
@@ -59,8 +76,20 @@ struct LoadedPhoto: View {
                 started.priority = priority
                 task = started
             }
+            .onCompletion { result in
+                #if DECK_PHOTO_METRICS
+                DeckPhotoMetrics.finished(name, result)
+                #endif
+                guard case .success = result else { return }
+                sharp = true
+                guard keptStandIn != nil else { return }
+                // Past the sharp copy's 0.2 s fade, the stand-in under it goes.
+                Task {
+                    try? await Task.sleep(for: .milliseconds(300))
+                    keptStandIn = nil
+                }
+            }
             #if DECK_PHOTO_METRICS
-            .onCompletion { DeckPhotoMetrics.finished(name, $0) }
             .onAppear { DeckPhotoMetrics.appeared(name) }
             #endif
             .frame(width: size.width, height: size.height)
@@ -74,6 +103,14 @@ struct LoadedPhoto: View {
         image.resizable().scaledToFill()
             .frame(width: size.width, height: size.height)
             .clipped()
+    }
+
+    /// An open profile's stand-in: the one already drawn, or, while the sharp copy is missing, a smaller copy
+    /// already on this phone.
+    private func standIn(_ size: CGSize, sharp drawn: Bool) -> ImageRequest? {
+        guard detail else { return nil }
+        if let keptStandIn { return keptStandIn }
+        return drawn ? nil : Images.standIn(name, points: size, scale: scale)
     }
 
     /// The small copy: on a limited connection while the sharp one is missing, or whenever it's already in

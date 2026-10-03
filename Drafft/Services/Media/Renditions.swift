@@ -47,6 +47,19 @@ enum Renditions {
         return ladder.filter { $0 >= start }.map(Optional.some) + [nil]
     }
 
+    /// The narrowest copy worth standing in for a sharper one (`standIn`): below it, the blurred preview
+    /// already says as much.
+    static let standInMinimum = 640
+
+    /// The copy to show at once while the one covering `needed` downloads: the widest already on this phone
+    /// (`here`) below it, at least `standInMinimum` wide. nil when a copy covering it is already here (it
+    /// decodes as fast) or no smaller one is.
+    static func standIn(covering needed: CGFloat, here: (Int) -> Bool) -> Int? {
+        let start = width(covering: needed)
+        if candidates(covering: needed).contains(where: { $0.map(here) ?? false }) { return nil }
+        return ladder.reversed().first { $0 >= standInMinimum && $0 < (start ?? .max) && here($0) }
+    }
+
     /// A small copy shown first on a slow connection, sharpened when the right one arrives: a quarter of
     /// the width needed, at least 160 px.
     static func previewWidth(covering width: CGFloat) -> Int {

@@ -39,6 +39,26 @@ final class RenditionsTests: XCTestCase {
         XCTAssertEqual(Renditions.width(covering: Renditions.asked(1_344, detail: false)), 1_080)
     }
 
+    func testTheCardsCopyStandsInForAnOpenProfilesWiderOne() {
+        // The gallery, 393 × 440 pt at 3x, wants 1 440; the card left its 1 080 on this phone.
+        let needed = Renditions.neededWidth(for: CGSize(width: 1_179, height: 1_320), aspect: 0.8)
+        XCTAssertEqual(Renditions.standIn(covering: needed) { $0 == 1_080 }, 1_080)
+        // The widest one below wins.
+        XCTAssertEqual(Renditions.standIn(covering: needed) { $0 == 640 || $0 == 1_080 }, 1_080)
+    }
+
+    func testNoStandInWhenTheRightCopyIsHereOrOnlyATinyOneIs() {
+        XCTAssertNil(Renditions.standIn(covering: 1_179) { $0 == 1_440 })
+        XCTAssertNil(Renditions.standIn(covering: 1_179) { $0 == 1_080 || $0 == 1_440 })
+        // A chat avatar's copy says no more than the blurred preview.
+        XCTAssertNil(Renditions.standIn(covering: 1_179) { $0 == 320 })
+        XCTAssertNil(Renditions.standIn(covering: 1_179) { _ in false })
+    }
+
+    func testAnyLadderCopyStandsInForTheOriginal() {
+        XCTAssertEqual(Renditions.standIn(covering: 1_800) { $0 == 1_440 }, 1_440)
+    }
+
     func testPreviewIsAQuarterOfTheWidth() {
         XCTAssertEqual(Renditions.previewWidth(covering: 1_344), 320)
         XCTAssertEqual(Renditions.previewWidth(covering: 300), 160)
