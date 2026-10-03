@@ -203,9 +203,8 @@ struct ProfileDetailView: View {
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
         .frame(height: Images.galleryHeight)
-        // The sheet's real width, for the next profile's first photo (`Images.warm`).
-        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { Images.galleryWidth = $0 }
-        // The next two photos downloaded while this one is looked at: a swipe never lands on a loader.
+        // The next two photos downloaded while this one is looked at: a swipe usually lands on the photo,
+        // not a loader.
         .task(id: page) {
             Images.prefetch(Array(profile.allPhotos.dropFirst(page + 1).prefix(2)), points: Images.galleryFrame,
                             scale: displayScale, detail: true)

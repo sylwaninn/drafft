@@ -6,7 +6,8 @@ import Nuke
 /// (`SwipeCard`'s priority); the window covers what comes after them:
 ///
 /// - on a good connection, the portraits of the next 6 cards, to disk, at the copy their card needs, then
-///   the other photos of the card in play (its profile, if opened);
+///   the other photos of the card in play, at the gallery's size (its profile, if opened: the gallery's own
+///   loads join these downloads);
 /// - on a limited one (`NetworkQuality`), a small copy of the portraits on screen and of the next 8 instead
 ///   (`Images.preview`, about 20 kB each): a full copy can't keep up with fast swipes on a slow line, a
 ///   small one can, so no card shows only its blurred preview. The cards behind the one in play get their
@@ -54,7 +55,7 @@ final class PhotoWindow {
             ? deck.prefix(onScreen + 8).map(\.portrait).compactMap { Images.preview($0, points: points, scale: scale) }
             : [])
         set(extras, limited ? [] : (deck.first?.photos ?? [])
-            .compactMap { Images.download($0, points: points, scale: scale, priority: .veryLow, detail: true) })
+            .compactMap { Images.download($0, points: Images.galleryFrame, scale: scale, priority: .veryLow, detail: true) })
     }
 
     /// Everything stops (the deck is gone, another screen).

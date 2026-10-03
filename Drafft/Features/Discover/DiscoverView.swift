@@ -190,12 +190,13 @@ struct DiscoverView: View {
                                      points: CGSize(width: geo.size.width, height: geo.size.height - 28), scale: displayScale)
             }
             .onDisappear { PhotoWindow.deck.clear() }
-            // A card looked at for a while is likelier to be opened: its profile's first photo starts, under
-            // the deck's own. A swipe cancels it; never ahead of every card, most are never opened.
+            // A card looked at for a while is likelier to be opened: its profile's first photo starts, level
+            // with the window's next portraits (.low), under the cards on screen. A swipe cancels it; never on
+            // a limited line, never ahead of every card: most are never opened.
             .task(id: app.deck.first?.id) {
-                guard let top = app.deck.first, !NetworkQuality.shared.isLimited else { return }
+                guard let top = app.deck.first else { return }
                 try? await Task.sleep(for: .seconds(1.5))
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled, !NetworkQuality.shared.isLimited else { return }
                 await Images.warm(top.portrait, scale: displayScale, priority: .low)
             }
             #if DECK_PHOTO_METRICS
