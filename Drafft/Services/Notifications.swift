@@ -364,7 +364,8 @@ struct NotificationSettings: Codable {
     }
 }
 
-/// Receives the APNs device token, and sets the notification delegate at launch.
+/// Receives the APNs device token, sets the notification delegate at launch, and gets the background upload
+/// events iOS relaunches the app for.
 final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -380,6 +381,17 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         // Expected until the push capability and the server are set up.
+    }
+
+    /// iOS relaunched the app because the uploads session has events (an upload finished while the app was
+    /// closed): hand the completion to the uploader, which calls it once the session has delivered them all.
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String,
+                     completionHandler: @escaping () -> Void) {
+        guard identifier == MediaUploader.sessionIdentifier else { return completionHandler() }
+        // Safe: iOS gives this handler to the main thread and the uploader only ever calls it there (the wrapper
+        // is what lets the compiler accept the conversion to a Sendable closure).
+        nonisolated(unsafe) let completion = completionHandler
+        MediaUploader.shared.handleEventsForBackgroundSession { completion() }
     }
 }
 
