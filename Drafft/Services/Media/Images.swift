@@ -78,11 +78,7 @@ enum Images {
         if name.hasPrefix("/") {
             url = URL(fileURLWithPath: name)
         } else if name.hasPrefix("http") {
-            var needed = Renditions.asked(Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name)),
-                                          detail: detail)
-            // A slow line gets a step lighter (a copy already here still wins): sooner beats sharper there.
-            if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
-            url = closest(name, covering: needed, variant: variant)
+            url = closest(name, covering: wanted(name, pixels: pixels, detail: detail), variant: variant)
         } else {
             return nil
         }
@@ -102,41 +98,35 @@ enum Images {
         return make(url, decode: decode, priority: .veryHigh, blur: 0, variant: nil)
     }
 
-    /// An open profile's gallery (`ProfileDetailView.gallery`): `galleryHeight` high, the sheet's width
-    /// (measured there once it's open; the screen's until then).
+    /// An open profile's gallery (`ProfileDetailView.gallery`): `galleryHeight` high, the screen's width (an
+    /// iPhone app in portrait: every profile opens full width).
     static let galleryHeight: CGFloat = 440
-    @MainActor static var galleryWidth: CGFloat = UIApplication.shared.connectedScenes
-        .compactMap { ($0 as? UIWindowScene)?.screen.bounds.width }.first ?? 393
-    @MainActor static var galleryFrame: CGSize { CGSize(width: galleryWidth, height: galleryHeight) }
+    @MainActor static var galleryFrame: CGSize {
+        let width = UIApplication.shared.connectedScenes.compactMap { ($0 as? UIWindowScene)?.screen.bounds.width }.first
+        return CGSize(width: width ?? 393, height: galleryHeight)
+    }
 
-    /// Starts downloading the gallery copy of a profile's first photo, to disk: on the tap that opens it (the
-    /// sheet's rise gives it a head start), or once its card has been looked at for a while. Never ahead of
-    /// every card: most are swiped, never opened. A second call for the same photo joins the first download;
-    /// cancelling the caller stops it, unless another caller still waits for it.
+    /// Downloads to disk the gallery copy of a profile's first photo (nothing when it's already there): on the
+    /// tap that opens it (the sheet's rise gives it a head start), or once its card has been looked at for a
+    /// while. Never ahead of every card: most are swiped, never opened. Another call, or the gallery's own
+    /// load (same key), joins the download at the highest priority asked; cancelling the caller stops it,
+    /// unless another still waits for it.
     @MainActor static func warm(_ name: String, scale: CGFloat, priority: ImageRequest.Priority) async {
         guard let request = download(name, points: galleryFrame, scale: scale, priority: priority, detail: true) else { return }
-        // A failure is the gallery's to show (it asks again): nothing to report here.
+        // Offline or cancelled: the gallery makes its own request, nothing to report here.
         _ = try? await ImagePipeline.shared.data(for: request)
     }
 
-    /// A copy already on this phone, smaller than the one an open profile's photo will download for the same
-    /// frame (`Renditions.standIn`): shown at once, decoded in the background from disk and cropped alike,
-    /// while the right copy arrives. The deck card's everyday copy, typically, when the gallery wants a wider one.
+    /// A copy already on this phone, narrower than the one an open profile's photo will download for the same
+    /// frame (`Renditions.standIn`): decoded in the background from disk (the card's decoded copy is another
+    /// size), at the sharp copy's decode size and crop, and shown while the right copy arrives. The deck
+    /// card's everyday copy, typically, when the gallery wants a wider one.
     static func standIn(_ name: String, points: CGSize, scale: CGFloat = 3) -> ImageRequest? {
         guard name.hasPrefix("http") else { return nil }
         let pixels = CGSize(width: points.width * scale, height: points.height * scale)
-        var needed = Renditions.asked(Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name)),
-                                      detail: true)
-        if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
-        let cache = ImagePipeline.shared.cache
-        func onDisk(_ width: Int) -> URL? {
-            guard let url = sized(name, width: width) else { return nil }
-            var probe = ImageRequest(url: url)
-            probe.imageID = cacheID(url, variant: nil)
-            return cache.containsData(for: probe) ? url : nil
-        }
-        guard let width = Renditions.standIn(covering: needed, here: { onDisk($0) != nil }),
-              let url = onDisk(width) else { return nil }
+        guard let width = Renditions.standIn(covering: wanted(name, pixels: pixels, detail: true),
+                                             here: { onDisk(name, width: $0, variant: nil) != nil }),
+              let url = sized(name, width: width) else { return nil }
         return make(url, decode: Renditions.decodeSize(for: pixels), priority: .veryHigh, blur: 0, variant: nil)
     }
 
@@ -158,10 +148,7 @@ enum Images {
                          variant: String? = nil, detail: Bool = false) -> ImageRequest? {
         guard name.hasPrefix("http") else { return nil }
         let pixels = CGSize(width: points.width * scale, height: points.height * scale)
-        var needed = Renditions.asked(Renditions.neededWidth(for: pixels, aspect: MediaPreviews.aspect(for: name)),
-                                      detail: detail)
-        if NetworkQuality.shared.isSlow { needed *= Renditions.limitedShare }
-        guard let url = closest(name, covering: needed, variant: variant) else { return nil }
+        guard let url = closest(name, covering: wanted(name, pixels: pixels, detail: detail), variant: variant) else { return nil }
         var request = ImageRequest(url: url, priority: priority)
         request.imageID = cacheID(url, variant: variant)
         return ImagePipeline.shared.cache.containsData(for: request) ? nil : request
@@ -191,18 +178,28 @@ enum Images {
 
     // MARK: Copies served by the media Worker
 
+    /// The width to download for a frame of `pixels` (`Renditions.wanted`), on the line as it is now.
+    private static func wanted(_ name: String, pixels: CGSize, detail: Bool) -> CGFloat {
+        Renditions.wanted(for: pixels, aspect: MediaPreviews.aspect(for: name), detail: detail,
+                          slow: NetworkQuality.shared.isSlow)
+    }
+
     /// The copy to show for `needed` pixels of width: the first of `Renditions.candidates` already on this
     /// phone (a larger copy beats a download), otherwise the one covering it.
     private static func closest(_ name: String, covering needed: CGFloat, variant: String?) -> URL? {
         let candidates = Renditions.candidates(covering: needed)
-        let cache = ImagePipeline.shared.cache
         for width in candidates {
-            guard let url = sized(name, width: width) else { continue }
-            var probe = ImageRequest(url: url)
-            probe.imageID = cacheID(url, variant: variant)
-            if cache.containsData(for: probe) { return url }
+            if let url = onDisk(name, width: width, variant: variant) { return url }
         }
         return sized(name, width: candidates[0])
+    }
+
+    /// The link to the copy `width` wide (nil: the original) when it's on this phone.
+    private static func onDisk(_ name: String, width: Int?, variant: String?) -> URL? {
+        guard let url = sized(name, width: width) else { return nil }
+        var probe = ImageRequest(url: url)
+        probe.imageID = cacheID(url, variant: variant)
+        return ImagePipeline.shared.cache.containsData(for: probe) ? url : nil
     }
 
     /// A photo link with `&w=` set to `width` (nil: the original). Only a signed link goes through the

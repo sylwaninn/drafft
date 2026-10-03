@@ -39,24 +39,73 @@ final class RenditionsTests: XCTestCase {
         XCTAssertEqual(Renditions.width(covering: Renditions.asked(1_344, detail: false)), 1_080)
     }
 
+    /// The gallery, 393 × 440 pt at 3x, for a 4:5 photo: 1 179 px wanted, the 1 440 copy.
+    private let gallery = Renditions.wanted(for: CGSize(width: 1_179, height: 1_320), aspect: 0.8, detail: true, slow: false)
+
     func testTheCardsCopyStandsInForAnOpenProfilesWiderOne() {
-        // The gallery, 393 × 440 pt at 3x, wants 1 440; the card left its 1 080 on this phone.
-        let needed = Renditions.neededWidth(for: CGSize(width: 1_179, height: 1_320), aspect: 0.8)
-        XCTAssertEqual(Renditions.standIn(covering: needed) { $0 == 1_080 }, 1_080)
-        // The widest one below wins.
-        XCTAssertEqual(Renditions.standIn(covering: needed) { $0 == 640 || $0 == 1_080 }, 1_080)
+        XCTAssertEqual(gallery, 1_179, accuracy: 0.5)
+        // The card left its 1 080 on this phone.
+        XCTAssertEqual(Renditions.standIn(covering: gallery) { $0 == 1_080 }, 1_080)
+        // The widest one here wins.
+        XCTAssertEqual(Renditions.standIn(covering: gallery) { $0 == 640 || $0 == 1_080 }, 1_080)
+        // 640 is just enough.
+        XCTAssertEqual(Renditions.standIn(covering: gallery) { $0 == 640 }, 640)
     }
 
-    func testNoStandInWhenTheRightCopyIsHereOrOnlyATinyOneIs() {
-        XCTAssertNil(Renditions.standIn(covering: 1_179) { $0 == 1_440 })
-        XCTAssertNil(Renditions.standIn(covering: 1_179) { $0 == 1_080 || $0 == 1_440 })
-        // A chat avatar's copy says no more than the blurred preview.
-        XCTAssertNil(Renditions.standIn(covering: 1_179) { $0 == 320 })
-        XCTAssertNil(Renditions.standIn(covering: 1_179) { _ in false })
+    func testNoStandInWhenACoveringCopyIsHere() {
+        XCTAssertNil(Renditions.standIn(covering: gallery) { $0 == 1_440 })
+        XCTAssertNil(Renditions.standIn(covering: gallery) { $0 == 1_080 || $0 == 1_440 })
+        // The original covers everything.
+        XCTAssertNil(Renditions.standIn(covering: gallery) { $0 == nil || $0 == 1_080 })
+        // A larger copy than the covering one.
+        XCTAssertNil(Renditions.standIn(covering: 1_000) { $0 == 1_440 })
+    }
+
+    func testNoStandInWhenNothingWorthShowingIsHere() {
+        // A 320 copy is too soft to stand in.
+        XCTAssertNil(Renditions.standIn(covering: gallery) { $0 == 320 })
+        XCTAssertNil(Renditions.standIn(covering: gallery) { _ in false })
+        // A small frame: its covering copy is the 640 or narrower.
+        XCTAssertNil(Renditions.standIn(covering: 600) { $0 == 320 })
+    }
+
+    func testTheFivePercentToleranceDecidesBetweenCoveringAndStandingIn() {
+        XCTAssertNil(Renditions.standIn(covering: 1_136) { $0 == 1_080 })
+        XCTAssertEqual(Renditions.standIn(covering: 1_137) { $0 == 1_080 }, 1_080)
+        XCTAssertNil(Renditions.standIn(covering: 1_515) { $0 == 1_440 })
+        XCTAssertEqual(Renditions.standIn(covering: 1_516) { $0 == 1_440 }, 1_440)
     }
 
     func testAnyLadderCopyStandsInForTheOriginal() {
         XCTAssertEqual(Renditions.standIn(covering: 1_800) { $0 == 1_440 }, 1_440)
+        XCTAssertNil(Renditions.standIn(covering: 1_800) { $0 == nil || $0 == 1_440 })
+    }
+
+    func testOnASlowLineTheCardsCopyIsTheGallerysOwn() {
+        let slow = Renditions.wanted(for: CGSize(width: 1_179, height: 1_320), aspect: 0.8, detail: true, slow: true)
+        XCTAssertEqual(Renditions.width(covering: slow), 1_080)
+        XCTAssertNil(Renditions.standIn(covering: slow) { $0 == 1_080 })
+        XCTAssertEqual(Renditions.standIn(covering: slow) { $0 == 640 }, 640)
+    }
+
+    func testEverydayPhotosAreWantedAt1080AtMost() {
+        XCTAssertEqual(Renditions.wanted(for: card, aspect: 0.8, detail: false, slow: false), 1_080)
+        XCTAssertEqual(Renditions.wanted(for: card, aspect: 0.8, detail: true, slow: false), 1_344, accuracy: 0.5)
+    }
+
+    func testAStandInIsNeverACopyTheRequestWouldPick() {
+        let widths: [Int?] = Renditions.ladder.map(Optional.some) + [nil]
+        for mask in 0..<(1 << widths.count) {
+            let here = Set(widths.indices.filter { mask & (1 << $0) != 0 }.map { widths[$0] })
+            for needed in stride(from: CGFloat(1), through: 2_500, by: 7) {
+                let candidates = Renditions.candidates(covering: needed)
+                guard let copy = Renditions.standIn(covering: needed, here: { here.contains($0) }) else { continue }
+                XCTAssertTrue(here.contains(copy))
+                XCTAssertGreaterThanOrEqual(copy, Renditions.standInMinimum)
+                XCTAssertFalse(candidates.contains(copy))
+                XCTAssertFalse(candidates.contains(where: { here.contains($0) }))
+            }
+        }
     }
 
     func testPreviewIsAQuarterOfTheWidth() {
