@@ -16,6 +16,7 @@ struct ProfileDetailView: View {
 
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.displayScale) private var displayScale
     @State private var page = 0
     @State private var showSafety = false
     @State private var pendingLike: LikeTarget?
@@ -201,7 +202,14 @@ struct ProfileDetailView: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .frame(height: 440)
+        .frame(height: Images.galleryHeight)
+        // The sheet's real width, for the next profile's first photo (`Images.warm`).
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { Images.galleryWidth = $0 }
+        // The next two photos downloaded while this one is looked at: a swipe never lands on a loader.
+        .task(id: page) {
+            Images.prefetch(Array(profile.allPhotos.dropFirst(page + 1).prefix(2)), points: Images.galleryFrame,
+                            scale: displayScale, detail: true)
+        }
         // Page steps centered on the photo, like a system page control; the heart keeps the corner.
         // Both share one bottom line so they read as one row, not two stray pieces.
         .overlay(alignment: .bottom) {
@@ -223,7 +231,7 @@ struct ProfileDetailView: View {
         // Stretchy header: on pull-down the photo grows upward so nothing ever shows above it.
         .visualEffect { content, proxy in
             let pull = max(0, proxy.frame(in: .scrollView).minY)
-            return content.scaleEffect(1 + pull / 440, anchor: .bottom)
+            return content.scaleEffect(1 + pull / Images.galleryHeight, anchor: .bottom)
         }
         .accessibilityLabel("Photos of \(profile.name), \(profile.allPhotos.count) total")
     }
