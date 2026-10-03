@@ -192,10 +192,9 @@ struct ProfileIdentity: View {
     let profile: Profile
     var nameSize: CGFloat = 34
     var showsLocation = true
-    /// Deck only: a red super like disc right after the age when they super liked you.
+    /// Likes tiles only: a red super like disc before the name when they super liked you (the deck card
+    /// draws it in its corner and passes `announcesSuperLike`).
     var showsSuperLike = false
-    /// The super like disc pops in when this turns true (the card reaching the top of the deck).
-    var superLikeActive = true
     /// The disc is drawn elsewhere (the deck card's corner): the line only says it to VoiceOver.
     var announcesSuperLike = false
 
@@ -203,7 +202,7 @@ struct ProfileIdentity: View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
             NameAgeLine(profile: profile, nameSize: nameSize,
                         nameColor: .white, ageColor: .white.opacity(0.8),
-                        showsBadge: showsSuperLike && profile.superLikedMe, badgeActive: superLikeActive,
+                        showsBadge: showsSuperLike && profile.superLikedMe,
                         announcesBadge: announcesSuperLike && profile.superLikedMe)
             if showsLocation {
                 Text("\(profile.neighborhood), \(LocationPrivacy.rounded(km: profile.distanceKm))")
